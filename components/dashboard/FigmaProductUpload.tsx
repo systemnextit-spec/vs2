@@ -263,6 +263,30 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
   });
   const [savingCatalog, setSavingCatalog] = useState(false);
 
+  // Local state for catalog items that includes newly added ones
+  const [localCategories, setLocalCategories] = useState<Category[]>(categories);
+  const [localSubCategories, setLocalSubCategories] = useState<SubCategory[]>(subCategories);
+  const [localChildCategories, setLocalChildCategories] = useState<ChildCategory[]>(childCategories);
+  const [localBrands, setLocalBrands] = useState<Brand[]>(brands);
+  const [localTags, setLocalTags] = useState<Tag[]>(tags);
+
+  // Sync with props when they change
+  React.useEffect(() => {
+    setLocalCategories(categories);
+  }, [categories]);
+  React.useEffect(() => {
+    setLocalSubCategories(subCategories);
+  }, [subCategories]);
+  React.useEffect(() => {
+    setLocalChildCategories(childCategories);
+  }, [childCategories]);
+  React.useEffect(() => {
+    setLocalBrands(brands);
+  }, [brands]);
+  React.useEffect(() => {
+    setLocalTags(tags);
+  }, [tags]);
+
   const [formData, setFormData] = useState<FormData>({
     name: '',
     slug: '',
@@ -681,16 +705,21 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
 
       toast.success(`${catalogModalTab.charAt(0).toUpperCase() + catalogModalTab.slice(1)} added successfully!`);
       
-      // Auto-select the newly created item in the form
+      // Update local state so dropdown shows the new item
       if (catalogModalTab === 'category') {
+        setLocalCategories(prev => [...prev, newItem as Category]);
         updateField('category', newCatalogItem.name.trim());
       } else if (catalogModalTab === 'subcategory') {
+        setLocalSubCategories(prev => [...prev, newItem as SubCategory]);
         updateField('subCategory', newCatalogItem.name.trim());
       } else if (catalogModalTab === 'childcategory') {
+        setLocalChildCategories(prev => [...prev, newItem as ChildCategory]);
         updateField('childCategory', newCatalogItem.name.trim());
       } else if (catalogModalTab === 'tag') {
+        setLocalTags(prev => [...prev, newItem as Tag]);
         updateField('tag', newCatalogItem.name.trim());
       } else if (catalogModalTab === 'brand') {
+        setLocalBrands(prev => [...prev, newItem as Brand]);
         updateField('brandName', newCatalogItem.name.trim());
       }
       
@@ -1532,7 +1561,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
             <SelectField
               value={formData.category}
               onChange={(v) => updateField('category', v)}
-              options={categories.map(c => ({ value: c.name, label: c.name }))}
+              options={localCategories.map(c => ({ value: c.name, label: c.name }))}
               placeholder="Select Category*"
               required
             />
@@ -1552,7 +1581,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
               <SelectField
                 value={formData.tag}
                 onChange={(v) => updateField('tag', v)}
-                options={tags.map(t => ({ value: t.name, label: t.name }))}
+                options={localTags.map(t => ({ value: t.name, label: t.name }))}
                 placeholder="Select Tag"
               />
               <input
@@ -1634,7 +1663,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
             <SelectField
               value={formData.category}
               onChange={(v) => updateField('category', v)}
-              options={categories.map(c => ({ value: c.name, label: c.name }))}
+              options={localCategories.map(c => ({ value: c.name, label: c.name }))}
               placeholder="Select Category*"
               required
             />
@@ -1654,7 +1683,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
               <SelectField
                 value={formData.tag}
                 onChange={(v) => updateField('tag', v)}
-                options={tags.map(t => ({ value: t.name, label: t.name }))}
+                options={localTags.map(t => ({ value: t.name, label: t.name }))}
                 placeholder="Select Tag"
               />
               <input
@@ -1753,7 +1782,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                     className="w-full h-11 border rounded-lg px-3 text-sm outline-none focus:border-[#ff6a00] bg-white"
                   >
                     <option value="">Select Parent Category</option>
-                    {categories.map((cat) => (
+                    {localCategories.map((cat) => (
                       <option key={cat.id || cat.name} value={cat.name}>{cat.name}</option>
                     ))}
                   </select>
@@ -1770,7 +1799,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                     className="w-full h-11 border rounded-lg px-3 text-sm outline-none focus:border-[#ff6a00] bg-white"
                   >
                     <option value="">Select Parent Sub Category</option>
-                    {subCategories.map((sub) => (
+                    {localSubCategories.map((sub) => (
                       <option key={sub.id || sub.name} value={sub.name}>{sub.name}</option>
                     ))}
                   </select>
