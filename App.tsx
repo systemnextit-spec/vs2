@@ -1,0 +1,522 @@
+/// <reference types="vite/client" />
+/**
+ * App.tsx - Main Application Component (Refactored & Optimized)
+ * 
+ * This file orchestrates the application by composing extracted modules:
+ * - hooks/useAppState.ts - Core data state management
+ * - hooks/useAppHandlers.ts - All handler functions
+ * - hooks/useAppEffects.ts - Session, data loading, refresh effects
+ * - hooks/useDataPersistence.ts - Data persistence effects
+ * - hooks/useChat.ts - Chat state and handlers
+ * - hooks/useCart.ts - Cart state and handlers
+ * - hooks/useAuth.ts - Authentication handlers
+ * - hooks/useTenant.ts - Tenant state and handlers
+ * - hooks/useThemeEffects.ts - Theme application
+ * - hooks/useFacebookPixel.ts - Facebook Pixel
+ * - hooks/useNavigation.ts - URL routing and navigation
+ * - components/AppRoutes.tsx - All view rendering logic
+ */
+import React, { useEffect, useCallback, lazy, Suspense } from 'react';
+
+// Core services
+import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import { DarkModeProvider } from './context/DarkModeContext';
+import { HelmetProvider } from 'react-helmet-async';
+import { DataService } from './services/DataService';
+
+// Extracted hooks
+import { useAppState } from './hooks/useAppState';
+import { useAppHandlers } from './hooks/useAppHandlers';
+import { useDataPersistence } from './hooks/useDataPersistence';
+import { useChat } from './hooks/useChat';
+import { useCart } from './hooks/useCart';
+import { useAuth } from './hooks/useAuth';
+import { useTenant } from './hooks/useTenant';
+import { useThemeEffects } from './hooks/useThemeEffects';
+import { useFacebookPixel } from './hooks/useFacebookPixel';
+import { useNavigation } from './hooks/useNavigation';
+import {
+  useSessionRestoration,
+  useSessionPersistence,
+  useUserRoleEffect,
+  useSocketRoom,
+  useInitialDataLoad,
+  useAdminDataLoad,
+  useDataRefresh,
+  useAdminChatVisibility,
+} from './hooks/useAppEffects';
+
+// Extracted components
+import { AppRoutes } from './components/AppRoutes';
+
+// Utilities
+import { isAdminRole, isPlatformOperator } from './utils/appHelpers';
+
+// Defer Toaster import
+const Toaster = lazy(() => import('react-hot-toast').then(m => ({ default: m.Toaster })));
+
+// Check if we're on the superadmin subdomain
+const isSuperAdminSubdomain = typeof window !== 'undefined' &&
+  (window.location.hostname === 'superadmin.allinbangla.com' ||
+    window.location.hostname.startsWith('superadmin.'));
+
+// Preload functions - ONLY called on user interaction
+export const preloadCheckout = () => import('./pages/StoreCheckout');
+export const preloadProductDetail = () => import('./pages/StoreProductDetail');
+export const preloadStoreProfile = () => import('./pages/StoreProfile');
+
+const App = () => {
+  // === CORE STATE ===
+  const appState = useAppState();
+  const {
+    isLoading, setIsLoading,
+    orders, setOrders,
+    products, setProducts,
+    logo, setLogo,
+    themeConfig, setThemeConfig,
+    websiteConfig, setWebsiteConfig,
+    deliveryConfig, setDeliveryConfig,
+    paymentMethods, setPaymentMethods,
+    facebookPixelConfig, setFacebookPixelConfig,
+    roles, setRoles,
+    users, setUsers,
+    categories, setCategories,
+    subCategories, setSubCategories,
+    childCategories, setChildCategories,
+    brands, setBrands,
+    tags, setTags,
+    courierConfig, setCourierConfig,
+    user, setUser,
+    isLoginOpen, setIsLoginOpen,
+    wishlist, setWishlist,
+    checkoutQuantity, setCheckoutQuantity,
+    selectedVariant, setSelectedVariant,
+    landingPages, setLandingPages,
+    selectedLandingPage, setSelectedLandingPage,
+    refs,
+    handleMobileMenuOpenRef,
+  } = appState;
+
+  // === TENANT MANAGEMENT ===
+  const tenant = useTenant();
+  const {
+    tenants,
+    activeTenantId,
+    setActiveTenantId,
+    hostTenantId,
+    setHostTenantId,
+    hostTenantSlug,
+    isTenantSwitching,
+    isTenantSeeding,
+    deletingTenantId,
+    applyTenantList,
+    refreshTenants,
+    completeTenantSwitch,
+    tenantsRef,
+    activeTenantIdRef,
+  } = tenant;
+
+  // === NAVIGATION ===
+  const navigation = useNavigation({ products, user, landingPages, setSelectedLandingPage });
+  const {
+    currentView,
+    setCurrentView,
+    adminSection,
+    setAdminSection,
+    urlCategoryFilter,
+    selectedProduct,
+    setSelectedProduct,
+    storeSearchQuery,
+    handleStoreSearchChange,
+    handleProductClick,
+    handleCategoryFilterChange,
+    currentViewRef,
+  } = navigation;
+
+  // === CHAT ===
+  const chat = useChat({ activeTenantId, isLoading, user, websiteConfig, isTenantSwitching });
+  const {
+    isChatOpen,
+    isAdminChatOpen,
+    chatMessages,
+    hasUnreadChat,
+    handleCustomerSendChat,
+    handleAdminSendChat,
+    handleEditChatMessage,
+    handleDeleteChatMessage,
+    handleOpenChat,
+    handleCloseChat,
+    handleOpenAdminChat,
+    handleCloseAdminChat,
+    loadChatMessages,
+    resetChatLoaded,
+    setChatMessages,
+    setHasUnreadChat,
+    skipNextChatSaveRef,
+    chatMessagesRef,
+    isAdminChatOpenRef,
+  } = chat;
+
+  // === CART ===
+  const cart = useCart({ user, products, tenantId: activeTenantId });
+  const { cartItems, handleCartToggle, handleAddProductToCart } = cart;
+
+  // Adapter for onToggleCart prop signature
+  const handleToggleCartForProduct = useCallback((product: any, quantity: number, variant?: any) => {
+    handleCartToggle(product.id, { silent: false });
+  }, [handleCartToggle]);
+
+  // === AUTH ===
+  const auth = useAuth({
+    tenants,
+    users,
+    activeTenantId,
+    setUser,
+    setUsers,
+    setActiveTenantId,
+    setCurrentView: setCurrentView as (view: string) => void,
+    setAdminSection,
+    setSelectedVariant: () => setSelectedVariant(null),
+  });
+  const { handleLogin, handleRegister, handleGoogleLogin, handleLogout, handleUpdateProfile } = auth;
+
+  // === HANDLERS ===
+  const handlers = useAppHandlers({
+    activeTenantId,
+    products,
+    orders,
+    roles,
+    wishlist,
+    checkoutQuantity,
+    selectedProduct,
+    selectedVariant,
+    user,
+    cartItems,
+    setProducts,
+    setOrders,
+    setRoles,
+    setWishlist,
+    setCheckoutQuantity,
+    setSelectedProduct,
+    setSelectedVariant,
+    setSelectedLandingPage,
+    setCurrentView,
+    setLogo,
+    setThemeConfig,
+    setWebsiteConfig,
+    setDeliveryConfig,
+    setPaymentMethods,
+    setCourierConfig,
+    setCategories,
+    setSubCategories,
+    setChildCategories,
+    setBrands,
+    setTags,
+    handleAddProductToCart,
+  });
+
+  // === LANDING PAGE HANDLERS ===
+  const handleCreateLandingPage = useCallback(async (page: any) => {
+    const scopedPage = { ...page, tenantId: page.tenantId || activeTenantId };
+    setLandingPages(prev => [scopedPage, ...prev]);
+
+    // Save to database immediately
+    try {
+      await DataService.saveImmediate('landing_pages', [scopedPage, ...refs.landingPagesRef.current], activeTenantId);
+      console.log('[Landing Page] Saved to database:', scopedPage.id);
+      return true;
+    } catch (error) {
+      console.error('[Landing Page] Failed to save:', error);
+      // Rollback on error
+      setLandingPages(prev => prev.filter(p => p.id !== scopedPage.id));
+      throw error;
+    }
+  }, [activeTenantId, setLandingPages, refs]);
+
+  const handleUpsertLandingPage = useCallback(async (page: any) => {
+    const scopedPage = { ...page, tenantId: page.tenantId || activeTenantId };
+    let newPages: any[] = [];
+    setLandingPages(prev => {
+      const exists = prev.some(lp => lp.id === scopedPage.id);
+      newPages = exists ? prev.map(lp => lp.id === scopedPage.id ? scopedPage : lp) : [scopedPage, ...prev];
+      return newPages;
+    });
+
+    try {
+      await DataService.saveImmediate('landing_pages', newPages, activeTenantId);
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }, [activeTenantId, setLandingPages]);
+
+  const handleToggleLandingPublish = useCallback(async (pageId: string, status: string) => {
+    const timestamp = new Date().toISOString();
+    let newPages: any[] = [];
+    setLandingPages(prev => {
+      newPages = prev.map(lp => lp.id === pageId ? {
+        ...lp,
+        status,
+        updatedAt: timestamp,
+        publishedAt: status === 'published' ? timestamp : undefined
+      } : lp);
+      return newPages;
+    });
+
+    try {
+      await DataService.saveImmediate('landing_pages', newPages, activeTenantId);
+    } catch (error) {
+      console.error('[Landing Page] Failed to update publish status:', error);
+      throw error;
+    }
+  }, [setLandingPages, activeTenantId]);
+
+  // === EFFECTS ===
+  // Theme & Facebook Pixel
+  useThemeEffects({ themeConfig, websiteConfig, activeTenantId, isLoading, currentView, isTenantSwitching });
+  useFacebookPixel(facebookPixelConfig);
+
+  // Session management
+  useSessionRestoration({ setUser, setCurrentView: setCurrentView as (view: string) => void, setActiveTenantId, refs });
+  useSessionPersistence({ user, refs });
+  useUserRoleEffect({ user, activeTenantId, currentViewRef, refs, setActiveTenantId, setCurrentView: setCurrentView as (view: string) => void, setAdminSection });
+
+  // Socket & Data loading
+  useSocketRoom(activeTenantId);
+  useInitialDataLoad({
+    activeTenantId,
+    hostTenantSlug: hostTenantSlug || '',
+    loadChatMessages,
+    completeTenantSwitch,
+    setActiveTenantId,
+    setHostTenantId,
+    setIsLoading,
+    setProducts,
+    setOrders,
+    setLogo,
+    setThemeConfig,
+    setWebsiteConfig,
+    setDeliveryConfig,
+    setPaymentMethods,
+    setLandingPages,
+    setCategories,
+    setSubCategories,
+    setChildCategories,
+    setBrands,
+    setTags,
+    refs,
+  });
+
+  // Admin data
+  useAdminDataLoad({
+    activeTenantId,
+    currentView,
+    tenants,
+    applyTenantList,
+    setUsers,
+    setRoles,
+    setCourierConfig,
+    setFacebookPixelConfig,
+    setCategories,
+    setSubCategories,
+    setChildCategories,
+    setBrands,
+    setTags,
+    refs,
+  });
+
+  // Real-time data refresh
+  useDataRefresh({
+    products,
+    categories,
+    activeTenantIdRef,
+    currentViewRef,
+    skipNextChatSaveRef,
+    chatMessagesRef,
+    isAdminChatOpenRef,
+    refs,
+    setProducts,
+    setOrders,
+    setLogo,
+    setThemeConfig,
+    setWebsiteConfig,
+    setDeliveryConfig,
+    setPaymentMethods,
+    setCategories,
+    setLandingPages,
+    setChatMessages,
+    setHasUnreadChat,
+  });
+
+  // Admin chat visibility
+  useAdminChatVisibility({ currentView, isAdminChatOpen, handleCloseAdminChat });
+
+  // Data persistence
+  useDataPersistence({
+    activeTenantId,
+    isLoading,
+    isTenantSwitching,
+    orders,
+    products,
+    logo,
+    themeConfig,
+    websiteConfig,
+    deliveryConfig,
+    courierConfig,
+    facebookPixelConfig,
+    roles,
+    users,
+    categories,
+    subCategories,
+    childCategories,
+    brands,
+    tags,
+    landingPages,
+    refs,
+  });
+
+  // Update userRef when user changes
+  useEffect(() => { refs.userRef.current = user; }, [user, refs]);
+
+  // Admin section access control
+  useEffect(() => {
+    if (adminSection === 'tenants' && !isPlatformOperator(user?.role)) setAdminSection('dashboard');
+  }, [adminSection, user, setAdminSection]);
+
+  // === TENANT HANDLERS ===
+  const handleTenantChange = useCallback((tenantId: string) => {
+    tenant.handleTenantChange(tenantId, {
+      onResetChat: resetChatLoaded,
+      setUser: (fn) => setUser(fn(user)),
+      setCurrentView: setCurrentView as (view: string) => void,
+      setAdminSection,
+      setSelectedProduct: () => setSelectedProduct(null),
+      setSelectedLandingPage: () => setSelectedLandingPage(null),
+    });
+  }, [tenant, resetChatLoaded, user, setCurrentView, setAdminSection, setSelectedProduct, setSelectedLandingPage, setUser]);
+
+  const handleCreateTenant = useCallback(async (payload: any, options?: { activate?: boolean }) => {
+    return tenant.handleCreateTenant(payload, options, handleTenantChange);
+  }, [tenant, handleTenantChange]);
+
+  const handleDeleteTenant = useCallback(async (tenantId: string) => {
+    return tenant.handleDeleteTenant(tenantId, handleTenantChange);
+  }, [tenant, handleTenantChange]);
+
+  // === COMPUTED VALUES ===
+  const platformOperator = isPlatformOperator(user?.role);
+  const canAccessAdminChat = isAdminRole(user?.role);
+  const selectedTenantRecord = tenants.find(t => t.id === activeTenantId) || tenantsRef.current.find(t => t.id === activeTenantId) || null;
+  const isTenantLockedByHost = Boolean(hostTenantId);
+  const scopedTenants = isTenantLockedByHost ? tenants.filter((t) => t.id === hostTenantId) : tenants;
+  const headerTenants = platformOperator ? scopedTenants : (selectedTenantRecord ? [selectedTenantRecord] : []);
+
+  // === RENDER ===
+  return (
+    <HelmetProvider>
+      <AuthProvider>
+        <DarkModeProvider>
+          <ThemeProvider themeConfig={themeConfig || undefined}>
+            <Suspense fallback={null}>
+              <Toaster position="top-right" toastOptions={{ duration: 2500 }} />
+              <div className="relative bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+                <AppRoutes
+                  currentView={currentView}
+                  isSuperAdminSubdomain={isSuperAdminSubdomain}
+                  products={products}
+                  orders={orders}
+                  logo={logo}
+                  themeConfig={themeConfig}
+                  websiteConfig={websiteConfig}
+                  deliveryConfig={deliveryConfig}
+                  paymentMethods={paymentMethods}
+                  courierConfig={courierConfig}
+                  facebookPixelConfig={facebookPixelConfig}
+                  categories={categories}
+                  subCategories={subCategories}
+                  childCategories={childCategories}
+                  brands={brands}
+                  tags={tags}
+                  chatMessages={chatMessages}
+                  user={user}
+                  wishlist={wishlist}
+                  cartItems={cartItems}
+                  selectedProduct={selectedProduct}
+                  selectedLandingPage={selectedLandingPage}
+                  selectedVariant={selectedVariant}
+                  checkoutQuantity={checkoutQuantity}
+                  storeSearchQuery={storeSearchQuery}
+                  urlCategoryFilter={urlCategoryFilter}
+                  activeTenantId={activeTenantId}
+                  headerTenants={headerTenants}
+                  isTenantSwitching={isTenantSwitching}
+                  isTenantSeeding={isTenantSeeding}
+                  deletingTenantId={deletingTenantId}
+                  isChatOpen={isChatOpen}
+                  isAdminChatOpen={isAdminChatOpen}
+                  hasUnreadChat={hasUnreadChat}
+                  canAccessAdminChat={canAccessAdminChat}
+                  onProductClick={handleProductClick}
+                  onQuickCheckout={handlers.handleCheckoutStart}
+                  onToggleWishlist={(id) => handlers.isInWishlist(id) ? handlers.removeFromWishlist(id) : handlers.addToWishlist(id)}
+                  isInWishlist={handlers.isInWishlist}
+                  onLogin={handleLogin}
+                  onRegister={handleRegister}
+                  onGoogleLogin={handleGoogleLogin}
+                  onLogout={handleLogout}
+                  onUpdateProfile={handleUpdateProfile}
+                  onUpdateOrder={handlers.handleUpdateOrder}
+                  onAddProduct={handlers.handleAddProduct}
+                  onUpdateProduct={handlers.handleUpdateProduct}
+                  onDeleteProduct={handlers.handleDeleteProduct}
+                  onBulkDeleteProducts={handlers.handleBulkDeleteProducts}
+                  onBulkUpdateProducts={handlers.handleBulkUpdateProducts}
+                  onBulkFlashSale={handlers.handleBulkFlashSale}
+                  onUpdateLogo={handlers.handleUpdateLogo}
+                  onUpdateTheme={handlers.handleUpdateTheme}
+                  onUpdateWebsiteConfig={handlers.handleUpdateWebsiteConfig}
+                  onUpdateDeliveryConfig={handlers.handleUpdateDeliveryConfig}
+                  onUpdatePaymentMethods={handlers.handleUpdatePaymentMethods}
+                  onUpdateCourierConfig={handlers.handleUpdateCourierConfig}
+                  onPlaceOrder={handlers.handlePlaceOrder}
+                  onLandingOrderSubmit={handlers.handleLandingOrderSubmit}
+                  onCloseLandingPreview={handlers.handleCloseLandingPreview}
+                  onTenantChange={handleTenantChange}
+                  onCreateTenant={handleCreateTenant}
+                  onDeleteTenant={handleDeleteTenant}
+                  onRefreshTenants={refreshTenants}
+                  onSearchChange={handleStoreSearchChange}
+                  onCategoryFilterChange={handleCategoryFilterChange}
+                  onMobileMenuOpenRef={(fn) => { handleMobileMenuOpenRef.current = fn; }}
+                  onToggleCart={handleToggleCartForProduct}
+                  onCheckoutFromCart={handlers.handleCheckoutFromCart}
+                  onAddToCart={handleAddProductToCart}
+                  onOpenChat={handleOpenChat}
+                  onCloseChat={handleCloseChat}
+                  onOpenAdminChat={handleOpenAdminChat}
+                  onCloseAdminChat={handleCloseAdminChat}
+                  onCustomerSendChat={handleCustomerSendChat}
+                  onAdminSendChat={handleAdminSendChat}
+                  onEditChatMessage={handleEditChatMessage}
+                  onDeleteChatMessage={handleDeleteChatMessage}
+                  setCurrentView={setCurrentView}
+                  setUser={setUser}
+                  setIsLoginOpen={setIsLoginOpen}
+                  isLoginOpen={isLoginOpen}
+                  landingPages={landingPages}
+                  onCreateLandingPage={handleCreateLandingPage}
+                  onUpsertLandingPage={handleUpsertLandingPage}
+                  onToggleLandingPublish={handleToggleLandingPublish}
+                  onAddOrder={handlers.handleAddOrder}
+                />
+              </div>
+            </Suspense>
+          </ThemeProvider>
+        </DarkModeProvider>
+      </AuthProvider>
+    </HelmetProvider>
+  );
+};
+
+export default App;

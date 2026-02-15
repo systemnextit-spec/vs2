@@ -1,0 +1,1 @@
+import{j as e}from"./react-jsx-runtime-BBsywpoz.js";const s=({noticeText:r})=>r?e.jsx("div",{className:"w-full bg-white border-b border-gray-100 py-1.5 overflow-hidden",children:e.jsx("div",{className:"relative overflow-hidden",children:e.jsx("div",{className:"admin-notice-ticker",children:e.jsx("span",{className:"text-sm",children:r})})})}):null;export{s as A};

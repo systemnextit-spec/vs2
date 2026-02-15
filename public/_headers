@@ -1,0 +1,116 @@
+# Cloudflare Pages Headers Configuration
+# Optimized for maximum CDN caching and performance
+
+# Default security headers for all routes
+/*
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: frame-ancestors 'self' https://*.allinbangla.com https://allinbangla.com
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Hashed assets (Vite output) - immutable caching for 1 year
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  Timing-Allow-Origin: *
+  Cross-Origin-Resource-Policy: cross-origin
+
+# JavaScript files with hash - immutable
+/*.*.js
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  Content-Type: application/javascript; charset=utf-8
+
+# CSS files with hash - immutable
+/*.*.css
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  Content-Type: text/css; charset=utf-8
+
+# Font files - long cache
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/*.eot
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# Image files - long cache with stale-while-revalidate
+/*.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+/*.jpg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+/*.jpeg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+/*.gif
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+/*.webp
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+/*.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+/*.ico
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+# Icons directory - long cache
+/icons/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+# Category icons - long cache
+/category-icons/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+# Manifest and config files
+/manifest.json
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Content-Type: application/manifest+json
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# Service worker - no cache (always fetch fresh)
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Service-Worker-Allowed: /
+
+# HTML pages - short cache for dynamic content
+/index.html
+  Cache-Control: public, max-age=0, s-maxage=60, stale-while-revalidate=86400
+  X-Content-Type-Options: nosniff
+
+# API routes should not be cached by Cloudflare (handled by origin)
+/api/*
+  Cache-Control: no-store, private
+  CDN-Cache-Control: no-store
+
+# Upload paths - medium cache
+/uploads/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *

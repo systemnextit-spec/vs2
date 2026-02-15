@@ -1,0 +1,308 @@
+import { Router, Request } from 'express';
+import { z } from 'zod';
+import { getTenantData, setTenantData } from '../services/tenantDataService';
+import { Server as SocketIOServer } from 'socket.io';
+import { Notification } from '../models/Notification';
+import { createAuditLog } from './auditLogs';
+
+export const ordersRouter = Router();
+
+// Order schema for validation
+const orderSchema = z.object({
+  id: z.string(),
+  tenantId: z.string().optional(),
+  customer: z.string(),
+  location: z.string().optional(),
+  amount: z.number(),
+  date: z.string(),
+  status: z.enum(['Pending', 'Confirmed', 'On Hold', 'Processing', 'Shipped', 'Sent to Courier', 'Delivered', 'Cancelled', 'Return', 'Refund', 'Returned Receive', 'Returned']).default('Pending'),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  division: z.string().optional(),
+  variant: z.object({
+    color: z.string(),
+    size: z.string()
+  }).optional(),
+  productId: z.union([z.number(), z.string()]).optional(),
+  productName: z.string().optional(),
+  productImage: z.string().optional().nullable(),
+  sku: z.string().optional(),
+  quantity: z.number().default(1),
+  deliveryType: z.string().optional(),
+  deliveryCharge: z.number().optional(),
+  trackingId: z.string().optional(),
+  courierProvider: z.string().optional(),
+  notes: z.string().optional(),
+  source: z.enum(['store', 'landing_page', 'admin']).optional(),
+  landingPageId: z.string().optional(),
+  createdAt: z.string().optional(),
+  items: z.array(z.any()).optional(),
+  weight: z.number().optional(),
+  pathaoArea: z.number().optional(),
+  pathaoZone: z.number().optional(),
+  pathaoCity: z.number().optional(),
+  // Payment method info (for manual MFS payments)
+  paymentMethod: z.string().optional(),
+  paymentMethodId: z.string().optional(),
+  transactionId: z.string().optional(),
+  customerPaymentPhone: z.string().optional(),
+});
+// order interface
+export interface Order {
+  id: string;
+  tenantId?: string;
+  customer: string;
+  location: string;
+  amount: number;
+  date: string;
+  status: 'Pending' | 'Confirmed' | 'On Hold' | 'Processing' | 'Shipped' | 'Sent to Courier' | 'Delivered' | 'Cancelled' | 'Return' | 'Refund' | 'Returned Receive';
+  email?: string;
+  trackingId?: string;
+  phone?: string;
+  division?: string;
+  variant?: { color: string; size: string };
+  productId?: number;
+  productName?: string;
+  productImage?: string; // Add this line
+  sku?: string; // Add this line if not present
+  quantity?: number;
+  deliveryType?: 'Regular' | 'Express' | 'Free';
+  deliveryCharge?: number;
+  courierProvider?: 'Steadfast' | 'Pathao';
+  courierMeta?: Record<string, any>;
+  source?: 'store' | 'landing_page' | 'admin';
+  landingPageId?: string;
+  // Payment method info (for manual MFS payments)
+  paymentMethod?: string;
+  paymentMethodId?: string;
+  transactionId?: string;
+  customerPaymentPhone?: string;
+}
+// type Order = z.infer<typeof orderSchema>;
+
+// Helper to emit Socket.IO events
+const emitOrderUpdate = (req: Request, tenantId: string, event: string, data: unknown) => {
+  const io = req.app.get('io') as SocketIOServer | undefined;
+  if (io) {
+    io.to(`tenant:${tenantId}`).emit(event, { tenantId, data, timestamp: Date.now() });
+    io.emit('order-update-global', { tenantId, event, timestamp: Date.now() });
+    console.log(`[Socket.IO] Emitted ${event} for tenant ${tenantId}`);
+  }
+};
+
+// Get all orders for a tenant
+ordersRouter.get('/:tenantId', async (req, res, next) => {
+  try {
+    const { tenantId } = req.params;
+    if (!tenantId) {
+      return res.status(400).json({ error: 'tenantId is required' });
+    }
+    
+    const orders = await getTenantData<Order[]>(tenantId, 'orders');
+    
+    res.set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+    
+    res.json({ data: orders || [] });
+  } catch (error) {
+    console.error('[Orders] Error fetching orders:', error);
+    next(error);
+  }
+});
+
+// Create a new order
+ordersRouter.post('/:tenantId', async (req, res, next) => {
+  try {
+    const { tenantId } = req.params;
+    if (!tenantId) {
+      return res.status(400).json({ error: 'tenantId is required' });
+    }
+    
+    const orderData = orderSchema.parse({
+      ...req.body,
+      tenantId,
+      id: req.body.id || `#${Math.floor(1000 + Math.random() * 9000)}`,
+      date: req.body.date || new Date().toISOString()
+    });
+    
+    // Get existing orders
+    const existingOrders = await getTenantData<Order[]>(tenantId, 'orders') || [];
+    
+    // Add new order at the beginning
+    const updatedOrders = [orderData, ...existingOrders];
+    
+    // Save orders
+    await setTenantData(tenantId, 'orders', updatedOrders);
+    
+    // Emit real-time update
+    emitOrderUpdate(req, tenantId, 'new-order', orderData);
+    
+    // Create audit log
+    const user = (req as any).user;
+    await createAuditLog({
+      tenantId,
+      userId: user?._id || user?.id || 'system',
+      userName: user?.name || orderData.customer || 'Customer',
+      userRole: user?.role || 'customer',
+      action: 'Order Created',
+      actionType: 'create',
+      resourceType: 'order',
+      resourceId: orderData.id,
+      resourceName: `Order ${orderData.id}`,
+      details: `New order ${orderData.id} created by ${orderData.customer} for ৳${orderData.amount}`,
+      metadata: { amount: orderData.amount, productName: orderData.productName, source: orderData.source },
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+      status: 'success'
+    });
+    
+    // Create notification for admin
+    try {
+      const notification = await Notification.create({
+        tenantId,
+        type: 'order',
+        title: `নতুন অর্ডার ${orderData.id}`,
+        message: `${orderData.customer} থেকে ৳${orderData.amount.toLocaleString()} টাকার অর্ডার এসেছে`,
+        data: {
+          orderId: orderData.id,
+          customerName: orderData.customer,
+          amount: orderData.amount,
+          productName: orderData.productName,
+          phone: orderData.phone
+        }
+      });
+      
+      // Emit socket event for real-time notification with sound trigger
+      const io = req.app.get('io') as SocketIOServer | undefined;
+      if (io) {
+        io.to(`tenant:${tenantId}`).emit('new-notification', notification);
+        console.log(`[Notification] Sent new order notification to tenant ${tenantId}`);
+      }
+    } catch (notifError) {
+      console.warn('[Orders] Failed to create notification:', notifError);
+    }
+    
+    console.log(`[Orders] New order ${orderData.id} created for tenant ${tenantId}`);
+    res.status(201).json({ data: orderData, success: true });
+  } catch (error) {
+console.error('[Orders] Error creating order:', error instanceof Error ? error.message : String(error));
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors });
+    }
+    next(error);
+  }
+});
+
+// Update an order
+ordersRouter.put('/:tenantId/:orderId', async (req, res, next) => {
+  try {
+    const { tenantId, orderId } = req.params;
+    if (!tenantId || !orderId) {
+      return res.status(400).json({ error: 'tenantId and orderId are required' });
+    }
+    
+    // Get existing orders
+    const existingOrders = await getTenantData<Order[]>(tenantId, 'orders') || [];
+    
+    // Find and update the order
+    const orderIndex = existingOrders.findIndex(o => o.id === orderId);
+    if (orderIndex === -1) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    
+    const oldOrder = existingOrders[orderIndex];
+    const updatedOrder = { ...oldOrder, ...req.body };
+    existingOrders[orderIndex] = updatedOrder;
+    
+    // Save orders
+    await setTenantData(tenantId, 'orders', existingOrders);
+    
+    // Emit real-time update
+    emitOrderUpdate(req, tenantId, 'order-updated', updatedOrder);
+    
+    // Create audit log
+    const user = (req as any).user;
+    const statusChanged = oldOrder.status !== updatedOrder.status;
+    await createAuditLog({
+      tenantId,
+      userId: user?._id || user?.id || 'system',
+      userName: user?.name || 'System',
+      userRole: user?.role || 'system',
+      action: statusChanged ? `Order Status: ${oldOrder.status} → ${updatedOrder.status}` : 'Order Updated',
+      actionType: 'update',
+      resourceType: 'order',
+      resourceId: orderId,
+      resourceName: `Order ${orderId}`,
+      details: statusChanged 
+        ? `Order ${orderId} status changed from ${oldOrder.status} to ${updatedOrder.status}`
+        : `Order ${orderId} updated`,
+      metadata: { oldStatus: oldOrder.status, newStatus: updatedOrder.status, changes: req.body },
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+      status: 'success'
+    });
+    
+    console.log(`[Orders] Order ${orderId} updated for tenant ${tenantId}`);
+    res.json({ data: updatedOrder, success: true });
+  } catch (error) {
+    console.error('[Orders] Error updating order:', error);
+    next(error);
+  }
+});
+
+// Delete an order
+ordersRouter.delete('/:tenantId/:orderId', async (req, res, next) => {
+  try {
+    const { tenantId, orderId } = req.params;
+    if (!tenantId || !orderId) {
+      return res.status(400).json({ error: 'tenantId and orderId are required' });
+    }
+    
+    // Get existing orders
+    const existingOrders = await getTenantData<Order[]>(tenantId, 'orders') || [];
+    
+    // Find the order before deleting
+    const orderToDelete = existingOrders.find(o => o.id === orderId);
+    
+    // Filter out the order to delete
+    const updatedOrders = existingOrders.filter(o => o.id !== orderId);
+    
+    if (updatedOrders.length === existingOrders.length) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    
+    // Save orders
+    await setTenantData(tenantId, 'orders', updatedOrders);
+    
+    // Emit real-time update
+    emitOrderUpdate(req, tenantId, 'order-deleted', { orderId });
+    
+    // Create audit log
+    const user = (req as any).user;
+    await createAuditLog({
+      tenantId,
+      userId: user?._id || user?.id || 'system',
+      userName: user?.name || 'System',
+      userRole: user?.role || 'system',
+      action: 'Order Deleted',
+      actionType: 'delete',
+      resourceType: 'order',
+      resourceId: orderId,
+      resourceName: `Order ${orderId}`,
+      details: `Order ${orderId} (${orderToDelete?.customer || 'Unknown'}) deleted`,
+      metadata: { deletedOrder: orderToDelete },
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+      status: 'success'
+    });
+    
+    console.log(`[Orders] Order ${orderId} deleted for tenant ${tenantId}`);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[Orders] Error deleting order:', error);
+    next(error);
+  }
+});

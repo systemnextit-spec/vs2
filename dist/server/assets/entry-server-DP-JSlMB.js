@@ -1,0 +1,1 @@
+import{jsx as r}from"react/jsx-runtime";import{renderToString as t}from"react-dom/server";import{HelmetProvider as o}from"react-helmet-async";function c(){const e={};return{html:t(r(o,{context:e,children:r("div",{id:"root",children:r("div",{className:"min-h-screen bg-gray-50 dark:bg-gray-900"})})})),head:e.helmet}}export{c as render};

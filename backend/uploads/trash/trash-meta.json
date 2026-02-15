@@ -1,0 +1,66 @@
+[
+  {
+    "originalUrl": "http://localhost:3000/uploads/images/695d12eba327aa48196200fa/fc726a2f-92ab-4f2a-8d04-9de9397bd386.webp",
+    "trashPath": "/uploads/trash/695d12eba327aa48196200fa/1771012107835_fc726a2f-92ab-4f2a-8d04-9de9397bd386.webp",
+    "deletedAt": 1771012107850,
+    "tenantId": "695d12eba327aa48196200fa",
+    "folder": null,
+    "filename": "fc726a2f-92ab-4f2a-8d04-9de9397bd386.webp"
+  },
+  {
+    "originalUrl": "https://allinbangla.com/uploads/images/695d12eba327aa48196200fa/6773f22c-9b42-4e1a-b9bf-972f5341ddeb.webp",
+    "trashPath": "/uploads/trash/695d12eba327aa48196200fa/1771012110029_6773f22c-9b42-4e1a-b9bf-972f5341ddeb.webp",
+    "deletedAt": 1771012110048,
+    "tenantId": "695d12eba327aa48196200fa",
+    "folder": null,
+    "filename": "6773f22c-9b42-4e1a-b9bf-972f5341ddeb.webp"
+  },
+  {
+    "originalUrl": "/uploads/images/gallery/695d12eba327aa48196200fa/Logo/be1fcb04-b9de-4ea0-99c5-2b9f94b515e0.webp",
+    "trashPath": "/uploads/trash/695d12eba327aa48196200fa/1771012110415_Logo",
+    "deletedAt": 1771012110419,
+    "tenantId": "695d12eba327aa48196200fa",
+    "folder": "gallery",
+    "filename": "Logo"
+  },
+  {
+    "originalUrl": "http://localhost:5001/uploads/images/695d12eba327aa48196200fa/4c1bc1c5-c3ed-4515-b059-34c81291aa0c.webp",
+    "trashPath": "/uploads/trash/695d12eba327aa48196200fa/1771016454920_4c1bc1c5-c3ed-4515-b059-34c81291aa0c.webp",
+    "deletedAt": 1771016454928,
+    "tenantId": "695d12eba327aa48196200fa",
+    "folder": null,
+    "filename": "4c1bc1c5-c3ed-4515-b059-34c81291aa0c.webp"
+  },
+  {
+    "originalUrl": "http://localhost:3000/uploads/images/695d12eba327aa48196200fa/62b0356b-5ad7-49e3-814a-a609d1ace2b1.webp",
+    "trashPath": "/uploads/trash/695d12eba327aa48196200fa/1771073889985_62b0356b-5ad7-49e3-814a-a609d1ace2b1.webp",
+    "deletedAt": 1771073889989,
+    "tenantId": "695d12eba327aa48196200fa",
+    "folder": null,
+    "filename": "62b0356b-5ad7-49e3-814a-a609d1ace2b1.webp"
+  },
+  {
+    "originalUrl": "http://localhost:3000/uploads/images/695d12eba327aa48196200fa/0ac7c181-b981-4cc4-b55a-af193e7ad2d3.webp",
+    "trashPath": "/uploads/trash/695d12eba327aa48196200fa/1771073890926_0ac7c181-b981-4cc4-b55a-af193e7ad2d3.webp",
+    "deletedAt": 1771073890928,
+    "tenantId": "695d12eba327aa48196200fa",
+    "folder": null,
+    "filename": "0ac7c181-b981-4cc4-b55a-af193e7ad2d3.webp"
+  },
+  {
+    "originalUrl": "/uploads/images/gallery/695d12eba327aa48196200fa/9ae32e44-4c9d-4da3-a8b0-aa1db04b8e19.webp",
+    "trashPath": "/uploads/trash/695d12eba327aa48196200fa/1771073891534_9ae32e44-4c9d-4da3-a8b0-aa1db04b8e19.webp",
+    "deletedAt": 1771073891536,
+    "tenantId": "695d12eba327aa48196200fa",
+    "folder": "gallery",
+    "filename": "9ae32e44-4c9d-4da3-a8b0-aa1db04b8e19.webp"
+  },
+  {
+    "originalUrl": "http://localhost:5001/uploads/images/695d12eba327aa48196200fa/3147a49a-6066-4381-b1d5-3fbe23d13528.webp",
+    "trashPath": "/uploads/trash/695d12eba327aa48196200fa/1771073892110_3147a49a-6066-4381-b1d5-3fbe23d13528.webp",
+    "deletedAt": 1771073892111,
+    "tenantId": "695d12eba327aa48196200fa",
+    "folder": null,
+    "filename": "3147a49a-6066-4381-b1d5-3fbe23d13528.webp"
+  }
+]

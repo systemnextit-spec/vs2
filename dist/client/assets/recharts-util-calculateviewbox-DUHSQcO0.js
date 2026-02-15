@@ -1,0 +1,1 @@
+import{n as t}from"./pkg-lodash-CH_GMSlH.js";var n=t(function(i){return{x:i.left,y:i.top,width:i.width,height:i.height}},function(i){return["l",i.left,"t",i.top,"w",i.width,"h",i.height].join("")});export{n as c};
