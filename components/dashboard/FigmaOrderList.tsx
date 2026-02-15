@@ -710,57 +710,57 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
   ];
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl mx-2 sm:mx-4 md:mx-6 p-4 sm:p-6 shadow-sm font-['Poppins']">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl mx-1 xxs:mx-2 sm:mx-4 md:mx-6 p-2 xxs:p-3 sm:p-6 shadow-sm font-['Poppins']">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-6">
-        <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Order List</h1>
+      <div className="flex flex-col xxs:flex-row items-start xxs:items-center justify-between gap-2 xxs:gap-3 sm:gap-0 mb-4 xxs:mb-6">
+        <h1 className="text-base xxs:text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Order List</h1>
         <button 
           onClick={() => setShowAddOrderModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-sm font-medium hover:from-sky-500 hover:to-blue-600 transition-all"
+          className="flex items-center gap-1 xxs:gap-2 px-2 xxs:px-3 sm:px-4 py-1.5 xxs:py-2 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-xs xxs:text-sm font-medium hover:from-sky-500 hover:to-blue-600 transition-all w-full xxs:w-auto justify-center"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3 h-3 xxs:w-4 xxs:h-4" />
           Add Order
         </button>
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6 dark:bg-gray-800">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 xxs:gap-4 mb-4 xxs:mb-6 dark:bg-gray-800">
         {/* Order Summary */}
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-5 flex flex-col h-full">
-          <h3 className="text-sm font-medium text-gray-700 mb-4">Order Summary</h3>
-          <div className="flex items-center justify-center gap-3 sm:gap-4 lg:gap-6 flex-1">
-            <div className="relative w-[180px] h-[180px] flex-shrink-0">
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3 xxs:p-4 sm:p-5 flex flex-col h-full">
+          <h3 className="text-xs xxs:text-sm font-medium text-gray-700 mb-3 xxs:mb-4">Order Summary</h3>
+          <div className="flex flex-col xxs:flex-row items-center justify-center gap-3 xxs:gap-4 lg:gap-6 flex-1">
+            <div className="relative w-[140px] h-[140px] xxs:w-[160px] xxs:h-[160px] sm:w-[180px] sm:h-[180px] flex-shrink-0">
               <DonutChart data={orderStatusData} total={orderSummary.total} />
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-gray-400 dark:text-gray-300 text-[9px] font-bold uppercase tracking-widest">Total</span>
-                <span className="text-black dark:text-white font-extrabold text-3xl leading-none my-1">{orders.length}</span>
-                <span className="text-gray-400 dark:text-gray-300 text-[9px] font-bold uppercase tracking-widest">Orders</span>
+                <span className="text-gray-400 dark:text-gray-300 text-[8px] xxs:text-[9px] font-bold uppercase tracking-widest">Total</span>
+                <span className="text-black dark:text-white font-extrabold text-2xl xxs:text-3xl leading-none my-1">{orders.length}</span>
+                <span className="text-gray-400 dark:text-gray-300 text-[8px] xxs:text-[9px] font-bold uppercase tracking-widest">Orders</span>
               </div>
             </div>
-            <div className="flex flex-col gap-2 text-sm">
+            <div className="flex flex-wrap xxs:flex-col justify-center gap-1 xxs:gap-2 text-xs xxs:text-sm">
               {orderStatusData.map((status, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <span className={`w-3 h-3 rounded-full ${status.bgColor}`}></span>
-                  <span className="text-slate-700 dark:text-slate-300 font-medium">{status.label}</span>
-                  <span style={{ color: status.color }}>({status.percentage}%)</span>
+                <div key={index} className="flex items-center gap-1 xxs:gap-2">
+                  <span className={`w-2 h-2 xxs:w-3 xxs:h-3 rounded-full ${status.bgColor}`}></span>
+                  <span className="text-slate-700 dark:text-slate-300 font-medium text-[10px] xxs:text-sm">{status.label}</span>
+                  <span style={{ color: status.color }} className="text-[10px] xxs:text-sm">({status.percentage}%)</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-5 flex flex-col h-full">
-          <div className="flex items-center gap-4 mb-3">
-            <span className="flex items-center gap-1 text-xs font-semibold text-[#FF8A00]">
-              <span className="w-2 h-2 rounded-full bg-[#FF8A00]"></span>
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3 xxs:p-4 sm:p-5 flex flex-col h-full">
+          <div className="flex items-center gap-3 xxs:gap-4 mb-2 xxs:mb-3">
+            <span className="flex items-center gap-1 text-[10px] xxs:text-xs font-semibold text-[#FF8A00]">
+              <span className="w-1.5 h-1.5 xxs:w-2 xxs:h-2 rounded-full bg-[#FF8A00]"></span>
               Visitors
             </span>
-            <span className="flex items-center gap-1 text-xs font-semibold text-[#38BDF8]">
-              <span className="w-2 h-2 rounded-full bg-[#38BDF8]"></span>
+            <span className="flex items-center gap-1 text-[10px] xxs:text-xs font-semibold text-[#38BDF8]">
+              <span className="w-1.5 h-1.5 xxs:w-2 xxs:h-2 rounded-full bg-[#38BDF8]"></span>
               Orders
             </span>
           </div>
-          <div className="flex-1 min-h-[180px]">
+          <div className="flex-1 min-h-[140px] xxs:min-h-[160px] sm:min-h-[180px]">
             <TrendChart orderData={orderChartData} />
           </div>
         </div>
@@ -769,12 +769,12 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200 overflow-x-auto">
+      <div className="flex gap-1 xxs:gap-2 mb-4 xxs:mb-6 border-b border-gray-200 overflow-x-auto -mx-2 xxs:mx-0 px-2 xxs:px-0 scrollbar-thin">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+            className={`px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-xs xxs:text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
               activeTab === tab.id ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -784,179 +784,179 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
       </div>
 
       {/* Search */}
-      <div className="flex flex-wrap gap-2 sm:gap-3 mb-6">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+      <div className="flex flex-col xxs:flex-row flex-wrap gap-2 xxs:gap-3 mb-4 xxs:mb-6">
+        <div className="flex-1 relative min-w-0">
+          <Search className="absolute left-2 xxs:left-3 top-2.5 xxs:top-3 w-4 h-4 xxs:w-5 xxs:h-5 text-gray-400" />
           <input
             type="text"
-            placeholder="Search by order ID, customer, phone..."
+            placeholder="Search orders..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+            className="w-full pl-8 xxs:pl-10 pr-3 xxs:pr-4 py-2 border border-gray-200 rounded-lg text-xs xxs:text-sm focus:outline-none focus:border-blue-500"
           />
         </div>
-        <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-          <SlidersHorizontal className="w-5 h-5 text-gray-600" />
+        <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors self-end xxs:self-auto">
+          <SlidersHorizontal className="w-4 h-4 xxs:w-5 xxs:h-5 text-gray-600" />
         </button>
       </div>
 
       {/* Bulk Action Toolbar */}
       {selectedOrders.size > 0 && (
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 p-2 sm:p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <span className="text-sm font-medium text-blue-700">
+        <div className="flex flex-col xxs:flex-row flex-wrap items-start xxs:items-center gap-2 xxs:gap-3 mb-3 xxs:mb-4 p-2 xxs:p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <span className="text-xs xxs:text-sm font-medium text-blue-700">
             {selectedOrders.size} order{selectedOrders.size > 1 ? 's' : ''} selected
           </span>
-          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
+          <div className="flex flex-wrap items-center gap-1 xxs:gap-2 w-full xxs:w-auto xxs:ml-auto">
             <button
               onClick={handleBulkPrint}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-1 xxs:gap-1.5 px-2 xxs:px-3 py-1 xxs:py-1.5 bg-white border border-gray-200 rounded-md text-xs xxs:text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              <Printer size={16} />
-              Print
+              <Printer size={14} className="xxs:w-4 xxs:h-4" />
+              <span className="hidden xxs:inline">Print</span>
             </button>
             <button
               onClick={() => handleBulkStatusChange('Confirmed')}
               disabled={isBulkProcessing}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 text-white rounded-md text-sm font-medium hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 xxs:gap-1.5 px-2 xxs:px-3 py-1 xxs:py-1.5 bg-emerald-500 text-white rounded-md text-xs xxs:text-sm font-medium hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isBulkProcessing ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
-              Confirm
+              {isBulkProcessing ? <Loader2 size={14} className="animate-spin xxs:w-4 xxs:h-4" /> : <CheckCircle2 size={14} className="xxs:w-4 xxs:h-4" />}
+              <span className="hidden xxs:inline">Confirm</span>
             </button>
             <button
               onClick={() => handleBulkStatusChange('Sent to Courier')}
               disabled={isBulkProcessing}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500 text-white rounded-md text-sm font-medium hover:bg-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 xxs:gap-1.5 px-2 xxs:px-3 py-1 xxs:py-1.5 bg-purple-500 text-white rounded-md text-xs xxs:text-sm font-medium hover:bg-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isBulkProcessing ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-              Send to Courier
+              {isBulkProcessing ? <Loader2 size={14} className="animate-spin xxs:w-4 xxs:h-4" /> : <Send size={14} className="xxs:w-4 xxs:h-4" />}
+              <span className="hidden xs:inline">Courier</span>
             </button>
             <button
               onClick={() => handleBulkStatusChange('Cancelled')}
               disabled={isBulkProcessing}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500 text-white rounded-md text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 xxs:gap-1.5 px-2 xxs:px-3 py-1 xxs:py-1.5 bg-orange-500 text-white rounded-md text-xs xxs:text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isBulkProcessing ? <Loader2 size={16} className="animate-spin" /> : <X size={16} />}
-              Cancel
+              {isBulkProcessing ? <Loader2 size={14} className="animate-spin xxs:w-4 xxs:h-4" /> : <X size={14} className="xxs:w-4 xxs:h-4" />}
+              <span className="hidden xxs:inline">Cancel</span>
             </button>
             <button
               onClick={handleBulkDelete}
               disabled={isBulkProcessing}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 xxs:gap-1.5 px-2 xxs:px-3 py-1 xxs:py-1.5 bg-red-500 text-white rounded-md text-xs xxs:text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isBulkProcessing ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-              Delete
+              {isBulkProcessing ? <Loader2 size={14} className="animate-spin xxs:w-4 xxs:h-4" /> : <Trash2 size={14} className="xxs:w-4 xxs:h-4" />}
+              <span className="hidden xxs:inline">Delete</span>
             </button>
             <button
               onClick={clearSelection}
-              className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
+              className="p-1 xxs:p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
             >
-              <X size={18} />
+              <X size={16} className="xxs:w-[18px] xxs:h-[18px]" />
             </button>
           </div>
         </div>
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm table-fixed">
+      <div className="overflow-x-auto -mx-2 xxs:mx-0 px-2 xxs:px-0">
+        <table className="w-full text-xs xxs:text-sm min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="w-10 px-3 py-3">
+              <th className="w-8 xxs:w-10 px-2 xxs:px-3 py-2 xxs:py-3">
                 <input
                   type="checkbox"
                   checked={paginatedOrders.length > 0 && selectedOrders.size === paginatedOrders.length}
                   onChange={toggleSelectAll}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="w-3 h-3 xxs:w-4 xxs:h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                 />
               </th>
-              <th className="w-24 px-3 py-3 text-left font-semibold text-gray-700">Order ID</th>
-              <th className="w-44 px-3 py-3 text-left font-semibold text-gray-700">Product</th>
-              <th className="w-40 px-3 py-3 text-left font-semibold text-gray-700">Customer</th>
-              <th className="w-20 px-3 py-3 text-left font-semibold text-gray-700">Date</th>
-              <th className="w-24 px-3 py-3 text-left font-semibold text-gray-700">Price</th>
-              <th className="w-16 px-3 py-3 text-left font-semibold text-gray-700">Payment</th>
-              <th className="w-32 px-3 py-3 text-left font-semibold text-gray-700">Status</th>
-              <th className="w-12 px-3 py-3 text-center font-semibold text-gray-700">Action</th>
+              <th className="w-20 xxs:w-24 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Order ID</th>
+              <th className="w-32 xxs:w-44 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Product</th>
+              <th className="w-32 xxs:w-40 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Customer</th>
+              <th className="w-16 xxs:w-20 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Date</th>
+              <th className="w-20 xxs:w-24 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Price</th>
+              <th className="w-14 xxs:w-16 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Payment</th>
+              <th className="w-24 xxs:w-32 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Status</th>
+              <th className="w-10 xxs:w-12 px-2 xxs:px-3 py-2 xxs:py-3 text-center font-semibold text-gray-700">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {paginatedOrders.length > 0 ? paginatedOrders.map((order) => (
               <tr key={order.id} className={`hover:bg-gray-50 transition-colors ${selectedOrders.has(order.id) ? 'bg-blue-50' : ''}`}>
-                <td className="px-3 py-3">
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3">
                   <input
                     type="checkbox"
                     checked={selectedOrders.has(order.id)}
                     onChange={() => toggleSelectOrder(order.id)}
-                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    className="w-3 h-3 xxs:w-4 xxs:h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                   />
                 </td>
-                <td className="px-3 py-3 font-medium text-gray-900 whitespace-nowrap">#{order.id?.slice(-6)}</td>
-                <td className="px-3 py-3">
-                  <div className="flex items-center gap-2 min-w-0">
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3 font-medium text-gray-900 whitespace-nowrap text-[10px] xxs:text-sm">#{order.id?.slice(-6)}</td>
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3">
+                  <div className="flex items-center gap-1 xxs:gap-2 min-w-0">
                     {order.productImage ? (
-                      <img src={normalizeImageUrl(order.productImage)} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />
+                      <img src={normalizeImageUrl(order.productImage)} alt="" className="w-6 h-6 xxs:w-8 xxs:h-8 rounded object-cover flex-shrink-0" />
                     ) : (
-                      <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center flex-shrink-0">
-                        <Package2 size={14} className="text-gray-400" />
+                      <div className="w-6 h-6 xxs:w-8 xxs:h-8 rounded bg-gray-100 flex items-center justify-center flex-shrink-0">
+                        <Package2 size={12} className="text-gray-400 xxs:w-[14px] xxs:h-[14px]" />
                       </div>
                     )}
-                    <span className="text-gray-700 truncate" title={order.productName || 'Custom Order'}>{order.productName || 'Custom Order'}</span>
+                    <span className="text-gray-700 truncate text-[10px] xxs:text-sm max-w-[80px] xxs:max-w-none" title={order.productName || 'Custom Order'}>{order.productName || 'Custom Order'}</span>
                   </div>
                 </td>
-                <td className="px-3 py-3">
-                  <div className="truncate text-gray-900 font-medium" title={order.customer}>{order.customer}</div>
-                  <div className="text-xs text-gray-500 truncate">{order.phone || 'No phone'}</div>
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3">
+                  <div className="truncate text-gray-900 font-medium text-[10px] xxs:text-sm max-w-[80px] xxs:max-w-none" title={order.customer}>{order.customer}</div>
+                  <div className="text-[9px] xxs:text-xs text-gray-500 truncate">{order.phone || 'No phone'}</div>
                 </td>
-                <td className="px-3 py-3 text-gray-700 whitespace-nowrap">
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3 text-gray-700 whitespace-nowrap text-[10px] xxs:text-sm">
                   {order.date ? new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '-'}
                 </td>
-                <td className="px-3 py-3 font-medium text-gray-900 whitespace-nowrap">{formatCurrency(order.amount)}</td>
-                <td className="px-3 py-3">
-                  <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getPaymentBadge(order)}`}>
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3 font-medium text-gray-900 whitespace-nowrap text-[10px] xxs:text-sm">{formatCurrency(order.amount)}</td>
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3">
+                  <span className={`px-1.5 xxs:px-2 py-0.5 xxs:py-1 rounded text-[9px] xxs:text-xs font-medium whitespace-nowrap ${getPaymentBadge(order)}`}>
                     {(order as any).paymentMethod?.match(/bKash|Nagad|Card|Paid/i) ? 'Paid' : 'COD'}
                   </span>
                 </td>
-                <td className="px-3 py-3">
-                  <div className="flex items-center gap-2">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3">
+                  <div className="flex items-center gap-1 xxs:gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 xxs:w-5 xxs:h-5">
                       <path d="M4.25 3.75H13.5C14.4665 3.75 15.25 4.53351 15.25 5.5V6.88965H17.2041C17.7848 6.88978 18.3279 7.1782 18.6533 7.65918L21.1992 11.4238C21.395 11.7132 21.4999 12.0549 21.5 12.4043V17.25H22C22.1381 17.25 22.25 17.3619 22.25 17.5C22.25 17.6381 22.1381 17.75 22 17.75H19.6621L19.5869 18.1582C19.3651 19.3485 18.3198 20.2498 17.0654 20.25C15.8109 20.25 14.7657 19.3487 14.5439 18.1582L14.4678 17.75H9.91211L9.83691 18.1582C9.61515 19.3485 8.56978 20.2498 7.31543 20.25C6.06089 20.25 5.01579 19.3487 4.79395 18.1582L4.71777 17.75H4.25C3.28351 17.75 2.5 16.9665 2.5 16V5.5C2.5 4.5335 3.2835 3.75 4.25 3.75ZM7.31543 15.6201C6.17509 15.6201 5.25023 16.5443 5.25 17.6846C5.25 18.825 6.17495 19.75 7.31543 19.75C8.45571 19.7498 9.37988 18.8249 9.37988 17.6846C9.37965 16.5445 8.45557 15.6203 7.31543 15.6201ZM17.0654 15.6201C15.9251 15.6201 15.0002 16.5443 15 17.6846C15 18.825 15.925 19.75 17.0654 19.75C18.2057 19.7498 19.1299 18.8249 19.1299 17.6846C19.1297 16.5445 18.2055 15.6203 17.0654 15.6201ZM4.25 4.25C3.55965 4.25 3 4.80965 3 5.5V16C3 16.6903 3.55964 17.25 4.25 17.25H4.75977L4.87109 16.9023C5.20208 15.8679 6.17245 15.1201 7.31543 15.1201C8.45822 15.1203 9.42782 15.868 9.75879 16.9023L9.87012 17.25H14.5098L14.6211 16.9023C14.6466 16.8227 14.6762 16.7448 14.709 16.6689L14.75 16.5742V5.5C14.75 4.80964 14.1903 4.25 13.5 4.25H4.25ZM15.25 15.707L15.9648 15.3672C16.2977 15.2089 16.6707 15.1201 17.0654 15.1201C18.2082 15.1203 19.1779 15.8681 19.5088 16.9023L19.6201 17.25H21V12.1953H15.25V15.707ZM15.25 11.6953H20.7793L20.251 10.915L18.2393 7.93945C18.0068 7.5959 17.6189 7.38978 17.2041 7.38965H15.25V11.6953Z" stroke="#26007F"/>
                       <path d="M12 10C12 11.6569 10.6569 13 9 13C7.34315 13 6 11.6569 6 10C6 8.34315 7.34315 7 9 7C9.47068 7 9.91605 7.1084 10.3125 7.30159M11.4375 8.125L8.8125 10.75L8.0625 10" stroke="#26007F" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-600'}`}>
+                    <span className={`px-1 xxs:px-2 py-0.5 xxs:py-1 rounded-full text-[9px] xxs:text-xs font-medium whitespace-nowrap ${STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-600'}`}>
                       {STATUS_LABELS[order.status] || order.status}
                     </span>
                   </div>
                 </td>
-                <td className="px-3 py-3 text-center relative">
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3 text-center relative">
                   <div data-dropdown>
                     <button 
                       onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)} 
-                      className="p-1 hover:bg-gray-200 rounded transition-colors"
+                      className="p-0.5 xxs:p-1 hover:bg-gray-200 rounded transition-colors"
                     >
-                      <MoreVertical className="w-4 h-4 text-gray-600" />
+                      <MoreVertical className="w-3 h-3 xxs:w-4 xxs:h-4 text-gray-600" />
                     </button>
                     {openDropdownId === order.id && (
-                      <div className="absolute right-full top-0 mr-2 z-50">
-                        <div style={{ width: '180px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', overflow: 'visible', padding: '8px 0' }}>
+                      <div className="absolute right-full top-0 mr-1 xxs:mr-2 z-50">
+                        <div style={{ width: '160px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', overflow: 'visible', padding: '6px 0' }}>
                           {/* Edit */}
                           <button 
                             onClick={() => openOrderModal(order)}
-                            style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', height: '48px', padding: '0 24px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '16px', color: 'black', whiteSpace: 'nowrap' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '6px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
                             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
                             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                           >
-                            <Edit3 size={24} color="black" />
+                            <Edit3 size={18} color="black" />
                             Edit
                           </button>
                           {/* Print Invoice */}
                           <button 
                             onClick={() => { handlePrintInvoice(order); setOpenDropdownId(null); }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', height: '48px', padding: '0 24px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '16px', color: 'black', whiteSpace: 'nowrap' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '6px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
                             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
                             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                           >
-                            <Printer size={24} color="black" />
-                            Print Invoice
+                            <Printer size={18} color="black" />
+                            Print
                           </button>
                           {/* Details - Highlighted */}
                           <button 
@@ -1052,44 +1052,44 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
 
       {/* Pagination */}
       {filteredOrders.length > ordersPerPage && (
-        <div className="flex flex-col items-center mt-6 pt-4 border-t border-pink-200">
-          <p className="text-sm text-gray-500 mb-3">
+        <div className="flex flex-col items-center mt-4 xxs:mt-6 pt-3 xxs:pt-4 border-t border-pink-200">
+          <p className="text-xs xxs:text-sm text-gray-500 mb-2 xxs:mb-3">
             Showing {((currentPage - 1) * ordersPerPage) + 1} to {Math.min(currentPage * ordersPerPage, filteredOrders.length)} of {filteredOrders.length}
           </p>
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-0.5 xxs:gap-1 sm:gap-2 flex-wrap justify-center">
             {/* Previous Button */}
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-md sm:rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-0.5 xxs:gap-1 px-1.5 xxs:px-2 sm:px-3 py-1 xxs:py-1.5 sm:py-2 text-xs xxs:text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-md sm:rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ChevronLeft size={16} />
-              Previous
+              <ChevronLeft size={14} className="xxs:w-4 xxs:h-4" />
+              <span className="hidden xxs:inline">Prev</span>
             </button>
             
             {/* Page Numbers */}
-            <div className="flex items-center gap-1 sm:gap-2 mx-1 sm:mx-2">
+            <div className="flex items-center gap-0.5 xxs:gap-1 sm:gap-2 mx-0.5 xxs:mx-1 sm:mx-2">
               {(() => {
                 const pages: (number | string)[] = [];
-                if (totalPages <= 7) {
+                if (totalPages <= 5) {
                   for (let i = 1; i <= totalPages; i++) pages.push(i);
                 } else {
                   // Always show first page
                   pages.push(1);
                   
-                  if (currentPage <= 4) {
-                    // Near start: 1 2 3 4 5 ... last
-                    for (let i = 2; i <= 5; i++) pages.push(i);
+                  if (currentPage <= 3) {
+                    // Near start: 1 2 3 ... last
+                    for (let i = 2; i <= 3; i++) pages.push(i);
                     pages.push('...');
                     pages.push(totalPages);
-                  } else if (currentPage >= totalPages - 3) {
-                    // Near end: 1 ... last-4 last-3 last-2 last-1 last
+                  } else if (currentPage >= totalPages - 2) {
+                    // Near end: 1 ... last-2 last-1 last
                     pages.push('...');
-                    for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+                    for (let i = totalPages - 2; i <= totalPages; i++) pages.push(i);
                   } else {
-                    // Middle: 1 ... current-1 current current+1 ... last
+                    // Middle: 1 ... current ... last
                     pages.push('...');
-                    for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+                    pages.push(currentPage);
                     pages.push('...');
                     pages.push(totalPages);
                   }
@@ -1097,12 +1097,12 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                 
                 return pages.map((page, idx) => (
                   page === '...' ? (
-                    <span key={`ellipsis-${idx}`} className="px-2 py-1 text-gray-400">....</span>
+                    <span key={`ellipsis-${idx}`} className="px-1 xxs:px-2 py-1 text-gray-400 text-xs xxs:text-sm">...</span>
                   ) : (
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page as number)}
-                      className={`min-w-[36px] h-9 px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium rounded-md sm:rounded-lg border transition-all shadow-sm ${
+                      className={`min-w-[28px] xxs:min-w-[32px] sm:min-w-[36px] h-7 xxs:h-8 sm:h-9 px-1.5 xxs:px-2 sm:px-3 py-1 xxs:py-1.5 sm:py-2 text-xs xxs:text-sm font-medium rounded-md sm:rounded-lg border transition-all shadow-sm ${
                         currentPage === page 
                           ? 'bg-gradient-to-r from-sky-400 to-blue-500 text-white border-transparent hover:opacity-90' 
                           : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
@@ -1119,10 +1119,10 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md sm:rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-0.5 xxs:gap-1 px-1.5 xxs:px-2 sm:px-3 py-1 xxs:py-1.5 sm:py-2 text-xs xxs:text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md sm:rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next
-              <ChevronRight size={16} />
+              <span className="hidden xxs:inline">Next</span>
+              <ChevronRight size={14} className="xxs:w-4 xxs:h-4" />
             </button>
           </div>
         </div>
