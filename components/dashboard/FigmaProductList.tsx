@@ -736,7 +736,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
               className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[100px] xxs:max-w-[119px]"
             >
               <span className="text-[11px] xxs:text-[12px] text-black dark:text-white truncate">
-                {categoryFilter === 'all' ? 'Category' : categoryFilter}
+                {categoryFilter === 'all' ? 'All' : categoryFilter}
               </span>
               <ChevronDown size={12} className="text-gray-600 dark:text-gray-400 flex-shrink-0 xxs:w-[14px] xxs:h-[14px]" />
             </button>
@@ -768,7 +768,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
               className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[90px] xxs:max-w-[110px]"
             >
               <span className="text-[11px] xxs:text-[12px] text-black dark:text-white truncate">
-                {brandFilter === 'all' ? 'Brand' : brandFilter}
+                {brandFilter === 'all' ? 'All' : brandFilter}
               </span>
               <ChevronDown size={12} className="text-gray-600 dark:text-gray-400 flex-shrink-0 xxs:w-[14px] xxs:h-[14px]" />
             </button>
@@ -800,7 +800,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
               className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0"
             >
               <span className="text-[11px] xxs:text-[12px] text-black dark:text-white">
-                {statusFilter === 'all' ? 'Status' : statusFilter}
+                {statusFilter === 'all' ? 'All' : statusFilter}
               </span>
               <ChevronDown size={12} className="text-gray-600 dark:text-gray-400 xxs:w-[14px] xxs:h-[14px]" />
             </button>

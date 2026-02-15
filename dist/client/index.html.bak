@@ -3,7 +3,7 @@
 
 <head>
     <!-- Critical resource preloads for parallel loading -->
-    <link rel="preload" href="https://allinbangla.com/assets/tailwind-BQP433QO.css" as="style" fetchpriority="high" crossorigin />
+    <link rel="preload" href="https://allinbangla.com/assets/tailwind-ecEJrOUG.css" as="style" fetchpriority="high" crossorigin />
     <link rel="modulepreload" href="https://allinbangla.com/assets/react-core-KcGD0Z1V.js" fetchpriority="high" crossorigin />
     <link rel="modulepreload" href="https://allinbangla.com/assets/react-dom-B3Ccfrsk.js" fetchpriority="high" crossorigin />
     <link rel="modulepreload" href="https://allinbangla.com/assets/react-dom-client-DYCaqmC6.js" fetchpriority="high" crossorigin />
@@ -11,8 +11,8 @@
     <link rel="modulepreload" href="https://allinbangla.com/assets/recharts-es6-index-js-vwDjcXxQ.js" fetchpriority="high" crossorigin />
     <link rel="modulepreload" href="https://allinbangla.com/assets/scheduler-CWG1rEj-.js" fetchpriority="high" crossorigin />
     <link rel="modulepreload" href="https://allinbangla.com/assets/store-index-vwDjcXxQ.js" fetchpriority="high" crossorigin />
-    <link rel="modulepreload" href="https://allinbangla.com/assets/index-FCuCQT2y.js" fetchpriority="high" crossorigin />
-    <link rel="modulepreload" href="https://allinbangla.com/assets/App-CIT2NUXT.js" fetchpriority="high" crossorigin />
+    <link rel="modulepreload" href="https://allinbangla.com/assets/index-Dcv_PD6l.js" fetchpriority="high" crossorigin />
+    <link rel="modulepreload" href="https://allinbangla.com/assets/App-ChWMiTYZ.js" fetchpriority="high" crossorigin />
   <!-- Dark mode initialization - must be first to prevent flash -->
   <script>
     (function() {
@@ -267,12 +267,12 @@
   
   <!-- Critical CSS - Inline for fastest render -->
   <style>*,:after,:before{box-sizing:border-box}html{-webkit-text-size-adjust:100%;line-height:1.5}body{font-family:Inter,system-ui,-apple-system,sans-serif;margin:0}#preload-skeleton{opacity:1;transition:opacity .2s ease-out}#preload-skeleton.done{opacity:0;pointer-events:none}.skeleton-bone{animation:shimmer 1.5s infinite;background:linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);background-size:200% 100%;border-radius:.25rem}.skeleton-search-bar{display:none}@media (min-width:768px){.skeleton-search-bar{display:block}}@keyframes shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}</style>
-  <script type="module" crossorigin src="https://allinbangla.com/assets/index-FCuCQT2y.js"></script>
+  <script type="module" crossorigin src="https://allinbangla.com/assets/index-Dcv_PD6l.js"></script>
   <link rel="modulepreload" crossorigin href="https://allinbangla.com/assets/pkg-eventemitter3-CXfM2dhT.js">
   <link rel="modulepreload" crossorigin href="https://allinbangla.com/assets/react-core-KcGD0Z1V.js">
   <link rel="modulepreload" crossorigin href="https://allinbangla.com/assets/react-jsx-runtime-BBsywpoz.js">
   <link rel="modulepreload" crossorigin href="https://allinbangla.com/assets/cmp-skeletonloaders-tsx-Durrj7lG.js">
-  <link rel="modulepreload" crossorigin href="https://allinbangla.com/assets/cmp-approutes-tsx-T9J5ygBG.js">
+  <link rel="modulepreload" crossorigin href="https://allinbangla.com/assets/cmp-approutes-tsx-DORRjFJg.js">
   <link rel="modulepreload" crossorigin href="https://allinbangla.com/assets/scheduler-CWG1rEj-.js">
   <link rel="modulepreload" crossorigin href="https://allinbangla.com/assets/react-dom-B3Ccfrsk.js">
   <link rel="modulepreload" crossorigin href="https://allinbangla.com/assets/react-dom-client-DYCaqmC6.js">
