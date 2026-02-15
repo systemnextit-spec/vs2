@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Search, RefreshCw, Edit2, Trash2, ChevronRight, X, User, Phone, Mail, MapPin, Loader2, MoreVertical, Eye } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Search, RefreshCw, Edit2, Trash2, ChevronRight, X, User, Phone, Mail, MapPin, Loader2 } from 'lucide-react';
 import { DueEntity, DueTransaction, EntityType } from '../types';
 import { dueListService } from '../services/DueListService';
 import toast from 'react-hot-toast';
@@ -35,19 +35,6 @@ const AdminContactList: React.FC<AdminContactListProps> = ({ tenantId }) => {
     type: 'Customer' as EntityType
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<string | null>(null);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-
-  // Close mobile menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
-        setMobileMenuOpen(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   // Count entities by type
   const entityCounts = {
@@ -290,8 +277,8 @@ const AdminContactList: React.FC<AdminContactListProps> = ({ tenantId }) => {
               </div>
             </div>
 
-            {/* Entity List - Desktop */}
-            <div className="flex-1 overflow-y-auto hidden sm:block">
+            {/* Entity List */}
+            <div className="flex-1 overflow-y-auto">
               {loading ? (
                 <div className="flex items-center justify-center h-32">
                   <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
@@ -328,100 +315,6 @@ const AdminContactList: React.FC<AdminContactListProps> = ({ tenantId }) => {
                       <ChevronRight size={16} className="text-gray-400" />
                     </div>
                   </button>
-                ))
-              )}
-            </div>
-
-            {/* Entity List - Mobile Cards */}
-            <div className="flex-1 overflow-y-auto block sm:hidden p-2 space-y-2">
-              {loading ? (
-                <div className="flex items-center justify-center h-32">
-                  <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-                </div>
-              ) : filteredEntities.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-32 text-gray-500 text-sm">
-                  <User size={24} className="mb-2 text-gray-300" />
-                  No {activeTab.toLowerCase()}s found
-                </div>
-              ) : (
-                filteredEntities.map(entity => (
-                  <div
-                    key={entity._id}
-                    className={`bg-white dark:bg-gray-800 rounded-lg border p-3 transition ${
-                      selectedEntity?._id === entity._id
-                        ? 'border-blue-500 ring-2 ring-blue-100 dark:ring-blue-900'
-                        : 'border-gray-200 dark:border-gray-700'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div
-                        className="flex items-center gap-3 flex-1 cursor-pointer"
-                        onClick={() => setSelectedEntity(entity)}
-                      >
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-semibold text-sm">
-                          {entity.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 dark:text-white truncate">{entity.name}</div>
-                          <div className="flex flex-col gap-0.5 mt-1">
-                            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                              <Phone size={12} />
-                              <span className="truncate">{formatPhone(entity.phone)}</span>
-                            </div>
-                            {entity.email && (
-                              <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                                <Mail size={12} />
-                                <span className="truncate">{entity.email}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="relative" ref={mobileMenuOpen === entity._id ? mobileMenuRef : null}>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setMobileMenuOpen(mobileMenuOpen === entity._id ? null : entity._id || null);
-                          }}
-                          className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition"
-                        >
-                          <MoreVertical size={18} className="text-gray-500 dark:text-gray-400" />
-                        </button>
-                        {mobileMenuOpen === entity._id && (
-                          <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10 min-w-[120px]">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedEntity(entity);
-                                setMobileMenuOpen(null);
-                              }}
-                              className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                            >
-                              <Eye size={14} /> View
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEdit(entity);
-                                setMobileMenuOpen(null);
-                              }}
-                              className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                            >
-                              <Edit2 size={14} /> Edit
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    {entity.address && (
-                      <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-                        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
-                          <MapPin size={12} className="inline mr-1" />
-                          {entity.address}
-                        </p>
-                      </div>
-                    )}
-                  </div>
                 ))
               )}
             </div>

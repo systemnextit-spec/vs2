@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Search, ChevronDown, Package } from 'lucide-react';
+import { Search, ChevronDown, Package, MoreVertical, Eye, Edit3 } from 'lucide-react';
 import { Product } from '../../types';
 import toast from 'react-hot-toast';
+import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 
 // Icons matching Figma design
 const SearchIcon = () => (
@@ -64,6 +65,7 @@ const FigmaInventory: React.FC<FigmaInventoryProps> = ({
   const [lowStockThreshold, setLowStockThreshold] = useState(5);
   const [expireThreshold, setExpireThreshold] = useState(10);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [mobileDropdownId, setMobileDropdownId] = useState<string | null>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load saved thresholds from backend
@@ -363,7 +365,7 @@ const FigmaInventory: React.FC<FigmaInventoryProps> = ({
           <div className="flex-1">
             {/* Stock Table */}
             <div className="mb-6">
-              <div className="overflow-x-auto">
+              <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full min-w-[700px] text-sm">
                   <thead className="bg-[#E0F2FE]">
                     <tr>
@@ -412,11 +414,69 @@ const FigmaInventory: React.FC<FigmaInventoryProps> = ({
                   </tbody>
                 </table>
               </div>
+              {/* Mobile Card View for Stock Table */}
+              <div className="block sm:hidden space-y-2">
+                {filteredProducts.length > 0 ? filteredProducts.map((product, idx) => (
+                  <div key={`stock-mobile-${product.id}-${idx}`} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      {product.images && product.images[0] ? (
+                        <img src={normalizeImageUrl(product.images[0])} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 rounded bg-gray-100 flex items-center justify-center flex-shrink-0">
+                          <Package size={16} className="text-gray-400" />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                        <p className="text-xs text-gray-500">৳{product.price || 0} • Stock: {product.stock || 0}</p>
+                        <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                          product.status === 'Active' 
+                            ? 'bg-[#c1ffbc] text-[#085e00]' 
+                            : 'bg-orange-100 text-orange-700'
+                        }`}>
+                          {product.status === 'Active' ? 'Publish' : 'Draft'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="relative" data-dropdown>
+                      <button 
+                        onClick={() => setMobileDropdownId(mobileDropdownId === `stock-${product.id}` ? null : `stock-${product.id}`)} 
+                        className="p-2 hover:bg-gray-100 rounded-lg"
+                      >
+                        <MoreVertical className="w-5 h-5 text-gray-600" />
+                      </button>
+                      {mobileDropdownId === `stock-${product.id}` && (
+                        <div className="absolute right-0 top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[120px]">
+                          <button 
+                            onClick={() => { window.location.href = `/admin/products?edit=${product.id}`; setMobileDropdownId(null); }}
+                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Eye size={16} />
+                            View
+                          </button>
+                          <button 
+                            onClick={() => { window.location.href = `/admin/products?edit=${product.id}`; setMobileDropdownId(null); }}
+                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Edit3 size={16} />
+                            Edit
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Package size={40} className="mx-auto mb-3 text-gray-300" />
+                    <p className="text-sm">No products found</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Expiry Table */}
             <div>
-              <div className="overflow-x-auto">
+              <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full min-w-[700px] text-sm">
                   <thead className="bg-[#E0F2FE]">
                     <tr>
@@ -455,6 +515,59 @@ const FigmaInventory: React.FC<FigmaInventoryProps> = ({
                     ))}
                   </tbody>
                 </table>
+              </div>
+              {/* Mobile Card View for Expiry Table */}
+              <div className="block sm:hidden space-y-2">
+                {expiryProducts.map((product, idx) => (
+                  <div key={`expiry-mobile-${product.id}-${idx}`} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      {product.images && product.images[0] ? (
+                        <img src={normalizeImageUrl(product.images[0])} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 rounded bg-gray-100 flex items-center justify-center flex-shrink-0">
+                          <Package size={16} className="text-gray-400" />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                        <p className="text-xs text-gray-500">Expires in: {product.expireDays} Days • Stock: {product.stock || 0}</p>
+                        <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                          product.status === 'Active' 
+                            ? 'bg-[#c1ffbc] text-[#085e00]' 
+                            : 'bg-orange-100 text-orange-700'
+                        }`}>
+                          {product.status === 'Active' ? 'Publish' : 'Draft'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="relative" data-dropdown>
+                      <button 
+                        onClick={() => setMobileDropdownId(mobileDropdownId === `expiry-${product.id}` ? null : `expiry-${product.id}`)} 
+                        className="p-2 hover:bg-gray-100 rounded-lg"
+                      >
+                        <MoreVertical className="w-5 h-5 text-gray-600" />
+                      </button>
+                      {mobileDropdownId === `expiry-${product.id}` && (
+                        <div className="absolute right-0 top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[120px]">
+                          <button 
+                            onClick={() => { window.location.href = `/admin/products?edit=${product.id}`; setMobileDropdownId(null); }}
+                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Eye size={16} />
+                            View
+                          </button>
+                          <button 
+                            onClick={() => { window.location.href = `/admin/products?edit=${product.id}`; setMobileDropdownId(null); }}
+                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Edit3 size={16} />
+                            Edit
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

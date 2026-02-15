@@ -15,7 +15,9 @@ import {
   X,
   Clock,
   Send,
-  ArrowUpDown
+  ArrowUpDown,
+  Eye,
+  Edit
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Order, Product } from '../types';
@@ -82,6 +84,7 @@ const AdminCustomersReview: React.FC<AdminCustomersReviewProps> = ({ orders, pro
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [mobileReviewMenuOpen, setMobileReviewMenuOpen] = useState<string | null>(null);
 
   // Fetch reviews from API
   useEffect(() => {
@@ -717,7 +720,7 @@ const AdminCustomersReview: React.FC<AdminCustomersReviewProps> = ({ orders, pro
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead className="bg-[#E0F2FE]">
                 <tr>
@@ -784,6 +787,71 @@ const AdminCustomersReview: React.FC<AdminCustomersReviewProps> = ({ orders, pro
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View (Reviews) */}
+          <div className="block sm:hidden space-y-3 p-4">
+            {filteredReviews.length === 0 ? (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">No reviews found</div>
+            ) : (
+              filteredReviews.map((review, idx) => {
+                const ratingStyle = getRatingBadgeStyle(review.rating);
+                return (
+                  <div 
+                    key={review._id} 
+                    className={`bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl p-4 shadow-sm ${selectedReviewId === review._id ? 'ring-2 ring-blue-500' : ''}`}
+                    onClick={() => setSelectedReviewId(review._id)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div 
+                        className={`mt-1 w-5 h-5 rounded border border-gray-400 dark:border-gray-500 cursor-pointer flex items-center justify-center flex-shrink-0 ${selectedReviews.includes(review._id) ? 'bg-[#0095FF] border-[#0095FF]' : 'bg-transparent'}`}
+                        onClick={(e) => { e.stopPropagation(); handleSelectReview(review._id); }}
+                      >
+                        {selectedReviews.includes(review._id) && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                      </div>
+                      <img src={getUserAvatar(review.userName)} alt="" className="w-10 h-10 rounded-lg object-cover bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{review.userName}</h4>
+                            <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full mt-1 ${ratingStyle.bg}`}>
+                              <span className={`text-xs font-bold ${ratingStyle.text}`}>{review.rating}</span>
+                              <Star className={`w-3 h-3 ${ratingStyle.starFill}`} fill="currentColor" />
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <button 
+                              className="text-gray-400 dark:text-gray-500 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+                              onClick={(e) => { e.stopPropagation(); setMobileReviewMenuOpen(mobileReviewMenuOpen === review._id ? null : review._id); }}
+                            >
+                              <MoreVertical className="w-5 h-5" />
+                            </button>
+                            {mobileReviewMenuOpen === review._id && (
+                              <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 py-1 min-w-[120px]">
+                                <button 
+                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                                  onClick={(e) => { e.stopPropagation(); setSelectedReviewId(review._id); setMobileReviewMenuOpen(null); }}
+                                >
+                                  <Eye className="w-4 h-4" /> View
+                                </button>
+                                <button 
+                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                                  onClick={(e) => { e.stopPropagation(); setSelectedReviewId(review._id); setMobileReviewMenuOpen(null); }}
+                                >
+                                  <Edit className="w-4 h-4" /> Edit
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">{review.comment}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{formatDate(review.createdAt)}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>

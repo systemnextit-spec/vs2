@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { Search, Filter, Printer, ShieldAlert, ShieldCheck, X, Package2, Mail, Truck, AlertTriangle, CheckCircle2, Send, Loader2, MoreVertical, Download, Trash2, Plus, TrendingUp, ChevronLeft, ChevronRight, ChevronDown, MoreHorizontal, ChevronUp, ShoppingCart, DollarSign, Package } from 'lucide-react';
+import { Search, Filter, Printer, ShieldAlert, ShieldCheck, X, Package2, Mail, Truck, AlertTriangle, CheckCircle2, Send, Loader2, MoreVertical, Download, Trash2, Plus, TrendingUp, ChevronLeft, ChevronRight, ChevronDown, MoreHorizontal, ChevronUp, ShoppingCart, DollarSign, Package, Eye, Edit } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Order, CourierConfig, PathaoConfig } from '../types';
 import { CourierService, FraudCheckResult } from '../services/CourierService';
@@ -67,6 +67,7 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, courierConfig, onUpda
   const [showCourierModal, setShowCourierModal] = useState(false);
   const [courierModalOrderId, setCourierModalOrderId] = useState<string | null>(null);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [mobileCardActionDropdown, setMobileCardActionDropdown] = useState<string | null>(null);
 
   // Available couriers
   const COURIERS = [
@@ -84,16 +85,21 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, courierConfig, onUpda
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
       if (openActionDropdown !== null) {
-        const target = event.target as HTMLElement;
         if (!target.closest('[data-action-dropdown]')) {
           setOpenActionDropdown(null);
+        }
+      }
+      if (mobileCardActionDropdown !== null) {
+        if (!target.closest('[data-mobile-card-dropdown]')) {
+          setMobileCardActionDropdown(null);
         }
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [openActionDropdown]);
+  }, [openActionDropdown, mobileCardActionDropdown]);
 
   // Check for highlighted order from notification click
   useEffect(() => {
@@ -661,9 +667,9 @@ footer { text-align: center; margin-top: 32px; font-size: 12px; color: #475569; 
           ) : (
             <>
                 {/* Mobile Card View (< lg) */}
-                <div className="block lg:hidden divide-y divide-slate-100">
+                <div className="block lg:hidden divide-y divide-slate-100 dark:divide-slate-700">
                   {paginatedOrders.length > 0 && (
-                    <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-sm text-slate-600">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between text-sm text-slate-600 dark:text-slate-300">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="checkbox"
@@ -688,7 +694,7 @@ footer { text-align: center; margin-top: 32px; font-size: 12px; color: #475569; 
                         key={order.id}
                         ref={(el) => { if (el) orderRowRefs.current.set(order.id, el as unknown as HTMLTableRowElement); }}
                         onClick={() => toggleOrderSelection(order.id)}
-                        className={`p-4 transition-colors ${isSelected ? 'bg-blue-50/50' : 'bg-white'}`}
+                        className={`p-4 transition-colors ${isSelected ? 'bg-blue-50/50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900'}`}
                       >
                         {/* Card Header */}
                         <div className="flex items-start justify-between mb-3">
@@ -717,7 +723,7 @@ footer { text-align: center; margin-top: 32px; font-size: 12px; color: #475569; 
                         </div>
 
                         {/* Product Info */}
-                        <div className="flex gap-3 mb-3 p-3 bg-slate-50 rounded-lg">
+                        <div className="flex gap-3 mb-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
                           <div className="h-12 w-12 rounded-md overflow-hidden bg-white border border-slate-200 shrink-0 flex items-center justify-center">
                             {order.productImage ? (
                               <img src={normalizeImageUrl(order.productImage)} alt="" className="h-full w-full object-cover" />
@@ -734,23 +740,55 @@ footer { text-align: center; margin-top: 32px; font-size: 12px; color: #475569; 
                         {/* Customer & Price */}
                         <div className="flex justify-between items-end">
                           <div className="text-sm">
-                            <p className="font-medium text-slate-900">{order.customer}</p>
+                            <p className="font-medium text-slate-900 dark:text-white">{order.customer}</p>
                             <p className="text-slate-500 text-xs">{order.phone || 'No Phone'}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-slate-900">{formatCurrency(order.amount)}</p>
+                            <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(order.amount)}</p>
                             <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${isPaid ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
                               {isPaid ? 'Paid' : 'Unpaid'}
                             </span>
                           </div>
                         </div>
 
-                        <button
-                          onClick={(e) => { e.stopPropagation(); openOrderModal(order); }}
-                          className="w-full mt-4 flex items-center justify-center gap-2 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
-                        >
-                          <MoreHorizontal size={16} /> View Details
-                        </button>
+                        {/* Mobile Action Dropdown */}
+                        <div className="relative mt-4" data-mobile-card-dropdown>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setMobileCardActionDropdown(mobileCardActionDropdown === order.id ? null : order.id);
+                            }}
+                            className="w-full flex items-center justify-center gap-2 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                          >
+                            <MoreVertical size={16} /> Actions
+                          </button>
+                          {mobileCardActionDropdown === order.id && (
+                            <div className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg overflow-hidden z-20">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openOrderModal(order);
+                                  setMobileCardActionDropdown(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                              >
+                                <Eye size={16} className="text-blue-500" />
+                                View Order
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openOrderModal(order);
+                                  setMobileCardActionDropdown(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-t border-slate-100 dark:border-slate-700"
+                              >
+                                <Edit size={16} className="text-emerald-500" />
+                                Edit Order
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     );
                   })

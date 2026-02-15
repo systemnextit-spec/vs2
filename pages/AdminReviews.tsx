@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { MessageCircle, Star, Filter, Flag, CheckCircle, Send, Edit3, Loader2 } from 'lucide-react';
+import { MessageCircle, Star, Filter, Flag, CheckCircle, Send, Edit3, Loader2, MoreVertical, Eye, Edit } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAuthHeader } from '../services/authService';
 
@@ -47,6 +47,7 @@ const AdminReviews: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<string | null>(null);
 
   // Fetch reviews from API
   useEffect(() => {
@@ -277,7 +278,7 @@ const AdminReviews: React.FC = () => {
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           <div className="xl:col-span-2">
-            <div className="overflow-x-auto rounded-xl border border-gray-100">
+            <div className="hidden sm:block overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-700">
               <table className="w-full min-w-[700px] text-sm">
                 <thead className="bg-gray-50">
                   <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
@@ -348,9 +349,138 @@ const AdminReviews: React.FC = () => {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Card View */}
+            <div className="block sm:hidden space-y-3">
+              {isLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="animate-spin text-violet-500" size={24} />
+                  <p className="text-sm text-gray-500 dark:text-gray-400 ml-2">Loading reviews...</p>
+                </div>
+              ) : filteredReviews.length === 0 ? (
+                <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
+                  No reviews match the current filters.
+                </div>
+              ) : (
+                filteredReviews.map((review) => (
+                  <div
+                    key={review._id}
+                    className={`bg-white dark:bg-gray-800 rounded-xl border p-4 shadow-sm transition ${
+                      selectedReview?._id === review._id
+                        ? 'border-violet-300 dark:border-violet-600 bg-violet-50/60 dark:bg-violet-900/20'
+                        : 'border-gray-100 dark:border-gray-700'
+                    }`}
+                    onClick={() => { setSelectedId(review._id); setReplyDraft(review.reply || ''); }}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
+                            {review.userName.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{review.userName}</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500">{formatDate(review.createdAt)}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 mb-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              size={14}
+                              className={star <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300 dark:text-gray-600'}
+                            />
+                          ))}
+                          <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">({review.rating})</span>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-2">
+                          {review.headline || review.comment}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${
+                              review.status === 'approved'
+                                ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800'
+                                : review.status === 'pending'
+                                ? 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800'
+                                : 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800'
+                            }`}
+                          >
+                            {review.status}
+                          </span>
+                          <span className="text-xs text-gray-400 dark:text-gray-500">Product #{review.productId}</span>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMobileMenuOpen(mobileMenuOpen === review._id ? null : review._id);
+                          }}
+                          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                        >
+                          <MoreVertical size={18} className="text-gray-500 dark:text-gray-400" />
+                        </button>
+                        {mobileMenuOpen === review._id && (
+                          <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-100 dark:border-gray-700 py-1 z-20">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedId(review._id);
+                                setReplyDraft(review.reply || '');
+                                setMobileMenuOpen(null);
+                              }}
+                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            >
+                              <Eye size={14} /> View
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedId(review._id);
+                                setReplyDraft(review.reply || '');
+                                setMobileMenuOpen(null);
+                              }}
+                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            >
+                              <Edit size={14} /> Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusChange(review._id, 'approved');
+                                setMobileMenuOpen(null);
+                              }}
+                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
+                            >
+                              <CheckCircle size={14} /> Approve
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusChange(review._id, 'rejected');
+                                setMobileMenuOpen(null);
+                              }}
+                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30"
+                            >
+                              <Flag size={14} /> Reject
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
-          <div className="border border-gray-100 rounded-2xl p-5 bg-gradient-to-b from-white to-violet-50/30 shadow-sm">
+          <div className="border border-gray-100 rounded-2xl p-5 bg-gradient-to-b from-white to-violet-50/30 shadow-sm dark:border-gray-700 dark:from-gray-800 dark:to-gray-800/50">
             {selectedReview ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-3">

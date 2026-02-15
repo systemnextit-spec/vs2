@@ -28,6 +28,9 @@ import {
   Download,
   RefreshCw,
   ChevronLeft,
+  MoreVertical,
+  Eye,
+  Edit,
   Clock
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -162,6 +165,9 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
   const [showAddProductPanel, setShowAddProductPanel] = useState(false);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Mobile menu state for purchase records
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<string | null>(null);
 
   const [paymentForm, setPaymentForm] = useState<PaymentForm>({
     dateOfPurchase: new Date().toISOString().split('T')[0],
@@ -730,20 +736,64 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
             </div>
             <div className="space-y-3">
               {records.map((record) => (
-                <div key={record._id} className="p-4 border rounded-lg hover:shadow-sm transition">
+                <div key={record._id} className="p-3 sm:p-4 border rounded-lg hover:shadow-sm transition bg-white dark:bg-gray-800 dark:border-gray-700">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <p className="text-gray-500 text-sm">#{record.purchaseNumber}</p>
-                      <p className="text-blue-600 font-medium">Total Price: ৳{record.totalAmount}</p>
-                      <p className="text-blue-600">Total Item: {record.items?.length || 0}</p>
-                      <p className="text-gray-500 text-sm">{new Date(record.createdAt).toLocaleString()}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">#{record.purchaseNumber}</p>
+                      <p className="text-blue-600 dark:text-blue-400 font-medium text-sm sm:text-base">Total Price: ৳{record.totalAmount}</p>
+                      <p className="text-blue-600 dark:text-blue-400 text-xs sm:text-sm">Total Item: {record.items?.length || 0}</p>
+                      <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{new Date(record.createdAt).toLocaleString()}</p>
+                      {/* Mobile: Show supplier inline */}
+                      <p className="sm:hidden text-gray-600 dark:text-gray-300 text-xs mt-1">
+                        {record.supplierName ? `Supplier: ${record.supplierName}` : ''}
+                      </p>
                     </div>
-                    <div className="text-right">
-                      {record.supplierName && <p className="text-gray-600">Supplier Name: {record.supplierName}</p>}
-                      <span className={`inline-block px-3 py-1 rounded text-sm font-medium mt-2 ${record.paymentType === 'cash' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                    {/* Desktop: Right side info */}
+                    <div className="hidden sm:block text-right">
+                      {record.supplierName && <p className="text-gray-600 dark:text-gray-300">Supplier Name: {record.supplierName}</p>}
+                      <span className={`inline-block px-3 py-1 rounded text-sm font-medium mt-2 ${record.paymentType === 'cash' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
                         {record.paymentType?.toUpperCase() || 'CASH'}
                       </span>
                     </div>
+                    {/* Mobile & Desktop: 3-dot menu */}
+                    <div className="relative ml-2">
+                      <button
+                        onClick={() => setMobileMenuOpen(mobileMenuOpen === record._id ? null : record._id)}
+                        className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+                      >
+                        <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 dark:text-gray-400" />
+                      </button>
+                      {mobileMenuOpen === record._id && (
+                        <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg z-10 py-1">
+                          <button
+                            onClick={() => {
+                              setMobileMenuOpen(null);
+                              toast.success('View purchase details');
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
+                            <Eye className="w-4 h-4" />
+                            View
+                          </button>
+                          <button
+                            onClick={() => {
+                              setMobileMenuOpen(null);
+                              toast.success('Edit purchase');
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
+                            <Edit className="w-4 h-4" />
+                            Edit
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {/* Mobile: Payment type badge */}
+                  <div className="sm:hidden mt-2 flex justify-end">
+                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${record.paymentType === 'cash' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
+                      {record.paymentType?.toUpperCase() || 'CASH'}
+                    </span>
                   </div>
                 </div>
               ))}

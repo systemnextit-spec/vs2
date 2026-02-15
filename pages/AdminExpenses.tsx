@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { Search, Plus, Calendar, Printer, Filter, Image as ImageIcon, Edit2, Trash2, ChevronLeft, ChevronRight, X, TrendingDown, BarChart3, Tag, Clock } from 'lucide-react';
+import { Search, Plus, Calendar, Printer, Filter, Image as ImageIcon, Edit2, Trash2, ChevronLeft, ChevronRight, X, TrendingDown, BarChart3, Tag, Clock, MoreVertical } from 'lucide-react';
 import { ExpenseService, ExpenseDTO, setExpenseTenantId } from '../services/ExpenseService';
 import { CategoryService, CategoryDTO, setCategoryTenantId } from '../services/CategoryService';
 import { normalizeImageUrl } from '../utils/imageUrlHelper';
@@ -74,6 +74,7 @@ const AdminExpenses: React.FC<AdminExpensesProps> = ({ tenantId }) => {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<string | null>(null);
 
   // Set tenant IDs on services
   useEffect(() => {
@@ -507,7 +508,8 @@ const AdminExpenses: React.FC<AdminExpensesProps> = ({ tenantId }) => {
               </div>
             </div>
           ) : (
-          <div className="overflow-x-auto">
+          <>
+          <div className="overflow-x-auto hidden sm:block">
           <table className="min-w-full text-xs sm:text-sm">
             <thead>
               <tr className="text-left text-gray-600 border-b border-gray-200">
@@ -557,6 +559,73 @@ const AdminExpenses: React.FC<AdminExpensesProps> = ({ tenantId }) => {
             </tfoot>
           </table>
           </div>
+
+          {/* Mobile Card View */}
+          <div className="block sm:hidden space-y-3">
+            {paged.map((i, idx) => (
+              <div key={i.id || `mobile-expense-${idx}`} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{i.name}</h3>
+                    {i.note && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">{i.note}</p>}
+                  </div>
+                  <div className="relative ml-2">
+                    <button
+                      onClick={() => setMobileMenuOpen(mobileMenuOpen === i.id ? null : i.id)}
+                      className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                    >
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
+                    {mobileMenuOpen === i.id && (
+                      <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 min-w-[120px] py-1">
+                        <button
+                          onClick={() => { handleEditExpense(i); setMobileMenuOpen(null); }}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button
+                          onClick={() => { handleDelete(i.id); setMobileMenuOpen(null); }}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-2">
+                    <div className="text-[10px] text-gray-500 dark:text-gray-400">Amount</div>
+                    <div className="text-sm font-bold text-red-600 dark:text-red-400">৳{i.amount.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
+                    <div className="text-[10px] text-gray-500 dark:text-gray-400">Date</div>
+                    <div className="text-sm font-semibold text-gray-900 dark:text-white">{new Date(i.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</div>
+                  </div>
+                </div>
+
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                    <Tag className="w-3 h-3" /> {i.category}
+                  </span>
+                  <span className={`px-2 py-1 rounded-full text-[10px] font-semibold ${i.status === 'Published' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : i.status === 'Trash' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+                    {i.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {/* Mobile Total Card */}
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">TOTAL</span>
+                <span className="text-lg font-bold text-red-600 dark:text-red-400">৳{totalAmount.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+          </>
           )}
         </div>
       </div>

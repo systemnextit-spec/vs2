@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Users, MessageCircle, Star, Search, Mail, Phone, MapPin, ShoppingBag, Calendar, TrendingUp, Filter, Flag, CheckCircle, Send, Edit3, User } from 'lucide-react';
+import { Users, MessageCircle, Star, Search, Mail, Phone, MapPin, ShoppingBag, Calendar, TrendingUp, Filter, Flag, CheckCircle, Send, Edit3, User, MoreVertical, Eye } from 'lucide-react';
 import { Order, Product } from '../types';
 import { formatCurrency } from '../utils/format';
 import { MetricsSkeleton } from '../components/SkeletonLoaders';
@@ -43,6 +43,7 @@ const AdminCustomers: React.FC<AdminCustomersProps> = ({ orders, products = [] }
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerInfo | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<string | null>(null);
   
   // Reviews state
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
@@ -343,7 +344,7 @@ const AdminCustomers: React.FC<AdminCustomersProps> = ({ orders, products = [] }
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {/* Customer List */}
           <div className="xl:col-span-2 bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full min-w-[700px] text-sm">
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
@@ -417,6 +418,69 @@ const AdminCustomers: React.FC<AdminCustomersProps> = ({ orders, products = [] }
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="block sm:hidden space-y-2 p-3">
+              {filteredCustomers.length === 0 ? (
+                <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+                  <Users size={40} className="mx-auto text-gray-300 dark:text-gray-600 mb-2" />
+                  <p className="font-medium">No customers found</p>
+                  <p className="text-sm">Customers will appear here when orders are placed</p>
+                </div>
+              ) : (
+                filteredCustomers.map(customer => (
+                  <div
+                    key={customer.id}
+                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 flex items-center justify-between"
+                  >
+                    <div 
+                      className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+                      onClick={() => setSelectedCustomer(customer)}
+                    >
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                        {customer.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{customer.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                          <Phone size={10} />
+                          {customer.phone}
+                        </p>
+                        <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                          {customer.totalOrders} orders • ৳{formatCurrency(customer.totalSpent)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMobileMenuOpen(mobileMenuOpen === customer.id ? null : customer.id);
+                        }}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+                      >
+                        <MoreVertical className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                      </button>
+                      {mobileMenuOpen === customer.id && (
+                        <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedCustomer(customer);
+                              setMobileMenuOpen(null);
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
+                            <Eye size={14} />
+                            View Details
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 

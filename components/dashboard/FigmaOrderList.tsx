@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { Plus, Search, SlidersHorizontal, MoreVertical, ChevronLeft, ChevronRight, X, Printer, Truck, Package2, Mail, AlertTriangle, CheckCircle2, Send, Loader2, Trash2, ShieldCheck, ShieldAlert, Copy, ZoomIn, Edit3, ArrowLeftCircle } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, MoreVertical, ChevronLeft, ChevronRight, X, Printer, Truck, Package2, Mail, AlertTriangle, CheckCircle2, Send, Loader2, Trash2, ShieldCheck, ShieldAlert, Copy, ZoomIn, Edit3, ArrowLeftCircle, Eye } from 'lucide-react';
 import { DonutChart } from '../modern-dashboard/OrderSummaryChart';
 import { TrendChart } from './order/TrendChart';
 import GmvStats from './order/GmvStats';
@@ -857,8 +857,8 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto -mx-2 xxs:mx-0 px-2 xxs:px-0">
-        <table className="w-full text-xs xxs:text-sm min-w-[600px]">
+      <div className="hidden sm:block overflow-x-auto -mx-2 xxs:mx-0 px-2 xxs:px-0">
+        <table className="w-full text-xs xxs:text-sm min-w-0">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="w-8 xxs:w-10 px-2 xxs:px-3 py-2 xxs:py-3">
@@ -872,9 +872,9 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
               <th className="w-20 xxs:w-24 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Order ID</th>
               <th className="w-32 xxs:w-44 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Product</th>
               <th className="w-32 xxs:w-40 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Customer</th>
-              <th className="w-16 xxs:w-20 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Date</th>
+              <th className="hidden sm:table-cell w-16 xxs:w-20 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Date</th>
               <th className="w-20 xxs:w-24 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Price</th>
-              <th className="w-14 xxs:w-16 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Payment</th>
+              <th className="hidden sm:table-cell w-14 xxs:w-16 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Payment</th>
               <th className="w-24 xxs:w-32 px-2 xxs:px-3 py-2 xxs:py-3 text-left font-semibold text-gray-700">Status</th>
               <th className="w-10 xxs:w-12 px-2 xxs:px-3 py-2 xxs:py-3 text-center font-semibold text-gray-700">Action</th>
             </tr>
@@ -907,11 +907,11 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                   <div className="truncate text-gray-900 font-medium text-[10px] xxs:text-sm max-w-[80px] xxs:max-w-none" title={order.customer}>{order.customer}</div>
                   <div className="text-[9px] xxs:text-xs text-gray-500 truncate">{order.phone || 'No phone'}</div>
                 </td>
-                <td className="px-2 xxs:px-3 py-2 xxs:py-3 text-gray-700 whitespace-nowrap text-[10px] xxs:text-sm">
+                <td className="hidden sm:table-cell px-2 xxs:px-3 py-2 xxs:py-3 text-gray-700 whitespace-nowrap text-[10px] xxs:text-sm">
                   {order.date ? new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '-'}
                 </td>
                 <td className="px-2 xxs:px-3 py-2 xxs:py-3 font-medium text-gray-900 whitespace-nowrap text-[10px] xxs:text-sm">{formatCurrency(order.amount)}</td>
-                <td className="px-2 xxs:px-3 py-2 xxs:py-3">
+                <td className="hidden sm:table-cell px-2 xxs:px-3 py-2 xxs:py-3">
                   <span className={`px-1.5 xxs:px-2 py-0.5 xxs:py-1 rounded text-[9px] xxs:text-xs font-medium whitespace-nowrap ${getPaymentBadge(order)}`}>
                     {(order as any).paymentMethod?.match(/bKash|Nagad|Card|Paid/i) ? 'Paid' : 'COD'}
                   </span>
@@ -1049,6 +1049,62 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
           </tbody>
         </table>
       </div>
+
+      {/* Mobile Card View */}
+      <div className="block sm:hidden space-y-2">
+        {paginatedOrders.length > 0 ? paginatedOrders.map((order) => (
+          <div key={order.id} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              {order.productImage ? (
+                <img src={normalizeImageUrl(order.productImage)} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+              ) : (
+                <div className="w-10 h-10 rounded bg-gray-100 flex items-center justify-center flex-shrink-0">
+                  <Package2 size={16} className="text-gray-400" />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-gray-900 truncate">{order.productName || 'Custom Order'}</p>
+                <p className="text-xs text-gray-500">{order.customer} • {formatCurrency(order.amount)}</p>
+                <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-600'}`}>
+                  {STATUS_LABELS[order.status] || order.status}
+                </span>
+              </div>
+            </div>
+            <div className="relative" data-dropdown>
+              <button 
+                onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)} 
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <MoreVertical className="w-5 h-5 text-gray-600" />
+              </button>
+              {openDropdownId === order.id && (
+                <div className="absolute right-0 top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[120px]">
+                  <button 
+                    onClick={() => { openOrderModal(order); setOpenDropdownId(null); }}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    <Eye size={16} />
+                    View
+                  </button>
+                  <button 
+                    onClick={() => { openOrderModal(order); setOpenDropdownId(null); }}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    <Edit3 size={16} />
+                    Edit
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )) : (
+          <div className="text-center py-8 text-gray-500">
+            <Package2 size={40} className="mx-auto mb-3 text-gray-300" />
+            <p className="text-sm">No orders found</p>
+          </div>
+        )}
+      </div>
+
 
       {/* Pagination */}
       {filteredOrders.length > ordersPerPage && (

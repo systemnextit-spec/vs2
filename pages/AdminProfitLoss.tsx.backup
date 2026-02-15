@@ -12,10 +12,7 @@ import {
     Database,
     Users,
     ShieldCheck,
-    Globe,
-    MoreVertical,
-    Eye,
-    Edit
+    Globe
 } from 'lucide-react';
 
 /**
@@ -45,9 +42,6 @@ const App = () => {
         type: 'profit',
         date: new Date().toISOString().split('T')[0]
     });
-
-    // Mobile dropdown state
-    const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
 
     // Simulated MongoDB Driver Connection & Fetch
     useEffect(() => {
@@ -127,7 +121,6 @@ const App = () => {
             type: 'profit',
             date: new Date().toISOString().split('T')[0]
         });
-
         setIsModalOpen(false);
     };
 
@@ -247,7 +240,7 @@ const App = () => {
                             <Filter size={18} />
                         </button>
                     </div>
-                    <div className="hidden sm:block overflow-x-auto">
+                    <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50/50 text-slate-500 text-xs font-semibold uppercase tracking-wider">
@@ -290,69 +283,6 @@ const App = () => {
                                 )}
                             </tbody>
                         </table>
-                    </div>
-
-                    {/* Mobile Card View */}
-                    <div className="block sm:hidden divide-y divide-slate-100 dark:divide-slate-700">
-                        {transactions.length === 0 ? (
-                            <div className="px-4 py-12 text-center text-slate-400 dark:text-slate-500">
-                                <div className="flex flex-col items-center gap-2">
-                                    <Database size={32} className="opacity-30" />
-                                    <p>No documents found</p>
-                                </div>
-                            </div>
-                        ) : (
-                            transactions.map((item) => (
-                                <div key={item._id} className="p-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <div className="flex items-start justify-between gap-3">
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold \${
-                                                    item.amount > 0 
-                                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' 
-                                                        : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
-                                                }`}>
-                                                    {item.amount > 0 ? 'Revenue' : 'Expense'}
-                                                </span>
-                                                <span className="text-xs text-slate-400 dark:text-slate-500">
-                                                    {new Date(item.date).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                            <h4 className="font-medium text-slate-800 dark:text-slate-200 truncate">{item.description}</h4>
-                                            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5 truncate">_id: {item._id}</p>
-                                            <div className="flex items-center gap-2 mt-2">
-                                                <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs">
-                                                    {item.category}
-                                                </span>
-                                                <span className={`text-sm font-bold \${item.amount > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                                                    {item.amount > 0 ? '+' : ''}\${Math.abs(Number(item.amount)).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="relative">
-                                            <button
-                                                onClick={() => setMobileDropdownOpen(mobileDropdownOpen === item._id ? null : item._id)}
-                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                                            >
-                                                <MoreVertical size={18} className="text-slate-400 dark:text-slate-500" />
-                                            </button>
-                                            {mobileDropdownOpen === item._id && (
-                                                <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-1 z-10">
-                                                    <button className="w-full px-3 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
-                                                        <Eye size={14} />
-                                                        View Details
-                                                    </button>
-                                                    <button className="w-full px-3 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
-                                                        <Edit size={14} />
-                                                        Edit Entry
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
                     </div>
                 </div>
 

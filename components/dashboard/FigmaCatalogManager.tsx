@@ -116,6 +116,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [openActionMenu, setOpenActionMenu] = useState<string | null>(null);
   const [actionMenuPosition, setActionMenuPosition] = useState<{ top: number; left: number } | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editItem, setEditItem] = useState<any>(null);
   const [formData, setFormData] = useState<any>({});
@@ -414,9 +415,9 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
           })}
         </div>
 
-        {/* Data Table */}
+        {/* Data Table - Hide on mobile */}
         <div className="bg-white dark:bg-gray-800 overflow-visible">
-          <div className="overflow-x-auto overflow-y-visible">
+          <div className="hidden sm:block overflow-x-auto overflow-y-visible">
             <table className="w-full min-w-[700px] text-sm">
               {/* Table Header - Gradient Background */}
               <thead className="bg-[#E0F2FE] dark:bg-gray-700">
@@ -540,6 +541,78 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="block sm:hidden space-y-2">
+            {paginatedData.length > 0 ? paginatedData.map((item, index) => (
+              <div key={item.id} className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-3 flex items-center justify-between">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  {showImageColumn && (
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] flex-shrink-0">
+                      {(item.icon || item.logo) ? (
+                        <img
+                          src={normalizeImageUrl(item.icon || item.logo)}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-white">
+                          <ImageIcon size={16} />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {view === 'catalog_subcategories' && categories.find(c => c.id === item.categoryId)?.name}
+                      {view === 'catalog_childcategories' && subCategories.find(s => s.id === item.subCategoryId)?.name}
+                      {(view === 'catalog_categories' || view === 'catalog_brands' || view === 'catalog_tags') && `${item.productCount || 0} products`}
+                    </p>
+                    <span className={`inline-flex mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                      item.status === 'Active' 
+                        ? 'bg-[#c1ffbc] text-[#085e00]' 
+                        : 'bg-orange-100 text-orange-700'
+                    }`}>
+                      {item.status === 'Active' ? 'Publish' : 'Inactive'}
+                    </span>
+                  </div>
+                </div>
+                <div className="relative" data-dropdown>
+                  <button
+                    onClick={() => setMobileMenuOpen(mobileMenuOpen === item.id ? null : item.id)}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg"
+                  >
+                    <MoreVertical className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  </button>
+                  {mobileMenuOpen === item.id && (
+                    <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 py-1 z-50 min-w-[120px]">
+                      <button
+                        onClick={() => { handleOpenModal(item); setMobileMenuOpen(null); }}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        <Edit size={16} className="text-blue-500" /> Edit
+                      </button>
+                      <button
+                        onClick={() => { handleDelete(item.id); setMobileMenuOpen(null); }}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                      >
+                        <Trash2 size={16} /> Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )) : (
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center mx-auto mb-3">
+                  <Search size={24} className="text-gray-400 dark:text-gray-500" />
+                </div>
+                <p className="font-medium">No {getTitle().toLowerCase()}s found</p>
+                <p className="text-sm">Try adjusting your search or add a new {getTitle().toLowerCase()}</p>
+              </div>
+            )}
           </div>
         </div>
 

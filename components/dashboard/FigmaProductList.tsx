@@ -1082,8 +1082,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* List View - Table */}
       {viewMode === 'list' && (
-      <div className="overflow-x-auto min-h-[200px] -mx-2 xxs:-mx-3 sm:mx-0 px-2 xxs:px-3 sm:px-0">
-        <table className="w-full text-xs xxs:text-sm overflow-visible min-w-[600px] xxs:min-w-[700px] sm:min-w-[900px]">
+      <><div className="hidden sm:block overflow-x-auto min-h-[200px] -mx-2 xxs:-mx-3 sm:mx-0 px-2 xxs:px-3 sm:px-0">
+        <table className="w-full text-xs xxs:text-sm overflow-visible min-w-0">
           <thead className="bg-[#E0F2FE] dark:bg-gray-700">
             <tr>
               <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left">
@@ -1098,10 +1098,10 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
               <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px]">Image</th>
               <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px]">Name</th>
               <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px]">Category</th>
-              <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Sub Category</th>
-              <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Priority</th>
-              <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">SKU</th>
-              <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Tags</th>
+              <th className="hidden md:table-cell px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Sub Category</th>
+              <th className="hidden lg:table-cell px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Priority</th>
+              <th className="hidden md:table-cell px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">SKU</th>
+              <th className="hidden lg:table-cell px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Tags</th>
               <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Status</th>
               <th className="px-4 py-3 text-center font-medium text-black dark:text-white text-[16px]">Action</th>
             </tr>
@@ -1145,16 +1145,16 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                 <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
                   {product.category || '-'}
                 </td>
-                <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
+                <td className="hidden md:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
                   {product.subCategory || '-'}
                 </td>
-                <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
+                <td className="hidden lg:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
                   {product.rating ? `${Math.round(product.rating * 10)}%` : '-'}
                 </td>
-                <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
+                <td className="hidden md:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
                   {product.sku || '-'}
                 </td>
-                <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
+                <td className="hidden lg:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
                   {product.tag || (Array.isArray(product.tags) ? product.tags.join(', ') : '') || '-'}
                 </td>
                 <td className="px-4 py-3">
@@ -1228,6 +1228,56 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           </tbody>
         </table>
       </div>
+
+      {/* Mobile Card View for Products */}
+      <div className="block sm:hidden space-y-2">
+        {paginatedProducts.length > 0 ? paginatedProducts.map((product, idx) => {
+          const productKey = getProductKey(product, idx);
+          return (
+            <div key={productKey} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 flex items-center justify-between">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                {product.images?.[0] ? (
+                  <img src={normalizeImageUrl(product.images[0])} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                ) : (
+                  <div className="w-10 h-10 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{product.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">৳{product.sellingPrice || product.price} | Stock: {product.stock ?? 0}</p>
+                  <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${product.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
+                    {product.status === 'active' ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              </div>
+              <div className="relative" data-dropdown>
+                <button onClick={() => setOpenDropdownId(openDropdownId === productKey ? null : productKey)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                  <MoreVertical className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                </button>
+                {openDropdownId === productKey && (
+                  <div className="absolute right-0 top-full mt-1 z-50 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 min-w-[120px]">
+                    <button onClick={() => { window.open(`/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <Eye size={16} />
+                      View
+                    </button>
+                    <button onClick={() => { onEditProduct?.(product); setOpenDropdownId(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <Edit size={16} />
+                      Edit
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }) : (
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <svg className="w-10 h-10 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            <p className="text-sm">No products found</p>
+          </div>
+        )}
+      </div>
+      </>
       )}
 
       {/* Footer: Print & Pagination */}

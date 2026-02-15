@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Search, ChevronDown, Package, AlertTriangle, CheckCircle, TrendingUp, BarChart3, Box } from 'lucide-react';
+import { Search, ChevronDown, Package, AlertTriangle, CheckCircle, TrendingUp, BarChart3, Box, MoreVertical, Eye, Edit } from 'lucide-react';
 import { Product } from '../types';
 import { normalizeImageUrl } from '../utils/imageUrlHelper';
 import toast from 'react-hot-toast';
@@ -21,6 +21,7 @@ const AdminInventory: React.FC<AdminInventoryProps> = ({
   const [lowStockThreshold, setLowStockThreshold] = useState(5);
   const [expireThreshold, setExpireThreshold] = useState(10);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<string | null>(null);
 
   // Load saved thresholds from backend
   useEffect(() => {
@@ -315,7 +316,7 @@ const AdminInventory: React.FC<AdminInventoryProps> = ({
 
         {/* Table Section */}
         <div className="xl:col-span-3 overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto hidden sm:block">
             <table className="w-full min-w-[800px] border-collapse">
               <thead className="bg-[#E0F2FE]">
                 <tr>
