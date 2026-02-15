@@ -6,7 +6,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import type { Product, User, LandingPage } from '../types';
 import { isAdminRole, SESSION_STORAGE_KEY } from '../utils/appHelpers';
 
-export type ViewState = 'store' | 'detail' | 'checkout' | 'success' | 'profile' | 'admin' | 'landing_preview' | 'offer_preview' | 'admin-login' | 'visual-search' | 'super-admin' | 'register';
+export type ViewState = 'store' | 'detail' | 'checkout' | 'success' | 'profile' | 'admin' | 'landing_preview' | 'offer_preview' | 'admin-login' | 'visual-search' | 'super-admin' | 'register' | 'static-page';
 
 // Parse order ID from URL for success page
 export function getOrderIdFromUrl(): string | null {
@@ -311,6 +311,21 @@ export function useNavigation({ products, user, landingPages, setSelectedLanding
     }
     
     // Known static routes that should NOT be treated as offer pages
+    // Static content pages - these show dedicated content from websiteConfig
+    const staticContentPages = [
+      'privacy', 'privacy-policy', 'about', 'about-us', 'terms', 'terms-and-conditions',
+      'termsnconditions', 'returnpolicy', 'return-policy', 'refund', 'refund-policy'
+    ];
+    
+    // Check if it is a static content page
+    if (staticContentPages.includes(trimmedPath.toLowerCase())) {
+      console.log('[Navigation] Static content page detected:', trimmedPath);
+      if (!activeView.startsWith('admin')) {
+        setCurrentView('static-page');
+      }
+      return;
+    }
+
     const staticRoutes = [
       'privacy', 'privacy-policy', 'about', 'about-us', 'terms', 'terms-and-conditions',
       'contact', 'contact-us', 'profile', 'categories', 'track', 'track-order',

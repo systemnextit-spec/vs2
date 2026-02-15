@@ -767,7 +767,7 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
           />
         </div>
 
-        {/* Row 4: Instagram & TikTok */}
+        {/* Row 4: Instagram & Daraz */}
         <div style={{ display: 'flex', gap: '16px' }}>
           <FigmaInput
             label="Instagram"
@@ -787,20 +787,20 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
             flex
           />
           <FigmaInput
-            label="TikTok"
-            value={websiteConfiguration.socialLinks?.find((l) => l.platform === 'TikTok')?.url || ''}
+            label="Daraz"
+            value={websiteConfiguration.socialLinks?.find((l) => l.platform === 'Daraz')?.url || ''}
             onChange={(v) => {
-              const idx = websiteConfiguration.socialLinks?.findIndex((l) => l.platform === 'TikTok');
+              const idx = websiteConfiguration.socialLinks?.findIndex((l) => l.platform === 'Daraz');
               if (idx !== undefined && idx >= 0) {
                 updateSocialLink(idx, 'url', v);
               } else {
                 setWebsiteConfiguration((p) => ({
                   ...p,
-                  socialLinks: [...(p.socialLinks || []), { id: Date.now().toString(), platform: 'TikTok', url: v }]
+                  socialLinks: [...(p.socialLinks || []), { id: Date.now().toString(), platform: 'Daraz', url: v }]
                 }));
               }
             }}
-            placeholder="TikTok Text"
+            placeholder="Daraz Text"
             flex
           />
         </div>

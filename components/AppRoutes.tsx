@@ -31,6 +31,7 @@ const StoreChatModal = lazy(() => import('./store/StoreChatModal').then(m => ({ 
 const TenantRegistration = lazy(() => 
   import(/* webpackChunkName: "tenant-registration" */ '../pages/TenantRegistration')
 );
+const StaticPage = lazy(() => import('../pages/StaticPage'));
 
 interface AppRoutesProps {
   currentView: string;
@@ -381,6 +382,39 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
                   onLogoutClick={onLogout}
                 />
               </>
+            </Suspense>
+          )}
+
+          {currentView === 'static-page' && (
+            <Suspense fallback={<StorePageSkeleton />}>
+              <StaticPage
+                products={products}
+                orders={orders}
+                user={user}
+                onLoginClick={() => setIsLoginOpen(true)}
+                onLogoutClick={onLogout}
+                onProfileClick={() => setCurrentView('profile')}
+                logo={logo}
+                websiteConfig={websiteConfig}
+                searchValue={storeSearchQuery}
+                onSearchChange={onSearchChange}
+                onOpenChat={onOpenChat}
+                onProductClick={onProductClick}
+                wishlistCount={wishlist.length}
+                wishlist={wishlist}
+                onToggleWishlist={(id) => onToggleWishlist(id)}
+                cart={cartItems}
+                onToggleCart={(id: number) => {
+                  const product = products.find(p => p.id === id);
+                  if (product) onToggleCart(product, 1);
+                }}
+                onCheckoutFromCart={onCheckoutFromCart}
+                categories={categories}
+                subCategories={subCategories}
+                childCategories={childCategories}
+                brands={brands}
+                tags={tags}
+              />
             </Suspense>
           )}
 

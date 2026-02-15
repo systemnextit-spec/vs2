@@ -16,16 +16,17 @@
 
 @keyframes adminNoticeTicker {
   0% {
-    transform: translateX(100%);
+    transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
 .admin-notice-ticker {
-  animation: adminNoticeTicker 30s linear infinite;
+  animation: adminNoticeTicker 20s linear infinite;
   white-space: nowrap;
+  width: fit-content;
 }
 
 /* Badge pulse animation */
@@ -85,4 +86,3 @@
     transform: translateX(0);
   }
 }
-

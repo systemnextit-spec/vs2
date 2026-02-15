@@ -35,6 +35,44 @@ export interface StoreFooterProps {
   onOpenChat?: () => void;
 }
 
+// Default links fallback
+const defaultQuickLinks = [
+  { id: '1', label: 'Home', url: '/' },
+  { id: '2', label: 'Terms and Conditions', url: '/termsnconditions' },
+  { id: '3', label: 'Return Policy', url: '/returnpolicy' },
+  { id: '4', label: 'Contact', url: '/contact' }
+];
+
+const defaultUsefulLinks = [
+  { id: '1', label: 'About Us', url: '/about' },
+  { id: '2', label: 'Privacy Policy', url: '/privacy' },
+  { id: '3', label: 'FAQ', url: '/faq' },
+  { id: '4', label: 'Track Order', url: '/track' }
+];
+
+// Helper to get footer links with fallback
+const getFooterQuickLinks = (config?: WebsiteConfig) => {
+  const links = config?.footerQuickLinks;
+  if (links && Array.isArray(links) && links.length > 0) {
+    const filtered = links.filter(l => l.label && l.url);
+    if (filtered.length > 0) {
+      return filtered;
+    }
+  }
+  return defaultQuickLinks;
+};
+
+const getFooterUsefulLinks = (config?: WebsiteConfig) => {
+  const links = config?.footerUsefulLinks;
+  if (links && Array.isArray(links) && links.length > 0) {
+    const filtered = links.filter(l => l.label && l.url);
+    if (filtered.length > 0) {
+      return filtered;
+    }
+  }
+  return defaultUsefulLinks;
+};
+
 // Shared utilities
 const getSocialIconMap = (): { [key: string]: React.ReactNode } => ({
   facebook: <Facebook size={18} />,
@@ -84,6 +122,8 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
   const whatsappLink = buildWhatsAppLink(websiteConfig?.whatsappNumber);
   const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
   const currentYear = new Date().getFullYear();
+  const quickLinks = getFooterQuickLinks(websiteConfig);
+  const usefulLinks = getFooterUsefulLinks(websiteConfig);
 
   return (
     <>
@@ -114,16 +154,16 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
             <div>
               <h4 className="text-white font-bold mb-5 text-lg relative inline-block">Quick Links<span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full"></span></h4>
               <ul className="space-y-3">
-                {[{ label: 'Home', href: '/' }, { label: 'Shop', href: '/products' }, { label: 'About Us', href: '/about' }, { label: 'Contact', href: '/contact' }].map((link, idx) => (
-                  <li key={idx}><a href={link.href} className="text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group text-sm"><ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-pink-500" />{link.label}</a></li>
+                {quickLinks.map((link, idx) => (
+                  <li key={link.id || idx}><a href={link.url} className="text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group text-sm"><ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-pink-500" />{link.label}</a></li>
                 ))}
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-bold mb-5 text-lg relative inline-block">Customer Area<span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full"></span></h4>
+              <h4 className="text-white font-bold mb-5 text-lg relative inline-block">Useful Links<span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full"></span></h4>
               <ul className="space-y-3">
-                {[{ label: 'My Account', href: '/profile' }, { label: 'Order History', href: '/profile/orders' }, { label: 'Track Order', href: '/track' }, { label: 'Wishlist', href: '/wishlist' }].map((link, idx) => (
-                  <li key={idx}><a href={link.href} className="text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group text-sm"><ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-pink-500" />{link.label}</a></li>
+                {usefulLinks.map((link, idx) => (
+                  <li key={link.id || idx}><a href={link.url} className="text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group text-sm"><ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-pink-500" />{link.label}</a></li>
                 ))}
               </ul>
             </div>
@@ -157,6 +197,7 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
 const FooterStyle2: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenChat }) => {
   const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
   const currentYear = new Date().getFullYear();
+  const quickLinks = getFooterQuickLinks(websiteConfig);
 
   return (
     <>
@@ -164,8 +205,8 @@ const FooterStyle2: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
-              {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-10 object-contain mb-4" /> : <h3 className="text-xl font-bold text-gray-900 mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
-              <p className="text-gray-600 text-sm mb-4 max-w-md">{websiteConfig?.shortDescription || 'Quality products at great prices.'}</p>
+              {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-20 object-contain mb-4" /> : <h3 className="text-xl font-bold text-gray-900 mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
+              <p className="text-gray-600 text-sm mb-4 max-w-md">{websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Quality products at great prices.'}</p>
               <div className="flex gap-3">
                 {websiteConfig?.socialLinks?.slice(0, 4).map((social, idx) => (
                   <a key={idx} href={social.url || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-gray-100 hover:bg-theme-primary hover:text-white flex items-center justify-center text-gray-600 transition-all" aria-label={social.platform}>{resolveSocialIcon(social.platform)}</a>
@@ -175,16 +216,16 @@ const FooterStyle2: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">Links</h4>
               <ul className="space-y-2">
-                {[{ label: 'Home', href: '/' }, { label: 'Terms and Conditions', href: '/termsnconditions' }, { label: 'Return Policy', href: '/returnpolicy' }, { label: 'Contact', href: '/contact' }].map((link, idx) => (
-                  <li key={idx}><a href={link.href} className="text-gray-600 hover:text-theme-primary text-sm transition-colors">{link.label}</a></li>
+                {quickLinks.map((link, idx) => (
+                  <li key={link.id || idx}><a href={link.url} className="text-gray-600 hover:text-theme-primary text-sm transition-colors">{link.label}</a></li>
                 ))}
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">Contact</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                {websiteConfig?.phones?.[0] && <li>{websiteConfig.phones[0]}</li>}
                 {websiteConfig?.emails?.[0] && <li>{websiteConfig.emails[0]}</li>}
+                {websiteConfig?.phones?.[0] && <li>{websiteConfig.phones[0]}</li>}
                 {websiteConfig?.addresses?.[0] && <li>{websiteConfig.addresses[0]}</li>}
               </ul>
             </div>
@@ -206,6 +247,8 @@ const FooterStyle3: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
   const whatsappLink = buildWhatsAppLink(websiteConfig?.whatsappNumber);
   const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
   const currentYear = new Date().getFullYear();
+  const quickLinks = getFooterQuickLinks(websiteConfig);
+  const usefulLinks = getFooterUsefulLinks(websiteConfig);
 
   return (
     <>
@@ -222,18 +265,18 @@ const FooterStyle3: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
               </div>
             </div>
             <div>
-              <h4 className="font-bold mb-5 text-lg">Shop</h4>
+              <h4 className="font-bold mb-5 text-lg">Quick Links</h4>
               <ul className="space-y-3">
-                {[{ label: 'All Products', href: '/products' }, { label: 'New Arrivals', href: '/new' }, { label: 'Best Sellers', href: '/bestsellers' }, { label: 'On Sale', href: '/sale' }].map((link, idx) => (
-                  <li key={idx}><a href={link.href} className="text-white/80 hover:text-white transition-colors text-sm flex items-center gap-2"><ExternalLink size={12} />{link.label}</a></li>
+                {quickLinks.map((link, idx) => (
+                  <li key={link.id || idx}><a href={link.url} className="text-white/80 hover:text-white transition-colors text-sm flex items-center gap-2"><ExternalLink size={12} />{link.label}</a></li>
                 ))}
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-5 text-lg">Support</h4>
+              <h4 className="font-bold mb-5 text-lg">Useful Links</h4>
               <ul className="space-y-3">
-                {[{ label: 'Help Center', href: '/help' }, { label: 'Track Order', href: '/track' }, { label: 'Returns', href: '/returns' }, { label: 'FAQ', href: '/faq' }].map((link, idx) => (
-                  <li key={idx}><a href={link.href} className="text-white/80 hover:text-white transition-colors text-sm flex items-center gap-2"><ExternalLink size={12} />{link.label}</a></li>
+                {usefulLinks.map((link, idx) => (
+                  <li key={link.id || idx}><a href={link.url} className="text-white/80 hover:text-white transition-colors text-sm flex items-center gap-2"><ExternalLink size={12} />{link.label}</a></li>
                 ))}
               </ul>
             </div>
@@ -269,6 +312,7 @@ const FooterStyle3: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
 const FooterStyle4: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenChat }) => {
   const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
   const currentYear = new Date().getFullYear();
+  const quickLinks = getFooterQuickLinks(websiteConfig);
 
   return (
     <>
@@ -289,8 +333,8 @@ const FooterStyle4: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
             <div className="flex max-w-md mx-auto"><input type="email" placeholder="Your email address" className="flex-1 px-4 py-3 rounded-l-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary/20" /><button className="px-6 py-3 bg-theme-primary text-white rounded-r-xl font-medium hover:bg-theme-primary/90 transition-colors">Subscribe</button></div>
           </div>
           <nav className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6 mb-8 text-sm">
-            {[{ label: 'Home', href: '/' }, { label: 'Shop', href: '/products' }, { label: 'About', href: '/about' }, { label: 'Contact', href: '/contact' }, { label: 'Privacy', href: '/privacy' }].map((link, idx) => (
-              <a key={idx} href={link.href} className="text-gray-600 hover:text-theme-primary transition-colors">{link.label}</a>
+            {quickLinks.map((link, idx) => (
+              <a key={link.id || idx} href={link.url} className="text-gray-600 hover:text-theme-primary transition-colors">{link.label}</a>
             ))}
           </nav>
         </div>
@@ -310,6 +354,8 @@ const FooterStyle5: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
   const whatsappLink = buildWhatsAppLink(websiteConfig?.whatsappNumber);
   const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
   const currentYear = new Date().getFullYear();
+  const quickLinks = getFooterQuickLinks(websiteConfig);
+  const usefulLinks = getFooterUsefulLinks(websiteConfig);
 
   return (
     <>
@@ -342,18 +388,18 @@ const FooterStyle5: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
               </div>
             </div>
             <div>
-              <h4 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide">Shop</h4>
+              <h4 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide">Quick Links</h4>
               <ul className="space-y-2">
-                {[{ label: 'All Products', href: '/products' }, { label: 'New Arrivals', href: '/new' }, { label: 'Categories', href: '/categories' }, { label: 'Deals', href: '/deals' }].map((link, idx) => (
-                  <li key={idx}><a href={link.href} className="text-gray-600 hover:text-theme-primary text-sm transition-colors">{link.label}</a></li>
+                {quickLinks.map((link, idx) => (
+                  <li key={link.id || idx}><a href={link.url} className="text-gray-600 hover:text-theme-primary text-sm transition-colors">{link.label}</a></li>
                 ))}
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide">Account</h4>
+              <h4 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide">Useful Links</h4>
               <ul className="space-y-2">
-                {[{ label: 'My Account', href: '/profile' }, { label: 'Orders', href: '/orders' }, { label: 'Wishlist', href: '/wishlist' }, { label: 'Track Order', href: '/track' }].map((link, idx) => (
-                  <li key={idx}><a href={link.href} className="text-gray-600 hover:text-theme-primary text-sm transition-colors">{link.label}</a></li>
+                {usefulLinks.map((link, idx) => (
+                  <li key={link.id || idx}><a href={link.url} className="text-gray-600 hover:text-theme-primary text-sm transition-colors">{link.label}</a></li>
                 ))}
               </ul>
             </div>
@@ -398,5 +444,3 @@ export const StoreFooter: React.FC<StoreFooterProps> = (props) => {
       return <FooterStyle1 {...props} />;
   }
 };
-
-export default StoreFooter;
