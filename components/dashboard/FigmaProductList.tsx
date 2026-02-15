@@ -576,7 +576,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   }, [propProducts]);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl mx-2 sm:mx-4 md:mx-6 p-4 sm:p-6 shadow-sm font-['Poppins']">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl mx-1 xxs:mx-2 sm:mx-4 md:mx-6 p-2 xxs:p-3 sm:p-6 shadow-sm font-['Poppins']">
       {/* Hidden file input for CSV/TSV/XLSX import */}
       <input
         type="file"
@@ -586,24 +586,24 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
         className="hidden"
       />
       {/* Header Row */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-5">
-        <h1 className="text-lg sm:text-xl lg:text-lg sm:text-xl lg:text-lg sm:text-xl lg:text-[22px] font-bold text-[#023337] dark:text-white tracking-[0.11px] font-['Lato']">Products</h1>
+      <div className="flex flex-col gap-3 xxs:gap-4 mb-4 xxs:mb-5">
+        <h1 className="text-base xxs:text-lg sm:text-xl lg:text-[22px] font-bold text-[#023337] dark:text-white tracking-[0.11px] font-['Lato']">Products</h1>
         
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4 lg:gap-6 w-full lg:w-auto">
+        <div className="flex flex-col xxs:flex-row flex-wrap items-stretch xxs:items-center gap-2 xxs:gap-3 sm:gap-4 lg:gap-6 w-full lg:w-auto">
           {/* Search Bar */}
-          <div className="bg-[#f9f9f9] dark:bg-gray-700 h-[34px] rounded-lg flex items-center px-2 w-full sm:w-[200px] md:w-[292px]">
+          <div className="bg-[#f9f9f9] dark:bg-gray-700 h-[32px] xxs:h-[34px] rounded-lg flex items-center px-2 w-full xxs:w-auto xxs:flex-1 sm:w-[200px] md:w-[292px] sm:flex-none">
             <SearchIcon />
             <input
               type="text"
-              placeholder="Search products/SKU"
+              placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent text-[12px] text-[#7b7b7b] dark:text-gray-400 ml-2 flex-1 outline-none"
+              className="bg-transparent text-[11px] xxs:text-[12px] text-[#7b7b7b] dark:text-gray-400 ml-2 flex-1 outline-none min-w-0"
             />
           </div>
 
-          {/* Deep Search */}
-          <button className="bg-[#f9f9f9] dark:bg-gray-700 h-[34px] rounded-lg flex items-center gap-2 px-4">
+          {/* Deep Search - Hidden on very small screens */}
+          <button className="hidden xs:flex bg-[#f9f9f9] dark:bg-gray-700 h-[34px] rounded-lg items-center gap-2 px-3 sm:px-4">
             <SortIcon />
             <span className="text-[12px] text-black dark:text-white">Deep Search</span>
           </button>
@@ -612,31 +612,31 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           <div className="relative" data-dropdown>
             <button
               onClick={() => setShowViewDropdown(!showViewDropdown)}
-              className="border border-[#ff6a00] h-[40px] sm:h-[48px] rounded-lg flex items-center justify-between px-2 sm:px-3 min-w-[100px] sm:min-w-[140px]"
+              className="border border-[#ff6a00] h-[36px] xxs:h-[40px] sm:h-[48px] rounded-lg flex items-center justify-between px-2 xxs:px-3 min-w-0 xxs:min-w-[100px] sm:min-w-[140px] w-full xxs:w-auto"
             >
-              <div className="flex flex-col gap-0.5 items-start overflow-hidden">
-                <span className="text-[11px] font-medium text-[#070707] dark:text-white tracking-[-0.24px]">View</span>
+              <div className="flex flex-col gap-0 xxs:gap-0.5 items-start overflow-hidden">
+                <span className="text-[10px] xxs:text-[11px] font-medium text-[#070707] dark:text-white tracking-[-0.24px]">View</span>
                 <div className="flex items-center gap-1">
                   <ExpandIcon />
-                  <span className="text-[13px] text-[#070707] dark:text-white tracking-[-0.3px] truncate">
-                    {viewMode === 'large' ? 'Large icons' : viewMode === 'small' ? 'Small icons' : 'List view'}
+                  <span className="text-[11px] xxs:text-[13px] text-[#070707] dark:text-white tracking-[-0.3px] truncate">
+                    {viewMode === 'large' ? 'Large' : viewMode === 'small' ? 'Small' : 'List'}
                   </span>
                 </div>
               </div>
               <ChevronDown size={14} className="text-gray-600 dark:text-gray-400 flex-shrink-0 ml-1" />
             </button>
             {showViewDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[155px]">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[140px] xxs:w-[155px]">
                 <button
                   onClick={() => { setViewMode('large'); setShowViewDropdown(false); }}
-                  className={`w-full px-3 py-2 text-left text-[13px] hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 ${viewMode === 'large' ? 'bg-orange-50 text-[#ff6a00]' : 'dark:text-gray-200'}`}
+                  className={`w-full px-2 xxs:px-3 py-2 text-left text-[12px] xxs:text-[13px] hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 ${viewMode === 'large' ? 'bg-orange-50 text-[#ff6a00]' : 'dark:text-gray-200'}`}
                 >
                   <ExpandIcon />
                   Large icons
                 </button>
                 <button
                   onClick={() => { setViewMode('small'); setShowViewDropdown(false); }}
-                  className={`w-full px-3 py-2 text-left text-[13px] hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 ${viewMode === 'small' ? 'bg-orange-50 text-[#ff6a00]' : 'dark:text-gray-200'}`}
+                  className={`w-full px-2 xxs:px-3 py-2 text-left text-[12px] xxs:text-[13px] hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 ${viewMode === 'small' ? 'bg-orange-50 text-[#ff6a00]' : 'dark:text-gray-200'}`}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="3" width="7" height="7" />
@@ -648,7 +648,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                 </button>
                 <button
                   onClick={() => { setViewMode('list'); setShowViewDropdown(false); }}
-                  className={`w-full px-3 py-2 text-left text-[13px] hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 ${viewMode === 'list' ? 'bg-orange-50 text-[#ff6a00]' : 'dark:text-gray-200'}`}
+                  className={`w-full px-2 xxs:px-3 py-2 text-left text-[12px] xxs:text-[13px] hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 ${viewMode === 'list' ? 'bg-orange-50 text-[#ff6a00]' : 'dark:text-gray-200'}`}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <line x1="3" y1="6" x2="21" y2="6" />
@@ -664,21 +664,21 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           {/* Add Product */}
           <button
             onClick={onAddProduct}
-            className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] h-[48px] rounded-lg flex items-center gap-1 px-3 sm:px-4 w-auto sm:w-[142px]"
+            className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] h-[36px] xxs:h-[40px] sm:h-[48px] rounded-lg flex items-center justify-center gap-1 px-3 sm:px-4 w-full xxs:w-auto"
           >
             <AddSquareIcon />
-            <span className="text-[15px] font-bold text-white tracking-[-0.3px] font-['Lato']">Add Product</span>
+            <span className="text-[13px] xxs:text-[15px] font-bold text-white tracking-[-0.3px] font-['Lato']">Add Product</span>
           </button>
         </div>
       </div>
 
       {/* Second Row: Import/Export & Filters */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-5">
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+      <div className="flex flex-col gap-3 xxs:gap-4 mb-4 xxs:mb-5">
+        <div className="flex flex-wrap items-center gap-2 xxs:gap-3 sm:gap-4">
           {/* Import */}
-          <button onClick={() => importInputRef.current?.click()} className="flex items-center gap-1 text-[12px] text-[#161719] dark:text-gray-300 hover:text-[#ff6a00] transition-colors">
+          <button onClick={() => importInputRef.current?.click()} className="flex items-center gap-1 text-[11px] xxs:text-[12px] text-[#161719] dark:text-gray-300 hover:text-[#ff6a00] transition-colors">
             {/* <Download size={20} className="text-[#161719]" /> */}
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="xxs:w-5 xxs:h-5">
                 <path d="M14.1667 17.5C13.6611 17.0085 11.6667 15.7002 11.6667 15C11.6667 14.2997 13.6611 12.9915 14.1667 12.5M12.5001 15H18.3334" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M10.0001 17.5C6.07171 17.5 4.10752 17.5 2.88714 16.2796C1.66675 15.0592 1.66675 13.095 1.66675 9.16667V6.62023C1.66675 5.1065 1.66675 4.34963 1.98368 3.78172C2.2096 3.37689 2.54364 3.04285 2.94846 2.81693C3.51638 2.5 4.27325 2.5 5.78697 2.5C6.75676 2.5 7.24166 2.5 7.66613 2.65917C8.63525 3.0226 9.03491 3.90298 9.47225 4.77761L10.0001 5.83333M6.66675 5.83333H13.9584C15.714 5.83333 16.5917 5.83333 17.2223 6.25466C17.4953 6.43706 17.7297 6.67143 17.9121 6.94441C18.3164 7.54952 18.3327 8.38233 18.3334 10V11.6667" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round"/>
                 </svg>
@@ -687,9 +687,9 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           </button>
 
           {/* Export */}
-          <button onClick={handleExportCSV} className="flex items-center gap-1 text-[12px] text-[#161719] dark:text-gray-300 hover:text-[#ff6a00] transition-colors">
+          <button onClick={handleExportCSV} className="flex items-center gap-1 text-[11px] xxs:text-[12px] text-[#161719] dark:text-gray-300 hover:text-[#ff6a00] transition-colors">
             {/* <Upload size={20} className="text-[#161719]" /> */}
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="xxs:w-5 xxs:h-5">
             <path d="M15.8334 17.5C16.3391 17.0085 18.3334 15.7002 18.3334 15C18.3334 14.2997 16.3391 12.9915 15.8334 12.5M17.5001 15H11.6667" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M10.0001 17.5C6.07171 17.5 4.10752 17.5 2.88714 16.2796C1.66675 15.0592 1.66675 13.095 1.66675 9.16667V6.62023C1.66675 5.1065 1.66675 4.34963 1.98368 3.78172C2.2096 3.37689 2.54364 3.04285 2.94846 2.81693C3.51638 2.5 4.27325 2.5 5.78697 2.5C6.75676 2.5 7.24166 2.5 7.66613 2.65917C8.63525 3.0226 9.03491 3.90298 9.47225 4.77761L10.0001 5.83333M6.66675 5.83333H13.9584C15.714 5.83333 16.5917 5.83333 17.2223 6.25466C17.4953 6.43706 17.7297 6.67143 17.9121 6.94441C18.3164 7.54952 18.3327 8.38233 18.3334 10V10.8333" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round"/>
             </svg>
@@ -701,20 +701,20 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           <div className="relative" data-dropdown>
             <button
               onClick={() => setShowPerPageDropdown(!showPerPageDropdown)}
-              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 px-2 sm:px-3 py-2 w-full sm:w-[119px]"
+              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 w-auto"
             >
-              <span className="text-[12px] text-black dark:text-white">{productsPerPage} Products</span>
-              <ChevronDown size={14} className="text-gray-600 dark:text-gray-400" />
+              <span className="text-[11px] xxs:text-[12px] text-black dark:text-white">{productsPerPage}</span>
+              <ChevronDown size={12} className="text-gray-600 dark:text-gray-400 xxs:w-[14px] xxs:h-[14px]" />
             </button>
             {showPerPageDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-full">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[80px] xxs:w-[100px]">
                 {[10, 20, 50, 100].map(num => (
                   <button
                     key={num}
                     onClick={() => { setProductsPerPage(num); setShowPerPageDropdown(false); }}
-                    className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
+                    className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
                   >
-                    {num} Products
+                    {num}
                   </button>
                 ))}
               </div>
@@ -722,29 +722,29 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+        <div className="flex flex-wrap items-center gap-2 xxs:gap-3 sm:gap-4">
           {/* Filter Label */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 xxs:gap-2">
             <SortIcon />
-            <span className="text-[12px] text-black dark:text-white">Filter:</span>
+            <span className="text-[11px] xxs:text-[12px] text-black dark:text-white">Filter:</span>
           </div>
 
           {/* Category Filter */}
           <div className="relative" data-dropdown>
             <button
               onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 px-2 sm:px-3 py-2 w-full sm:w-[119px]"
+              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[100px] xxs:max-w-[119px]"
             >
-              <span className="text-[12px] text-black dark:text-white truncate">
-                {categoryFilter === 'all' ? 'All Category' : categoryFilter}
+              <span className="text-[11px] xxs:text-[12px] text-black dark:text-white truncate">
+                {categoryFilter === 'all' ? 'All' : categoryFilter}
               </span>
-              <ChevronDown size={14} className="text-gray-600 dark:text-gray-400 flex-shrink-0" />
+              <ChevronDown size={12} className="text-gray-600 dark:text-gray-400 flex-shrink-0 xxs:w-[14px] xxs:h-[14px]" />
             </button>
             {showCategoryDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[150px] max-h-[200px] overflow-y-auto">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[130px] xxs:w-[150px] max-h-[200px] overflow-y-auto">
                 <button
                   onClick={() => { setCategoryFilter('all'); setShowCategoryDropdown(false); }}
-                  className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
+                  className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
                 >
                   All Category
                 </button>
@@ -752,7 +752,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                   <button
                     key={cat}
                     onClick={() => { setCategoryFilter(cat!); setShowCategoryDropdown(false); }}
-                    className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 truncate"
+                    className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 truncate"
                   >
                     {cat}
                   </button>
@@ -765,18 +765,18 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           <div className="relative" data-dropdown>
             <button
               onClick={() => setShowBrandDropdown(!showBrandDropdown)}
-              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 px-3 py-2"
+              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[90px] xxs:max-w-[110px]"
             >
-              <span className="text-[12px] text-black dark:text-white truncate">
-                {brandFilter === 'all' ? 'All Brands' : brandFilter}
+              <span className="text-[11px] xxs:text-[12px] text-black dark:text-white truncate">
+                {brandFilter === 'all' ? 'All' : brandFilter}
               </span>
-              <ChevronDown size={14} className="text-gray-600 dark:text-gray-400 flex-shrink-0" />
+              <ChevronDown size={12} className="text-gray-600 dark:text-gray-400 flex-shrink-0 xxs:w-[14px] xxs:h-[14px]" />
             </button>
             {showBrandDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[150px] max-h-[200px] overflow-y-auto">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[130px] xxs:w-[150px] max-h-[200px] overflow-y-auto">
                 <button
                   onClick={() => { setBrandFilter('all'); setShowBrandDropdown(false); }}
-                  className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
+                  className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
                 >
                   All Brands
                 </button>
@@ -784,7 +784,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                   <button
                     key={brand}
                     onClick={() => { setBrandFilter(brand!); setShowBrandDropdown(false); }}
-                    className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 truncate"
+                    className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 truncate"
                   >
                     {brand}
                   </button>
@@ -797,30 +797,30 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           <div className="relative" data-dropdown>
             <button
               onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 px-3 py-2"
+              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0"
             >
-              <span className="text-[12px] text-black dark:text-white">
-                {statusFilter === 'all' ? 'All Status' : statusFilter}
+              <span className="text-[11px] xxs:text-[12px] text-black dark:text-white">
+                {statusFilter === 'all' ? 'All' : statusFilter}
               </span>
-              <ChevronDown size={14} className="text-gray-600 dark:text-gray-400" />
+              <ChevronDown size={12} className="text-gray-600 dark:text-gray-400 xxs:w-[14px] xxs:h-[14px]" />
             </button>
             {showStatusDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[120px]">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[100px] xxs:w-[120px]">
                 <button
                   onClick={() => { setStatusFilter('all'); setShowStatusDropdown(false); }}
-                  className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
+                  className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
                 >
                   All Status
                 </button>
                 <button
                   onClick={() => { setStatusFilter('Active'); setShowStatusDropdown(false); }}
-                  className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
+                  className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
                 >
                   Publish
                 </button>
                 <button
                   onClick={() => { setStatusFilter('Draft'); setShowStatusDropdown(false); }}
-                  className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
+                  className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
                 >
                   Draft
                 </button>
@@ -832,57 +832,56 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* Bulk Action Bar - Shows when items are selected */}
       {selectedIds.size > 0 && (
-        <div className="bg-gradient-to-r from-[#ff6a00] to-[#ff9500] rounded-xl p-4 mb-5 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-white font-semibold text-sm">
-              {selectedIds.size} product{selectedIds.size > 1 ? 's' : ''} selected
+        <div className="bg-gradient-to-r from-[#ff6a00] to-[#ff9500] rounded-xl p-2 xxs:p-3 sm:p-4 mb-4 xxs:mb-5 flex flex-col xxs:flex-row flex-wrap items-start xxs:items-center justify-between gap-2 xxs:gap-4">
+          <div className="flex items-center gap-2 xxs:gap-3">
+            <span className="text-white font-semibold text-xs xxs:text-sm">
+              {selectedIds.size} selected
             </span>
             <button 
               onClick={() => setSelectedIds(new Set())}
-              className="text-white/80 hover:text-white text-sm underline"
+              className="text-white/80 hover:text-white text-xs xxs:text-sm underline"
             >
-              Clear selection
+              Clear
             </button>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1 xxs:gap-2">
             <button
               onClick={handleBulkPublish}
-              className="bg-white text-green-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-50 transition-colors flex items-center gap-2"
+              className="bg-white text-green-600 px-2 xxs:px-3 sm:px-4 py-1.5 xxs:py-2 rounded-lg text-xs xxs:text-sm font-medium hover:bg-green-50 transition-colors flex items-center gap-1 xxs:gap-2"
             >
-              <Eye size={16} />
-              Publish
+              <Eye size={14} className="xxs:w-4 xxs:h-4" />
+              <span className="hidden xxs:inline">Publish</span>
             </button>
             <button
               onClick={handleBulkDraft}
-              className="bg-white text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+              className="bg-white text-gray-600 px-2 xxs:px-3 sm:px-4 py-1.5 xxs:py-2 rounded-lg text-xs xxs:text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-1 xxs:gap-2"
             >
-              <Edit size={16} />
-              Draft
+              <Edit size={14} className="xxs:w-4 xxs:h-4" />
+              <span className="hidden xxs:inline">Draft</span>
             </button>
             <button
               onClick={() => handleBulkFlashSale('add')}
-              className="bg-white text-orange-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-50 transition-colors flex items-center gap-2"
+              className="bg-white text-orange-600 px-2 xxs:px-3 sm:px-4 py-1.5 xxs:py-2 rounded-lg text-xs xxs:text-sm font-medium hover:bg-orange-50 transition-colors flex items-center gap-1 xxs:gap-2"
             >
-              ⚡ Send to Flash Sale
+              ⚡ <span className="hidden xs:inline">Flash Sale</span>
             </button>
             <button
               onClick={() => handleBulkFlashSale('remove')}
-              className="bg-white text-yellow-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-yellow-50 transition-colors flex items-center gap-2"
+              className="hidden sm:flex bg-white text-yellow-600 px-2 xxs:px-3 sm:px-4 py-1.5 xxs:py-2 rounded-lg text-xs xxs:text-sm font-medium hover:bg-yellow-50 transition-colors items-center gap-1 xxs:gap-2"
             >
-              ⚡ Remove from Flash Sale
+              ⚡ Remove
             </button>
             <button
               onClick={() => setShowDiscountModal(true)}
-              className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-50 transition-colors flex items-center gap-2"
+              className="bg-white text-purple-600 px-2 xxs:px-3 sm:px-4 py-1.5 xxs:py-2 rounded-lg text-xs xxs:text-sm font-medium hover:bg-purple-50 transition-colors flex items-center gap-1 xxs:gap-2"
             >
-              % Discount
+              %
             </button>
             <button
               onClick={handleBulkDelete}
-              className="bg-white text-red-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors flex items-center gap-2"
+              className="bg-white text-red-600 px-2 xxs:px-3 sm:px-4 py-1.5 xxs:py-2 rounded-lg text-xs xxs:text-sm font-medium hover:bg-red-50 transition-colors flex items-center gap-1 xxs:gap-2"
             >
-              <Trash2 size={16} />
-              Delete
+              <Trash2 size={14} className="xxs:w-4 xxs:h-4" />
             </button>
           </div>
         </div>
@@ -890,19 +889,19 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* Discount Modal */}
       {showDiscountModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 w-[400px] shadow-2xl">
-            <h3 className="text-lg font-semibold mb-4 dark:text-white">Apply Discount</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 xxs:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-3 xxs:p-4 sm:p-6 w-full max-w-[350px] xxs:max-w-[400px] shadow-2xl">
+            <h3 className="text-base xxs:text-lg font-semibold mb-3 xxs:mb-4 dark:text-white">Apply Discount</h3>
+            <p className="text-xs xxs:text-sm text-gray-600 dark:text-gray-400 mb-3 xxs:mb-4">
               Apply discount to {selectedIds.size} selected product{selectedIds.size > 1 ? 's' : ''}
             </p>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3 xxs:mb-4">
               <input
                 type="number"
                 value={discountValue}
                 onChange={(e) => setDiscountValue(Number(e.target.value))}
                 placeholder="Enter discount %"
-                className="flex-1 h-10 border dark:border-gray-600 rounded-lg px-3 text-sm outline-none focus:border-[#ff6a00] bg-white dark:bg-gray-700 dark:text-white"
+                className="flex-1 h-9 xxs:h-10 border dark:border-gray-600 rounded-lg px-2 xxs:px-3 text-xs xxs:text-sm outline-none focus:border-[#ff6a00] bg-white dark:bg-gray-700 dark:text-white"
                 min="0"
                 max="100"
               />
@@ -911,15 +910,15 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => { setShowDiscountModal(false); setDiscountValue(0); }}
-                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                className="px-3 xxs:px-4 py-1.5 xxs:py-2 text-xs xxs:text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
               >
                 Cancel
               </button>
               <button
                 onClick={handleApplyDiscount}
-                className="px-4 py-2 text-sm bg-[#ff6a00] text-white rounded-lg hover:bg-[#e55d00]"
+                className="px-3 xxs:px-4 py-1.5 xxs:py-2 text-xs xxs:text-sm bg-[#ff6a00] text-white rounded-lg hover:bg-[#e55d00]"
               >
-                Apply Discount
+                Apply
               </button>
             </div>
           </div>
@@ -928,25 +927,25 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* Grid View - Large Icons */}
       {viewMode === 'large' && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 xxs:gap-3 sm:gap-4">
           {paginatedProducts.length > 0 ? paginatedProducts.map((product, idx) => {
             const productKey = getProductKey(product, idx);
             return (
-            <div key={productKey} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-2 sm:p-4 hover:shadow-lg transition-shadow relative group">
+            <div key={productKey} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-2 xxs:p-3 sm:p-4 hover:shadow-lg transition-shadow relative group">
               {/* Checkbox */}
-              <div className="absolute top-3 left-3 z-10">
+              <div className="absolute top-2 xxs:top-3 left-2 xxs:left-3 z-10">
                 <input
                   type="checkbox"
                   checked={selectedIds.has(productKey)}
                   onChange={() => handleSelectProduct(productKey)}
-                  className="w-5 h-5 rounded border-gray-300"
+                  className="w-4 h-4 xxs:w-5 xxs:h-5 rounded border-gray-300"
                 />
               </div>
               {/* Actions Dropdown */}
-              <div className="absolute top-3 right-3 z-10" data-dropdown>
+              <div className="absolute top-2 xxs:top-3 right-2 xxs:right-3 z-10" data-dropdown>
                 <button
                   onClick={() => setOpenDropdownId(openDropdownId === productKey ? null : productKey)}
-                  className="p-1.5 bg-white/80 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full transition-colors"
+                  className="p-1 xxs:p-1.5 bg-white/80 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full transition-colors"
                 >
                   <DotsIcon />
                 </button>
@@ -990,17 +989,17 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white text-sm">
+                  <div className="w-full h-full flex items-center justify-center text-white text-xs xxs:text-sm">
                     No Image
                   </div>
                 )}
               </div>
               {/* Info */}
-              <h3 className="text-xs sm:text-[14px] font-medium text-gray-900 dark:text-white line-clamp-2 mb-1 sm:mb-2">{product.name}</h3>
-              <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-2">{product.category || 'Uncategorized'}</p>
+              <h3 className="text-[11px] xxs:text-xs sm:text-[14px] font-medium text-gray-900 dark:text-white line-clamp-2 mb-1 sm:mb-2">{product.name}</h3>
+              <p className="text-[11px] xxs:text-[13px] text-gray-500 dark:text-gray-400 mb-1 xxs:mb-2">{product.category || 'Uncategorized'}</p>
               <div className="flex items-center justify-between">
-                <span className="text-[15px] font-bold text-[#1e90ff]">৳{product.price}</span>
-                <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                <span className="text-[13px] xxs:text-[15px] font-bold text-[#1e90ff]">৳{product.price}</span>
+                <span className={`px-1.5 xxs:px-2 py-0.5 rounded-full text-[9px] xxs:text-[11px] font-medium ${
                   product.status === 'Active' 
                     ? 'bg-[#c1ffbc] text-[#085e00]' 
                     : 'bg-orange-100 text-orange-700'
@@ -1008,16 +1007,16 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                   {product.status === 'Active' ? 'Publish' : 'Draft'}
                 </span>
               </div>
-              {product.sku && <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2">SKU: {product.sku}</p>}
+              {product.sku && <p className="text-[10px] xxs:text-[11px] text-gray-400 dark:text-gray-500 mt-1 xxs:mt-2">SKU: {product.sku}</p>}
             </div>
           );}) : (
-            <div className="col-span-full py-12 text-center text-gray-500 dark:text-gray-400">
+            <div className="col-span-full py-8 xxs:py-12 text-center text-gray-500 dark:text-gray-400">
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center mb-3">
-                  <Search size={24} className="text-gray-400 dark:text-gray-500" />
+                <div className="w-12 h-12 xxs:w-16 xxs:h-16 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center mb-2 xxs:mb-3">
+                  <Search size={20} className="text-gray-400 dark:text-gray-500 xxs:w-6 xxs:h-6" />
                 </div>
-                <p className="font-medium">No products found</p>
-                <p className="text-sm">Try adjusting your search or filters</p>
+                <p className="font-medium text-sm xxs:text-base">No products found</p>
+                <p className="text-xs xxs:text-sm">Try adjusting your search or filters</p>
               </div>
             </div>
           )}
@@ -1026,23 +1025,23 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* Grid View - Small Icons */}
       {viewMode === 'small' && (
-        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 xxs:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2 xxs:gap-3">
           {paginatedProducts.length > 0 ? paginatedProducts.map((product, idx) => {
             const productKey = getProductKey(product, idx);
             return (
-            <div key={productKey} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-2 hover:shadow-md transition-shadow relative group">
+            <div key={productKey} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-1.5 xxs:p-2 hover:shadow-md transition-shadow relative group">
               {/* Checkbox */}
               <div className="absolute top-1 left-1 z-10">
                 <input
                   type="checkbox"
                   checked={selectedIds.has(productKey)}
                   onChange={() => handleSelectProduct(productKey)}
-                  className="w-4 h-4 rounded border-gray-300"
+                  className="w-3 h-3 xxs:w-4 xxs:h-4 rounded border-gray-300"
                 />
               </div>
               {/* Image */}
               <div 
-                className="w-full aspect-square rounded overflow-hidden bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] mb-2 cursor-pointer"
+                className="w-full aspect-square rounded overflow-hidden bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] mb-1.5 xxs:mb-2 cursor-pointer"
                 onClick={() => onEditProduct?.(product)}
               >
                 {product.image ? (
@@ -1052,29 +1051,29 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white text-xs">
+                  <div className="w-full h-full flex items-center justify-center text-white text-[10px] xxs:text-xs">
                     No Img
                   </div>
                 )}
               </div>
               {/* Info */}
-              <h3 className="text-[11px] font-medium text-gray-900 dark:text-white line-clamp-1">{product.name}</h3>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-[12px] font-bold text-[#1e90ff]">৳{product.price}</span>
-                <span className={`w-2 h-2 rounded-full ${
+              <h3 className="text-[10px] xxs:text-[11px] font-medium text-gray-900 dark:text-white line-clamp-1">{product.name}</h3>
+              <div className="flex items-center justify-between mt-0.5 xxs:mt-1">
+                <span className="text-[11px] xxs:text-[12px] font-bold text-[#1e90ff]">৳{product.price}</span>
+                <span className={`w-1.5 h-1.5 xxs:w-2 xxs:h-2 rounded-full ${
                   product.status === 'Active' ? 'bg-green-500' : 'bg-orange-400'
                 }`} title={product.status === 'Active' ? 'Published' : 'Draft'} />
               </div>
             </div>
             );
           }) : (
-            <div className="col-span-full py-12 text-center text-gray-500 dark:text-gray-400">
+            <div className="col-span-full py-8 xxs:py-12 text-center text-gray-500 dark:text-gray-400">
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center mb-3">
-                  <Search size={24} className="text-gray-400 dark:text-gray-500" />
+                <div className="w-12 h-12 xxs:w-16 xxs:h-16 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center mb-2 xxs:mb-3">
+                  <Search size={20} className="text-gray-400 dark:text-gray-500 xxs:w-6 xxs:h-6" />
                 </div>
-                <p className="font-medium">No products found</p>
-                <p className="text-sm">Try adjusting your search or filters</p>
+                <p className="font-medium text-sm xxs:text-base">No products found</p>
+                <p className="text-xs xxs:text-sm">Try adjusting your search or filters</p>
               </div>
             </div>
           )}
@@ -1083,22 +1082,22 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* List View - Table */}
       {viewMode === 'list' && (
-      <div className="overflow-x-auto min-h-[200px] -mx-4 sm:mx-0 px-4 sm:px-0">
-        <table className="w-full text-sm overflow-visible min-w-[900px]">
+      <div className="overflow-x-auto min-h-[200px] -mx-2 xxs:-mx-3 sm:mx-0 px-2 xxs:px-3 sm:px-0">
+        <table className="w-full text-xs xxs:text-sm overflow-visible min-w-[600px] xxs:min-w-[700px] sm:min-w-[900px]">
           <thead className="bg-[#E0F2FE] dark:bg-gray-700">
             <tr>
-              <th className="px-4 py-3 text-left">
+              <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left">
                 <input
                   type="checkbox"
                   checked={selectedIds.size === paginatedProducts.length && paginatedProducts.length > 0}
                   onChange={handleSelectAll}
-                  className="w-5 h-5 rounded border-[1.5px] border-[#050605] bg-white dark:bg-gray-600"
+                  className="w-4 h-4 xxs:w-5 xxs:h-5 rounded border-[1.5px] border-[#050605] bg-white dark:bg-gray-600"
                 />
               </th>
-              <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">SL</th>
-              <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Image</th>
-              <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Name</th>
-              <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Category</th>
+              <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px]">SL</th>
+              <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px]">Image</th>
+              <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px]">Name</th>
+              <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px]">Category</th>
               <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Sub Category</th>
               <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Priority</th>
               <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">SKU</th>

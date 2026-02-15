@@ -814,22 +814,22 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
   ];
 
   return (
-    <div className="min-h-screen bg-[#f9f9f9] pb-8 font-['Lato']">
+    <div className="min-h-screen bg-[#f9f9f9] pb-6 xxs:pb-8 font-['Lato']">
       {/* Header */}
-      <div className="px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
-        <h1 className="text-lg sm:text-xl lg:text-lg sm:text-xl lg:text-lg sm:text-xl lg:text-[24px] font-bold text-black">Product Upload</h1>
+      <div className="px-2 xxs:px-3 sm:px-4 lg:px-6 py-3 xxs:py-4 sm:py-6">
+        <h1 className="text-base xxs:text-lg sm:text-xl lg:text-[24px] font-bold text-black">Product Upload</h1>
       </div>
 
-      <div className="px-3 sm:px-4 lg:px-6 flex flex-col lg:flex-row gap-4 lg:gap-6">
+      <div className="px-2 xxs:px-3 sm:px-4 lg:px-6 flex flex-col lg:flex-row gap-3 xxs:gap-4 lg:gap-6">
         {/* Left Column - Form */}
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 space-y-3 xxs:space-y-4">
           {/* General Information */}
           <Section title="General Information">
-            <div className="space-y-4">
+            <div className="space-y-3 xxs:space-y-4">
               {/* Item Name */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-[16px] text-black">
+              <div className="flex flex-col gap-1.5 xxs:gap-2">
+                <div className="flex flex-col xxs:flex-row xxs:items-center justify-between gap-1 xxs:gap-2">
+                  <label className="text-[14px] xxs:text-[16px] text-black">
                     Item Name<span className="text-[#e30000]">*</span>
                   </label>
                   <Toggle 
@@ -848,13 +848,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                     }
                   }}
                   placeholder="Ex: Samsung Galaxy S25 Ultra"
-                  className="w-full h-10 bg-[#f9f9f9] rounded-lg px-3 text-[14px] placeholder:text-[#a2a2a2] outline-none"
+                  className="w-full h-9 xxs:h-10 bg-[#f9f9f9] rounded-lg px-2 xxs:px-3 text-[13px] xxs:text-[14px] placeholder:text-[#a2a2a2] outline-none"
                 />
               </div>
 
               {/* Shop Name */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[16px] text-black">
+              <div className="flex flex-col gap-1.5 xxs:gap-2">
+                <label className="text-[14px] xxs:text-[16px] text-black">
                   Shop Name
                 </label>
                 <input
@@ -862,22 +862,22 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   value={formData.shopName}
                   onChange={(e) => updateField('shopName', e.target.value)}
                   placeholder="Enter your shop name"
-                  className="w-full h-10 bg-[#f9f9f9] rounded-lg px-3 text-[14px] placeholder:text-[#a2a2a2] outline-none"
+                  className="w-full h-9 xxs:h-10 bg-[#f9f9f9] rounded-lg px-2 xxs:px-3 text-[13px] xxs:text-[14px] placeholder:text-[#a2a2a2] outline-none"
                 />
               </div>
 
               {/* Media */}
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5 xxs:gap-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-[16px] font-medium text-black">
+                  <label className="text-[14px] xxs:text-[16px] font-medium text-black">
                     Media<span className="text-[#da0000]">*</span>
                   </label>
-                  <ChevronUp size={20} />
+                  <ChevronUp size={18} className="xxs:w-5 xxs:h-5" />
                 </div>
                 
                 {/* Image Upload & Gallery */}
                 <div 
-                  className={`rounded-lg p-4 transition-colors border-2 ${
+                  className={`rounded-lg p-2 xxs:p-3 sm:p-4 transition-colors border-2 ${
                     isDragging 
                       ? 'bg-blue-50 border-blue-400 border-dashed' 
                       : 'bg-[#f9f9f9] border-transparent hover:bg-gray-50'
@@ -888,20 +888,20 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                 >
                   {/* Gallery Grid */}
                   {allImages.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-3 xxs:space-y-4">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">{allImages.length}/20 images</span>
+                        <span className="text-xs xxs:text-sm text-gray-600">{allImages.length}/20 images</span>
                         {allImages.length < 20 && (
                           <button 
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="text-sm text-[#ff9f1c] hover:underline flex items-center gap-1"
+                            className="text-xs xxs:text-sm text-[#ff9f1c] hover:underline flex items-center gap-1"
                           >
-                            <Plus size={14} /> Add More
+                            <Plus size={12} className="xxs:w-[14px] xxs:h-[14px]" /> Add More
                           </button>
                         )}
                       </div>
-                      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
+                      <div className="grid grid-cols-3 xxs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 xxs:gap-3">
                         {allImages.map((img, idx) => (
                           <div 
                             key={idx} 
@@ -911,17 +911,17 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                           >
                             <img src={normalizeImageUrl(img)} alt={`Product ${idx + 1}`} className="w-full h-full object-cover" />
                             {idx === 0 && (
-                              <div className="absolute top-1 left-1 bg-[#ff9f1c] text-white text-[10px] px-1.5 py-0.5 rounded">
+                              <div className="absolute top-0.5 xxs:top-1 left-0.5 xxs:left-1 bg-[#ff9f1c] text-white text-[8px] xxs:text-[10px] px-1 xxs:px-1.5 py-0.5 rounded">
                                 Main
                               </div>
                             )}
                             {/* Hover actions */}
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 xxs:gap-2">
                               {idx !== 0 && (
                                 <button 
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); handleSetAsMain(idx); }}
-                                  className="w-7 h-7 bg-white text-gray-700 rounded-full flex items-center justify-center text-xs hover:bg-[#ff9f1c] hover:text-white transition-colors"
+                                  className="w-5 h-5 xxs:w-7 xxs:h-7 bg-white text-gray-700 rounded-full flex items-center justify-center text-[10px] xxs:text-xs hover:bg-[#ff9f1c] hover:text-white transition-colors"
                                   title="Set as Main"
                                 >
                                   ★
@@ -930,10 +930,10 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                               <button 
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); handleRemoveImage(idx); }}
-                                className="w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                                className="w-5 h-5 xxs:w-7 xxs:h-7 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
                                 title="Remove"
                               >
-                                <X size={14} />
+                                <X size={12} className="xxs:w-[14px] xxs:h-[14px]" />
                               </button>
                             </div>
                           </div>
@@ -944,28 +944,27 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                             onClick={() => fileInputRef.current?.click()}
                             className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-[#ff9f1c] hover:bg-orange-50 transition-colors"
                           >
-                            <Plus size={24} className="text-gray-400" />
-                            <span className="text-[10px] text-gray-400 mt-1">Add</span>
+                            <Plus size={20} className="text-gray-400 xxs:w-6 xxs:h-6" />
+                            <span className="text-[9px] xxs:text-[10px] text-gray-400 mt-0.5 xxs:mt-1">Add</span>
                           </div>
                         )}
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center py-4 sm:py-6 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                      <div className="w-[76px] h-[76px] mb-3">
-                        <Upload size={76} className="text-[#a2a2a2]" />
+                    <div className="flex flex-col items-center py-3 xxs:py-4 sm:py-6 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                      <div className="w-[50px] h-[50px] xxs:w-[60px] xxs:h-[60px] sm:w-[76px] sm:h-[76px] mb-2 xxs:mb-3">
+                        <Upload className="w-full h-full text-[#a2a2a2]" />
                       </div>
-                      <p className="text-[16px] text-[#a2a2a2] text-center">
-                        Drag and drop images here, or click to add.
+                      <p className="text-[13px] xxs:text-[14px] sm:text-[16px] text-[#a2a2a2] text-center">
+                        Drag & drop images, or click to add.
                       </p>
-                      <p className="text-[12px] text-[#a2a2a2] text-center mt-1">
-                        Supported: JPG, PNG (max 4MB each). Up to 20 images.<br/>
-                        Recommended: 1:1.6 aspect ratio (855×1386 pixels)
+                      <p className="text-[10px] xxs:text-[11px] sm:text-[12px] text-[#a2a2a2] text-center mt-1">
+                        JPG, PNG (max 4MB). Up to 20 images.
                       </p>
                       <button 
                         type="button"
                         onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                        className="mt-4 bg-[#ff9f1c] text-white px-4 py-2 rounded-lg text-[14px] font-semibold"
+                        className="mt-3 xxs:mt-4 bg-[#ff9f1c] text-white px-3 xxs:px-4 py-1.5 xxs:py-2 rounded-lg text-[12px] xxs:text-[14px] font-semibold"
                       >
                         Add Images
                       </button>
@@ -1040,7 +1039,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
 
           {/* Pricing */}
           <Section title="Pricing">
-            <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-6">
               <InputField
                 label="Sell/Current Price"
                 required
@@ -1069,8 +1068,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
 
           {/* Inventory */}
           <Section title="Inventory">
-            <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+            <div className="space-y-3 xxs:space-y-4">
+              <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-6">
                 <InputField
                   label="Product Priority"
                   value={formData.priority}
@@ -1092,7 +1091,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   placeholder="Piece, kg, liter, meter etc."
                 />
               </div>
-              <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-6">
                 <InputField
                   label="Warranty"
                   value={formData.warranty}
@@ -1110,10 +1109,10 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   value={formData.barcode}
                   onChange={(v) => updateField('barcode', v)}
                   placeholder="2154645786216"
-                  rightIcon={<Scan size={20} className="text-gray-400" />}
+                  rightIcon={<Scan size={18} className="text-gray-400 xxs:w-5 xxs:h-5" />}
                 />
               </div>
-              <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-6">
                 <InputField
                   label="Initial Sold Count"
                   value={formData.initialSoldCount}
@@ -1126,14 +1125,14 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   value={formData.productionStart}
                   onChange={(v) => updateField('productionStart', v)}
                   placeholder="DD-MM-YYYY"
-                  rightIcon={<Calendar size={20} className="text-gray-400" />}
+                  rightIcon={<Calendar size={18} className="text-gray-400 xxs:w-5 xxs:h-5" />}
                 />
                 <InputField
                   label="Expiration End"
                   value={formData.expirationEnd}
                   onChange={(v) => updateField('expirationEnd', v)}
                   placeholder="DD-MM-YYYY"
-                  rightIcon={<Calendar size={20} className="text-gray-400" />}
+                  rightIcon={<Calendar size={18} className="text-gray-400 xxs:w-5 xxs:h-5" />}
                 />
               </div>
             </div>
@@ -1582,56 +1581,56 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         </div>
 
         {/* Mobile Sidebar - shown below form on mobile */}
-        <div className="lg:hidden space-y-4 w-full">
+        <div className="lg:hidden space-y-3 xxs:space-y-4 w-full">
           {/* Action Buttons - Mobile */}
           <div className="flex gap-2">
             <button
               onClick={handleSaveDraft}
-              className="flex-1 h-10 bg-white rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 text-sm"
+              className="flex-1 h-9 xxs:h-10 bg-white rounded-lg flex items-center justify-center gap-1.5 xxs:gap-2 hover:bg-gray-50 text-xs xxs:text-sm"
             >
               <DraftIcon />
               <span className="font-semibold text-[#070606]">Draft</span>
             </button>
             <button
               onClick={handlePublish}
-              className="flex-1 h-10 bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] rounded-lg flex items-center justify-center gap-2"
+              className="flex-1 h-9 xxs:h-10 bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] rounded-lg flex items-center justify-center gap-1.5 xxs:gap-2"
             >
               <AddCircleIcon />
-              <span className="text-sm font-semibold text-white">{editProduct ? 'Update' : 'Add'}</span>
+              <span className="text-xs xxs:text-sm font-semibold text-white">{editProduct ? 'Update' : 'Add'}</span>
             </button>
           </div>
 
           {/* Ready To Publish - Mobile */}
-          <div className="bg-white rounded-lg p-3 sm:p-4">
-            <h3 className="text-base sm:text-lg font-medium text-black mb-3">Ready To Publish</h3>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex-1 h-2 bg-[#f9f9f9] rounded-full overflow-hidden">
+          <div className="bg-white rounded-lg p-2 xxs:p-3 sm:p-4">
+            <h3 className="text-sm xxs:text-base sm:text-lg font-medium text-black mb-2 xxs:mb-3">Ready To Publish</h3>
+            <div className="flex items-center gap-2 mb-2 xxs:mb-3">
+              <div className="flex-1 h-1.5 xxs:h-2 bg-[#f9f9f9] rounded-full overflow-hidden">
                 <div 
                   className={`h-full ${getProgressColor(completionPercentage)} rounded-full transition-all duration-300`}
                   style={{ width: `${completionPercentage}%` }}
                 />
               </div>
-              <span className="text-sm font-medium">{completionPercentage}%</span>
+              <span className="text-xs xxs:text-sm font-medium">{completionPercentage}%</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5 xxs:gap-2">
               {completionItems.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2">
-                  <div className={`w-3 h-3 rounded-full border flex items-center justify-center transition-all ${item.completed ? 'bg-green-500 border-green-500' : 'border-gray-300 bg-white'}`}>
+                <div key={idx} className="flex items-center gap-1.5 xxs:gap-2">
+                  <div className={`w-2.5 h-2.5 xxs:w-3 xxs:h-3 rounded-full border flex items-center justify-center transition-all ${item.completed ? 'bg-green-500 border-green-500' : 'border-gray-300 bg-white'}`}>
                     {item.completed && (
-                      <svg className="w-2 h-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <svg className="w-1.5 h-1.5 xxs:w-2 xxs:h-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     )}
                   </div>
-                  <span className={`text-xs ${item.completed ? 'text-black' : 'text-gray-400'}`}>{item.label}</span>
+                  <span className={`text-[10px] xxs:text-xs ${item.completed ? 'text-black' : 'text-gray-400'}`}>{item.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Catalog - Mobile */}
-          <div className="bg-white rounded-lg p-3 sm:p-4">
-            <h3 className="text-base sm:text-lg font-medium text-black mb-3">Catalog</h3>
+          <div className="bg-white rounded-lg p-2 xxs:p-3 sm:p-4">
+            <h3 className="text-sm xxs:text-base sm:text-lg font-medium text-black mb-2 xxs:mb-3">Catalog</h3>
             <SelectField
               value={formData.category}
               onChange={(v) => updateField('category', v)}
@@ -1641,17 +1640,17 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
             />
             <button 
               onClick={() => setShowCatalogModal(true)}
-              className="mt-3 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
+              className="mt-2 xxs:mt-3 h-8 xxs:h-9 bg-[#f4f4f4] rounded-lg px-2 xxs:px-3 flex items-center gap-1.5 xxs:gap-2 ml-auto hover:bg-gray-200 transition-colors text-xs xxs:text-sm"
             >
-              <Plus size={20} />
+              <Plus size={16} className="xxs:w-5 xxs:h-5" />
               <span className="font-semibold text-[#070606]">Add Category</span>
             </button>
           </div>
 
           {/* Tag & Deep Search - Mobile */}
-          <div className="bg-white rounded-lg p-3 sm:p-4">
-            <h3 className="text-base sm:text-lg font-medium text-black mb-3">Tag & Deep Search</h3>
-            <div className="space-y-2">
+          <div className="bg-white rounded-lg p-2 xxs:p-3 sm:p-4">
+            <h3 className="text-sm xxs:text-base sm:text-lg font-medium text-black mb-2 xxs:mb-3">Tag & Deep Search</h3>
+            <div className="space-y-1.5 xxs:space-y-2">
               <SelectField
                 value={formData.tag}
                 onChange={(v) => updateField('tag', v)}
