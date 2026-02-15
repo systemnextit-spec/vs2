@@ -102,7 +102,7 @@ const menuItems: SidebarItem[] = [
     hasDropdown: true,
     children: [
       { id: 'website_content_carousel', label: 'Carousal', icon: <ChevronRight className="w-4 h-4" /> },
-      { id: 'website_content_banners', label: 'Banners', icon: <ChevronRight className="w-4 h-4" /> },
+      { id: 'website_content_banners', label: 'Campaigns', icon: <ChevronRight className="w-4 h-4" /> },
       { id: 'website_content_popups', label: 'Popups', icon: <ChevronRight className="w-4 h-4" /> },
       { id: 'website_content_landing_page', label: 'Landing Page', icon: <ChevronRight className="w-4 h-4" /> },
     ]
