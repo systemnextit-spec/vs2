@@ -420,7 +420,9 @@ export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {
 
   return (
     <>
-      <AdminNoticeTicker noticeText={websiteConfig?.adminNoticeText} />
+      {websiteConfig?.showNewsSlider && (
+        <AdminNoticeTicker noticeText={websiteConfig?.adminNoticeText} />
+      )}
 
       <header className="store-header w-full bg-white shadow-sm sticky top-0 z-50 transition-colors duration-300">
         <MobileHeaderBar

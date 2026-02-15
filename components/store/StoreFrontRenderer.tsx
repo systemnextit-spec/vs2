@@ -387,6 +387,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
                   onAddToCart={handleAddToCartFallback}
                   productCardStyle={websiteConfig?.productCardStyle}
                   productSectionStyle={websiteConfig?.productSectionStyle}
+                  showSoldCount={websiteConfig?.showProductSoldCount}
                 />
               </LazySection>
             </Suspense>
@@ -514,6 +515,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
                   onAddToCart={handleAddToCartFallback}
                   productCardStyle={websiteConfig?.productCardStyle}
                   productSectionStyle={websiteConfig?.productSectionStyle}
+                  showSoldCount={websiteConfig?.showProductSoldCount}
                 />
               </LazySection>
             </Suspense>

@@ -220,7 +220,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     if (item) {
       setFormData({ ...item });
     } else {
-      const defaults: any = { name: '', status: 'Active', priority: 100 };
+      const defaults: any = { name: '', status: 'Active', priority: 0 };
       if (view === 'catalog_categories') defaults.icon = '';
       if (view === 'catalog_subcategories') defaults.categoryId = categories[0]?.id || '';
       if (view === 'catalog_childcategories') defaults.subCategoryId = subCategories[0]?.id || '';
@@ -798,7 +798,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
                 <input
                   type="number"
-                  value={formData.priority || 100}
+                  value={formData.priority || 0}
                   onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />

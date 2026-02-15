@@ -9,13 +9,15 @@ export interface ProductCardProps {
     onClick: (product: Product) => void;
     onBuyNow?: (product: Product) => void;
     onAddToCart?: (product: Product) => void;
+    showSoldCount?: boolean;
 }
 
 const ProductCardComponent: React.FC<ProductCardProps> = ({ 
     product, 
     onClick, 
     onBuyNow, 
-    onAddToCart 
+    onAddToCart,
+    showSoldCount 
 }) => {
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [isHovered, setIsHovered] = useState(false);

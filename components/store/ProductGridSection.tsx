@@ -18,6 +18,7 @@ interface Props {
   keyPrefix: string; 
   maxProducts?: number; 
   reverseOrder?: boolean; 
+  showSoldCount?: boolean;
 }
 
 const colors = { 
@@ -35,7 +36,7 @@ const icons = {
 };
 
 // Style 1: Classic Clean Grid
-const ProductSectionStyle1 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle1 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="py-4">
       <div className="bg-white/80 backdrop-blur-lg border border-gray-100 rounded-xl p-3 md:p-4 mb-3 shadow-sm flex items-center gap-2.5">
@@ -43,7 +44,7 @@ const ProductSectionStyle1 = memo(({ title, products, accentColor = 'green', onP
         <SectionHeader title={title} className="text-lg md:text-xl font-bold text-gray-900"/>
       </div>
       <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart}/>)}
+        {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
       </div>
     </section>
   );
@@ -51,7 +52,7 @@ const ProductSectionStyle1 = memo(({ title, products, accentColor = 'green', onP
 ProductSectionStyle1.displayName = 'ProductSectionStyle1';
 
 // Style 2: Bordered Cards with Icon Header
-const ProductSectionStyle2 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle2 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="py-4">
       <div className="flex items-center gap-3 mb-4 px-1">
@@ -65,7 +66,7 @@ const ProductSectionStyle2 = memo(({ title, products, accentColor = 'green', onP
       </div>
       <div className="bg-white rounded-2xl border border-gray-200 p-3 sm:p-4">
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart}/>)}
+          {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
         </div>
       </div>
     </section>
@@ -74,7 +75,7 @@ const ProductSectionStyle2 = memo(({ title, products, accentColor = 'green', onP
 ProductSectionStyle2.displayName = 'ProductSectionStyle2';
 
 // Style 3: Gradient Header with Shadow Cards
-const ProductSectionStyle3 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle3 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="py-4">
       <div className="bg-gradient-theme-br rounded-t-2xl p-4 sm:p-5">
@@ -88,7 +89,7 @@ const ProductSectionStyle3 = memo(({ title, products, accentColor = 'green', onP
       </div>
       <div className="bg-gray-50 rounded-b-2xl p-3 sm:p-4 border border-t-0 border-gray-200">
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart}/>)}
+          {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
         </div>
       </div>
     </section>
@@ -97,7 +98,7 @@ const ProductSectionStyle3 = memo(({ title, products, accentColor = 'green', onP
 ProductSectionStyle3.displayName = 'ProductSectionStyle3';
 
 // Style 4: Minimal with Underline
-const ProductSectionStyle4 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle4 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="py-4">
       <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-gray-100">
@@ -108,7 +109,7 @@ const ProductSectionStyle4 = memo(({ title, products, accentColor = 'green', onP
         <span className="text-sm text-gray-500">{products.length} products</span>
       </div>
       <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart}/>)}
+        {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
       </div>
     </section>
   );
@@ -116,7 +117,7 @@ const ProductSectionStyle4 = memo(({ title, products, accentColor = 'green', onP
 ProductSectionStyle4.displayName = 'ProductSectionStyle4';
 
 // Style 5: Card Container with Badge
-const ProductSectionStyle5 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle5 = memo(({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="py-4">
       <div className="relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -134,7 +135,7 @@ const ProductSectionStyle5 = memo(({ title, products, accentColor = 'green', onP
         </div>
         <div className="p-3 sm:p-4">
           <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart}/>)}
+            {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
           </div>
         </div>
       </div>
@@ -144,7 +145,7 @@ const ProductSectionStyle5 = memo(({ title, products, accentColor = 'green', onP
 ProductSectionStyle5.displayName = 'ProductSectionStyle5';
 
 // Main Component
-export const ProductGridSection = ({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, productSectionStyle = '1', keyPrefix, maxProducts = 10, reverseOrder = false }: Props) => {
+export const ProductGridSection = ({ title, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, productSectionStyle = '1', keyPrefix, maxProducts = 10, reverseOrder = false, showSoldCount }: Props) => {
   const display = reverseOrder ? products.slice().reverse().slice(0, maxProducts) : products.slice(0, maxProducts);
   
   const initCount = useCallback(() => {
@@ -163,7 +164,7 @@ export const ProductGridSection = ({ title, products, accentColor = 'green', onP
   }, [display.length, visible]);
 
   const visibleProducts = display.slice(0, visible);
-  const commonProps = { title, products: visibleProducts, accentColor, onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix };
+  const commonProps = { title, products: visibleProducts, accentColor, onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount };
 
   switch (productSectionStyle) {
     case '2': return <ProductSectionStyle2 {...commonProps} />;

@@ -262,10 +262,10 @@ const AdminCustomersReview: React.FC<AdminCustomersReviewProps> = ({ orders, pro
 
   // Customer stats
   const customerStats = useMemo(() => {
-    const totalCustomers = customers.length || 45;
-    const totalReviews = reviews.length || 45;
-    const repeatCustomers = customers.filter(c => c.totalOrders > 1).length || 45;
-    const blockedCustomers = customers.filter(c => c.status === 'Blocked').length || 45;
+    const totalCustomers = customers.length || 0;
+    const totalReviews = reviews.length || 0;
+    const repeatCustomers = customers.filter(c => c.totalOrders > 1).length || 0;
+    const blockedCustomers = customers.filter(c => c.status === 'Blocked').length || 0;
     
     return { totalCustomers, totalReviews, repeatCustomers, blockedCustomers };
   }, [customers, reviews]);

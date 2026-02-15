@@ -100,6 +100,62 @@ const features = [
   { icon: <CreditCard size={24} />, title: 'Easy Returns', desc: '7 days return policy' },
   { icon: <Headphones size={24} />, title: '24/7 Support', desc: 'Dedicated support' },
 ];
+// Copyright section helper component
+interface CopyrightSectionProps {
+  websiteConfig?: WebsiteConfig;
+  currentYear: number;
+  variant?: 'dark' | 'light' | 'gradient';
+  className?: string;
+  children?: React.ReactNode;
+}
+
+const CopyrightSection: React.FC<CopyrightSectionProps> = ({ 
+  websiteConfig, 
+  currentYear, 
+  variant = 'dark',
+  className = '',
+  children 
+}) => {
+  // If hideCopyright is true, hide the entire section
+  if (websiteConfig?.hideCopyright) {
+    return null;
+  }
+
+  const textColors = {
+    dark: { main: 'text-gray-500', highlight: 'text-white', powered: 'text-gray-400 hover:text-blue-400' },
+    light: { main: 'text-gray-500', highlight: 'text-gray-800', powered: 'text-gray-500 hover:text-blue-500' },
+    gradient: { main: 'text-white/70', highlight: 'text-white', powered: 'text-white/60 hover:text-white' },
+  };
+  const colors = textColors[variant];
+
+  return (
+    <div className={`flex flex-col md:flex-row items-center justify-between gap-4 ${className}`}>
+      {/* Copyright text - conditionally shown */}
+      {!websiteConfig?.hideCopyrightText && (
+        <p className={`text-sm ${colors.main}`}>
+          © {currentYear} <span className={`font-medium ${colors.highlight}`}>{websiteConfig?.websiteName || 'Store'}</span>. All rights reserved.
+        </p>
+      )}
+      
+      {children}
+      
+      {/* Powered by - conditionally shown */}
+      {websiteConfig?.showPoweredBy && (
+        <a 
+          href="https://systemnextit.com" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className={`text-xs ${colors.powered} transition-colors flex items-center gap-1`}
+        >
+          Powered by <span className="font-semibold">System Next IT</span>
+          <ExternalLink size={10} />
+        </a>
+      )}
+    </div>
+  );
+};
+
+
 
 const FloatingChatButton: React.FC<{ websiteConfig?: WebsiteConfig; onOpenChat?: () => void }> = ({ websiteConfig, onOpenChat }) => {
   const whatsappLink = buildWhatsAppLink(websiteConfig?.whatsappNumber);
@@ -180,11 +236,10 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
         </div>
         <div className="border-t border-gray-800">
           <div className="max-w-7xl mx-auto px-4 py-5">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-gray-500">© {currentYear} <span className="text-white font-medium">{websiteConfig?.websiteName || 'Store'}</span>. All rights reserved.</p>
+            <CopyrightSection websiteConfig={websiteConfig} currentYear={currentYear} variant="dark">
               <div className="flex items-center gap-3"><span className="text-xs text-gray-500">We accept:</span><div className="flex gap-2">{['bKash', 'Nagad', 'Visa', 'Master'].map((m, i) => <div key={i} className="px-3 py-1.5 bg-gray-800 rounded text-xs font-medium text-gray-400">{m}</div>)}</div></div>
               <p className="text-xs text-gray-500 flex items-center gap-1">Made with <Heart size={12} className="text-pink-500 fill-pink-500" /> in Bangladesh</p>
-            </div>
+            </CopyrightSection>
           </div>
         </div>
       </footer>
@@ -233,7 +288,18 @@ const FooterStyle2: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
         </div>
         <div className="border-t border-gray-100">
           <div className="max-w-6xl mx-auto px-4 py-4">
-            <p className="text-center text-sm text-gray-500">© {currentYear} {websiteConfig?.websiteName || 'Store'}. All rights reserved.</p>
+            {!websiteConfig?.hideCopyright && (
+              <div className="flex flex-col items-center gap-2">
+                {!websiteConfig?.hideCopyrightText && (
+                  <p className="text-center text-sm text-gray-500">© {currentYear} {websiteConfig?.websiteName || 'Store'}. All rights reserved.</p>
+                )}
+                {websiteConfig?.showPoweredBy && (
+                  <a href="https://systemnextit.com" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-500 transition-colors flex items-center gap-1">
+                    Powered by <span className="font-semibold">System Next IT</span><ExternalLink size={10} />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </footer>
@@ -296,10 +362,19 @@ const FooterStyle3: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
         </div>
         <div className="border-t border-white/20">
           <div className="max-w-7xl mx-auto px-4 py-5">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-white/70">© {currentYear} {websiteConfig?.websiteName || 'Store'}. All rights reserved.</p>
-              <div className="flex gap-4 text-sm text-white/70"><a href="/privacy" className="hover:text-white">Privacy</a><a href="/terms" className="hover:text-white">Terms</a></div>
-            </div>
+            {!websiteConfig?.hideCopyright && (
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                {!websiteConfig?.hideCopyrightText && (
+                  <p className="text-sm text-white/70">© {currentYear} {websiteConfig?.websiteName || 'Store'}. All rights reserved.</p>
+                )}
+                <div className="flex gap-4 text-sm text-white/70"><a href="/privacy" className="hover:text-white">Privacy</a><a href="/terms" className="hover:text-white">Terms</a></div>
+                {websiteConfig?.showPoweredBy && (
+                  <a href="https://systemnextit.com" target="_blank" rel="noopener noreferrer" className="text-xs text-white/60 hover:text-white transition-colors flex items-center gap-1">
+                    Powered by <span className="font-semibold">System Next IT</span><ExternalLink size={10} />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </footer>
@@ -340,7 +415,18 @@ const FooterStyle4: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
         </div>
         <div className="border-t border-gray-200">
           <div className="max-w-4xl mx-auto px-4 py-5">
-            <p className="text-center text-sm text-gray-500">© {currentYear} {websiteConfig?.websiteName || 'Store'}. Made with <Heart size={12} className="inline text-rose-500 fill-rose-500" /> in Bangladesh</p>
+            {!websiteConfig?.hideCopyright && (
+              <div className="flex flex-col items-center gap-2">
+                {!websiteConfig?.hideCopyrightText && (
+                  <p className="text-center text-sm text-gray-500">© {currentYear} {websiteConfig?.websiteName || 'Store'}. Made with <Heart size={12} className="inline text-rose-500 fill-rose-500" /> in Bangladesh</p>
+                )}
+                {websiteConfig?.showPoweredBy && (
+                  <a href="https://systemnextit.com" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-500 transition-colors flex items-center gap-1">
+                    Powered by <span className="font-semibold">System Next IT</span><ExternalLink size={10} />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </footer>
@@ -415,10 +501,19 @@ const FooterStyle5: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
         </div>
         <div className="border-t border-gray-200 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-gray-500">© {currentYear} {websiteConfig?.websiteName || 'Store'}. All rights reserved.</p>
-              <div className="flex items-center gap-3"><span className="text-xs text-gray-500">Payments:</span><div className="flex gap-1">{['bKash', 'Nagad', 'Visa', 'Master'].map((m, i) => <span key={i} className="px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-medium text-gray-600">{m}</span>)}</div></div>
-            </div>
+            {!websiteConfig?.hideCopyright && (
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                {!websiteConfig?.hideCopyrightText && (
+                  <p className="text-sm text-gray-500">© {currentYear} {websiteConfig?.websiteName || 'Store'}. All rights reserved.</p>
+                )}
+                <div className="flex items-center gap-3"><span className="text-xs text-gray-500">Payments:</span><div className="flex gap-1">{['bKash', 'Nagad', 'Visa', 'Master'].map((m, i) => <span key={i} className="px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-medium text-gray-600">{m}</span>)}</div></div>
+                {websiteConfig?.showPoweredBy && (
+                  <a href="https://systemnextit.com" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-500 transition-colors flex items-center gap-1">
+                    Powered by <span className="font-semibold">System Next IT</span><ExternalLink size={10} />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </footer>

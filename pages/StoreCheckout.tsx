@@ -204,7 +204,9 @@ const StoreCheckout = ({
   };
 
   const validateForm = () => {
-    const fieldsToValidate = ['fullName', 'phone', 'email', 'division', 'address'];
+    const fieldsToValidate = websiteConfig?.showEmailFieldForOrder 
+      ? ['fullName', 'phone', 'email', 'division', 'address']
+      : ['fullName', 'phone', 'division', 'address'];
     const messages: Record<string, string> = {};
     fieldsToValidate.forEach(field => {
       const value = (formData as Record<string, string>)[field] || '';
@@ -444,6 +446,7 @@ const StoreCheckout = ({
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    {websiteConfig?.showEmailFieldForOrder && (
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2.5">Email Address <span className="text-rose-500">*</span></label>
                       <div className="relative group">
@@ -468,6 +471,7 @@ const StoreCheckout = ({
                         </p>
                       )}
                     </div>
+                    )}
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2.5">Division/Region <span className="text-rose-500">*</span></label>
                       <div className="relative group">
@@ -785,6 +789,7 @@ const StoreCheckout = ({
               </div>
 
               <div className="mt-6 space-y-4">
+                {websiteConfig?.enablePromoCode && (
                 <div className="flex flex-col gap-2.5">
                   <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Have a promo code?</label>
                   <div className="flex gap-2">
@@ -809,6 +814,7 @@ const StoreCheckout = ({
                     </p>
                   )}
                 </div>
+                )}
               </div>
 
               <div className="mt-6 flex flex-col gap-3">
