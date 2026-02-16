@@ -28,7 +28,7 @@ const generateUniqueProductId = (existingProducts: Product[]): number => {
   if (existingProducts.length === 0) {
     return Date.now();
   }
-  // Use reduce to safely handle large arrays (spread operator can cause stack overflow)
+  // Use reduce instead of Math.max(...ids) to safely handle large arrays (spread with Math.max can cause stack overflow)
   const maxId = existingProducts.reduce((max, p) => Math.max(max, p.id), 0);
   // Always use maxId + 1 for consistency to avoid mixing sequential and timestamp-based IDs
   return maxId + 1;
@@ -126,9 +126,8 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     const tenantId = newProduct.tenantId || activeTenantId;
     setProducts(prev => {
       // Ensure the product has a unique ID
-      const existingIds = new Set(prev.map(p => p.id));
       let productId = newProduct.id;
-      if (!productId || existingIds.has(productId)) {
+      if (!productId || prev.some(p => p.id === productId)) {
         productId = generateUniqueProductId(prev);
       }
       const productWithId = { ...newProduct, id: productId };
