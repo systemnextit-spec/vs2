@@ -38,6 +38,7 @@ const LanguageDateCard: React.FC<{
   date: string;
   dayName: string;
 }> = ({ currentLang, onLangChange, date, dayName }) => {
+  const { t } = useLanguage();
   return (
     <div className="flex gap-4 w-full col-span-2 sm:col-span-1">
       {/* Language Selector - exact Figma design */}
