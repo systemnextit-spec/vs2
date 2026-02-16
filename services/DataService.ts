@@ -137,7 +137,8 @@ const initSocket = async (): Promise<Socket | null> => {
   if (socketInitAttempted) return socket;
   
   socketInitAttempted = true;
-  const socketUrl = API_BASE_URL || window.location.origin;
+  // Use current origin for socket connection (websocket must match current domain)
+  const socketUrl = window.location.origin;
   
   console.log('[Socket.IO] Initializing connection to:', socketUrl);
   

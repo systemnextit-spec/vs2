@@ -57,7 +57,9 @@ class NotificationService {
     this.disconnect();
 
     this.tenantId = tenantId;
-    this.socket = io(this.apiBaseUrl, {
+    // Use current origin for socket (must match current domain for websocket)
+    const socketUrl = typeof window !== 'undefined' ? window.location.origin : this.apiBaseUrl;
+    this.socket = io(socketUrl, {
       withCredentials: true,
       transports: ['polling', 'websocket'], // Start with polling, then upgrade to websocket
       reconnection: true,
