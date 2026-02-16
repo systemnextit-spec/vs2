@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 import { uploadImageToServer, uploadAndSaveToGallery, saveToGallery } from '../../services/imageUploadService';
 import { GalleryPicker } from '../GalleryPicker';
+import { RichTextEditor } from '../RichTextEditor';
 import { FolderOpen } from 'lucide-react';
 
 // Icons
@@ -1119,33 +1120,12 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
 
               {/* Product Description */}
               <div className="flex flex-col gap-2">
-                <label className="text-[16px] text-black">
-                  Product Description<span className="text-[#da0000]">*</span>
-                </label>
-                {/* Rich Text Toolbar */}
-                <div className="bg-[#f9f9f9] h-10 rounded-lg flex items-center gap-5 px-3">
-                  <span className="text-[14px] font-semibold text-[#4f4d4d]">Normal</span>
-                  <ChevronDown size={10} />
-                  <Bold size={14} className="text-[#4f4d4d] cursor-pointer" />
-                  <Italic size={14} className="text-[#4f4d4d] cursor-pointer" />
-                  <Underline size={14} className="text-[#4f4d4d] cursor-pointer" />
-                  <span className="text-[14px] text-[#4f4d4d]">"</span>
-                  <span className="text-[14px] underline text-[#4f4d4d]">A</span>
-                  <AlignLeft size={16} className="text-[#4f4d4d] cursor-pointer" />
-                  <AlignRight size={16} className="text-[#4f4d4d] cursor-pointer" />
-                  <List size={16} className="text-[#4f4d4d] cursor-pointer" />
-                  <ListOrdered size={16} className="text-[#4f4d4d] cursor-pointer" />
-                  <Image size={16} className="text-[#4f4d4d] cursor-pointer" />
-                  <Link size={16} className="text-[#4f4d4d] cursor-pointer" />
-                  <Youtube size={16} className="text-[#4f4d4d] cursor-pointer" />
-                  <Type size={16} className="text-[#4f4d4d] cursor-pointer" />
-                </div>
-                <textarea
+                <RichTextEditor
+                  label="Product Description"
                   value={formData.description}
-                  onChange={(e) => updateField('description', e.target.value)}
-                  placeholder="Ex: Description"
-                  rows={5}
-                  className="w-full bg-[#f9f9f9] rounded-lg p-3 text-[14px] placeholder:text-[#a2a2a2] outline-none resize-none"
+                  onChange={(v) => updateField('description', v)}
+                  placeholder="Enter product description..."
+                  minHeight="min-h-[200px]"
                 />
               </div>
             </div>
@@ -1643,39 +1623,107 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
           {/* Catalog */}
           <div className="bg-white rounded-lg p-4">
             <h3 className="text-[20px] font-medium text-black mb-4">Catalog</h3>
-            <SelectField
-              value={formData.category}
-              onChange={(v) => updateField('category', v)}
-              options={localCategories.map(c => ({ value: c.name, label: c.name }))}
-              placeholder="Select Category*"
-              required
-            />
-            <button 
-              onClick={() => setShowCatalogModal(true)}
-              className="mt-4 h-10 bg-[#f4f4f4] rounded-lg px-4 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors"
-            >
-              <Plus size={24} />
-              <span className="text-[14px] font-semibold text-[#070606]">Add New Category</span>
-            </button>
-          </div>
+            
+            {/* Category */}
+            <div className="mb-3">
+              <SelectField
+                value={formData.category}
+                onChange={(v) => updateField('category', v)}
+                options={localCategories.map(c => ({ value: c.name, label: c.name }))}
+                placeholder="Select Category*"
+                required
+              />
+              <button 
+                onClick={() => { setCatalogModalTab('category'); setShowCatalogModal(true); }}
+                className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
+              >
+                <Plus size={18} />
+                <span className="font-semibold text-[#070606]">Add Category</span>
+              </button>
+            </div>
 
-          {/* Tag & Deep Search */}
-          <div className="bg-white rounded-lg p-4">
-            <h3 className="text-[20px] font-medium text-black mb-4">Tag & Deep Search</h3>
-            <div className="space-y-2">
+            {/* Sub Category */}
+            <div className="mb-3">
+              <SelectField
+                value={formData.subCategory}
+                onChange={(v) => updateField('subCategory', v)}
+                options={localSubCategories
+                  .filter(sc => !formData.category || sc.categoryName === formData.category || sc.categoryId === formData.category)
+                  .map(sc => ({ value: sc.name, label: sc.name }))}
+                placeholder="Select Sub Category"
+              />
+              <button 
+                onClick={() => { setCatalogModalTab('subcategory'); setShowCatalogModal(true); }}
+                className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
+              >
+                <Plus size={18} />
+                <span className="font-semibold text-[#070606]">Add Sub Category</span>
+              </button>
+            </div>
+
+            {/* Child Category */}
+            <div className="mb-3">
+              <SelectField
+                value={formData.childCategory}
+                onChange={(v) => updateField('childCategory', v)}
+                options={localChildCategories
+                  .filter(cc => !formData.subCategory || cc.subCategoryName === formData.subCategory || cc.subCategoryId === formData.subCategory)
+                  .map(cc => ({ value: cc.name, label: cc.name }))}
+                placeholder="Select Child Category"
+              />
+              <button 
+                onClick={() => { setCatalogModalTab('childcategory'); setShowCatalogModal(true); }}
+                className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
+              >
+                <Plus size={18} />
+                <span className="font-semibold text-[#070606]">Add Child Category</span>
+              </button>
+            </div>
+
+            {/* Brand */}
+            <div className="mb-3">
+              <SelectField
+                value={formData.brandName}
+                onChange={(v) => updateField('brandName', v)}
+                options={localBrands.map(b => ({ value: b.name, label: b.name }))}
+                placeholder="Select Brand"
+              />
+              <button 
+                onClick={() => { setCatalogModalTab('brand'); setShowCatalogModal(true); }}
+                className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
+              >
+                <Plus size={18} />
+                <span className="font-semibold text-[#070606]">Add Brand</span>
+              </button>
+            </div>
+
+            {/* Tags */}
+            <div>
               <SelectField
                 value={formData.tag}
                 onChange={(v) => updateField('tag', v)}
                 options={localTags.map(t => ({ value: t.name, label: t.name }))}
                 placeholder="Select Tag"
               />
-              <input
-                value={formData.deepSearch}
-                onChange={(e) => updateField('deepSearch', e.target.value)}
-                placeholder="Deep Search. ex.New Mobile, Popular product"
-                className="w-full h-10 bg-[#f9f9f9] rounded-lg px-3 text-[12px] placeholder:text-[#a2a2a2] outline-none"
-              />
+              <button 
+                onClick={() => { setCatalogModalTab('tag'); setShowCatalogModal(true); }}
+                className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
+              >
+                <Plus size={18} />
+                <span className="font-semibold text-[#070606]">Add Tag</span>
+              </button>
             </div>
+          </div>
+
+          {/* Deep Search */}
+          <div className="bg-white rounded-lg p-4">
+            <h3 className="text-[20px] font-medium text-black mb-4">Deep Search</h3>
+            <input
+              value={formData.deepSearch}
+              onChange={(e) => updateField('deepSearch', e.target.value)}
+              placeholder="Deep Search. ex.New Mobile, Popular product"
+              className="w-full h-10 bg-[#f9f9f9] rounded-lg px-3 text-[12px] placeholder:text-[#a2a2a2] outline-none"
+            />
           </div>
 
           {/* Condition */}
@@ -1745,39 +1793,107 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
           {/* Catalog - Mobile */}
           <div className="bg-white rounded-lg p-2 xxs:p-3 sm:p-4">
             <h3 className="text-sm xxs:text-base sm:text-lg font-medium text-black mb-2 xxs:mb-3">Catalog</h3>
-            <SelectField
-              value={formData.category}
-              onChange={(v) => updateField('category', v)}
-              options={localCategories.map(c => ({ value: c.name, label: c.name }))}
-              placeholder="Select Category*"
-              required
-            />
-            <button 
-              onClick={() => setShowCatalogModal(true)}
-              className="mt-2 xxs:mt-3 h-8 xxs:h-9 bg-[#f4f4f4] rounded-lg px-2 xxs:px-3 flex items-center gap-1.5 xxs:gap-2 ml-auto hover:bg-gray-200 transition-colors text-xs xxs:text-sm"
-            >
-              <Plus size={16} className="xxs:w-5 xxs:h-5" />
-              <span className="font-semibold text-[#070606]">Add Category</span>
-            </button>
-          </div>
+            
+            {/* Category - Mobile */}
+            <div className="mb-2 xxs:mb-3">
+              <SelectField
+                value={formData.category}
+                onChange={(v) => updateField('category', v)}
+                options={localCategories.map(c => ({ value: c.name, label: c.name }))}
+                placeholder="Select Category*"
+                required
+              />
+              <button 
+                onClick={() => { setCatalogModalTab('category'); setShowCatalogModal(true); }}
+                className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
+              >
+                <Plus size={14} />
+                <span className="font-semibold text-[#070606]">Add Category</span>
+              </button>
+            </div>
 
-          {/* Tag & Deep Search - Mobile */}
-          <div className="bg-white rounded-lg p-2 xxs:p-3 sm:p-4">
-            <h3 className="text-sm xxs:text-base sm:text-lg font-medium text-black mb-2 xxs:mb-3">Tag & Deep Search</h3>
-            <div className="space-y-1.5 xxs:space-y-2">
+            {/* Sub Category - Mobile */}
+            <div className="mb-2 xxs:mb-3">
+              <SelectField
+                value={formData.subCategory}
+                onChange={(v) => updateField('subCategory', v)}
+                options={localSubCategories
+                  .filter(sc => !formData.category || sc.categoryName === formData.category || sc.categoryId === formData.category)
+                  .map(sc => ({ value: sc.name, label: sc.name }))}
+                placeholder="Select Sub Category"
+              />
+              <button 
+                onClick={() => { setCatalogModalTab('subcategory'); setShowCatalogModal(true); }}
+                className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
+              >
+                <Plus size={14} />
+                <span className="font-semibold text-[#070606]">Add Sub Category</span>
+              </button>
+            </div>
+
+            {/* Child Category - Mobile */}
+            <div className="mb-2 xxs:mb-3">
+              <SelectField
+                value={formData.childCategory}
+                onChange={(v) => updateField('childCategory', v)}
+                options={localChildCategories
+                  .filter(cc => !formData.subCategory || cc.subCategoryName === formData.subCategory || cc.subCategoryId === formData.subCategory)
+                  .map(cc => ({ value: cc.name, label: cc.name }))}
+                placeholder="Select Child Category"
+              />
+              <button 
+                onClick={() => { setCatalogModalTab('childcategory'); setShowCatalogModal(true); }}
+                className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
+              >
+                <Plus size={14} />
+                <span className="font-semibold text-[#070606]">Add Child Category</span>
+              </button>
+            </div>
+
+            {/* Brand - Mobile */}
+            <div className="mb-2 xxs:mb-3">
+              <SelectField
+                value={formData.brandName}
+                onChange={(v) => updateField('brandName', v)}
+                options={localBrands.map(b => ({ value: b.name, label: b.name }))}
+                placeholder="Select Brand"
+              />
+              <button 
+                onClick={() => { setCatalogModalTab('brand'); setShowCatalogModal(true); }}
+                className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
+              >
+                <Plus size={14} />
+                <span className="font-semibold text-[#070606]">Add Brand</span>
+              </button>
+            </div>
+
+            {/* Tags - Mobile */}
+            <div>
               <SelectField
                 value={formData.tag}
                 onChange={(v) => updateField('tag', v)}
                 options={localTags.map(t => ({ value: t.name, label: t.name }))}
                 placeholder="Select Tag"
               />
-              <input
-                value={formData.deepSearch}
-                onChange={(e) => updateField('deepSearch', e.target.value)}
-                placeholder="Deep Search. ex.New Mobile, Popular product"
-                className="w-full h-9 bg-[#f9f9f9] rounded-lg px-3 text-xs placeholder:text-[#a2a2a2] outline-none"
-              />
+              <button 
+                onClick={() => { setCatalogModalTab('tag'); setShowCatalogModal(true); }}
+                className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
+              >
+                <Plus size={14} />
+                <span className="font-semibold text-[#070606]">Add Tag</span>
+              </button>
             </div>
+          </div>
+
+          {/* Deep Search - Mobile */}
+          <div className="bg-white rounded-lg p-2 xxs:p-3 sm:p-4">
+            <h3 className="text-sm xxs:text-base sm:text-lg font-medium text-black mb-2 xxs:mb-3">Deep Search</h3>
+            <input
+              value={formData.deepSearch}
+              onChange={(e) => updateField('deepSearch', e.target.value)}
+              placeholder="Deep Search. ex.New Mobile, Popular product"
+              className="w-full h-9 bg-[#f9f9f9] rounded-lg px-3 text-xs placeholder:text-[#a2a2a2] outline-none"
+            />
           </div>
 
           {/* Condition - Mobile */}
