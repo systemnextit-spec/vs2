@@ -188,13 +188,22 @@ const FigmaInventory: React.FC<FigmaInventoryProps> = ({
     return filtered.slice(0, 4); // Show only first 4 items as per Figma
   }, [products, searchQuery, sortBy]);
 
-  // Products with expiry dates (simulated for demo)
+  // Products with expiry dates - only show products that have actual expiry dates
   const expiryProducts = useMemo(() => {
-    // In real app, filter by actual expiry dates
-    return products.slice(0, 5).map((p, idx) => ({
-      ...p,
-      expireDays: 35 + (idx * 30) // Simulated expire days
-    }));
+    // Filter products that have actual expiry dates set
+    return products
+      .filter(p => p.expiryDate) // Only include products with expiry dates
+      .map(p => {
+        const expireDate = new Date(p.expiryDate);
+        const today = new Date();
+        const diffTime = expireDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return {
+          ...p,
+          expireDays: diffDays > 0 ? diffDays : 0
+        };
+      })
+      .slice(0, 5);
   }, [products]);
 
   const isInventoryHealthy = inventoryStats.lowStockCount === 0;
@@ -488,7 +497,14 @@ const FigmaInventory: React.FC<FigmaInventoryProps> = ({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#b9b9b9]/50">
-                    {expiryProducts.map((product, idx) => (
+                    {expiryProducts.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                          <Package size={40} className="mx-auto mb-3 text-gray-300" />
+                          <p className="text-sm">No products with expiry dates</p>
+                        </td>
+                      </tr>
+                    ) : expiryProducts.map((product, idx) => (
                       <tr key={`expiry-${product.id}-${idx}`} className="h-[68px] hover:bg-gray-50 transition-colors border-b border-[#b9b9b9]/50">
                         <td className="px-4 py-3 text-[12px] text-[#1d1a1a] max-w-[263px]">
                           <p className="line-clamp-2">{product.name}</p>
@@ -518,7 +534,12 @@ const FigmaInventory: React.FC<FigmaInventoryProps> = ({
               </div>
               {/* Mobile Card View for Expiry Table */}
               <div className="block sm:hidden space-y-2">
-                {expiryProducts.map((product, idx) => (
+                {expiryProducts.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <Package size={40} className="mx-auto mb-3 text-gray-300" />
+                    <p className="text-sm">No products with expiry dates</p>
+                  </div>
+                ) : expiryProducts.map((product, idx) => (
                   <div key={`expiry-mobile-${product.id}-${idx}`} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       {product.images && product.images[0] ? (

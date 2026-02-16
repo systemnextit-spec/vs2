@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Search, RefreshCw, X, Pipette } from 'lucide-react';
 import { WebsiteConfig, ColorKey } from './types';
 import { DEFAULT_COLORS, normalizeHexColor } from './constants';
@@ -882,7 +882,18 @@ export const ThemeColorsTab: React.FC<ThemeColorsTabProps> = ({
   setThemeColors
 }) => {
   const [colorDrafts, setColorDrafts] = useState({ ...DEFAULT_COLORS });
-  const [selectedPreset, setSelectedPreset] = useState<number | null>(1);
+
+  // Derive selected preset from current themeColors by comparing values
+  const selectedPreset = useMemo(() => {
+    const matchingPreset = PRESET_COLOR_COMBINATIONS.find(
+      (preset) =>
+        preset.primary.toLowerCase() === themeColors.primary?.toLowerCase() &&
+        preset.secondary.toLowerCase() === themeColors.secondary?.toLowerCase() &&
+        preset.tertiary.toLowerCase() === themeColors.tertiary?.toLowerCase() &&
+        preset.font.toLowerCase() === themeColors.font?.toLowerCase()
+    );
+    return matchingPreset?.id ?? null;
+  }, [themeColors]);
 
   // Sync color drafts with theme colors
   useEffect(() => {
@@ -893,7 +904,6 @@ export const ThemeColorsTab: React.FC<ThemeColorsTabProps> = ({
     const normalized = normalizeHexColor(value);
     if (normalized) {
       setThemeColors((prev) => ({ ...prev, [colorKey]: normalized }));
-      setSelectedPreset(null); // Deselect preset when manually changing colors
     }
   };
 
@@ -905,7 +915,6 @@ export const ThemeColorsTab: React.FC<ThemeColorsTabProps> = ({
       tertiary: preset.tertiary,
       font: preset.font,
     });
-    setSelectedPreset(preset.id);
   };
 
   const shuffleColors = () => {
