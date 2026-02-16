@@ -1724,6 +1724,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
             <input
               value={formData.deepSearch}
               onChange={(e) => updateField('deepSearch', e.target.value)}
+              type="text"
               placeholder="Deep Search. ex.New Mobile, Popular product"
               className="w-full h-10 bg-[#f9f9f9] rounded-lg px-3 text-[12px] placeholder:text-[#a2a2a2] outline-none"
             />
@@ -1920,6 +1921,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
             <input
               value={formData.deepSearch}
               onChange={(e) => updateField('deepSearch', e.target.value)}
+              type="text"
               placeholder="Deep Search. ex.New Mobile, Popular product"
               className="w-full h-9 bg-[#f9f9f9] rounded-lg px-3 text-xs placeholder:text-[#a2a2a2] outline-none"
             />

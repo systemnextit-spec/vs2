@@ -857,7 +857,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
       )}
 
       {/* Table */}
-      <div className="hidden sm:block overflow-x-auto -mx-2 xxs:mx-0 px-2 xxs:px-0">
+      <div className={`hidden sm:block -mx-2 xxs:mx-0 px-2 xxs:px-0 ${openDropdownId ? "overflow-visible" : "overflow-x-auto"}`}>
         <table className="w-full text-xs xxs:text-sm min-w-0">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
