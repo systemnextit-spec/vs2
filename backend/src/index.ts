@@ -69,13 +69,14 @@ const io = new SocketIOServer(httpServer, {
       // Get allowed origins from environment
       const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
       const systemnextPattern = /^https?:\/\/([a-z0-9-]+\.)?systemnextit\.com$/i;
+      const systemnextWebsitePattern = /^https?:\/\/([a-z0-9-]+\.)?systemnextit\.website$/i;
       const cartngetPattern = /^https?:\/\/([a-z0-9-]+\.)?cartnget\.shop$/i;
       const shopbdPattern = /^https?:\/\/([a-z0-9-]+\.)?shopbdit\.com$/i;
       // Support localhost with subdomains: store.localhost:3000, admin.localhost:5173, etc.
       const localhostPattern = /^https?:\/\/([a-z0-9-]+\.)?localhost(:\d+)?$/i;
       const origins = Array.isArray(origin) ? origin : [origin];
       const isAllowed = origins.some(o => 
-        systemnextPattern.test(o) || 
+        systemnextPattern.test(o) || systemnextWebsitePattern.test(o) || 
         cartngetPattern.test(o) ||
         shopbdPattern.test(o) ||
         localhostPattern.test(o) ||
@@ -127,12 +128,13 @@ const corsOptions: cors.CorsOptions = {
     
     // Allow all allinbangla.com, cartnget.shop, and shopbdit.com subdomains
     const systemnextPattern = /^https?:\/\/([a-z0-9-]+\.)?systemnextit\.com$/i;
+    const systemnextWebsitePattern = /^https?:\/\/([a-z0-9-]+\.)?systemnextit\.website$/i;
     const cartngetPattern = /^https?:\/\/([a-z0-9-]+\.)?cartnget\.shop$/i;
     const shopbdPattern = /^https?:\/\/([a-z0-9-]+\.)?shopbdit\.com$/i;
     // Support localhost with subdomains: store.localhost:3000, admin.localhost:5173, etc.
     const localhostPattern = /^https?:\/\/([a-z0-9-]+\.)?localhost(:\d+)?$/i;
     
-    if (systemnextPattern.test(origin) || cartngetPattern.test(origin) || shopbdPattern.test(origin) || localhostPattern.test(origin)) {
+    if (systemnextPattern.test(origin) || systemnextWebsitePattern.test(origin) || cartngetPattern.test(origin) || shopbdPattern.test(origin) || localhostPattern.test(origin)) {
       return callback(null, true);
     }
     

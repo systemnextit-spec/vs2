@@ -132,14 +132,22 @@ export function useAppHandlers(props: UseAppHandlersProps) {
       }
       const productWithId = { ...newProduct, id: productId };
       const slug = ensureUniqueProductSlug(productWithId.slug || productWithId.name || `product-${productId}`, prev, tenantId, productId);
-      return [...prev, { ...productWithId, slug, tenantId }];
+      const updated = [...prev, { ...productWithId, slug, tenantId }];
+      // Save to backend
+      DataService.save('products', updated, tenantId);
+      return updated;
     });
   }, [activeTenantId, setProducts]);
 
   const handleUpdateProduct = useCallback((updatedProduct: Product) => {
     const tenantId = updatedProduct.tenantId || activeTenantId;
     const slug = ensureUniqueProductSlug(updatedProduct.slug || updatedProduct.name || `product-${updatedProduct.id}`, products, tenantId, updatedProduct.id);
-    setProducts(prev => prev.map(p => p.id === updatedProduct.id ? { ...updatedProduct, slug, tenantId } : p));
+    setProducts(prev => {
+      const updated = prev.map(p => p.id === updatedProduct.id ? { ...updatedProduct, slug, tenantId } : p);
+      // Save to backend
+      DataService.save('products', updated, tenantId);
+      return updated;
+    });
   }, [activeTenantId, products, setProducts]);
 
   const handleDeleteProduct = useCallback((id: number) => {
