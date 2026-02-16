@@ -401,6 +401,15 @@ export interface WebsiteConfig {
   allowProductImageDownloads?: boolean;
   showEmailFieldForOrder?: boolean;
   enablePromoCode?: boolean;
+  // Theme Colors
+  themeColorsEnabled?: boolean;
+  themeColors?: {
+    primary: string;
+    secondary: string;
+    depthAccent: string;
+    font: string;
+  };
+  readyTheme?: string;
 }
 
 export interface DeliveryConfig {

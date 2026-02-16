@@ -199,6 +199,9 @@ export const ThemeViewTab: React.FC<ThemeViewTabProps> = ({
   setWebsiteConfiguration
 }) => {
   const [selectedColourPreset, setSelectedColourPreset] = useState(1);
+  const [themeColorsEnabled, setThemeColorsEnabled] = useState(
+    (websiteConfiguration as any).themeColorsEnabled ?? false
+  );
   const [themeColors, setThemeColors] = useState({
     primary: '#1e90ff',
     secondary: '#ff6a00',
@@ -259,21 +262,69 @@ export const ThemeViewTab: React.FC<ThemeViewTabProps> = ({
           padding: '24px',
         }}
       >
-        <h3
-          style={{
-            fontFamily: '"Lato", sans-serif',
-            fontWeight: 700,
-            fontSize: '18px',
-            color: '#f91515',
-            marginBottom: '20px',
-          }}
-        >
-          Theme Colour - 
-        "(This section is under development, changes here will not reflect on the live website yet.)"
-        </h3>
+        {/* Enable/Disable Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <h3
+            style={{
+              fontFamily: '"Lato", sans-serif',
+              fontWeight: 700,
+              fontSize: '18px',
+              color: '#023337',
+              margin: 0,
+            }}
+          >
+            Theme Colour
+          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '14px', color: '#666' }}>
+              {themeColorsEnabled ? 'Enabled' : 'Disabled'}
+            </span>
+            <button
+              onClick={() => {
+                const newValue = !themeColorsEnabled;
+                setThemeColorsEnabled(newValue);
+                setWebsiteConfiguration(prev => ({
+                  ...prev,
+                  themeColorsEnabled: newValue
+                }));
+              }}
+              style={{
+                width: '50px',
+                height: '26px',
+                borderRadius: '13px',
+                border: 'none',
+                cursor: 'pointer',
+                position: 'relative',
+                backgroundColor: themeColorsEnabled ? '#22c55e' : '#d1d5db',
+                transition: 'background-color 0.2s ease',
+              }}
+            >
+              <div
+                style={{
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '50%',
+                  backgroundColor: 'white',
+                  position: 'absolute',
+                  top: '2px',
+                  left: themeColorsEnabled ? '26px' : '2px',
+                  transition: 'left 0.2s ease',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                }}
+              />
+            </button>
+          </div>
+        </div>
 
         {/* Color Inputs Row */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '24px' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: '20px', 
+          marginBottom: '24px',
+          opacity: themeColorsEnabled ? 1 : 0.5,
+          pointerEvents: themeColorsEnabled ? 'auto' : 'none',
+        }}>
           <ColorInput
             label="Primary"
             value={themeColors.primary}
@@ -297,7 +348,13 @@ export const ThemeViewTab: React.FC<ThemeViewTabProps> = ({
         </div>
 
         {/* Ready Colours Row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '16px',
+          opacity: themeColorsEnabled ? 1 : 0.5,
+          pointerEvents: themeColorsEnabled ? 'auto' : 'none',
+        }}>
           <span
             style={{
               fontFamily: '"Lato", sans-serif',

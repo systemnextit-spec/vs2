@@ -184,13 +184,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 px-3 sm:px-4 lg:px-6">
           {/* Visitor Stats - Left Side */}
           <div className="md:col-span-4 lg:col-span-3">
-            <FigmaVisitorStats
-              visitorStats={{
-                onlineNow: 0,
-                todayVisitors: 0,
-                totalVisitors: 0
-              }}
-            />
+            <FigmaVisitorStats tenantId={tenantId} />
           </div>
 
           {/* Analytics Bar Chart - Right Side */}
