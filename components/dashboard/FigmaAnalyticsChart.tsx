@@ -58,7 +58,9 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
 
       try {
         setLoading(true);
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+        const hostname = window.location.hostname;
+        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+        const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
         
         let url = `${apiUrl}/api/visitors/${activeTenantId}/stats`;
         const params = new URLSearchParams();

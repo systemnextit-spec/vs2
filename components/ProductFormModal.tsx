@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   X, Upload, Image as ImageIcon, Plus, Trash2, 
   Calendar, RefreshCw, ChevronDown, Minus, ScanLine,
-  Save, FolderOpen
+  Save, FolderOpen, Code, Eye
 } from 'lucide-react';
 import { Product, Category, SubCategory, ChildCategory, Brand, Tag } from '../types';
 
@@ -140,6 +140,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [newChildCategoryName, setNewChildCategoryName] = useState('');
   const [showNewTagInput, setShowNewTagInput] = useState(false);
   const [newTagName, setNewTagName] = useState('');
+  const [descriptionViewMode, setDescriptionViewMode] = useState<'html' | 'preview'>('html');
 
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
@@ -519,15 +520,50 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                 {/* Product Description */}
                 <div>
-                  <label className="block text-teal-950 text-sm sm:text-base font-bold font-['Lato'] mb-3">Product Description</label>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-teal-950 text-sm sm:text-base font-bold font-['Lato']">Product Description</label>
+                    <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setDescriptionViewMode('html')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                          descriptionViewMode === 'html' 
+                            ? 'bg-white text-blue-600 shadow-sm' 
+                            : 'text-gray-600 hover:text-gray-800'
+                        }`}
+                      >
+                        <Code size={14} />
+                        HTML
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDescriptionViewMode('preview')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                          descriptionViewMode === 'preview' 
+                            ? 'bg-white text-blue-600 shadow-sm' 
+                            : 'text-gray-600 hover:text-gray-800'
+                        }`}
+                      >
+                        <Eye size={14} />
+                        Preview
+                      </button>
+                    </div>
+                  </div>
                   <div className="relative">
-                    <textarea 
-                      value={formData.description} 
-                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))} 
-                      placeholder="Jasmine Fragrance oil, extracted from the delicate jasmine blossoms, is renowned for its enchanting and luxurious aroma. Prized for centuries in perfumery and aromatherapy, this exquisite oil offers a multitude of benefits and applications."
-                      rows={4}
-                      className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-teal-950 text-sm sm:text-base font-normal font-['Lato'] leading-6 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400" 
-                    />
+                    {descriptionViewMode === 'html' ? (
+                      <textarea 
+                        value={formData.description} 
+                        onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))} 
+                        placeholder="Enter HTML description or plain text..."
+                        rows={8}
+                        className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-teal-950 text-sm font-mono leading-6 resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      />
+                    ) : (
+                      <div 
+                        className="w-full min-h-[200px] p-3 bg-gray-50 rounded-lg border border-gray-200 text-teal-950 text-sm sm:text-base font-normal font-['Lato'] leading-6 overflow-auto prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: formData.description || '<p class="text-gray-400">No description to preview</p>' }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>

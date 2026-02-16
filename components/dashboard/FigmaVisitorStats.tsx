@@ -140,7 +140,9 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
       }
 
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+        const hostname = window.location.hostname;
+        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+        const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
         
         // Fetch stats and online count in parallel
         const [statsRes, onlineRes] = await Promise.all([
@@ -175,7 +177,9 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
       if (!activeTenantId) return;
       
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+        const hostname = window.location.hostname;
+        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+        const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
         const onlineRes = await fetch(`${apiUrl}/api/visitors/${activeTenantId}/online`);
         if (onlineRes.ok) {
           const onlineData = await onlineRes.json();

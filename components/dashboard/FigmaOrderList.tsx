@@ -928,7 +928,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                   </div>
                 </td>
                 <td className="px-2 xxs:px-3 py-2 xxs:py-3 text-center relative">
-                  <div data-dropdown>
+                  <div className="relative" data-dropdown>
                     <button 
                       onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)} 
                       className="p-0.5 xxs:p-1 hover:bg-gray-200 rounded transition-colors"
@@ -936,7 +936,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                       <MoreVertical className="w-3 h-3 xxs:w-4 xxs:h-4 text-gray-600" />
                     </button>
                     {openDropdownId === order.id && (
-                      <div className="absolute right-full top-0 mr-1 xxs:mr-2 z-[9999]">
+                      <div className="absolute right-0 top-full mt-1 z-[99999]">
                         <div style={{ width: '160px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', overflow: 'visible', padding: '6px 0' }}>
                           {/* Edit */}
                           <button 
@@ -1078,7 +1078,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                 <MoreVertical className="w-5 h-5 text-gray-600" />
               </button>
               {openDropdownId === order.id && (
-                <div className="absolute right-0 top-full mt-1 z-[9999] bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[120px]">
+                <div className="absolute right-0 top-full mt-1 z-[99999] bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[120px]">
                   <button 
                     onClick={() => { openOrderModal(order); setOpenDropdownId(null); }}
                     className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
