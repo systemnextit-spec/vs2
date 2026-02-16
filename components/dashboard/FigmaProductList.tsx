@@ -1082,7 +1082,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* List View - Table */}
       {viewMode === 'list' && (
-      <><div className="hidden sm:block overflow-x-auto min-h-[200px] -mx-2 xxs:-mx-3 sm:mx-0 px-2 xxs:px-3 sm:px-0">
+      <><div className="hidden sm:block overflow-visible min-h-[200px] -mx-2 xxs:-mx-3 sm:mx-0 px-2 xxs:px-3 sm:px-0">
         <table className="w-full text-xs xxs:text-sm overflow-visible min-w-0">
           <thead className="bg-[#E0F2FE] dark:bg-gray-700">
             <tr>
