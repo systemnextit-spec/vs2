@@ -946,21 +946,6 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                 />
               </div>
 
-              {/* Shop Name */}
-              <div className="flex flex-col gap-1.5 xxs:gap-2">
-                <label className="text-[14px] xxs:text-[16px] text-black">
-                  Shop Name
-                </label>
-                <input
-                  type="text"
-                  value={formData.shopName}
-                  onChange={(e) => updateField('shopName', e.target.value)}
-                  placeholder="Enter your shop name"
-                  className="w-full h-9 xxs:h-10 bg-[#f9f9f9] rounded-lg px-2 xxs:px-3 text-[13px] xxs:text-[14px] placeholder:text-[#a2a2a2] outline-none"
-                />
-              </div>
-
-              {/* Media */}
               <div className="flex flex-col gap-1.5 xxs:gap-2">
                 <div className="flex items-center justify-between">
                   <label className="text-[14px] xxs:text-[16px] font-medium text-black">
