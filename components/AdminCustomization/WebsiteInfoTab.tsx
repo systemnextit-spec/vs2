@@ -266,62 +266,152 @@ const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
   </p>
 );
 
-// Figma-styled Rich Text Editor (Simplified)
+// Fully Functional Rich Text Editor with all formatting options
 const RichTextEditor: React.FC<{
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-}> = ({ label, value, onChange, placeholder }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-    <SectionHeader title={label} />
-    {/* Toolbar */}
-    <div
-      style={{
-        backgroundColor: '#f9f9f9',
-        borderRadius: '8px',
-        padding: '9px 13px',
-        display: 'flex',
-        gap: '20px',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-      }}
-    >
-      <span style={{ fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: '#4f4d4d' }}>Normal</span>
-      <span style={{ fontFamily: '"Lato", sans-serif', fontWeight: 800, fontSize: '14px', color: '#4f4d4d' }}>B</span>
-      <span style={{ fontFamily: '"Crimson Text", serif', fontWeight: 600, fontSize: '15px', color: '#4f4d4d', fontStyle: 'italic' }}>I</span>
-      <span style={{ fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: '#4f4d4d', textDecoration: 'underline' }}>U</span>
-      <span style={{ fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: '#4f4d4d', textDecoration: 'underline' }}>A</span>
-    </div>
-    {/* Text Area */}
-    <div
-      style={{
-        backgroundColor: '#f9f9f9',
-        borderRadius: '8px',
-        height: '175px',
-        overflow: 'hidden',
-      }}
-    >
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+}> = ({ label, value, onChange, placeholder }) => {
+  const editorRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (editorRef.current && value && !isInitialized) {
+      editorRef.current.innerHTML = value;
+      setIsInitialized(true);
+    }
+  }, [value, isInitialized]);
+
+  const handleInput = useCallback(() => {
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
+    }
+  }, [onChange]);
+
+  const execCmd = useCallback((command: string, val?: string) => {
+    editorRef.current?.focus();
+    document.execCommand(command, false, val);
+    handleInput();
+  }, [handleInput]);
+
+  const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imageUrl = event.target?.result as string;
+      if (editorRef.current) {
+        editorRef.current.focus();
+        document.execCommand('insertImage', false, imageUrl);
+        handleInput();
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  }, [handleInput]);
+
+  const handleLink = useCallback(() => {
+    const url = prompt('Enter URL:');
+    if (url) {
+      execCmd('createLink', url);
+    }
+  }, [execCmd]);
+
+  const toolBtnStyle: React.CSSProperties = {
+    padding: '6px 10px',
+    border: '1px solid #d1d5db',
+    borderRadius: '4px',
+    backgroundColor: 'white',
+    cursor: 'pointer',
+    fontFamily: '"Lato", sans-serif',
+    fontSize: '13px',
+    color: '#374151',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: '32px',
+    height: '32px',
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+      <SectionHeader title={label} />
+      <div
         style={{
-          width: '100%',
-          height: '100%',
-          border: 'none',
-          background: 'transparent',
-          outline: 'none',
-          resize: 'none',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '8px',
+          padding: '10px',
+          display: 'flex',
+          gap: '8px',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          border: '1px solid #e5e7eb',
+        }}
+      >
+        <select
+          onChange={(e) => { if (e.target.value) { execCmd('formatBlock', e.target.value); e.target.value = ''; } }}
+          style={{ ...toolBtnStyle, width: '90px', padding: '0 8px' }}
+        >
+          <option value="">Normal</option>
+          <option value="h1">Heading 1</option>
+          <option value="h2">Heading 2</option>
+          <option value="h3">Heading 3</option>
+          <option value="p">Paragraph</option>
+        </select>
+        <div style={{ width: '1px', height: '24px', backgroundColor: '#d1d5db' }} />
+        <button type="button" style={toolBtnStyle} onClick={() => execCmd('bold')} title="Bold"><strong>B</strong></button>
+        <button type="button" style={toolBtnStyle} onClick={() => execCmd('italic')} title="Italic"><em>I</em></button>
+        <button type="button" style={toolBtnStyle} onClick={() => execCmd('underline')} title="Underline"><span style={{ textDecoration: 'underline' }}>U</span></button>
+        <div style={{ width: '1px', height: '24px', backgroundColor: '#d1d5db' }} />
+        <button type="button" style={toolBtnStyle} onClick={handleLink} title="Insert Link">🔗</button>
+        <button type="button" style={toolBtnStyle} onClick={() => fileInputRef.current?.click()} title="Insert Image">🖼️</button>
+        <div style={{ width: '1px', height: '24px', backgroundColor: '#d1d5db' }} />
+        <button type="button" style={toolBtnStyle} onClick={() => execCmd('insertUnorderedList')} title="Bullet List">•</button>
+        <button type="button" style={toolBtnStyle} onClick={() => execCmd('insertOrderedList')} title="Numbered List">1.</button>
+        <div style={{ width: '1px', height: '24px', backgroundColor: '#d1d5db' }} />
+        <button type="button" style={toolBtnStyle} onClick={() => execCmd('justifyLeft')} title="Align Left">⬅</button>
+        <button type="button" style={toolBtnStyle} onClick={() => execCmd('justifyCenter')} title="Align Center">⬌</button>
+        <button type="button" style={toolBtnStyle} onClick={() => execCmd('justifyRight')} title="Align Right">➡</button>
+        <button type="button" style={toolBtnStyle} onClick={() => execCmd('justifyFull')} title="Justify">☰</button>
+      </div>
+      <div
+        ref={editorRef}
+        contentEditable
+        suppressContentEditableWarning
+        onInput={handleInput}
+        data-placeholder={placeholder}
+        style={{
+          backgroundColor: '#f9f9f9',
+          borderRadius: '8px',
+          minHeight: '175px',
           padding: '13px',
           fontFamily: '"Lato", sans-serif',
           fontSize: '14px',
-          color: value ? 'black' : '#a2a2a2',
+          color: 'black',
+          border: '1px solid #e5e7eb',
+          outline: 'none',
+          overflow: 'auto',
         }}
       />
+      <style>{`
+        div[data-placeholder]:empty:before {
+          content: attr(data-placeholder);
+          color: #a2a2a2;
+          pointer-events: none;
+        }
+      `}</style>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        style={{ display: 'none' }}
+      />
     </div>
-  </div>
-);
+  );
+};
 
 // Figma-styled Checkbox
 const FigmaCheckbox: React.FC<{
