@@ -1175,7 +1175,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                       <DotsIcon />
                     </button>
                     {openDropdownId === productKey && (
-                      <div className="absolute right-4 top-[calc(100%+4px)] z-[9999]">
+                      <div className="fixed right-8 mt-2 z-[9999]">
                         <div className="w-[160px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden py-2">
                           <button
                             onClick={() => { onEditProduct?.(product); setOpenDropdownId(null); }}
