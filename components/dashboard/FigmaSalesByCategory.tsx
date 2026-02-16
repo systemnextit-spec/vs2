@@ -29,13 +29,13 @@ const categoryColors = [
 ];
 
 const defaultCategories: CategoryData[] = [
-  { name: 'Hair care', percentage: 15, color: '#4F46E5', bgColor: 'bg-indigo-600', textColor: 'text-indigo-600' },
-  { name: 'Serum', percentage: 15, color: '#FB923C', bgColor: 'bg-orange-400', textColor: 'text-orange-400' },
-  { name: 'Cream', percentage: 15, color: '#FCA5A5', bgColor: 'bg-red-300', textColor: 'text-red-300' },
-  { name: 'Home & kitchen', percentage: 15, color: '#EF4444', bgColor: 'bg-red-500', textColor: 'text-red-500' },
-  { name: 'Lip care', percentage: 15, color: '#A3E635', bgColor: 'bg-lime-400', textColor: 'text-lime-400' },
-  { name: 'Air Conditioner', percentage: 15, color: '#38BDF8', bgColor: 'bg-sky-400', textColor: 'text-slate-600' },
-  { name: 'Skin care', percentage: 10, color: '#A21CAF', bgColor: 'bg-fuchsia-700', textColor: 'text-fuchsia-700' }
+  { name: 'Hair care', percentage: 0, color: '#4F46E5', bgColor: 'bg-indigo-600', textColor: 'text-indigo-600' },
+  { name: 'Serum', percentage: 0, color: '#FB923C', bgColor: 'bg-orange-400', textColor: 'text-orange-400' },
+  { name: 'Cream', percentage: 0, color: '#FCA5A5', bgColor: 'bg-red-300', textColor: 'text-red-300' },
+  { name: 'Home & kitchen', percentage: 0, color: '#EF4444', bgColor: 'bg-red-500', textColor: 'text-red-500' },
+  { name: 'Lip care', percentage: 0, color: '#A3E635', bgColor: 'bg-lime-400', textColor: 'text-lime-400' },
+  { name: 'Air Conditioner', percentage: 0, color: '#38BDF8', bgColor: 'bg-sky-400', textColor: 'text-slate-600' },
+  { name: 'Skin care', percentage: 0, color: '#A21CAF', bgColor: 'bg-fuchsia-700', textColor: 'text-fuchsia-700' }
 ];
 
 const FigmaSalesByCategory: React.FC<FigmaSalesByCategoryProps> = ({

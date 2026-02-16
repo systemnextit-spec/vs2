@@ -42,7 +42,7 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
       }));
 
       orders.forEach(order => {
-        const orderDate = order.createdAt ? new Date(order.createdAt) : null;
+        const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
         if (!orderDate) return;
         
         const orderYear = orderDate.getFullYear();
@@ -69,7 +69,7 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
       }));
 
       orders.forEach(order => {
-        const orderDate = order.createdAt ? new Date(order.createdAt) : null;
+        const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
         if (!orderDate || orderDate.getMonth() !== targetMonthNum || orderDate.getFullYear() !== targetYear) return;
         
         const dayIndex = orderDate.getDate() - 1;
@@ -91,7 +91,7 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
       }));
 
       orders.forEach(order => {
-        const orderDate = order.createdAt ? new Date(order.createdAt) : null;
+        const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
         if (!orderDate || orderDate.toDateString() !== now.toDateString()) return;
         
         const hour = orderDate.getHours();
@@ -115,7 +115,7 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
       }
 
       orders.forEach(order => {
-        const orderDate = order.createdAt ? new Date(order.createdAt) : null;
+        const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
         if (!orderDate) return;
         
         for (let i = 11; i >= 0; i--) {
