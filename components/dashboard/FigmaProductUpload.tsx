@@ -334,7 +334,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     category: '',
     subCategory: '',
     childCategory: '',
-    condition: 'Used',
+    condition: 'New',
     tag: '',
     deepSearch: ''
   });
