@@ -493,7 +493,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     const newImages = imageUrls.filter(url => !formData.galleryImages.includes(url));
     if (newImages.length > 0) {
       updateField('galleryImages', [...formData.galleryImages, ...newImages]);
-      toast.success(\`\${newImages.length} images added to gallery\`);
+      toast.success(`${newImages.length} images added to gallery`);
     }
     setShowGalleryPicker(false);
     setGalleryPickerTarget(null);

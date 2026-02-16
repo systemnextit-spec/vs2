@@ -385,8 +385,8 @@ const AdminGallery: React.FC = () => {
          if (!tenantId) return;
          try {
             // Use tenant-specific key for gallery storage
-            const galleryKey = `gallery_${tenantId}`;
-            const stored = await DataService.get<GalleryItem[]>(galleryKey, GALLERY_IMAGES);
+            // Load from tenant-specific gallery (consistent with GalleryPicker and saveToGallery)
+            const stored = await DataService.get<GalleryItem[]>('gallery', GALLERY_IMAGES, tenantId);
             if (mounted) {
                setImages(stored);
                setIsLoaded(true);
@@ -407,9 +407,8 @@ const AdminGallery: React.FC = () => {
 
    useEffect(() => {
       if (!isLoaded || !tenantId) return;
-      // Use tenant-specific key for gallery storage
-      const galleryKey = `gallery_${tenantId}`;
-      DataService.save(galleryKey, images);
+      // Save to tenant-specific gallery (consistent with GalleryPicker and saveToGallery)
+      DataService.save('gallery', images, tenantId);
    }, [images, isLoaded, tenantId]);
 
   // Load trash when viewing
