@@ -306,6 +306,8 @@ export const useStoreHome = ({
       ) return true;
       if (Array.isArray(product.tags) && product.tags.some(tag => contains(tag))) return true;
       if (Array.isArray(product.searchTags) && product.searchTags.some(tag => contains(tag))) return true;
+      // Deep Search: comma-separated keywords
+      if (product.deepSearch && product.deepSearch.split(",").some(keyword => contains(keyword.trim()))) return true;
       return false;
     });
   }, [activeProducts, normalizedSearch]);

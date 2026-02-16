@@ -941,52 +941,52 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                           {/* Edit */}
                           <button 
                             onClick={() => openOrderModal(order)}
-                            style={{ display: 'flex', alignItems: 'center', gap: '6px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
                             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
                             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                           >
-                            <Edit3 size={18} color="black" />
+                            <Edit3 size={18} className="text-gray-700" />
                             Edit
                           </button>
                           {/* Print Invoice */}
                           <button 
                             onClick={() => { handlePrintInvoice(order); setOpenDropdownId(null); }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '6px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
                             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
                             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                           >
-                            <Printer size={18} color="black" />
+                            <Printer size={18} className="text-gray-700" />
                             Print
                           </button>
                           {/* Details - Highlighted */}
                           <button 
                             onClick={() => handleOpenDetails(order)}
-                            style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', height: '48px', padding: '0 24px', backgroundColor: '#f4f4f4', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '16px', color: 'black', whiteSpace: 'nowrap' }}
-                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#eaeaea'}
-                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f4f4f4'}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                           >
-                            <ZoomIn size={24} color="black" />
+                            <ZoomIn size={18} className="text-gray-700" />
                             Details
                           </button>
                           {/* Duplicate */}
                           <button 
                             onClick={() => handleDuplicateOrder(order)}
-                            style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', height: '48px', padding: '0 24px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '16px', color: 'black', whiteSpace: 'nowrap' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
                             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
                             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                           >
-                            <Copy size={24} color="black" />
+                            <Copy size={18} className="text-gray-700" />
                             Duplicate
                           </button>
                           {/* Order Status */}
                           <div style={{ position: 'relative' }}>
                             <button 
                               onClick={(e) => { e.stopPropagation(); setShowStatusMenu(showStatusMenu === order.id ? null : order.id); }}
-                              style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', height: '48px', padding: '0 24px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '16px', color: 'black', whiteSpace: 'nowrap' }}
+                              style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
                               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
                               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                             >
-                              <ArrowLeftCircle size={24} color="black" />
+                              <ArrowLeftCircle size={18} className="text-gray-700" />
                               Order Status
                             </button>
                             {showStatusMenu === order.id && (
@@ -997,7 +997,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                                     key={status}
                                     onClick={(e) => { e.stopPropagation(); handleStatusChange(order.id, status); }}
                                     style={{ display: 'block', width: '100%', padding: '10px 16px', textAlign: 'left', backgroundColor: order.status === status ? '#f0f0f0' : 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f4f4f4'}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'white'}
                                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = order.status === status ? '#f0f0f0' : 'white'}
                                   >
                                     {STATUS_LABELS[status]}
@@ -1011,7 +1011,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                                     key={status}
                                     onClick={(e) => { e.stopPropagation(); handleStatusChange(order.id, status); }}
                                     style={{ display: 'block', width: '100%', padding: '10px 16px', textAlign: 'left', backgroundColor: order.status === status ? '#f0f0f0' : 'white', border: 'none', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '14px', color: 'black', whiteSpace: 'nowrap' }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f4f4f4'}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'white'}
                                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = order.status === status ? '#f0f0f0' : 'white'}
                                   >
                                     {STATUS_LABELS[status]}
@@ -1024,11 +1024,11 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                           <button 
                             onClick={() => handleDeleteOrder(order.id)}
                             disabled={isDeleting === order.id}
-                            style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', height: '48px', padding: '0 24px', backgroundColor: 'white', border: 'none', cursor: isDeleting === order.id ? 'wait' : 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '16px', color: '#da0000', whiteSpace: 'nowrap', opacity: isDeleting === order.id ? 0.7 : 1 }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', height: '40px', padding: '0 16px', backgroundColor: 'white', border: 'none', cursor: isDeleting === order.id ? 'wait' : 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: '#da0000', whiteSpace: 'nowrap', opacity: isDeleting === order.id ? 0.7 : 1 }}
                             onMouseEnter={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#f9f9f9')}
                             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                           >
-                            {isDeleting === order.id ? <Loader2 size={24} color="#da0000" className="animate-spin" /> : <Trash2 size={24} color="#da0000" />}
+                            {isDeleting === order.id ? <Loader2 size={18} className="text-red-600 animate-spin" /> : <Trash2 size={18} className="text-red-600" />}
                             {isDeleting === order.id ? 'Deleting...' : 'Delete'}
                           </button>
                         </div>
@@ -1495,7 +1495,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
 
               {/* Customer Info */}
               <div style={{ backgroundColor: '#f9fafb', borderRadius: '12px', padding: '20px', marginBottom: '16px' }}>
-                <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '16px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '14px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '4px', height: '20px', backgroundColor: '#3b82f6', borderRadius: '2px' }}></div>
                   Customer Information
                 </h3>
@@ -1525,7 +1525,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
 
               {/* Product Info */}
               <div style={{ backgroundColor: '#f9fafb', borderRadius: '12px', padding: '20px', marginBottom: '16px' }}>
-                <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '16px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '14px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '4px', height: '20px', backgroundColor: '#10b981', borderRadius: '2px' }}></div>
                   Product Details
                 </h3>
@@ -1538,7 +1538,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                     />
                   )}
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '16px', fontWeight: 600, color: '#111827' }}>{detailsOrder.productName || 'N/A'}</p>
+                    <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '14px', fontWeight: 600, color: '#111827' }}>{detailsOrder.productName || 'N/A'}</p>
                     <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '14px', color: '#6b7280', marginTop: '4px' }}>Qty: {detailsOrder.quantity || 1}</p>
                   </div>
                 </div>
@@ -1546,7 +1546,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
 
               {/* Order Summary */}
               <div style={{ backgroundColor: '#f9fafb', borderRadius: '12px', padding: '20px' }}>
-                <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '16px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '14px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '4px', height: '20px', backgroundColor: '#f59e0b', borderRadius: '2px' }}></div>
                   Order Summary
                 </h3>
@@ -1560,7 +1560,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                     <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '15px', fontWeight: 600, color: '#111827' }}>{formatCurrency(detailsOrder.deliveryCharge || 0)}</span>
                   </div>
                   <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '16px', fontWeight: 700, color: '#111827' }}>Total</span>
+                    <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Total</span>
                     <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '18px', fontWeight: 700, color: '#059669' }}>{formatCurrency((detailsOrder.amount || 0) + (detailsOrder.deliveryCharge || 0))}</span>
                   </div>
                 </div>
@@ -1569,7 +1569,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
               {/* Payment Information */}
               {((detailsOrder as any).paymentMethod || (detailsOrder as any).transactionId || (detailsOrder as any).customerPaymentPhone) && (
                 <div style={{ backgroundColor: '#fffbeb', borderRadius: '12px', padding: '20px', marginTop: '16px', border: '1px solid #fde68a' }}>
-                  <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '16px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '14px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ width: '4px', height: '20px', backgroundColor: '#f59e0b', borderRadius: '2px' }}></div>
                     Payment Information
                   </h3>
@@ -1599,7 +1599,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
               {/* Courier Info if available */}
               {detailsOrder.courierProvider && (
                 <div style={{ backgroundColor: '#f9fafb', borderRadius: '12px', padding: '20px', marginTop: '16px' }}>
-                  <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '16px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '14px', color: '#374151', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ width: '4px', height: '20px', backgroundColor: '#8b5cf6', borderRadius: '2px' }}></div>
                     Courier Information
                   </h3>
@@ -1621,7 +1621,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
             <div style={{ padding: '16px 24px', borderTop: '1px solid #e5e5e5', backgroundColor: '#f9fafb', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
               <button
                 onClick={() => { handlePrintInvoice(detailsOrder); }}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', backgroundColor: 'white', border: '1px solid #d1d5db', borderRadius: '8px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: '#374151' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px', backgroundColor: 'white', border: '1px solid #d1d5db', borderRadius: '8px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: '#374151' }}
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
               >
@@ -1630,7 +1630,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
               </button>
               <button
                 onClick={() => { setDetailsOrder(null); openOrderModal(detailsOrder); }}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', backgroundColor: '#111827', border: 'none', borderRadius: '8px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'white' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px', backgroundColor: '#111827', border: 'none', borderRadius: '8px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontWeight: 600, fontSize: '14px', color: 'white' }}
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1f2937'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#111827'}
               >
