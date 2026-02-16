@@ -4,7 +4,9 @@ import toast from 'react-hot-toast';
 import { Product, Category, SubCategory, ChildCategory, Brand, Tag } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
-import { uploadImageToServer } from '../../services/imageUploadService';
+import { uploadImageToServer, uploadAndSaveToGallery, saveToGallery } from '../../services/imageUploadService';
+import { GalleryPicker } from '../GalleryPicker';
+import { FolderOpen } from 'lucide-react';
 
 // Icons
 const AddCircleIcon = () => (
@@ -263,6 +265,11 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
   });
   const [savingCatalog, setSavingCatalog] = useState(false);
 
+  // Gallery picker state
+  const [showGalleryPicker, setShowGalleryPicker] = useState(false);
+  const [galleryPickerTarget, setGalleryPickerTarget] = useState<'mainImage' | 'gallery' | 'variantImage' | 'catalogIcon' | null>(null);
+  const [galleryPickerVariantKey, setGalleryPickerVariantKey] = useState<string | null>(null);
+
   // Local state for catalog items that includes newly added ones
   const [localCategories, setLocalCategories] = useState<Category[]>(categories);
   const [localSubCategories, setLocalSubCategories] = useState<SubCategory[]>(subCategories);
@@ -423,16 +430,73 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     return 'bg-blue-500';
   };
 
-  // Upload single file and return URL
-  const uploadSingleFile = async (file: File): Promise<string | null> => {
+  // Upload single file and return URL (also saves to gallery)
+  const uploadSingleFile = async (file: File, galleryCategory: string = 'Products'): Promise<string | null> => {
     try {
-      const imageUrl = await uploadImageToServer(file, tenantId);
+      const imageUrl = await uploadAndSaveToGallery(file, tenantId, galleryCategory);
       return imageUrl;
     } catch (error) {
       console.error('Upload error:', error);
       toast.error(error instanceof Error ? error.message : 'Upload failed');
       return null;
     }
+  };
+
+  // Open gallery picker for different targets
+  const openGalleryPicker = (target: 'mainImage' | 'gallery' | 'variantImage' | 'catalogIcon', variantKey?: string) => {
+    setGalleryPickerTarget(target);
+    setGalleryPickerVariantKey(variantKey || null);
+    setShowGalleryPicker(true);
+  };
+
+  // Handle image selection from gallery
+  const handleGallerySelect = (imageUrl: string) => {
+    if (!galleryPickerTarget) return;
+
+    switch (galleryPickerTarget) {
+      case 'mainImage':
+        updateField('mainImage', imageUrl);
+        toast.success('Main image selected from gallery');
+        break;
+      case 'gallery':
+        if (!formData.galleryImages.includes(imageUrl)) {
+          updateField('galleryImages', [...formData.galleryImages, imageUrl]);
+          toast.success('Image added to gallery');
+        } else {
+          toast.error('Image already in gallery');
+        }
+        break;
+      case 'variantImage':
+        if (galleryPickerVariantKey) {
+          const [variantIdx, optionIdx] = galleryPickerVariantKey.split('-').map(Number);
+          const newVariants = [...formData.variants];
+          if (newVariants[variantIdx] && newVariants[variantIdx].options[optionIdx]) {
+            newVariants[variantIdx].options[optionIdx].image = imageUrl;
+            updateField('variants', newVariants);
+            toast.success('Variant image selected from gallery');
+          }
+        }
+        break;
+      case 'catalogIcon':
+        setNewCatalogItem(prev => ({ ...prev, image: imageUrl }));
+        toast.success('Image selected from gallery');
+        break;
+    }
+
+    setShowGalleryPicker(false);
+    setGalleryPickerTarget(null);
+    setGalleryPickerVariantKey(null);
+  };
+
+  // Handle multiple image selection from gallery
+  const handleGallerySelectMultiple = (imageUrls: string[]) => {
+    const newImages = imageUrls.filter(url => !formData.galleryImages.includes(url));
+    if (newImages.length > 0) {
+      updateField('galleryImages', [...formData.galleryImages, ...newImages]);
+      toast.success(\`\${newImages.length} images added to gallery\`);
+    }
+    setShowGalleryPicker(false);
+    setGalleryPickerTarget(null);
   };
 
   // Get all images (mainImage + galleryImages)
@@ -969,12 +1033,23 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                         ))}
                         {/* Add more placeholder */}
                         {allImages.length < 20 && (
-                          <div 
-                            onClick={() => fileInputRef.current?.click()}
-                            className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-[#ff9f1c] hover:bg-orange-50 transition-colors"
-                          >
-                            <Plus size={20} className="text-gray-400 xxs:w-6 xxs:h-6" />
-                            <span className="text-[9px] xxs:text-[10px] text-gray-400 mt-0.5 xxs:mt-1">Add</span>
+                          <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="text-gray-400 hover:text-[#ff9f1c] transition-colors"
+                              title="Upload new image"
+                            >
+                              <Plus size={20} className="xxs:w-6 xxs:h-6" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => openGalleryPicker('gallery')}
+                              className="text-gray-400 hover:text-[#ff9f1c] transition-colors"
+                              title="Choose from gallery"
+                            >
+                              <FolderOpen size={16} className="xxs:w-5 xxs:h-5" />
+                            </button>
                           </div>
                         )}
                       </div>
@@ -990,13 +1065,23 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                       <p className="text-[10px] xxs:text-[11px] sm:text-[12px] text-[#a2a2a2] text-center mt-1">
                         JPG, PNG (max 4MB). Up to 20 images.
                       </p>
-                      <button 
-                        type="button"
-                        onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                        className="mt-3 xxs:mt-4 bg-[#ff9f1c] text-white px-3 xxs:px-4 py-1.5 xxs:py-2 rounded-lg text-[12px] xxs:text-[14px] font-semibold"
-                      >
-                        Add Images
-                      </button>
+                      <div className="flex gap-2 mt-3 xxs:mt-4">
+                        <button 
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                          className="bg-[#ff9f1c] text-white px-3 xxs:px-4 py-1.5 xxs:py-2 rounded-lg text-[12px] xxs:text-[14px] font-semibold"
+                        >
+                          Add Images
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); openGalleryPicker('gallery'); }}
+                          className="bg-gray-100 text-gray-700 px-3 xxs:px-4 py-1.5 xxs:py-2 rounded-lg text-[12px] xxs:text-[14px] font-semibold flex items-center gap-1.5 hover:bg-gray-200 transition-colors"
+                        >
+                          <FolderOpen size={14} />
+                          From Gallery
+                        </button>
+                      </div>
                     </div>
                   )}
                   <input
@@ -1841,6 +1926,14 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                         </div>
                       )}
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => openGalleryPicker('catalogIcon')}
+                      className="h-20 px-4 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[#ff6a00] hover:bg-orange-50 transition-colors text-gray-400"
+                    >
+                      <FolderOpen size={24} />
+                      <span className="text-xs mt-1">Gallery</span>
+                    </button>
                     {newCatalogItem.image && (
                       <button
                         onClick={() => setNewCatalogItem(prev => ({ ...prev, image: '' }))}
@@ -2038,6 +2131,25 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
           </div>
         </div>
       )}
+
+      {/* Gallery Picker Modal */}
+      <GalleryPicker
+        isOpen={showGalleryPicker}
+        onClose={() => {
+          setShowGalleryPicker(false);
+          setGalleryPickerTarget(null);
+          setGalleryPickerVariantKey(null);
+        }}
+        onSelect={handleGallerySelect}
+        multiple={galleryPickerTarget === 'gallery'}
+        onSelectMultiple={galleryPickerTarget === 'gallery' ? handleGallerySelectMultiple : undefined}
+        title={
+          galleryPickerTarget === 'mainImage' ? 'Select Main Image' :
+          galleryPickerTarget === 'gallery' ? 'Select Gallery Images' :
+          galleryPickerTarget === 'variantImage' ? 'Select Variant Image' :
+          'Select Image'
+        }
+      />
     </div>
   );
 };

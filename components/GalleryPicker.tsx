@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { X, Search, Image as ImageIcon, Check, FolderOpen, Grid, LayoutGrid, ZoomIn, ChevronLeft, ChevronRight, Filter, ArrowUpAZ, ArrowDownAZ } from 'lucide-react';
 import { GalleryItem } from '../types';
 import { DataService } from '../services/DataService';
+import { useAuth } from '../context/AuthContext';
 
 // No default gallery images - users upload their own
 const DEFAULT_GALLERY_IMAGES: GalleryItem[] = [];
@@ -27,6 +28,8 @@ export const GalleryPicker: React.FC<GalleryPickerProps> = ({
   onSelectMultiple,
   title = 'Choose from Gallery'
 }) => {
+  const { user } = useAuth();
+  const tenantId = user?.tenantId || 'default';
   const [images, setImages] = useState<GalleryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,7 +47,8 @@ export const GalleryPicker: React.FC<GalleryPickerProps> = ({
     const loadGallery = async () => {
       setIsLoading(true);
       try {
-        const stored = await DataService.get<GalleryItem[]>('gallery', DEFAULT_GALLERY_IMAGES);
+        // Load gallery images for current tenant only
+        const stored = await DataService.get<GalleryItem[]>('gallery', DEFAULT_GALLERY_IMAGES, tenantId);
         setImages(stored);
       } catch (error) {
         console.warn('Failed to load gallery:', error);
@@ -58,7 +62,7 @@ export const GalleryPicker: React.FC<GalleryPickerProps> = ({
     setSelectedUrls([]);
     setSearchTerm('');
     setPreviewImage(null);
-  }, [isOpen]);
+  }, [isOpen, tenantId]);
 
   // Close sort menu when clicking outside
   useEffect(() => {

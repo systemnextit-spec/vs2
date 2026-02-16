@@ -17,6 +17,85 @@ export interface UploadResponse {
   error?: string;
 }
 
+import { GalleryItem } from '../types';
+
+/**
+ * Save an uploaded image to the tenant's gallery
+ * This allows the image to be reused from the gallery picker
+ */
+export const saveToGallery = async (
+  imageUrl: string,
+  tenantId: string,
+  title?: string,
+  category: string = 'Uploads'
+): Promise<void> => {
+  try {
+    // Fetch existing gallery
+    const getResponse = await fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/gallery`);
+    let existingGallery: GalleryItem[] = [];
+    if (getResponse.ok) {
+      const result = await getResponse.json();
+      existingGallery = result.data || [];
+    }
+
+    // Check if image already exists in gallery (avoid duplicates)
+    const normalizedUrl = imageUrl.replace(API_BASE_URL, '');
+    const exists = existingGallery.some(item => 
+      item.imageUrl === imageUrl || 
+      item.imageUrl === normalizedUrl ||
+      item.imageUrl.replace(API_BASE_URL, '') === normalizedUrl
+    );
+    
+    if (exists) {
+      console.log('[Gallery] Image already exists in gallery, skipping');
+      return;
+    }
+
+    // Create new gallery item
+    const newItem: GalleryItem = {
+      id: Date.now(),
+      tenantId,
+      title: title || `Image ${existingGallery.length + 1}`,
+      category,
+      imageUrl: normalizedUrl.startsWith('/') ? normalizedUrl : imageUrl,
+      dateAdded: new Date().toISOString()
+    };
+
+    // Save to gallery
+    const saveResponse = await fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/gallery`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: [...existingGallery, newItem] })
+    });
+
+    if (!saveResponse.ok) {
+      console.warn('[Gallery] Failed to save image to gallery');
+    } else {
+      console.log('[Gallery] Image saved to gallery:', newItem.title);
+    }
+  } catch (error) {
+    console.warn('[Gallery] Error saving to gallery:', error);
+    // Don't throw - gallery save is optional
+  }
+};
+
+/**
+ * Upload image and automatically save to gallery
+ */
+export const uploadAndSaveToGallery = async (
+  file: File,
+  tenantId: string,
+  galleryCategory: string = 'Products'
+): Promise<string> => {
+  const imageUrl = await uploadImageToServer(file, tenantId);
+  
+  // Save to gallery in background (don't block)
+  saveToGallery(imageUrl, tenantId, file.name.replace(/\.[^/.]+$/, ''), galleryCategory)
+    .catch(err => console.warn('[Gallery] Background save failed:', err));
+  
+  return imageUrl;
+};
+
 /**
  * Upload a file to the server without applying product-specific transforms.
  * Useful for assets like carousel images that are already resized/converted.
