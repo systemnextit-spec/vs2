@@ -121,7 +121,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
     totalOrder: String([104, 56, 266, 506][idx] || 100),
     status: (p.stock || 0) > 0 ? 'Stock' : 'Stock out' as 'Stock' | 'Stock out',
     price: `$${(p.price || 999).toFixed(2)}`,
-    image: p.image?.[0]
+    image: p.image
   })), [products]);
 
   // Top products data - memoized to prevent re-renders
@@ -130,7 +130,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
     name: p.name || ['Apple iPhone 13', 'Nike Air Jordan', 'T-shirt', 'Assorted Cross Bag', 'Fur Pom Gloves'][idx],
     itemCode: `#FXZ-${4567 + idx}`,
     price: `$${(p.price || [999, 72.4, 35.4, 80, 45][idx]).toFixed(2)}`,
-    image: p.image?.[0]
+    image: p.image
   })), [products]);
 
   return (
