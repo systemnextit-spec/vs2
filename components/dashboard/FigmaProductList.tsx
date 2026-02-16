@@ -732,7 +732,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           {/* Category Filter */}
           <div className="relative" data-dropdown>
             <button
-              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+              onClick={() => { setShowCategoryDropdown(!showCategoryDropdown); setShowBrandDropdown(false); setShowStatusDropdown(false); }}
               className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[100px] xxs:max-w-[119px]"
             >
               <span className="text-[11px] xxs:text-[12px] text-black dark:text-white truncate">
@@ -764,7 +764,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           {/* Brand Filter */}
           <div className="relative" data-dropdown>
             <button
-              onClick={() => setShowBrandDropdown(!showBrandDropdown)}
+              onClick={() => { setShowBrandDropdown(!showBrandDropdown); setShowCategoryDropdown(false); setShowStatusDropdown(false); }}
               className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[90px] xxs:max-w-[110px]"
             >
               <span className="text-[11px] xxs:text-[12px] text-black dark:text-white truncate">
@@ -796,7 +796,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           {/* Status Filter */}
           <div className="relative" data-dropdown>
             <button
-              onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+              onClick={() => { setShowStatusDropdown(!showStatusDropdown); setShowCategoryDropdown(false); setShowBrandDropdown(false); }}
               className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0"
             >
               <span className="text-[11px] xxs:text-[12px] text-black dark:text-white">
