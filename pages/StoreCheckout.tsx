@@ -324,7 +324,7 @@ const StoreCheckout = ({
                   >
                     {isCompleted ? '✓' : index + 1}
                   </div>
-                  <div className="hidden sm:block">
+                  <div className="flex-1">
                     <p className="text-xs text-gray-400 uppercase tracking-wide">Step {index + 1}</p>
                     <p className={`text-sm font-semibold transition ${active ? 'text-gray-900' : 'text-gray-400'}`}>{step.label}</p>
                   </div>

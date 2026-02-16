@@ -101,10 +101,12 @@ const menuItems: SidebarItem[] = [
     icon: <img src="https://hdnfltv.com/image/nitimages/fluent_content-view-gallery-28-regular.webp" alt="Website Content" className="w-5 h-5 object-contain" />, 
     hasDropdown: true,
     children: [
-      { id: 'website_content_carousel', label: 'Carousal', icon: <ChevronRight className="w-4 h-4" /> },
+      { id: 'website_info', label: 'Website', icon: <ChevronRight className="w-4 h-4" /> },
+      { id: 'website_content_carousel', label: 'Carousel', icon: <ChevronRight className="w-4 h-4" /> },
       { id: 'website_content_banners', label: 'Campaigns', icon: <ChevronRight className="w-4 h-4" /> },
       { id: 'website_content_popups', label: 'Popups', icon: <ChevronRight className="w-4 h-4" /> },
       { id: 'website_content_landing_page', label: 'Landing Page', icon: <ChevronRight className="w-4 h-4" /> },
+      { id: 'chat_settings', label: 'Chat', icon: <ChevronRight className="w-4 h-4" /> },
     ]
   },
   { id: 'gallery', label: 'Gallery', icon: <img src="https://hdnfltv.com/image/nitimages/solar_gallery-linear.webp" alt="Gallery" className="w-5 h-5 object-contain" /> },
