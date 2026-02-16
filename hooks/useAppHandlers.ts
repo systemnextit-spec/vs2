@@ -28,9 +28,10 @@ const generateUniqueProductId = (existingProducts: Product[]): number => {
   if (existingProducts.length === 0) {
     return Date.now();
   }
-  const maxId = Math.max(...existingProducts.map(p => p.id));
-  // Ensure the new ID is at least current timestamp to avoid conflicts with other systems
-  return Math.max(maxId + 1, Date.now());
+  // Use reduce to safely handle large arrays (spread operator can cause stack overflow)
+  const maxId = existingProducts.reduce((max, p) => Math.max(max, p.id), 0);
+  // Always use maxId + 1 for consistency to avoid mixing sequential and timestamp-based IDs
+  return maxId + 1;
 };
 
 interface UseAppHandlersProps {
