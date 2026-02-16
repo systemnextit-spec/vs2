@@ -8,6 +8,7 @@ import FigmaSalesPerformance from './FigmaSalesPerformance';
 import FigmaSalesByCategory from './FigmaSalesByCategory';
 import FigmaAnalyticsChart from './FigmaAnalyticsChart';
 import { Order, Product } from '../../types';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface FigmaDashboardContentProps {
   user?: {
@@ -28,7 +29,7 @@ const FigmaDashboardContent: React.FC<FigmaDashboardContentProps> = ({
   products = [],
   onNavigate
 }) => {
-  const [language, setLanguage] = useState<string>('en');
+  const { language, setLanguage } = useLanguage();
   const [timeFilter, setTimeFilter] = useState<string>('Month');
 
   // Calculate stats from real data - default to 0 when no data

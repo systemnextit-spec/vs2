@@ -22,6 +22,7 @@ import React, { useEffect, useCallback, lazy, Suspense } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { DarkModeProvider } from './context/DarkModeContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { HelmetProvider } from 'react-helmet-async';
 import { DataService } from './services/DataService';
 
@@ -416,6 +417,7 @@ const App = () => {
   return (
     <HelmetProvider>
       <AuthProvider>
+        <LanguageProvider tenantId={activeTenantId}>
         <DarkModeProvider>
           <ThemeProvider themeConfig={themeConfig || undefined}>
             <Suspense fallback={null}>
@@ -514,6 +516,7 @@ const App = () => {
             </Suspense>
           </ThemeProvider>
         </DarkModeProvider>
+        </LanguageProvider>
       </AuthProvider>
     </HelmetProvider>
   );

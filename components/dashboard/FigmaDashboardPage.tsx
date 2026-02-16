@@ -14,6 +14,7 @@ import {
 import { Order, Product } from '../../types';
 import { useNotifications } from '../../hooks/useNotifications';
 import { useTenant } from '../../hooks/useTenant';
+import { useLanguage } from '../../context/LanguageContext';
 import { DataService } from '../../services/DataService';
 
 interface FigmaDashboardPageProps {
@@ -43,7 +44,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
   hasUnreadChat = false,
   onOpenAdminChat
 }) => {
-  const [language, setLanguage] = useState<string>('en');
+  const { language, setLanguage } = useLanguage();
   const [timeFilter, setTimeFilter] = useState<'day' | 'month' | 'year' | 'all' | 'custom'>('year');
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [currentPage, setCurrentPage] = useState<string>('dashboard');

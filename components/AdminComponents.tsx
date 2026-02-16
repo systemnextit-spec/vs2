@@ -10,6 +10,7 @@ import { StatCardProps, User, Tenant } from '../types';
 import { useNotifications } from '../hooks/useNotifications';
 import type { Notification as AppNotification } from '../backend/src/services/NotificationService';
 import { normalizeImageUrl } from '../utils/imageUrlHelper';
+import { useLanguage } from '../context/LanguageContext';
 
 
 // Check if we're on tenant subdomain with /admin path (not admin.* or superadmin.* subdomain)
@@ -61,6 +62,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 	const [isProductsOpen, setIsProductsOpen] = useState(activePage === 'products' || activePage === 'product-upload');
 	const desktopScrollRef = useRef<HTMLDivElement>(null);
 	const mobileScrollRef = useRef<HTMLDivElement>(null);
+	const { t } = useLanguage();
 
 	// Simple navigation handler
 	const handleNavigate = (page: string) => {
@@ -70,47 +72,47 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 
 	// Main Menu items (without products - we'll handle it separately)
 	const mainMenuItems = [
-		{ id: 'dashboard', icon: <LayoutDashboard size={18} />, label: 'Dashboard', resource: 'dashboard' },
-		{ id: 'orders', icon: <ShoppingBag size={18} />, label: 'Orders', resource: 'orders' },
+		{ id: 'dashboard', icon: <LayoutDashboard size={18} />, label: t('dashboard'), resource: 'dashboard' },
+		{ id: 'orders', icon: <ShoppingBag size={18} />, label: t('orders'), resource: 'orders' },
 		// Products moved to separate dropdown below
-		{ id: 'inventory', icon: <Boxes size={18} />, label: 'Inventory', resource: 'inventory' },
-		{ id: 'customers_reviews', icon: <Users size={18} />, label: 'Customers & review', resource: 'customers' },
+		{ id: 'inventory', icon: <Boxes size={18} />, label: t('inventory'), resource: 'inventory' },
+		{ id: 'customers_reviews', icon: <Users size={18} />, label: t('customers_reviews'), resource: 'customers' },
 	];
 
 	// Configuration items
 	const configItems = [
-		{ id: 'customization', icon: <Sliders size={18} />, label: 'Customization', resource: 'customization' },
-		{ id: 'store_studio', icon: <Layers size={18} />, label: 'Store Studio', resource: 'customization' },
-		{ id: 'landing_pages', icon: <FileText size={18} />, label: 'Landing Page', resource: 'landing_pages' },
-                { id: 'popups', icon: <FileText size={18} />, label: 'Popups', resource: 'customization' },
-		{ id: 'gallery', icon: <ImageIcon size={18} />, label: 'Gallery', resource: 'gallery' },
-		{ id: 'business_report_expense', icon: <FileText size={18} />, label: 'Business Report', resource: 'business_report' },
-		{ id: 'expenses', icon: <TrendingDown size={18} />, label: 'Expenses', resource: 'business_report' },
-		{ id: 'income', icon: <TrendingUp size={18} />, label: 'Income', resource: 'business_report' },
-		{ id: 'purchases', icon: <ShoppingCart size={18} />, label: 'Purchase Info', resource: 'business_report' },
-		{ id: 'due_book', icon: <BookOpen size={18} />, label: 'Due Book', resource: 'business_report' },
+		{ id: 'customization', icon: <Sliders size={18} />, label: t('customization'), resource: 'customization' },
+		{ id: 'store_studio', icon: <Layers size={18} />, label: t('store_studio'), resource: 'customization' },
+		{ id: 'landing_pages', icon: <FileText size={18} />, label: t('landing_pages'), resource: 'landing_pages' },
+                { id: 'popups', icon: <FileText size={18} />, label: t('popups'), resource: 'customization' },
+		{ id: 'gallery', icon: <ImageIcon size={18} />, label: t('gallery'), resource: 'gallery' },
+		{ id: 'business_report_expense', icon: <FileText size={18} />, label: t('business_report'), resource: 'business_report' },
+		{ id: 'expenses', icon: <TrendingDown size={18} />, label: t('expenses'), resource: 'business_report' },
+		{ id: 'income', icon: <TrendingUp size={18} />, label: t('income'), resource: 'business_report' },
+		{ id: 'purchases', icon: <ShoppingCart size={18} />, label: t('purchases'), resource: 'business_report' },
+		{ id: 'due_book', icon: <BookOpen size={18} />, label: t('due_book'), resource: 'business_report' },
 	];
 
 	// System items
 	const systemItems = [
-		{ id: 'activity_log', icon: <ClipboardList size={18} />, label: 'Activity Log', resource: 'settings' },
-		{ id: 'support', icon: <Headphones size={18} />, label: 'Support', resource: 'settings' },
-		{ id: 'tutorial', icon: <FileText size={18} />, label: 'Tutorial', resource: 'settings' },
-		{ id: 'profile', icon: <UserCircle size={18} />, label: 'Profile', resource: 'settings' },
-		{ id: 'settings', icon: <Settings size={18} />, label: 'Settings', resource: 'settings' },
+		{ id: 'activity_log', icon: <ClipboardList size={18} />, label: t('activity_log'), resource: 'settings' },
+		{ id: 'support', icon: <Headphones size={18} />, label: t('support'), resource: 'settings' },
+		{ id: 'tutorial', icon: <FileText size={18} />, label: t('tutorial'), resource: 'settings' },
+		{ id: 'profile', icon: <UserCircle size={18} />, label: t('profile'), resource: 'settings' },
+		{ id: 'settings', icon: <Settings size={18} />, label: t('settings'), resource: 'settings' },
 	];
 
 	const catalogItems = [
-		{ id: 'catalog_categories', label: 'Categories' },
-		{ id: 'catalog_subcategories', label: 'Sub Categories' },
-		{ id: 'catalog_childcategories', label: 'Child Categories' },
-		{ id: 'catalog_brands', label: 'Brand' },
-		{ id: 'catalog_tags', label: 'Tags' },
+		{ id: 'catalog_categories', label: t('categories') },
+		{ id: 'catalog_subcategories', label: t('subcategories') },
+		{ id: 'catalog_childcategories', label: t('child_categories') },
+		{ id: 'catalog_brands', label: t('brands') },
+		{ id: 'catalog_tags', label: t('tags') },
 	];
 
 	const productsMenuItems = [
-		{ id: 'products', label: 'All Products' },
-		{ id: 'product-upload', label: 'Add New Product' },
+		{ id: 'products', label: t('all_products') },
+		{ id: 'product-upload', label: t('add_new_product') },
 	];
 
 	// Filter menu items based on permissions
@@ -156,7 +158,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 				</div>
 
 				{/* Main Menu Section */}
-				{!isCollapsed && <div className="text-[11px] font-bold text-slate-500 mb-2 px-3 uppercase tracking-widest">Main Menu</div>}
+				{!isCollapsed && <div className="text-[11px] font-bold text-slate-500 mb-2 px-3 uppercase tracking-widest">{t('main_menu')}</div>}
 
 				{filteredMainMenuItems.map((item) => (
 					<div
@@ -245,7 +247,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 				{/* Configuration Section */}
 				{filteredConfigItems.length > 0 && (
 					<>
-						{!isCollapsed && <div className="text-[11px] font-bold text-slate-500 mt-6 mb-2 px-3 uppercase tracking-widest">Configuration</div>}
+						{!isCollapsed && <div className="text-[11px] font-bold text-slate-500 mt-6 mb-2 px-3 uppercase tracking-widest">{t('configuration')}</div>}
 
 						{filteredConfigItems.map((item) => (
 							<div
@@ -264,7 +266,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 				{/* System Section */}
 				{filteredSystemItems.length > 0 && (
 					<>
-						{!isCollapsed && <div className="text-[11px] font-bold text-slate-500 mt-6 mb-2 px-3 uppercase tracking-widest">System</div>}
+						{!isCollapsed && <div className="text-[11px] font-bold text-slate-500 mt-6 mb-2 px-3 uppercase tracking-widest">{t('system')}</div>}
 
 						{filteredSystemItems.map((item) => (
 							<div
