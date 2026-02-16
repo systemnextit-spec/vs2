@@ -712,7 +712,7 @@ footer { text-align: center; margin-top: 32px; font-size: 12px; color: #475569; 
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="text-xs font-mono text-slate-400">#{rowNumber < 10 ? `0${rowNumber}` : rowNumber}</span>
-                                <span className="font-bold text-slate-900">#{order.id.slice(-6)}</span>
+                                <span className="font-bold text-slate-900">{order.id.slice(-6)}</span>
                               </div>
                               <span className="text-xs text-slate-500">{order.date ? new Date(order.date).toLocaleDateString('en-GB') : 'N/A'}</span>
                             </div>
@@ -849,7 +849,7 @@ footer { text-align: center; margin-top: 32px; font-size: 12px; color: #475569; 
                               />
                             </td>
                             <td className="p-4 text-sm text-slate-500 font-mono">{rowNumber < 10 ? `0${rowNumber}` : rowNumber}</td>
-                            <td className="p-4 text-sm font-semibold text-slate-900">#{order.id.slice(-6)}</td>
+                            <td className="p-4 text-sm font-semibold text-slate-900">{order.id.slice(-6)}</td>
                             <td className="p-4 text-sm text-slate-500">{order.sku || '-'}</td>
                             <td className="p-4">
                               <div className="flex items-center gap-3">
@@ -1095,7 +1095,7 @@ footer { text-align: center; margin-top: 32px; font-size: 12px; color: #475569; 
                 <div>
                   <div className="flex items-center gap-3">
                     <h2 className="text-xl font-bold text-slate-900">Edit Order</h2>
-                    <span className="px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 text-xs font-mono font-medium">#{selectedOrder.id.slice(-6)}</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 text-xs font-mono font-medium">{selectedOrder.id.slice(-6)}</span>
                   </div>
                   <p className="text-sm text-slate-500 mt-1">Update details, assign courier or check fraud risk</p>
                 </div>

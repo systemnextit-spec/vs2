@@ -178,7 +178,7 @@ const AdminBusinessReport: React.FC<AdminBusinessReportProps> = ({
                   <tbody className="divide-y divide-gray-100">
                     {orders.filter(o => o.status === 'Delivered').slice(0, 5).map((order, idx) => (
                       <tr key={order.id || idx} className="hover:bg-gray-50">
-                        <td className="px-5 py-3 text-sm font-medium text-gray-900">#{order.id}</td>
+                        <td className="px-5 py-3 text-sm font-medium text-gray-900">{order.id}</td>
                         <td className="px-5 py-3 text-sm text-gray-600">{order.customerName || 'N/A'}</td>
                         <td className="px-5 py-3 text-sm font-medium text-gray-900">৳{(order.amount || 0).toLocaleString()}</td>
                         <td className="px-5 py-3">

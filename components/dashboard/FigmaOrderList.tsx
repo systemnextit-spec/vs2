@@ -890,7 +890,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                     className="w-3 h-3 xxs:w-4 xxs:h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                   />
                 </td>
-                <td className="px-2 xxs:px-3 py-2 xxs:py-3 font-medium text-gray-900 whitespace-nowrap text-[10px] xxs:text-sm">#{order.id?.slice(-6)}</td>
+                <td className="px-2 xxs:px-3 py-2 xxs:py-3 font-medium text-gray-900 whitespace-nowrap text-[10px] xxs:text-sm">{order.id?.slice(-6)}</td>
                 <td className="px-2 xxs:px-3 py-2 xxs:py-3">
                   <div className="flex items-center gap-1 xxs:gap-2 min-w-0">
                     {order.productImage ? (
@@ -1230,7 +1230,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
               <div>
                 <div className="flex items-center gap-3">
                   <h2 className="text-xl font-bold text-gray-900">Edit Order</h2>
-                  <span className="px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700 text-xs font-mono">#{selectedOrder.id?.slice(-6)}</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700 text-xs font-mono">{selectedOrder.id?.slice(-6)}</span>
                 </div>
                 <p className="text-sm text-gray-500 mt-1">Update order details and send to courier</p>
               </div>
@@ -1471,7 +1471,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: '1px solid #e5e5e5', backgroundColor: '#f9fafb' }}>
               <div>
                 <h2 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '20px', color: '#111827', margin: 0 }}>Order Details</h2>
-                <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '14px', color: '#6b7280', marginTop: '4px' }}>Order #{detailsOrder.id?.slice(-6)}</p>
+                <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '14px', color: '#6b7280', marginTop: '4px' }}>Order {detailsOrder.id?.slice(-6)}</p>
               </div>
               <button 
                 onClick={() => setDetailsOrder(null)} 

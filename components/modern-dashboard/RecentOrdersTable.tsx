@@ -33,7 +33,7 @@ const RecentOrdersTable: React.FC<RecentOrdersTableProps> = ({ orders }) => {
         {orders.map((order, index) => (
           <div key={index} className="p-3 hover:bg-gray-50/50 transition-colors">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-bold text-gray-900">#{order.id}</span>
+              <span className="text-sm font-bold text-gray-900">{order.id}</span>
               <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${getStatusStyle(order.status)}`}>
                 {order.status}
               </span>
@@ -76,7 +76,7 @@ const RecentOrdersTable: React.FC<RecentOrdersTableProps> = ({ orders }) => {
             {orders.map((order, index) => (
               <tr key={index} className="hover:bg-gray-50/50 transition-colors">
                 <td className="px-3 sm:px-4 py-2.5 sm:py-3">
-                  <span className="text-xs sm:text-sm font-bold text-gray-900">#{order.id}</span>
+                  <span className="text-xs sm:text-sm font-bold text-gray-900">{order.id}</span>
                 </td>
                 <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm text-gray-500">{order.date}</td>
                 <td className="px-3 sm:px-4 py-2.5 sm:py-3">

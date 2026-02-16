@@ -532,7 +532,7 @@ const AdminCustomers: React.FC<AdminCustomersProps> = ({ orders, products = [] }
                     {selectedCustomer.orders.slice(0, 5).map((order, idx) => (
                       <div key={idx} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg text-sm">
                         <div>
-                          <p className="font-medium text-gray-700">#{order.id}</p>
+                          <p className="font-medium text-gray-700">{order.id}</p>
                           <p className="text-xs text-gray-400">{formatDate(order.createdAt || order.date || '')}</p>
                         </div>
                         <div className="text-right">
