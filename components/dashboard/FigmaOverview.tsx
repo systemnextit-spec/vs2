@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 
 // Icon URLs
 const ICON_URLS = {
@@ -33,7 +34,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, iconUrl }) => {
 // Combined Language and Date display component
 const LanguageDateCard: React.FC<{
   currentLang: string;
-  onLangChange: (lang: string) => void;
+  onLangChange: (lang: 'en' | 'bn') => void;
   date: string;
   dayName: string;
 }> = ({ currentLang, onLangChange, date, dayName }) => {
@@ -41,7 +42,7 @@ const LanguageDateCard: React.FC<{
     <div className="flex gap-4 w-full col-span-2 sm:col-span-1">
       {/* Language Selector - exact Figma design */}
       <div className="bg-[#F5F5F5] dark:bg-gray-700 w-[122px] h-[68px] relative rounded-lg overflow-hidden flex-shrink-0">
-        <div className="left-[16px] top-[10px] absolute text-black dark:text-gray-300 text-[13px] font-normal font-['Poppins']">Language</div>
+        <div className="left-[16px] top-[10px] absolute text-black dark:text-gray-300 text-[13px] font-normal font-['Poppins']">{t("language")}</div>
         <div className="w-[92px] h-[26px] left-[16px] top-[32px] absolute rounded-3xl border border-gray-300 dark:border-gray-500 overflow-hidden">
           <button 
             onClick={() => onLangChange('en')}
@@ -112,7 +113,7 @@ interface FigmaOverviewProps {
     totalStock?: number;
   };
   currentLang?: string;
-  onLangChange?: (lang: string) => void;
+  onLangChange?: (lang: 'en' | 'bn') => void;
   notificationImages?: string[];
 }
 
@@ -132,6 +133,7 @@ const FigmaOverview: React.FC<FigmaOverviewProps> = ({
   const now = new Date();
   const currentDate = now.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
   const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' });
+  const { t } = useLanguage();
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl mx-2 sm:mx-4 md:mx-6 p-4 sm:p-6 shadow-sm overflow-hidden">
@@ -145,13 +147,13 @@ const FigmaOverview: React.FC<FigmaOverviewProps> = ({
           {/* Row 1 */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
             <StatCard
-              title="Total Products"
+              title={t("total_products")}
               value={stats.totalProducts || 0}
               iconUrl={ICON_URLS.totalProduct}
             />
             
             <StatCard
-              title="Total Orders"
+              title={t("total_orders")}
               value={(stats.totalOrders || 0).toLocaleString()}
               iconUrl={ICON_URLS.totalOrder}
             />
@@ -167,25 +169,25 @@ const FigmaOverview: React.FC<FigmaOverviewProps> = ({
           {/* Row 2 */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
             <StatCard
-              title="Low Stock"
+              title={t("low_stock")}
               value={stats.lowStock || 0 }
               iconUrl={ICON_URLS.lowStock}
             />
             
             <StatCard
-              title="Total Amount"
+              title={t("total_amount")}
               value={stats.totalAmount || '৳0'}
               iconUrl={ICON_URLS.totalAmount}
             />
             
             {/* <StatCard
-              title="Total Stock"
+              title={t("total_stock")}
               value={(stats.totalStock ||  0).toLocaleString()}
               iconUrl={ICON_URLS.totalStock}
             /> */}
             
             <StatCard
-              title="To be Reviewed"
+              title={t("to_be_reviewed")}
               value={stats.toReview || 0}
               iconUrl={ICON_URLS.toReview}
             />

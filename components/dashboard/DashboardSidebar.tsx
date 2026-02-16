@@ -25,6 +25,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { PermissionMap } from './types';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface SidebarItem {
   id: string;
@@ -130,6 +131,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   permissions
 }) => {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const { t } = useLanguage();
 
   // Check if user can access a menu item
   const canAccess = (itemId: string): boolean => {
@@ -164,9 +166,55 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
     return false;
   };
 
+  // Create translated menu items
+  const translatedMenuItems: SidebarItem[] = useMemo(() => [
+    { id: 'dashboard', label: t('dashboard'), icon: <img src="https://hdnfltv.com/image/nitimages/dashboard-square-01.webp" alt="Dashboard" className="w-5 h-5 object-contain" /> },
+    { id: 'orders', label: t('orders'), icon: <img src="https://hdnfltv.com/image/nitimages/invoice.webp" alt="Orders" className="w-5 h-5 object-contain" /> },
+    { id: 'products', label: t('products'), icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_ad-product.webp" alt="Products" className="w-5 h-5 object-contain" /> },
+    { 
+      id: 'catalog', 
+      label: t('catalog'), 
+      icon: <img src="https://hdnfltv.com/image/nitimages/hugeicons_catalogue.webp" alt="Catalog" className="w-5 h-5 object-contain" />,
+      hasDropdown: true,
+      children: [
+        { id: 'catalog_categories', label: t('category'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'catalog_subcategories', label: t('sub_category'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'catalog_childcategories', label: t('child_category'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'catalog_brands', label: t('brands'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'catalog_tags', label: t('tags'), icon: <ChevronRight className="w-4 h-4" /> },
+      ]
+    },
+    { id: 'inventory', label: t('inventory'), icon: <img src="https://hdnfltv.com/image/nitimages/note.webp" alt="Inventory" className="w-5 h-5 object-contain" /> },
+    { id: 'customers_reviews', label: t('customers_reviews'), icon: <img src="https://hdnfltv.com/image/nitimages/user-group.webp" alt="Customers & review" className="w-5 h-5 object-contain" /> },
+    { id: 'customization', label: t('customization'), icon: <img src="https://hdnfltv.com/image/nitimages/arcticons_galaxy-themes.webp" alt="Customization" className="w-5 h-5 object-contain" /> },
+    { 
+      id: 'website_content', 
+      label: t('website_content'), 
+      icon: <img src="https://hdnfltv.com/image/nitimages/fluent_content-view-gallery-28-regular.webp" alt="Website Content" className="w-5 h-5 object-contain" />,
+      hasDropdown: true,
+      children: [
+        { id: 'website_info', label: t('website_info'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'website_content_carousel', label: t('carousel'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'website_content_banners', label: t('campaigns'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'website_content_popups', label: t('popups'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'website_content_landing_page', label: t('landing_pages'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'chat_settings', label: t('chat'), icon: <ChevronRight className="w-4 h-4" /> },
+      ]
+    },
+    { id: 'gallery', label: t('gallery'), icon: <img src="https://hdnfltv.com/image/nitimages/solar_gallery-linear.webp" alt="Gallery" className="w-5 h-5 object-contain" /> },
+    { id: 'business_report', label: t('business_report'), icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_table-report.webp" alt="Business Report" className="w-5 h-5 object-contain" /> },
+    { id: 'settings', label: t('settings'), icon: <img src="https://hdnfltv.com/image/nitimages/ci_settings.webp" alt="Settings" className="w-5 h-5 object-contain" /> },
+    { id: 'admin_control', label: t('admin_control'), icon:<img src="https://hdnfltv.com/image/nitimages/hugeicons_microsoft-admin.webp" alt="Admin Control" className="w-5 h-5 object-contain" /> },
+    { id: 'activity_log', label: t('activity_log'), icon: <img src="https://hdnfltv.com/image/nitimages/transaction-history.webp" alt="Activity Log" className="w-5 h-5 object-contain" /> },
+    { id: 'billing', label: t('billing'), icon: <img src="https://hdnfltv.com/image/nitimages/solar_card-linear.webp" alt="Billing & Subscription" className="w-5 h-5 object-contain" /> },
+    { id: 'support', label: t('support'), icon: <img src="https://hdnfltv.com/image/nitimages/pasted_1770763342068.webp" alt="Support" className="w-5 h-5 object-contain" /> },
+    { id: 'tutorial', label: t('tutorial'), icon: <img src="https://hdnfltv.com/image/nitimages/pasted_1770763376612.webp" alt="Tutorial" className="w-5 h-5 object-contain" /> },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], [t]);
+
   // Filter menu items based on permissions
   const filteredMenuItems = useMemo(() => {
-    return menuItems.filter(item => {
+    return translatedMenuItems.filter(item => {
       // Check if user can access this item
       if (!canAccess(item.id)) return false;
 

@@ -64,6 +64,8 @@ const translationsEn: Record<string, string> = {
   
   // Metrics
   'total_orders': 'Total Orders',
+  'total_amount': 'Total Amount',
+  'total_stock': 'Total Stock',
   'products_on_hand': 'Products on Hand',
   'pending_orders': 'Pending Orders',
   'confirmed_orders': 'Confirmed Orders',
@@ -175,6 +177,16 @@ const translationsEn: Record<string, string> = {
   'add_new_product': 'Add New Product',
   'configuration': 'Configuration',
   'system': 'System',
+  'website_content': 'Website Content',
+  'website_info': 'Website',
+  'carousel': 'Carousel',
+  'campaigns': 'Campaigns',
+  'chat': 'Chat',
+  'admin_control': 'Admin Control',
+  'billing': 'Billing & Subscription',
+  'category': 'Category',
+  'sub_category': 'Sub Category',
+  'child_category': 'Child Category',
 };
 
 // Bangla Translations
@@ -186,6 +198,8 @@ const translationsBn: Record<string, string> = {
   
   // Metrics
   'total_orders': 'মোট অর্ডার',
+  'total_amount': 'মোট মূল্য',
+  'total_stock': 'মোট স্টক',
   'products_on_hand': 'মজুদ পণ্য',
   'pending_orders': 'অপেক্ষমাণ অর্ডার',
   'confirmed_orders': 'নিশ্চিত অর্ডার',
@@ -297,6 +311,16 @@ const translationsBn: Record<string, string> = {
   'add_new_product': 'নতুন পণ্য যোগ করুন',
   'configuration': 'কনফিগারেশন',
   'system': 'সিস্টেম',
+  'website_content': 'ওয়েবসাইট কন্টেন্ট',
+  'website_info': 'ওয়েবসাইট',
+  'carousel': 'ক্যারোসেল',
+  'campaigns': 'ক্যাম্পেইন',
+  'chat': 'চ্যাট',
+  'admin_control': 'অ্যাডমিন কন্ট্রোল',
+  'billing': 'বিলিং ও সাবস্ক্রিপশন',
+  'category': 'ক্যাটাগরি',
+  'sub_category': 'সাব ক্যাটাগরি',
+  'child_category': 'চাইল্ড ক্যাটাগরি',
 };
 
 // Helper function for number formatting
