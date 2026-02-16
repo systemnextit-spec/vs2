@@ -63,6 +63,7 @@ const translationsEn: Record<string, string> = {
   'overview': 'Business Overview',
   
   // Metrics
+  'total_products': 'Total Products',
   'total_orders': 'Total Orders',
   'total_amount': 'Total Amount',
   'total_stock': 'Total Stock',
@@ -197,6 +198,7 @@ const translationsBn: Record<string, string> = {
   'overview': 'ব্যবসায়িক সংক্ষিপ্ত বিবরণ',
   
   // Metrics
+  'total_products': 'মোট পণ্য',
   'total_orders': 'মোট অর্ডার',
   'total_amount': 'মোট মূল্য',
   'total_stock': 'মোট স্টক',
