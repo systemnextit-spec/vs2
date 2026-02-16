@@ -372,7 +372,10 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         sku: editProduct.sku || '',
         quantity: editProduct.stock || 0,
         variants: loadedVariants,
-        variantsMandatory: editProduct.variantGroups?.[0]?.isMandatory || false
+        variantsMandatory: editProduct.variantGroups?.[0]?.isMandatory || false,
+        flashSale: editProduct.flashSale || false,
+        flashSaleStartDate: editProduct.flashSaleStartDate || '',
+        flashSaleEndDate: editProduct.flashSaleEndDate || ''
       }));
     }
   }, [editProduct]);
