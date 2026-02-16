@@ -138,7 +138,7 @@ export const register = async (userData: {
   if (!tenantId && subdomain) {
     // Fetch tenant info by subdomain
     try {
-      const tenantResponse = await fetch(`${API_URL}/tenants/by-subdomain/${subdomain}`);
+      const tenantResponse = await fetch(`${API_URL}/tenants/resolve/${subdomain}`);
       if (tenantResponse.ok) {
         const tenantData = await tenantResponse.json();
         tenantId = tenantData._id || tenantData.id;

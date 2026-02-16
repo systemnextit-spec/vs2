@@ -470,6 +470,7 @@ const App = () => {
                   onUpdateProfile={handleUpdateProfile}
                   onUpdateOrder={handlers.handleUpdateOrder}
                   onAddProduct={handlers.handleAddProduct}
+                  onBulkAddProducts={handlers.handleBulkAddProducts}
                   onUpdateProduct={handlers.handleUpdateProduct}
                   onDeleteProduct={handlers.handleDeleteProduct}
                   onBulkDeleteProducts={handlers.handleBulkDeleteProducts}

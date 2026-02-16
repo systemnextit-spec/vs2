@@ -139,6 +139,32 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     });
   }, [activeTenantId, setProducts]);
 
+  // Bulk add products - saves all at once to avoid race conditions
+  const handleBulkAddProducts = useCallback((newProducts: Product[]) => {
+    const tenantId = newProducts[0]?.tenantId || activeTenantId;
+    setProducts(prev => {
+      let updated = [...prev];
+      const usedIds = new Set(updated.map(p => p.id));
+      
+      newProducts.forEach(newProduct => {
+        // Ensure unique ID
+        let productId = newProduct.id;
+        if (!productId || usedIds.has(productId)) {
+          productId = generateUniqueProductId(updated);
+        }
+        usedIds.add(productId);
+        
+        const productWithId = { ...newProduct, id: productId, tenantId };
+        const slug = ensureUniqueProductSlug(productWithId.slug || productWithId.name || `product-${productId}`, updated, tenantId, productId);
+        updated = [...updated, { ...productWithId, slug }];
+      });
+      
+      // Save all products at once
+      DataService.save('products', updated, tenantId);
+      return updated;
+    });
+  }, [activeTenantId, setProducts]);
+
   const handleUpdateProduct = useCallback((updatedProduct: Product) => {
     const tenantId = updatedProduct.tenantId || activeTenantId;
     const slug = ensureUniqueProductSlug(updatedProduct.slug || updatedProduct.name || `product-${updatedProduct.id}`, products, tenantId, updatedProduct.id);
@@ -551,6 +577,7 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     
     // Product handlers
     handleAddProduct,
+    handleBulkAddProducts,
     handleUpdateProduct,
     handleDeleteProduct,
     handleBulkDeleteProducts,

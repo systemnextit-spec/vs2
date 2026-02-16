@@ -33,8 +33,21 @@ export const listTenants = async (): Promise<Tenant[]> => {
 };
 
 export const getTenantById = async (id: string) => {
+  // Validate if id is a valid ObjectId format (24 hex chars)
+  const isValidObjectId = /^[a-fA-F0-9]{24}$/.test(id);
   const db = await getDatabase();
-  const tenant = await db.collection<Tenant>(collectionName).findOne({ _id: new ObjectId(id) });
+  
+  // If valid ObjectId, search by _id; otherwise try searching by subdomain
+  let tenant = null;
+  if (isValidObjectId) {
+    tenant = await db.collection<Tenant>(collectionName).findOne({ _id: new ObjectId(id) });
+  }
+  
+  // Fallback: if not found or invalid ObjectId, try subdomain
+  if (!tenant) {
+    tenant = await db.collection<Tenant>(collectionName).findOne({ subdomain: id });
+  }
+  
   return normalizeTenantDocument(tenant);
 };
 

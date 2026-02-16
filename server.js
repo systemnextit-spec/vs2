@@ -127,7 +127,7 @@ async function createServer() {
   // Proxy API requests to backend server
   // Uses raw streaming to properly handle multipart/form-data file uploads
   app.use('/api', async (req, res) => {
-    const backendUrl = `http://localhost:5001/api${req.url}`;
+    const backendUrl = `https://allinbangla.com/api${req.url}`;
     const contentType = req.get('Content-Type') || '';
     const isMultipart = contentType.includes('multipart/form-data');
     
