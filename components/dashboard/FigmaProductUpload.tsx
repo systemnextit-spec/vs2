@@ -375,7 +375,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         variantsMandatory: editProduct.variantGroups?.[0]?.isMandatory || false,
         flashSale: editProduct.flashSale || false,
         flashSaleStartDate: editProduct.flashSaleStartDate || '',
-        flashSaleEndDate: editProduct.flashSaleEndDate || ''
+        flashSaleEndDate: editProduct.flashSaleEndDate || '',
+        deepSearch: editProduct.deepSearch || ''
       }));
     }
   }, [editProduct]);
@@ -854,7 +855,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       flashSale: formData.flashSale,
       flashSaleStartDate: formData.flashSaleStartDate || undefined,
       flashSaleEndDate: formData.flashSaleEndDate || undefined,
-      variantGroups: validVariants.length > 0 ? validVariants : undefined
+      variantGroups: validVariants.length > 0 ? validVariants : undefined,
+      deepSearch: formData.deepSearch || ""
     };
 
     // Save to backend via onAddProduct
@@ -907,7 +909,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       flashSale: formData.flashSale,
       flashSaleStartDate: formData.flashSaleStartDate || undefined,
       flashSaleEndDate: formData.flashSaleEndDate || undefined,
-      variantGroups: validVariants.length > 0 ? validVariants : undefined
+      variantGroups: validVariants.length > 0 ? validVariants : undefined,
+      deepSearch: formData.deepSearch || ""
     };
 
     onAddProduct(newProduct);

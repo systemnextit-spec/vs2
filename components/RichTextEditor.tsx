@@ -46,6 +46,16 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     };
   }, []);
 
+  // Sync external value changes to editor (for editing existing products)
+  useEffect(() => {
+    if (editorRef.current && isMounted && !isEditing && value) {
+      // Only update if content is actually different
+      if (editorRef.current.innerHTML !== value) {
+        editorRef.current.innerHTML = value;
+      }
+    }
+  }, [value, isMounted, isEditing]);
+
   const handleEditorChange = useCallback(() => {
     if (editorRef.current && isMounted) {
       onChange(editorRef.current.innerHTML);

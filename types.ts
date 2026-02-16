@@ -134,6 +134,7 @@ export interface Product {
   brand?: string; // Added
   tags?: string[];
   searchTags?: string[]; // Deep search tags for advanced product search
+  deepSearch?: string; // Deep search keywords for product discovery
   colors?: string[]; // Added: Array of color codes or names
   sizes?: string[]; // Added: Array of size strings (S, M, L, XL etc)
   variantGroups?: ProductVariantGroup[]; // Enhanced variants with images
