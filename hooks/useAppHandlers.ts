@@ -110,11 +110,30 @@ export function useAppHandlers(props: UseAppHandlersProps) {
   }, [setRoles]);
 
   // === PRODUCT HANDLERS ===
+  // Generate a unique product ID that doesn't collide with existing IDs
+  const generateUniqueProductId = useCallback((existingProducts: Product[]): number => {
+    const existingIds = new Set(existingProducts.map(p => p.id));
+    let newId = Date.now() + Math.floor(Math.random() * 10000);
+    while (existingIds.has(newId)) {
+      newId = Date.now() + Math.floor(Math.random() * 10000);
+    }
+    return newId;
+  }, []);
+
   const handleAddProduct = useCallback((newProduct: Product) => {
     const tenantId = newProduct.tenantId || activeTenantId;
-    const slug = ensureUniqueProductSlug(newProduct.slug || newProduct.name || `product-${newProduct.id}`, products, tenantId, newProduct.id);
-    setProducts(prev => [...prev, { ...newProduct, slug, tenantId }]);
-  }, [activeTenantId, products, setProducts]);
+    setProducts(prev => {
+      // Ensure the product has a unique ID
+      const existingIds = new Set(prev.map(p => p.id));
+      let productId = newProduct.id;
+      if (!productId || existingIds.has(productId)) {
+        productId = generateUniqueProductId(prev);
+      }
+      const productWithId = { ...newProduct, id: productId };
+      const slug = ensureUniqueProductSlug(productWithId.slug || productWithId.name || `product-${productId}`, prev, tenantId, productId);
+      return [...prev, { ...productWithId, slug, tenantId }];
+    });
+  }, [activeTenantId, generateUniqueProductId, setProducts]);
 
   const handleUpdateProduct = useCallback((updatedProduct: Product) => {
     const tenantId = updatedProduct.tenantId || activeTenantId;
