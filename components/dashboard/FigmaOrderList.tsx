@@ -1264,6 +1264,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                           className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
                           value={draftOrder.phone || ''} 
                           onChange={(e) => handleDraftChange('phone', e.target.value)}
+                          maxLength={13}
                         />
                       </label>
                       <label className="block space-y-1.5">
@@ -1690,6 +1691,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                   value={newOrderForm.phone}
                   onChange={(e) => setNewOrderForm(prev => ({ ...prev, phone: e.target.value }))}
                   placeholder="01XXXXXXXXX"
+                  maxLength={13}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
               </div>
