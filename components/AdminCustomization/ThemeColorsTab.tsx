@@ -909,7 +909,9 @@ export const ThemeColorsTab: React.FC<ThemeColorsTabProps> = ({
   };
 
   const shuffleColors = () => {
-    const randomPreset = PRESET_COLOR_COMBINATIONS[Math.floor(Math.random() * PRESET_COLOR_COMBINATIONS.length)];
+    // Filter out the currently selected preset to ensure a different one is chosen
+    const availablePresets = PRESET_COLOR_COMBINATIONS.filter(p => p.id !== selectedPreset);
+    const randomPreset = availablePresets[Math.floor(Math.random() * availablePresets.length)];
     applyPreset(randomPreset);
   };
 
