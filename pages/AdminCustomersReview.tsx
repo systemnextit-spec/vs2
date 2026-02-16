@@ -85,6 +85,10 @@ const AdminCustomersReview: React.FC<AdminCustomersReviewProps> = ({ orders, pro
   const [replyDraft, setReplyDraft] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [mobileReviewMenuOpen, setMobileReviewMenuOpen] = useState<string | null>(null);
+  const [customerActionDropdown, setCustomerActionDropdown] = useState<string | null>(null);
+  const [viewingCustomer, setViewingCustomer] = useState<CustomerInfo | null>(null);
+  const [editingCustomer, setEditingCustomer] = useState<CustomerInfo | null>(null);
+  const [editFormData, setEditFormData] = useState({ name: '', phone: '', email: '', address: '', status: 'Active' as 'Active' | 'Blocked' });
 
   // Fetch reviews from API
   useEffect(() => {
@@ -644,10 +648,33 @@ const AdminCustomersReview: React.FC<AdminCustomersReviewProps> = ({ orders, pro
                           {customer.status}
                         </span>
                       </td>
-                      <td className="py-4 px-2 text-center">
-                        <button className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                      <td className="py-4 px-2 text-center relative">
+                        <button 
+                          onClick={() => setCustomerActionDropdown(customerActionDropdown === customer.id ? null : customer.id)}
+                          className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                        >
                           <MoreVertical className="w-5 h-5" />
                         </button>
+                        {customerActionDropdown === customer.id && (
+                          <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1 min-w-[120px]">
+                            <button
+                              onClick={() => { setViewingCustomer(customer); setCustomerActionDropdown(null); }}
+                              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                            >
+                              <Eye className="w-4 h-4" /> View
+                            </button>
+                            <button
+                              onClick={() => { 
+                                setEditFormData({ name: customer.name, phone: customer.phone, email: customer.email || '', address: customer.address || '', status: customer.status });
+                                setEditingCustomer(customer); 
+                                setCustomerActionDropdown(null); 
+                              }}
+                              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                            >
+                              <Edit className="w-4 h-4" /> Edit
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -677,9 +704,34 @@ const AdminCustomersReview: React.FC<AdminCustomersReviewProps> = ({ orders, pro
                           <p className="text-xs text-gray-500">{customer.phone}</p>
                           <p className="text-xs text-gray-400 truncate">{customer.email}</p>
                         </div>
-                        <button className="text-gray-400">
-                          <MoreVertical className="w-5 h-5" />
-                        </button>
+                        <div className="relative">
+                          <button 
+                            onClick={() => setCustomerActionDropdown(customerActionDropdown === customer.id ? null : customer.id)}
+                            className="text-gray-400"
+                          >
+                            <MoreVertical className="w-5 h-5" />
+                          </button>
+                          {customerActionDropdown === customer.id && (
+                            <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1 min-w-[120px]">
+                              <button
+                                onClick={() => { setViewingCustomer(customer); setCustomerActionDropdown(null); }}
+                                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                              >
+                                <Eye className="w-4 h-4" /> View
+                              </button>
+                              <button
+                                onClick={() => { 
+                                  setEditFormData({ name: customer.name, phone: customer.phone, email: customer.email || '', address: customer.address || '', status: customer.status });
+                                  setEditingCustomer(customer); 
+                                  setCustomerActionDropdown(null); 
+                                }}
+                                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                              >
+                                <Edit className="w-4 h-4" /> Edit
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                       <div className="mt-2">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${customer.status === 'Active' ? 'bg-[#DCFCE7] text-[#166534]' : 'bg-[#FEE2E2] text-[#991B1B]'}`}>
@@ -855,6 +907,280 @@ const AdminCustomersReview: React.FC<AdminCustomersReviewProps> = ({ orders, pro
           </div>
         </div>
       </div>
+
+      {/* View Customer Modal */}
+      {viewingCustomer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setViewingCustomer(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-gray-100 p-5 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-gray-900">Customer Details</h3>
+              <button onClick={() => setViewingCustomer(null)} className="p-2 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="flex items-center gap-4">
+                <img src={viewingCustomer.avatar} alt="" className="w-16 h-16 rounded-full object-cover bg-gray-200" />
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900">{viewingCustomer.name}</h4>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${viewingCustomer.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {viewingCustomer.status}
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Phone</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.phone}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Email</p>
+                  <p className="text-sm font-medium text-gray-900 truncate">{viewingCustomer.email || 'N/A'}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Total Orders</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.totalOrders}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Total Spent</p>
+                  <p className="text-sm font-medium text-gray-900">৳{viewingCustomer.totalSpent.toLocaleString()}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">First Order</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.firstOrderDate}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Last Order</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.lastOrderDate}</p>
+                </div>
+              </div>
+              {viewingCustomer.address && (
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Address</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.address}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Customer Modal */}
+      {editingCustomer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setEditingCustomer(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-gray-100 p-5 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-gray-900">Edit Customer</h3>
+              <button onClick={() => setEditingCustomer(null)} className="p-2 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input
+                  type="text"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <input
+                  type="text"
+                  value={editFormData.phone}
+                  onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <textarea
+                  value={editFormData.address}
+                  onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select
+                  value={editFormData.status}
+                  onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value as 'Active' | 'Blocked' })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Blocked">Blocked</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setEditingCustomer(null)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    toast.success('Customer updated successfully');
+                    setEditingCustomer(null);
+                  }}
+                  className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Customer Modal */}
+      {viewingCustomer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setViewingCustomer(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-gray-100 p-5 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-gray-900">Customer Details</h3>
+              <button onClick={() => setViewingCustomer(null)} className="p-2 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="flex items-center gap-4">
+                <img src={viewingCustomer.avatar} alt="" className="w-16 h-16 rounded-full object-cover bg-gray-200" />
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900">{viewingCustomer.name}</h4>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${viewingCustomer.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {viewingCustomer.status}
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Phone</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.phone}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Email</p>
+                  <p className="text-sm font-medium text-gray-900 truncate">{viewingCustomer.email || 'N/A'}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Total Orders</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.totalOrders}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Total Spent</p>
+                  <p className="text-sm font-medium text-gray-900">৳{viewingCustomer.totalSpent.toLocaleString()}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">First Order</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.firstOrderDate}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Last Order</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.lastOrderDate}</p>
+                </div>
+              </div>
+              {viewingCustomer.address && (
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Address</p>
+                  <p className="text-sm font-medium text-gray-900">{viewingCustomer.address}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Customer Modal */}
+      {editingCustomer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setEditingCustomer(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-gray-100 p-5 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-gray-900">Edit Customer</h3>
+              <button onClick={() => setEditingCustomer(null)} className="p-2 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input
+                  type="text"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <input
+                  type="text"
+                  value={editFormData.phone}
+                  onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <textarea
+                  value={editFormData.address}
+                  onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select
+                  value={editFormData.status}
+                  onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value as 'Active' | 'Blocked' })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Blocked">Blocked</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setEditingCustomer(null)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    toast.success('Customer updated successfully');
+                    setEditingCustomer(null);
+                  }}
+                  className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Review Detail Modal */}
       {selectedReview && (
