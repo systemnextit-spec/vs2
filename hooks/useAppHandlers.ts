@@ -22,6 +22,18 @@ const toast = {
   error: (msg: string) => getToast().then(m => m.toast.error(msg)),
 };
 
+// Generate a unique product ID that doesn't collide with existing IDs
+// Uses max existing ID + 1 for true uniqueness
+const generateUniqueProductId = (existingProducts: Product[]): number => {
+  if (existingProducts.length === 0) {
+    return Date.now();
+  }
+  // Use reduce instead of Math.max(...ids) to safely handle large arrays (spread with Math.max can cause stack overflow)
+  const maxId = existingProducts.reduce((max, p) => Math.max(max, p.id), 0);
+  // Always use maxId + 1 for consistency to avoid mixing sequential and timestamp-based IDs
+  return maxId + 1;
+};
+
 interface UseAppHandlersProps {
   activeTenantId: string;
   products: Product[];
@@ -112,9 +124,17 @@ export function useAppHandlers(props: UseAppHandlersProps) {
   // === PRODUCT HANDLERS ===
   const handleAddProduct = useCallback((newProduct: Product) => {
     const tenantId = newProduct.tenantId || activeTenantId;
-    const slug = ensureUniqueProductSlug(newProduct.slug || newProduct.name || `product-${newProduct.id}`, products, tenantId, newProduct.id);
-    setProducts(prev => [...prev, { ...newProduct, slug, tenantId }]);
-  }, [activeTenantId, products, setProducts]);
+    setProducts(prev => {
+      // Ensure the product has a unique ID
+      let productId = newProduct.id;
+      if (!productId || prev.some(p => p.id === productId)) {
+        productId = generateUniqueProductId(prev);
+      }
+      const productWithId = { ...newProduct, id: productId };
+      const slug = ensureUniqueProductSlug(productWithId.slug || productWithId.name || `product-${productId}`, prev, tenantId, productId);
+      return [...prev, { ...productWithId, slug, tenantId }];
+    });
+  }, [activeTenantId, setProducts]);
 
   const handleUpdateProduct = useCallback((updatedProduct: Product) => {
     const tenantId = updatedProduct.tenantId || activeTenantId;
