@@ -1,8 +1,11 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { Plus, Search, MoreVertical, ChevronLeft, ChevronRight, ChevronDown, Download, Upload, Filter, Printer, Edit, Trash2, Copy, Eye, X, Loader2, LayoutGrid, List } from 'lucide-react';
+import { Plus, Search, MoreVertical, ChevronLeft, ChevronRight, ChevronDown, Download, Upload, Filter, Printer, Edit, Trash2, Copy, Eye, X, Loader2, LayoutGrid, List, GripVertical, Save } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
+import { DndContext, closestCenter, DragEndEvent, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Product, Category, Brand } from '../../types';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 
@@ -67,6 +70,178 @@ interface FigmaProductListProps {
   onImport?: () => void;
   onExport?: () => void;
   onBulkImport?: (products: Product[]) => void;
+  tenantId?: string;
+  productDisplayOrder?: number[];
+  onProductOrderChange?: (order: number[]) => Promise<void>;
+}
+
+
+// Sortable Table Row for drag-and-drop reordering
+interface SortableTableRowProps {
+  product: Product;
+  productKey: string;
+  index: number;
+  currentPage: number;
+  productsPerPage: number;
+  selectedIds: Set<string>;
+  handleSelectProduct: (key: string) => void;
+  openDropdownId: string | null;
+  setOpenDropdownId: (id: string | null) => void;
+  onEditProduct?: (product: Product) => void;
+  onCloneProduct?: (product: Product) => void;
+  onDeleteProduct?: (id: number) => void;
+}
+
+function SortableTableRow({
+  product,
+  productKey,
+  index,
+  currentPage,
+  productsPerPage,
+  selectedIds,
+  handleSelectProduct,
+  openDropdownId,
+  setOpenDropdownId,
+  onEditProduct,
+  onCloneProduct,
+  onDeleteProduct,
+}: SortableTableRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: product.id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 1000 : 'auto',
+    position: 'relative' as const,
+    backgroundColor: isDragging ? '#f9fafb' : undefined,
+  };
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className={`h-[68px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${isDragging ? 'shadow-lg' : ''}`}
+    >
+      <td className="px-4 py-3">
+        <input
+          type="checkbox"
+          checked={selectedIds.has(productKey)}
+          onChange={() => handleSelectProduct(productKey)}
+          className="w-5 h-5 rounded border-[1.5px] border-[#eaf8e7] bg-white dark:bg-gray-600"
+        />
+      </td>
+      <td className="px-2 py-3 text-center">
+        <button
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded touch-none"
+          title="Drag to reorder products"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-4 w-4 text-gray-400" />
+        </button>
+      </td>
+      <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200 text-center">
+        {(currentPage - 1) * productsPerPage + index + 1}
+      </td>
+      <td className="px-4 py-3">
+        <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-r from-[#38bdf8] to-[#1e90ff]">
+          {product.image ? (
+            <img
+              src={normalizeImageUrl(product.image)}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-white text-xs">
+              No img
+            </div>
+          )}
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <p className="text-[12px] text-[#1d1a1a] dark:text-gray-200 max-w-[200px] line-clamp-2">
+          {product.name}
+        </p>
+      </td>
+      <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
+        {product.category || '-'}
+      </td>
+      <td className="hidden md:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
+        {product.subCategory || '-'}
+      </td>
+      <td className="hidden lg:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
+        {product.rating ? `${Math.round(product.rating * 10)}%` : '-'}
+      </td>
+      <td className="hidden md:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
+        {product.sku || '-'}
+      </td>
+      <td className="hidden lg:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
+        {product.tag || (Array.isArray(product.tags) ? product.tags.join(', ') : '') || '-'}
+      </td>
+      <td className="px-4 py-3">
+        <span className={`px-[9px] py-0.5 rounded-[30px] text-[12px] font-medium ${
+          product.status === 'Active' 
+            ? 'bg-[#c1ffbc] text-[#085e00]' 
+            : 'bg-orange-100 text-orange-700'
+        }`}>
+          {product.status === 'Active' ? 'Publish' : 'Draft'}
+        </span>
+      </td>
+      <td className="px-4 py-3 text-center">
+        <div className="relative" data-dropdown>
+          <button
+            onClick={() => setOpenDropdownId(openDropdownId === productKey ? null : productKey)}
+            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+          >
+            <MoreVertical size={16} className="text-gray-500" />
+          </button>
+          {openDropdownId === productKey && (
+            <div className="absolute right-0 top-full mt-1 z-[9999]">
+              <div className="w-[160px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden py-2">
+                <button
+                  onClick={() => { onEditProduct?.(product); setOpenDropdownId(null); }}
+                  className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  <Edit size={16} />
+                  Edit
+                </button>
+                <button
+                  onClick={() => { onCloneProduct?.(product); setOpenDropdownId(null); }}
+                  className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  <Copy size={16} />
+                  Duplicate
+                </button>
+                <button
+                  onClick={() => { window.open(`/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
+                  className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  <Eye size={16} />
+                  View
+                </button>
+                <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
+                <button
+                  onClick={() => { onDeleteProduct?.(product.id); setOpenDropdownId(null); }}
+                  className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-red-600"
+                >
+                  <Trash2 size={16} />
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
 }
 
 const FigmaProductList: React.FC<FigmaProductListProps> = ({
@@ -83,7 +258,10 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   onBulkDiscount,
   onImport,
   onExport,
-  onBulkImport
+  onBulkImport,
+  tenantId,
+  productDisplayOrder = [],
+  onProductOrderChange
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,6 +272,20 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [discountValue, setDiscountValue] = useState<number>(0);
+  
+  // Drag and drop state
+  const [orderedProducts, setOrderedProducts] = useState<Product[]>([]);
+  const [hasOrderChanges, setHasOrderChanges] = useState(false);
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
+  
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
   
   // Filters
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -106,6 +298,88 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
+
+  // Initialize ordered products based on productDisplayOrder
+  useEffect(() => {
+    if (propProducts.length === 0) {
+      setOrderedProducts([]);
+      return;
+    }
+
+    // If there's a saved order, use it
+    if (productDisplayOrder && productDisplayOrder.length > 0) {
+      const ordered = productDisplayOrder
+        .map(id => propProducts.find(p => p.id === id))
+        .filter((p): p is Product => p !== undefined);
+      
+      // Add any products not in the saved order at the end
+      const unorderedProducts = propProducts.filter(
+        p => !productDisplayOrder.includes(p.id)
+      );
+      
+      setOrderedProducts([...ordered, ...unorderedProducts]);
+    } else {
+      setOrderedProducts([...propProducts]);
+    }
+    setHasOrderChanges(false);
+  }, [propProducts, productDisplayOrder]);
+
+  // Handle drag end for reordering
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    setOrderedProducts((items) => {
+      const oldIndex = items.findIndex(item => item.id === active.id);
+      const newIndex = items.findIndex(item => item.id === over.id);
+
+      const newOrder = arrayMove(items, oldIndex, newIndex);
+      setHasOrderChanges(true);
+      return newOrder;
+    });
+  }, []);
+
+  // Save the product order
+  const handleSaveOrder = useCallback(async () => {
+    if (!onProductOrderChange) {
+      toast.error('Order saving not configured');
+      return;
+    }
+
+    setIsSavingOrder(true);
+    try {
+      const order = orderedProducts.map(p => p.id);
+      await onProductOrderChange(order);
+      setHasOrderChanges(false);
+      toast.success('Product order saved! Store front will show products in this order.');
+    } catch (error) {
+      console.error('Failed to save product order:', error);
+      toast.error('Failed to save product order');
+    } finally {
+      setIsSavingOrder(false);
+    }
+  }, [orderedProducts, onProductOrderChange]);
+
+  // Reset to original order
+  const handleResetOrder = useCallback(() => {
+    if (productDisplayOrder && productDisplayOrder.length > 0) {
+      const ordered = productDisplayOrder
+        .map(id => propProducts.find(p => p.id === id))
+        .filter((p): p is Product => p !== undefined);
+      
+      const unorderedProducts = propProducts.filter(
+        p => !productDisplayOrder.includes(p.id)
+      );
+      
+      setOrderedProducts([...ordered, ...unorderedProducts]);
+    } else {
+      setOrderedProducts([...propProducts]);
+    }
+    setHasOrderChanges(false);
+  }, [propProducts, productDisplayOrder]);
 
   // Export products to CSV
   const handleExportCSV = useCallback(() => {
@@ -393,7 +667,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
   // Filter products
   const filteredProducts = useMemo(() => {
-    let filtered = propProducts;
+    // Use orderedProducts to maintain drag-drop order
+    let filtered = orderedProducts.length > 0 ? orderedProducts : propProducts;
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
@@ -417,7 +692,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     }
 
     return filtered;
-  }, [propProducts, searchQuery, categoryFilter, brandFilter, statusFilter]);
+  }, [orderedProducts, propProducts, searchQuery, categoryFilter, brandFilter, statusFilter]);
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const paginatedProducts = useMemo(() => {
@@ -669,6 +944,36 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
             <AddSquareIcon />
             <span className="text-[13px] xxs:text-[15px] font-bold text-white tracking-[-0.3px] font-['Lato']">Add Product</span>
           </button>
+
+          {/* Save/Reset Order Buttons */}
+          {hasOrderChanges && (
+            <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-gray-200 dark:border-gray-700">
+              <button
+                onClick={handleSaveOrder}
+                disabled={isSavingOrder}
+                className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isSavingOrder ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
+                <span>Save Order</span>
+              </button>
+              <button
+                onClick={handleResetOrder}
+                disabled={isSavingOrder}
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 transition-colors"
+              >
+                <X className="h-4 w-4" />
+                <span>Reset</span>
+              </button>
+              <span className="text-sm text-amber-600 dark:text-amber-400 flex items-center">
+                <span className="inline-block w-2 h-2 bg-amber-500 rounded-full mr-2 animate-pulse"></span>
+                Unsaved changes
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -1082,6 +1387,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* List View - Table */}
       {viewMode === 'list' && (
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={paginatedProducts.map(p => p.id)} strategy={verticalListSortingStrategy}>
       <><div className="hidden sm:block overflow-visible min-h-[200px] -mx-2 xxs:-mx-3 sm:mx-0 px-2 xxs:px-3 sm:px-0">
         <table className="w-full text-xs xxs:text-sm overflow-visible min-w-0">
           <thead className="bg-[#E0F2FE] dark:bg-gray-700">
@@ -1093,6 +1400,9 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                   onChange={handleSelectAll}
                   className="w-4 h-4 xxs:w-5 xxs:h-5 rounded border-[1.5px] border-[#050605] bg-white dark:bg-gray-600"
                 />
+              </th>
+              <th className="px-2 py-2 xxs:py-3 text-center font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px] w-10" title="Drag to reorder">
+                <GripVertical className="h-4 w-4 text-gray-400 mx-auto" />
               </th>
               <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px]">SL</th>
               <th className="px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-left font-medium text-black dark:text-white text-[12px] xxs:text-[14px] sm:text-[16px]">Image</th>
@@ -1110,109 +1420,22 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
             {paginatedProducts.length > 0 ? paginatedProducts.map((product, index) => {
               const productKey = getProductKey(product, index);
               return (
-              <tr key={productKey} className="h-[68px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <td className="px-4 py-3">
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.has(productKey)}
-                    onChange={() => handleSelectProduct(productKey)}
-                    className="w-5 h-5 rounded border-[1.5px] border-[#eaf8e7] bg-white dark:bg-gray-600"
-                  />
-                </td>
-                <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200 text-center">
-                  {(currentPage - 1) * productsPerPage + index + 1}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-r from-[#38bdf8] to-[#1e90ff]">
-                    {product.image ? (
-                      <img
-                        src={normalizeImageUrl(product.image)}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-white text-xs">
-                        No img
-                      </div>
-                    )}
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <p className="text-[12px] text-[#1d1a1a] dark:text-gray-200 max-w-[200px] line-clamp-2">
-                    {product.name}
-                  </p>
-                </td>
-                <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
-                  {product.category || '-'}
-                </td>
-                <td className="hidden md:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
-                  {product.subCategory || '-'}
-                </td>
-                <td className="hidden lg:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
-                  {product.rating ? `${Math.round(product.rating * 10)}%` : '-'}
-                </td>
-                <td className="hidden md:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
-                  {product.sku || '-'}
-                </td>
-                <td className="hidden lg:table-cell px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200">
-                  {product.tag || (Array.isArray(product.tags) ? product.tags.join(', ') : '') || '-'}
-                </td>
-                <td className="px-4 py-3">
-                  <span className={`px-[9px] py-0.5 rounded-[30px] text-[12px] font-medium ${
-                    product.status === 'Active' 
-                      ? 'bg-[#c1ffbc] text-[#085e00]' 
-                      : 'bg-orange-100 text-orange-700'
-                  }`}>
-                    {product.status === 'Active' ? 'Publish' : 'Draft'}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-center">
-                  <div className="relative" data-dropdown>
-                    <button
-                      onClick={() => setOpenDropdownId(openDropdownId === productKey ? null : productKey)}
-                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-                    >
-                      <DotsIcon />
-                    </button>
-                    {openDropdownId === productKey && (
-                      <div className="absolute right-0 top-full mt-1 z-[9999]">
-                        <div className="w-[160px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden py-2">
-                          <button
-                            onClick={() => { onEditProduct?.(product); setOpenDropdownId(null); }}
-                            className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300"
-                          >
-                            <Edit size={16} />
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => { onCloneProduct?.(product); setOpenDropdownId(null); }}
-                            className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300"
-                          >
-                            <Copy size={16} />
-                            Duplicate
-                          </button>
-                          <button
-                            onClick={() => { window.open(`/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
-                            className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300"
-                          >
-                            <Eye size={16} />
-                            View
-                          </button>
-                          <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
-                          <button
-                            onClick={() => { onDeleteProduct?.(product.id); setOpenDropdownId(null); }}
-                            className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-red-600"
-                          >
-                            <Trash2 size={16} />
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            );}) : (
+                <SortableTableRow
+                  key={productKey}
+                  product={product}
+                  productKey={productKey}
+                  index={index}
+                  currentPage={currentPage}
+                  productsPerPage={productsPerPage}
+                  selectedIds={selectedIds}
+                  handleSelectProduct={handleSelectProduct}
+                  openDropdownId={openDropdownId}
+                  setOpenDropdownId={setOpenDropdownId}
+                  onEditProduct={onEditProduct}
+                  onCloneProduct={onCloneProduct}
+                  onDeleteProduct={onDeleteProduct}
+                />
+              );}) : (
               <tr>
                 <td colSpan={11} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                   <div className="flex flex-col items-center">
@@ -1236,8 +1459,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           return (
             <div key={productKey} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                {product.images?.[0] ? (
-                  <img src={normalizeImageUrl(product.images[0])} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                {product.image?.[0] ? (
+                  <img src={normalizeImageUrl(product.image[0])} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
                 ) : (
                   <div className="w-10 h-10 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -1245,9 +1468,9 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{product.name}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">৳{product.sellingPrice || product.price} | Stock: {product.stock ?? 0}</p>
-                  <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${product.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
-                    {product.status === 'active' ? 'Active' : 'Inactive'}
+                  <p className="text-xs text-gray-500 dark:text-gray-400">৳{product.price} | Stock: {product.stock ?? 0}</p>
+                  <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${product.status === 'Active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
+                    {product.status === 'Active' ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
@@ -1278,6 +1501,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
         )}
       </div>
       </>
+        </SortableContext>
+      </DndContext>
       )}
 
       {/* Footer: Print & Pagination */}
@@ -1323,5 +1548,6 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     </div>
   );
 };
+
 
 export default FigmaProductList;
