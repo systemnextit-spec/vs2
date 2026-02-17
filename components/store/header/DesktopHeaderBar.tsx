@@ -92,7 +92,7 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
           <button type="button" onClick={onHomeClick} className="px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all">Home</button>
           {websiteConfig?.showMobileHeaderCategory && (
             <div ref={categoryMenuRef} className="relative" onMouseEnter={() => onCategoryMenuOpen(true)} onMouseLeave={() => onCategoryMenuOpen(false)}>
-              <button type="button" onClick={onCategoriesClick} className="">Categories <ChevronDown size={14} className={`transition-transform ${isCategoryMenuOpen ? 'rotate-180' : ''}`} /></button>
+              <button type="button" onClick={onCategoriesClick} className="px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all flex items-center gap-1.5">Categories <ChevronDown size={14} className={`transition-transform ${isCategoryMenuOpen ? 'rotate-180' : ''}`} /></button>
               {isCategoryMenuOpen && categoriesList?.length ? (
                 <div className="absolute left-0 top-full mt-0 w-60 rounded-2xl border border-gray-100/80 bg-white/95 backdrop-blur-lg py-2 shadow-2xl z-100">
                   {categoriesList.map(cat => <button key={cat} type="button" onClick={() => { onCategorySelect?.(cat); onCategoryMenuOpen(false); }} className="block w-full px-4 py-3 text-left text-sm hover:bg-gray-50/80 hover:text-theme-primary transition-all">{cat}</button>)}

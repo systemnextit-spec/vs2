@@ -420,7 +420,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {
 
   return (
     <>
-      {websiteConfig?.showNewsSlider && (
+      {websiteConfig?.adminNoticeText && (
         <AdminNoticeTicker noticeText={websiteConfig?.adminNoticeText} />
       )}
 
