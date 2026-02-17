@@ -631,42 +631,41 @@ const StoreProductDetail = ({
 
               {/* Image Section - Enhanced Gallery */}
               <div className="w-full md:w-1/2 flex flex-col gap-4">
-                {/* Main Product Image with Zoom */}
+                {/* Main Product Image with Zoom OR Video */}
                 <div className="relative">
-                  <div
-                    className={`mobile-image-gallery aspect-square bg-white rounded-2xl overflow-hidden relative group border border-gray-200 ${showVideo && youtubeVideoId ? '' : 'cursor-crosshair'}`}
-                    onMouseEnter={() => { if (!showVideo) setIsHovering(true); }}
-                    onMouseLeave={() => { if (!showVideo) setIsHovering(false); }}
-                    onMouseMove={(e) => {
-                      if (showVideo) return;
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const x = ((e.clientX - rect.left) / rect.width) * 100;
-                      const y = ((e.clientY - rect.top) / rect.height) * 100;
-                      setZoomPosition({ x, y });
-                    }}
-                    onClick={() => { if (!showVideo) setIsZoomOpen(true); }}
-                  >
-                    {/* Main Image or Video */}
-                    {showVideo && youtubeVideoId ? (
-                      <div className="w-full h-full absolute inset-0 z-10">
-                        <iframe
-                          width="100%"
-                          height="100%"
-                          src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&mute=1&rel=0`}
-                          title="Product Video"
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="w-full h-full absolute inset-0"
-                        />
-                      </div>
-                    ) : (
+                  {showVideo && youtubeVideoId ? (
+                    /* Video Player - completely separate from zoom container */
+                    <div className="mobile-image-gallery aspect-square bg-black rounded-2xl overflow-hidden relative border border-gray-200">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&mute=1&rel=0`}
+                        title="Product Video"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="absolute inset-0 w-full h-full"
+                      />
+                    </div>
+                  ) : (
+                    /* Image with Zoom */
+                    <div
+                      className="mobile-image-gallery aspect-square bg-white rounded-2xl overflow-hidden relative group border border-gray-200 cursor-crosshair"
+                      onMouseEnter={() => setIsHovering(true)}
+                      onMouseLeave={() => setIsHovering(false)}
+                      onMouseMove={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const x = ((e.clientX - rect.left) / rect.width) * 100;
+                        const y = ((e.clientY - rect.top) / rect.height) * 100;
+                        setZoomPosition({ x, y });
+                      }}
+                      onClick={() => setIsZoomOpen(true)}
+                    >
                       <LazyImage
                         src={selectedImage}
                         alt={product.name}
                         className="w-full h-full object-contain"
                       />
-                    )}
 
                     {/* Hover Zoom Lens Effect */}
                     {isHovering && (
@@ -744,6 +743,7 @@ const StoreProductDetail = ({
                       </div>
                     </div>
                   </div>
+                  )}
 
                   {/* Zoomed Preview Panel (Desktop Only) */}
                   {isHovering && (
