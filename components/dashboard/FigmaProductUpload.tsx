@@ -103,7 +103,7 @@ const Section: React.FC<{
     <div className="bg-white rounded-lg shadow-[0px_4px_11.4px_-2px_rgba(0,0,0,0.08)] px-4 py-5">
       <div 
         className="flex items-center justify-between cursor-pointer"
-        onClick={handleToggle}
+        onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex-1">
           <h2 className="text-[20px] font-medium text-black font-['Lato']">{title}</h2>
