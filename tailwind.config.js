@@ -92,7 +92,7 @@ module.exports = {
     breakBefore: false,
     breakInside: false,
     caretColor: false,
-    aspectRatio: false,
+    aspectRatio: true,
     touchAction: false,
     userSelect: true,
     resize: false,
