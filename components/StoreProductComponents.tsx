@@ -110,7 +110,7 @@ const ProductCardStyle3: React.FC<ProductCardProps> = ({ product, onClick, onBuy
         </div>
         <div className="flex gap-2">
           <button className="flex items-center justify-center w-10 h-10 border-2 border-theme-primary/30 text-theme-primary rounded-xl hover:bg-theme-primary hover:text-white hover:border-theme-primary transition-all" onClick={handleCart}><ShoppingCart size={16} /></button>
-          <button className="flex-1 bg-theme-primary text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-theme-primary/90 hover:shadow-lg transition-all" onClick={handleBuyNow}>Buy Now</button>
+          <button className="flex-1 text-white text-sm font-semibold py-2.5 rounded-xl transition-all btn-order" onClick={handleBuyNow}>Buy Now</button>
         </div>
       </div>
     </div>

@@ -719,7 +719,7 @@ const StoreProductDetail = ({
 
                   {/* Zoomed Preview Panel (Desktop Only) */}
                   {isHovering && (
-                    <div className="hidden md:block absolute right-[calc(100%+16px)] top-0 w-[400px] h-[400px] bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden z-50">
+                    <div className="hidden md:block absolute left-[calc(100%+16px)] top-0 w-[400px] h-[400px] bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden z-50">
                       <div
                         className="w-full h-full"
                         style={{
