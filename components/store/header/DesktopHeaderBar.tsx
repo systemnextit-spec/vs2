@@ -92,9 +92,9 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
           <button type="button" onClick={onHomeClick} className="px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all">Home</button>
           {websiteConfig?.showMobileHeaderCategory && (
             <div ref={categoryMenuRef} className="relative" onMouseEnter={() => onCategoryMenuOpen(true)} onMouseLeave={() => onCategoryMenuOpen(false)}>
-              <button type="button" onClick={onCategoriesClick} className="px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all flex items-center gap-1.5">Categories <ChevronDown size={14} className={`transition-transform ${isCategoryMenuOpen ? 'rotate-180' : ''}`} /></button>
+              <button type="button" onClick={onCategoriesClick} className="">Categories <ChevronDown size={14} className={`transition-transform ${isCategoryMenuOpen ? 'rotate-180' : ''}`} /></button>
               {isCategoryMenuOpen && categoriesList?.length ? (
-                <div className="absolute left-0 top-full mt-1.5 w-60 rounded-2xl border border-gray-100/80 bg-white/95 backdrop-blur-lg py-2 shadow-2xl z-100">
+                <div className="absolute left-0 top-full mt-0 w-60 rounded-2xl border border-gray-100/80 bg-white/95 backdrop-blur-lg py-2 shadow-2xl z-100">
                   {categoriesList.map(cat => <button key={cat} type="button" onClick={() => { onCategorySelect?.(cat); onCategoryMenuOpen(false); }} className="block w-full px-4 py-3 text-left text-sm hover:bg-gray-50/80 hover:text-theme-primary transition-all">{cat}</button>)}
                 </div>
               ) : null}
@@ -145,7 +145,7 @@ const HeaderStyle2 = memo<DesktopHeaderBarProps>(({
           </button>
           <div className="relative" ref={menuRef}>
             <button type="button" className="p-2 text-gray-600 hover:text-theme-primary" onClick={user ? onMenuToggle : onLoginClick}>
-              <User size={22} strokeWidth={1.5} />
+              <User size={22} strokeWidth={1.5} />px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all flex items-center gap-1.5
             </button>
             {user && isMenuOpen && (
               <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
@@ -219,7 +219,7 @@ const HeaderStyle3 = memo<DesktopHeaderBarProps>(({
             <div ref={categoryMenuRef} className="relative" onMouseEnter={() => onCategoryMenuOpen(true)} onMouseLeave={() => onCategoryMenuOpen(false)}>
               <button type="button" onClick={onCategoriesClick} className="px-4 py-2 rounded-lg hover:bg-theme-primary/10 hover:text-theme-primary transition-all flex items-center gap-1">Categories <ChevronDown size={14} /></button>
               {isCategoryMenuOpen && categoriesList?.length ? (
-                <div className="absolute left-0 top-full mt-1 w-56 rounded-xl bg-white py-2 shadow-xl border z-50">
+                <div className="absolute left-0 top-full mt-0 w-56 rounded-xl bg-white py-2 shadow-xl border z-50">
                   {categoriesList.map(cat => <button key={cat} type="button" onClick={() => { onCategorySelect?.(cat); onCategoryMenuOpen(false); }} className="block w-full px-4 py-2.5 text-left text-sm hover:bg-theme-primary/10 hover:text-theme-primary">{cat}</button>)}
                 </div>
               ) : null}
@@ -273,7 +273,7 @@ const HeaderStyle4 = memo<DesktopHeaderBarProps>(({
               <Menu size={18} /> All Categories <ChevronDown size={14} />
             </button>
             {isCategoryMenuOpen && categoriesList?.length ? (
-              <div className="absolute left-0 top-full mt-1 w-64 rounded-xl bg-white py-2 shadow-2xl border z-50">
+              <div className="absolute left-0 top-full mt-0 w-64 rounded-xl bg-white py-2 shadow-2xl border z-50">
                 {categoriesList.map(cat => <button key={cat} type="button" onClick={() => { onCategorySelect?.(cat); onCategoryMenuOpen(false); }} className="block w-full px-4 py-3 text-left text-sm hover:bg-theme-primary/10 hover:text-theme-primary transition-all">{cat}</button>)}
               </div>
             ) : null}
@@ -337,7 +337,7 @@ const HeaderStyle5 = memo<DesktopHeaderBarProps>(({
             <div ref={categoryMenuRef} className="relative" onMouseEnter={() => onCategoryMenuOpen(true)} onMouseLeave={() => onCategoryMenuOpen(false)}>
               <button type="button" onClick={onCategoriesClick} className="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all flex items-center gap-1">Categories <ChevronDown size={14} /></button>
               {isCategoryMenuOpen && categoriesList?.length ? (
-                <div className="absolute left-0 top-full mt-1 w-56 rounded-xl bg-gray-800 py-2 shadow-xl border border-gray-700 z-50">
+                <div className="absolute left-0 top-full mt-0 w-56 rounded-xl bg-gray-800 py-2 shadow-xl border border-gray-700 z-50">
                   {categoriesList.map(cat => <button key={cat} type="button" onClick={() => { onCategorySelect?.(cat); onCategoryMenuOpen(false); }} className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 hover:text-white hover:bg-gray-700">{cat}</button>)}
                 </div>
               ) : null}
