@@ -117,15 +117,7 @@ const CategoryStyle2 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   return (
     <div ref={sectionRef} className="py-4 sm:py-6 px-2 sm:px-4">
       <div className="flex items-center justify-between mb-4 sm:mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-theme-br flex items-center justify-center shadow-lg">
-            <Layers size={20} className="text-white" />
-          </div>
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900">Shop by Category</h2>
-            <p className="text-xs text-gray-500">Browse our collection</p>
-          </div>
-        </div>
+        {/* Category text */}
         <button className="flex items-center gap-1 text-sm font-semibold text-theme-primary hover:text-theme-secondary transition-colors px-3 py-1.5 rounded-lg hover:bg-theme-primary/10" onClick={() => onCategoryClick('__all__')}>
           See All <ChevronRight size={18} />
         </button>

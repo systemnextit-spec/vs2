@@ -608,13 +608,13 @@ const StoreProductDetail = ({
         </div>
       )}
 
-      <main className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
+      <main className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 pt-2">
+        <div className="flex flex-col lg:flex-row gap-4">
 
           {/* Main Content: Product Details */}
           <div className="flex-1">
             {/* Product Hero Block */}
-            <div className="glass-card mobile-product-card p-4 md:p-6 flex flex-col md:flex-row gap-8 animate-slide-up"
+            <div className="glass-card mobile-product-card p-4 md:p-6 flex flex-col md:flex-row gap-4 animate-slide-up"
             >
 
               {/* Image Section - Enhanced Gallery */}
@@ -962,7 +962,7 @@ const StoreProductDetail = ({
                 </div>
 
                 {/* Desktop Buttons */}
-                <div className="hidden md:flex gap-3 mb-8">
+                <div className="hidden md:flex gap-3 mb-4">
                   <button
                     onClick={handleAddToCart}
                     disabled={isOutOfStock}
@@ -993,7 +993,7 @@ const StoreProductDetail = ({
             </div>
 
             {/* Tabs Section */}
-            <div className="mt-8 glass-card rounded-xl overflow-hidden animate-slide-up">
+            <div className="mt-2 glass-card rounded-xl overflow-hidden animate-slide-up">
               <div className="mobile-tab-nav flex border-b border-gray-100">
                 <button
                   onClick={() => setActiveTab('description')}
@@ -1017,7 +1017,7 @@ const StoreProductDetail = ({
                   </span>
                 </button>
               </div>
-              <div className="p-8 min-h-[200px]">
+              <div className="p-4 min-h-[100px]">
                 {activeTab === 'description' ? (
                   <div className="text-gray-600 leading-relaxed space-y-4">
                     <div
@@ -1048,7 +1048,7 @@ const StoreProductDetail = ({
           </div>
 
           {/* Right Sidebar */}
-          <aside className="w-full lg:w-80 space-y-8">
+          <aside className="w-full lg:w-80 space-y-4">
 
             {/* Related Products Widget */}
             <div className="glass-card rounded-xl p-5 animate-slide-up">
