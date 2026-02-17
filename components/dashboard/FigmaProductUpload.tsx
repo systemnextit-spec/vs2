@@ -103,7 +103,7 @@ const Section: React.FC<{
     <div className="bg-white rounded-lg shadow-[0px_4px_11.4px_-2px_rgba(0,0,0,0.08)] px-4 py-5">
       <div 
         className="flex items-center justify-between cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
       >
         <div className="flex-1">
           <h2 className="text-[20px] font-medium text-black font-['Lato']">{title}</h2>
@@ -188,6 +188,8 @@ const SelectField: React.FC<{
   placeholder?: string;
 }> = ({ label, required, value, onChange, options, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -199,6 +201,16 @@ const SelectField: React.FC<{
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+
+  const handleToggle = () => {
+    if (!isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      setOpenUpward(spaceBelow < 200);
+    }
+    setIsOpen(!isOpen);
+  };
 
   const selectedOption = options.find(o => o.value === value);
 
@@ -212,7 +224,8 @@ const SelectField: React.FC<{
       )}
       <div className="relative">
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          ref={buttonRef}
+          onClick={handleToggle}
           className="w-full h-10 bg-[#f9f9f9] rounded-lg px-3 flex items-center justify-between text-[14px] text-black"
         >
           <span className={selectedOption ? 'text-black' : 'text-[#a2a2a2]'}>
@@ -221,7 +234,7 @@ const SelectField: React.FC<{
           <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border z-50 max-h-60 overflow-auto">
+          <div className={`absolute left-0 right-0 bg-white rounded-lg shadow-lg border z-50 max-h-60 overflow-auto ${openUpward ? 'bottom-full mb-1' : 'top-full mt-1'}`}>
             {options.map((option) => (
               <button
                 key={option.value}
