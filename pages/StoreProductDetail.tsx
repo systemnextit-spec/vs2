@@ -342,7 +342,7 @@ const StoreProductDetail = ({
 
   // Get YouTube video ID if available
   const youtubeVideoId = product.videoUrl ? getYouTubeVideoId(product.videoUrl) : null;
-  const [showVideo, setShowVideo] = useState(false);
+  const [showVideo, setShowVideo] = useState(youtubeVideoId ? true : false);
   const [selectedImage, setSelectedImage] = useState(galleryImages[0]);
   const fallbackColor = product.variantDefaults?.color || 'Default';
   const fallbackSize = product.variantDefaults?.size || 'Standard';
@@ -647,16 +647,16 @@ const StoreProductDetail = ({
                   >
                     {/* Main Image or Video */}
                     {showVideo && youtubeVideoId ? (
-                      <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-full h-full absolute inset-0">
                         <iframe
                           width="100%"
                           height="100%"
-                          src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1`}
+                          src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&mute=1&rel=0`}
                           title="Product Video"
                           frameBorder="0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
-                          className="w-full h-full"
+                          className="w-full h-full absolute inset-0"
                         />
                       </div>
                     ) : (
@@ -779,22 +779,7 @@ const StoreProductDetail = ({
                     className="flex gap-2 overflow-x-auto scrollbar-hide px-1 py-1"
                     style={{ scrollBehavior: 'smooth' }}
                   >
-                    {additionalImages.map((img, idx) => (
-                      <button
-                        key={idx}
-                        onMouseEnter={() => handleThumbnailSelect(img, idx)}
-                        onClick={() => handleThumbnailSelect(img, idx)}
-                        className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 p-1 transition-all overflow-hidden transform hover:scale-105 ${selectedImageIndex === idx
-                          ? 'border-theme-primary shadow-md'
-                          : 'border-gray-200 hover:border-theme-primary/70'
-                          }`}
-                        aria-label={`View image ${idx + 1}`}
-                        aria-pressed={selectedImageIndex === idx}
-                      >
-                        <LazyImage src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
-                      </button>
-                    ))}
-                    {/* Video Thumbnail if available */}
+                    {/* Video Thumbnail if available - FIRST POSITION */}
                     {youtubeVideoId && (
                       <button
                         onClick={() => {
@@ -819,6 +804,21 @@ const StoreProductDetail = ({
                         </div>
                       </button>
                     )}
+                    {additionalImages.map((img, idx) => (
+                      <button
+                        key={idx}
+                        onMouseEnter={() => handleThumbnailSelect(img, idx)}
+                        onClick={() => handleThumbnailSelect(img, idx)}
+                        className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 p-1 transition-all overflow-hidden transform hover:scale-105 ${selectedImageIndex === idx
+                            ? 'border-theme-primary shadow-md'
+                          : 'border-gray-200 hover:border-theme-primary/70'
+                          }`}
+                        aria-label={`View image ${idx + 1}`}
+                        aria-pressed={selectedImageIndex === idx}
+                      >
+                        <LazyImage src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
+                      </button>
+                    ))}
                   </div>
 
                   {/* Right Arrow */}
