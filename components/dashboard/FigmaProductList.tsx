@@ -941,8 +941,26 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
             </button>
           </div>
 
-          {/* Right side: View + Add Product */}
+          {/* Right side: Import + Export + View + Add Product */}
           <div className="flex flex-col xxs:flex-row items-stretch xxs:items-center gap-2 xxs:gap-3 sm:gap-4">
+            {/* Import */}
+            <button onClick={() => importInputRef.current?.click()} className="flex items-center gap-1 xxs:gap-2 text-[11px] xxs:text-[12px] text-[#161719] dark:text-gray-300 hover:text-[#ff6a00] transition-colors px-2 xxs:px-3 py-1.5 xxs:py-2 bg-[#f9f9f9] dark:bg-gray-700 rounded-lg">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="xxs:w-5 xxs:h-5">
+                <path d="M14.1667 17.5C13.6611 17.0085 11.6667 15.7002 11.6667 15C11.6667 14.2997 13.6611 12.9915 14.1667 12.5M12.5001 15H18.3334" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M10.0001 17.5C6.07171 17.5 4.10752 17.5 2.88714 16.2796C1.66675 15.0592 1.66675 13.095 1.66675 9.16667V6.62023C1.66675 5.1065 1.66675 4.34963 1.98368 3.78172C2.2096 3.37689 2.54364 3.04285 2.94846 2.81693C3.51638 2.5 4.27325 2.5 5.78697 2.5C6.75676 2.5 7.24166 2.5 7.66613 2.65917C8.63525 3.0226 9.03491 3.90298 9.47225 4.77761L10.0001 5.83333M6.66675 5.83333H13.9584C15.714 5.83333 16.5917 5.83333 17.2223 6.25466C17.4953 6.43706 17.7297 6.67143 17.9121 6.94441C18.3164 7.54952 18.3327 8.38233 18.3334 10V11.6667" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round"/>
+              </svg>
+              <span className="hidden xxs:inline">Import</span>
+            </button>
+
+            {/* Export */}
+            <button onClick={handleExportCSV} className="flex items-center gap-1 xxs:gap-2 text-[11px] xxs:text-[12px] text-[#161719] dark:text-gray-300 hover:text-[#ff6a00] transition-colors px-2 xxs:px-3 py-1.5 xxs:py-2 bg-[#f9f9f9] dark:bg-gray-700 rounded-lg">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="xxs:w-5 xxs:h-5">
+                <path d="M15.8334 17.5C16.3391 17.0085 18.3334 15.7002 18.3334 15C18.3334 14.2997 16.3391 12.9915 15.8334 12.5M17.5001 15H11.6667" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M10.0001 17.5C6.07171 17.5 4.10752 17.5 2.88714 16.2796C1.66675 15.0592 1.66675 13.095 1.66675 9.16667V6.62023C1.66675 5.1065 1.66675 4.34963 1.98368 3.78172C2.2096 3.37689 2.54364 3.04285 2.94846 2.81693C3.51638 2.5 4.27325 2.5 5.78697 2.5C6.75676 2.5 7.24166 2.5 7.66613 2.65917C8.63525 3.0226 9.03491 3.90298 9.47225 4.77761L10.0001 5.83333M6.66675 5.83333H13.9584C15.714 5.83333 16.5917 5.83333 17.2223 6.25466C17.4953 6.43706 17.7297 6.67143 17.9121 6.94441C18.3164 7.54952 18.3327 8.38233 18.3334 10V10.8333" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round"/>
+              </svg>
+              <span className="hidden xxs:inline">Export</span>
+            </button>
+
             {/* View Mode */}
           <div className="relative" data-dropdown>
             <button
@@ -1044,28 +1062,6 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
         <div className="flex flex-col gap-2 xxs:gap-3">
           {/* Import/Export/PerPage row */}
           <div className="flex flex-wrap items-center gap-2 xxs:gap-3 sm:gap-4 justify-end">
-            {/* Import */}
-          <button onClick={() => importInputRef.current?.click()} className="flex items-center gap-1 text-[11px] xxs:text-[12px] text-[#161719] dark:text-gray-300 hover:text-[#ff6a00] transition-colors">
-            {/* <Download size={20} className="text-[#161719]" /> */}
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="xxs:w-5 xxs:h-5">
-                <path d="M14.1667 17.5C13.6611 17.0085 11.6667 15.7002 11.6667 15C11.6667 14.2997 13.6611 12.9915 14.1667 12.5M12.5001 15H18.3334" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M10.0001 17.5C6.07171 17.5 4.10752 17.5 2.88714 16.2796C1.66675 15.0592 1.66675 13.095 1.66675 9.16667V6.62023C1.66675 5.1065 1.66675 4.34963 1.98368 3.78172C2.2096 3.37689 2.54364 3.04285 2.94846 2.81693C3.51638 2.5 4.27325 2.5 5.78697 2.5C6.75676 2.5 7.24166 2.5 7.66613 2.65917C8.63525 3.0226 9.03491 3.90298 9.47225 4.77761L10.0001 5.83333M6.66675 5.83333H13.9584C15.714 5.83333 16.5917 5.83333 17.2223 6.25466C17.4953 6.43706 17.7297 6.67143 17.9121 6.94441C18.3164 7.54952 18.3327 8.38233 18.3334 10V11.6667" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round"/>
-                </svg>
-
-            Import
-          </button>
-
-          {/* Export */}
-          <button onClick={handleExportCSV} className="flex items-center gap-1 text-[11px] xxs:text-[12px] text-[#161719] dark:text-gray-300 hover:text-[#ff6a00] transition-colors">
-            {/* <Upload size={20} className="text-[#161719]" /> */}
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="xxs:w-5 xxs:h-5">
-            <path d="M15.8334 17.5C16.3391 17.0085 18.3334 15.7002 18.3334 15C18.3334 14.2997 16.3391 12.9915 15.8334 12.5M17.5001 15H11.6667" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M10.0001 17.5C6.07171 17.5 4.10752 17.5 2.88714 16.2796C1.66675 15.0592 1.66675 13.095 1.66675 9.16667V6.62023C1.66675 5.1065 1.66675 4.34963 1.98368 3.78172C2.2096 3.37689 2.54364 3.04285 2.94846 2.81693C3.51638 2.5 4.27325 2.5 5.78697 2.5C6.75676 2.5 7.24166 2.5 7.66613 2.65917C8.63525 3.0226 9.03491 3.90298 9.47225 4.77761L10.0001 5.83333M6.66675 5.83333H13.9584C15.714 5.83333 16.5917 5.83333 17.2223 6.25466C17.4953 6.43706 17.7297 6.67143 17.9121 6.94441C18.3164 7.54952 18.3327 8.38233 18.3334 10V10.8333" stroke="#FF5500" strokeWidth="1.25" strokeLinecap="round"/>
-            </svg>
-
-            Export
-          </button>
-
           {/* Products Per Page */}
           <div className="relative" data-dropdown>
             <button
