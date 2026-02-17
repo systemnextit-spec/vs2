@@ -71,6 +71,7 @@ interface FigmaProductListProps {
   onExport?: () => void;
   onBulkImport?: (products: Product[]) => void;
   tenantId?: string;
+  tenantSubdomain?: string;
   productDisplayOrder?: number[];
   onProductOrderChange?: (order: number[]) => Promise<void>;
 }
@@ -90,6 +91,7 @@ interface SortableTableRowProps {
   onEditProduct?: (product: Product) => void;
   onCloneProduct?: (product: Product) => void;
   onDeleteProduct?: (id: number) => void;
+  storeBaseUrl?: string;
 }
 
 function SortableTableRow({
@@ -105,6 +107,7 @@ function SortableTableRow({
   onEditProduct,
   onCloneProduct,
   onDeleteProduct,
+  storeBaseUrl = '',
 }: SortableTableRowProps) {
   const {
     attributes,
@@ -208,7 +211,7 @@ function SortableTableRow({
               <div className="w-[160px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden py-2">
                 <button
                   onClick={() => { onEditProduct?.(product); setOpenDropdownId(null); }}
-                  className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className=""
                 >
                   <Edit size={16} />
                   Edit
@@ -221,7 +224,7 @@ function SortableTableRow({
                   Duplicate
                 </button>
                 <button
-                  onClick={() => { window.open(`/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
+                  onClick={() => { window.open(`${storeBaseUrl}/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
                   className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
                   <Eye size={16} />
@@ -260,9 +263,17 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   onExport,
   onBulkImport,
   tenantId,
+  tenantSubdomain,
   productDisplayOrder = [],
   onProductOrderChange
 }) => {
+  // Helper to get the store URL for this tenant
+  const getStoreUrl = (subdomain?: string) => {
+    if (!subdomain) return '';
+    const isLocalhost = window.location.hostname.includes('localhost');
+    if (isLocalhost) return `http://${subdomain}.localhost:3000`;
+    return `https://${subdomain}.allinbangla.com`;
+  };
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -299,14 +310,47 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
 
+  // Track if user has manually reordered (to prevent reset on parent re-render)
+  const hasManualOrderRef = useRef(false);
+  const prevProductIdsRef = useRef<string>('');
+
   // Initialize ordered products based on productDisplayOrder
   useEffect(() => {
+    console.log('[FigmaProductList] useEffect triggered', {
+      propProductsLength: propProducts.length,
+      hasManualOrder: hasManualOrderRef.current,
+      productDisplayOrder: productDisplayOrder?.length,
+      firstProductImage: propProducts[0]?.image,
+      firstProductName: propProducts[0]?.name
+    });
+
     if (propProducts.length === 0) {
       setOrderedProducts([]);
+      prevProductIdsRef.current = '';
+      hasManualOrderRef.current = false;
       return;
     }
 
-    // If there's a saved order, use it
+    // Check if products actually changed (compare IDs)
+    const currentProductIds = propProducts.map(p => p.id).sort().join(',');
+    const productsChanged = prevProductIdsRef.current !== currentProductIds;
+
+    console.log('[FigmaProductList] Check:', {
+      productsChanged,
+      hasManualOrder: hasManualOrderRef.current,
+      currentIds: currentProductIds.substring(0, 50) + '...',
+      prevIds: prevProductIdsRef.current.substring(0, 50) + '...'
+    });
+
+    // If products haven't changed and user has manually ordered, keep the order
+    if (!productsChanged && hasManualOrderRef.current) {
+      console.log('[FigmaProductList] Keeping manual order, skipping reset');
+      return;
+    }
+
+    prevProductIdsRef.current = currentProductIds;
+
+    // If there's a saved order from backend, use it
     if (productDisplayOrder && productDisplayOrder.length > 0) {
       const ordered = productDisplayOrder
         .map(id => propProducts.find(p => p.id === id))
@@ -318,10 +362,16 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       );
       
       setOrderedProducts([...ordered, ...unorderedProducts]);
+      console.log('[FigmaProductList] Set ordered from productDisplayOrder');
     } else {
       setOrderedProducts([...propProducts]);
+      console.log('[FigmaProductList] Set ordered from propProducts');
     }
     setHasOrderChanges(false);
+    // Only reset hasManualOrderRef when products actually changed
+    if (productsChanged) {
+      hasManualOrderRef.current = false;
+    }
   }, [propProducts, productDisplayOrder]);
 
   // Handle drag end for reordering
@@ -336,7 +386,12 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       const oldIndex = items.findIndex(item => item.id === active.id);
       const newIndex = items.findIndex(item => item.id === over.id);
 
+      if (oldIndex === -1 || newIndex === -1) {
+        return items;
+      }
+
       const newOrder = arrayMove(items, oldIndex, newIndex);
+      hasManualOrderRef.current = true; // Flag that user has manually reordered
       setHasOrderChanges(true);
       return newOrder;
     });
@@ -1270,7 +1325,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                         <Copy size={14} /> Duplicate
                       </button>
                       <button
-                        onClick={() => { window.open(`/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
+                        onClick={() => { window.open(`${getStoreUrl(tenantSubdomain)}/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
                         className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300"
                       >
                         <Eye size={14} /> View
@@ -1434,6 +1489,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                   onEditProduct={onEditProduct}
                   onCloneProduct={onCloneProduct}
                   onDeleteProduct={onDeleteProduct}
+                  storeBaseUrl={getStoreUrl(tenantSubdomain)}
                 />
               );}) : (
               <tr>
@@ -1459,8 +1515,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           return (
             <div key={productKey} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                {product.image?.[0] ? (
-                  <img src={normalizeImageUrl(product.image[0])} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                {product.image ? (
+                  <img src={normalizeImageUrl(product.image)} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
                 ) : (
                   <div className="w-10 h-10 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -1480,7 +1536,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                 </button>
                 {openDropdownId === productKey && (
                   <div className="absolute right-0 top-full mt-1 z-50 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 min-w-[120px]">
-                    <button onClick={() => { window.open(`/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <button onClick={() => { window.open(`${getStoreUrl(tenantSubdomain)}/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
                       <Eye size={16} />
                       View
                     </button>

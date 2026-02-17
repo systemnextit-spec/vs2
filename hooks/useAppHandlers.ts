@@ -236,6 +236,33 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     });
   }, [setProducts, activeTenantId]);
 
+  // Handler to save product display order
+  const handleProductOrderChange = useCallback(async (order: number[]) => {
+    // Reorder products based on the provided order
+    setProducts(prev => {
+      // Create a map of product by id
+      const productMap = new Map(prev.map(p => [p.id, p]));
+      
+      // Build ordered array following the new order
+      const orderedProducts: Product[] = [];
+      order.forEach(id => {
+        const product = productMap.get(id);
+        if (product) {
+          orderedProducts.push(product);
+          productMap.delete(id);
+        }
+      });
+      
+      // Append any products that weren't in the order (shouldn't happen but just in case)
+      productMap.forEach(product => orderedProducts.push(product));
+      
+      // Save to backend - the order in the array determines display order
+      DataService.save('products', orderedProducts, activeTenantId);
+      
+      return orderedProducts;
+    });
+  }, [setProducts, activeTenantId]);
+
   const handleBulkDiscount = useCallback((ids: number[], discountPercent: number) => {
     setProducts(prev => {
       const updated = prev.map(p => {
@@ -584,6 +611,7 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     handleBulkUpdateProducts,
     handleBulkFlashSale,
     handleBulkDiscount,
+    handleProductOrderChange,
     
     // Order handlers
     handleUpdateOrder,

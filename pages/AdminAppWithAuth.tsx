@@ -34,6 +34,7 @@ interface AdminAppWithAuthProps {
   onBulkDeleteProducts: (ids: number[]) => void;
   onBulkUpdateProducts: (ids: number[], updates: Partial<Product>) => void;
   onBulkFlashSale: (ids: number[], action: 'add' | 'remove') => void;
+  onProductOrderChange?: (order: number[]) => Promise<void>;
   onUpdateLogo: (logo: string | null) => void;
   onUpdateTheme: (config: ThemeConfig) => Promise<void>;
   onUpdateWebsiteConfig: (config: WebsiteConfig) => Promise<void>;

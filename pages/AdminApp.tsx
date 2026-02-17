@@ -127,6 +127,7 @@ interface AdminAppProps {
   onBulkDeleteProducts: (ids: number[]) => void;
   onBulkUpdateProducts: (ids: number[], updates: Partial<Product>) => void;
   onBulkFlashSale: (ids: number[], action: 'add' | 'remove') => void;
+  onProductOrderChange?: (order: number[]) => Promise<void>;
   onUpdateLogo: (logo: string | null) => void;
   onUpdateTheme: (config: ThemeConfig) => Promise<void>;
   onUpdateWebsiteConfig: (config: WebsiteConfig) => Promise<void>;
@@ -426,6 +427,7 @@ const AdminApp: React.FC<AdminAppProps> = ({
   onBulkDeleteProducts,
   onBulkUpdateProducts,
   onBulkFlashSale,
+  onProductOrderChange,
   onUpdateLogo,
   onUpdateTheme,
   onUpdateWebsiteConfig,
@@ -772,7 +774,7 @@ const AdminApp: React.FC<AdminAppProps> = ({
         <Suspense fallback={<PageLoadingFallback section={adminSection} />}>
           {
             adminSection === 'orders' ? <FigmaOrderList orders={orders} courierConfig={courierConfig} onUpdateOrder={onUpdateOrder} products={products} tenantId={activeTenantId} onNewOrder={onAddOrder} initialSelectedOrderId={selectedOrderIdFromNotification} onClearSelectedOrderId={() => setSelectedOrderIdFromNotification(null)} /> :
-              adminSection === 'products' ? <FigmaProductList products={products} categories={categories} brands={brands} onAddProduct={() => { setEditingProduct(null); setAdminSection('product-upload'); }} onEditProduct={(p) => { setEditingProduct(p); setAdminSection('product-upload'); }} onDeleteProduct={onDeleteProduct} onCloneProduct={(p) => onAddProduct({ ...p, id: Date.now(), name: p.name + ' (Copy)' })} onBulkDelete={onBulkDeleteProducts} onBulkStatusUpdate={(ids, status) => onBulkUpdateProducts(ids, { status })} onBulkFlashSale={onBulkFlashSale} onBulkImport={onBulkAddProducts} /> :
+              adminSection === 'products' ? <FigmaProductList products={products} categories={categories} brands={brands} onAddProduct={() => { setEditingProduct(null); setAdminSection('product-upload'); }} onEditProduct={(p) => { setEditingProduct(p); setAdminSection('product-upload'); }} onDeleteProduct={onDeleteProduct} onCloneProduct={(p) => onAddProduct({ ...p, id: Date.now(), name: p.name + ' (Copy)' })} onBulkDelete={onBulkDeleteProducts} onBulkStatusUpdate={(ids, status) => onBulkUpdateProducts(ids, { status })} onBulkFlashSale={onBulkFlashSale} onBulkImport={onBulkAddProducts} tenantId={activeTenantId} tenantSubdomain={activeTenantSubdomain} onProductOrderChange={onProductOrderChange} /> :
                 adminSection === 'product-upload' ? <FigmaProductUpload categories={categories} subCategories={subCategories} childCategories={childCategories} brands={brands} tags={tags} onAddProduct={editingProduct ? onUpdateProduct : onAddProduct} onBack={() => { setEditingProduct(null); setAdminSection('products'); }} onNavigate={setAdminSection} editProduct={editingProduct} /> :
                   adminSection === 'store_studio' ? <StoreStudioManager tenantId={activeTenantId} onBack={() => setAdminSection('manage_shop')} products={products} /> :
                   adminSection === 'landing_pages' ? <AdminLandingPage tenantSubdomain={selectedTenantRecord?.subdomain || ''} products={products} landingPages={landingPages} onCreateLandingPage={onCreateLandingPage} onUpdateLandingPage={onUpsertLandingPage} onTogglePublish={onToggleLandingPublish} onPreviewLandingPage={handlePreviewLandingPage} /> :
