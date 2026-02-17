@@ -224,7 +224,7 @@ function SortableTableRow({
                   Duplicate
                 </button>
                 <button
-                  onClick={() => { window.open(`${storeBaseUrl}/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
+                  onClick={() => { window.open(`${storeBaseUrl}/product-details/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
                   className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
                   <Eye size={16} />
@@ -1325,7 +1325,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                         <Copy size={14} /> Duplicate
                       </button>
                       <button
-                        onClick={() => { window.open(`${getStoreUrl(tenantSubdomain)}/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
+                        onClick={() => { window.open(`${getStoreUrl(tenantSubdomain)}/product-details/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }}
                         className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300"
                       >
                         <Eye size={14} /> View
@@ -1536,7 +1536,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                 </button>
                 {openDropdownId === productKey && (
                   <div className="absolute right-0 top-full mt-1 z-50 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 min-w-[120px]">
-                    <button onClick={() => { window.open(`${getStoreUrl(tenantSubdomain)}/product/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <button onClick={() => { window.open(`${getStoreUrl(tenantSubdomain)}/product-details/${product.slug || product.id}`, '_blank'); setOpenDropdownId(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
                       <Eye size={16} />
                       View
                     </button>
