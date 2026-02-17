@@ -145,6 +145,7 @@ export interface Product {
   flashSale?: boolean; // Flash sale flag
   flashSaleStartDate?: string; // ISO date string
   flashSaleEndDate?: string; // ISO date string
+  soldCount?: number; // Adding '?' makes it optional if some products don't have it
 }
 
 export interface Popup {

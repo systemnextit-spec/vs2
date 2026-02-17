@@ -161,7 +161,7 @@ const FloatingChatButton: React.FC<{ websiteConfig?: WebsiteConfig; onOpenChat?:
   const whatsappLink = buildWhatsAppLink(websiteConfig?.whatsappNumber);
   const chatEnabled = websiteConfig?.chatEnabled ?? true;
   const chatFallbackLink = !chatEnabled && websiteConfig?.chatWhatsAppFallback ? whatsappLink : null;
-  const baseClasses = 'hidden md:flex fixed bottom-8 right-8 w-14 h-14 items-center justify-center rounded-full transition-all duration-300 hover:-translate-y-1 hover:scale-105 z-40 shadow-lg';
+  const baseClasses = 'hidden md:flex fixed bottom-20 right-8 w-14 h-14 items-center justify-center rounded-full transition-all duration-300 hover:-translate-y-1 hover:scale-105 z-40 shadow-lg';
   const chatIcon = <MessageCircle size={24} strokeWidth={2} className="text-white" />;
 
   if (chatEnabled && onOpenChat) {
