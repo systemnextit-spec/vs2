@@ -278,6 +278,28 @@ const StoreProductDetail = ({
   categories,
   onCategoryClick
 }: StoreProductDetailProps) => {
+  // Navigation handlers for header buttons
+  const handleCategoriesNav = useCallback(() => {
+    onBack();
+  }, [onBack]);
+
+  const handleProductsNav = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', '/all-products');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  }, []);
+
+  const handleCategorySelect = useCallback((categoryName: string) => {
+    if (onCategoryClick) {
+      onCategoryClick(categoryName);
+    }
+  }, [onCategoryClick]);
+
+  const categoriesList = useMemo(() => {
+    return categories?.map(cat => cat.name) || [];
+  }, [categories]);
+
   const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
   const [showCartSuccess, setShowCartSuccess] = useState(false);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
@@ -521,6 +543,11 @@ const StoreProductDetail = ({
           onSearchChange={onSearchChange}
           onProductClick={onProductClick}
           tenantId={tenantId}
+          onCategoriesClick={handleCategoriesNav}
+          onProductsClick={handleProductsNav}
+          categoriesList={categoriesList}
+          onCategorySelect={handleCategorySelect}
+          categories={categories}
         />
       </Suspense>
 
