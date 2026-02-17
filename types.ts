@@ -472,6 +472,7 @@ export interface Category {
 }
 
 export interface SubCategory {
+  categoryName: string;
   id: string;
   tenantId?: string;
   categoryId: string;

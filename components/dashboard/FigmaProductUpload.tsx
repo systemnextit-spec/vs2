@@ -1398,7 +1398,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
           </Section>
 
           {/* Product Details */}
-          <Section title="Product Details" subtitle="You can add multiple product details for a single product here. Like Brand, Model, Serial Number, Fabric Type, and EMI etc.">
+          <Section title="key features" subtitle="You can add multiple key features for a single product here. Like Brand, Model, Serial Number, Fabric Type, and EMI etc.">
             {formData.details.map((detail, idx) => (
               <div key={idx} className="flex items-end gap-2 mb-4">
                 <div className="flex-1 grid grid-cols-2 gap-2">
@@ -1670,7 +1670,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                 value={formData.childCategory}
                 onChange={(v) => updateField('childCategory', v)}
                 options={localChildCategories
-                  .filter(cc => !formData.subCategory || cc.subCategoryName === formData.subCategory || cc.subCategoryId === formData.subCategory)
+                  .filter(cc => !formData.subCategory || cc.subCategoryId === formData.subCategory || cc.subCategoryId === formData.subCategory)
                   .map(cc => ({ value: cc.name, label: cc.name }))}
                 placeholder="Select Child Category"
               />
@@ -1867,7 +1867,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                 value={formData.childCategory}
                 onChange={(v) => updateField('childCategory', v)}
                 options={localChildCategories
-                  .filter(cc => !formData.subCategory || cc.subCategoryName === formData.subCategory || cc.subCategoryId === formData.subCategory)
+                  .filter(cc => !formData.subCategory || cc.subCategoryId === formData.subCategory || cc.subCategoryId === formData.subCategory)
                   .map(cc => ({ value: cc.name, label: cc.name }))}
                 placeholder="Select Child Category"
               />
