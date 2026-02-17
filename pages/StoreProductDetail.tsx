@@ -634,20 +634,21 @@ const StoreProductDetail = ({
                 {/* Main Product Image with Zoom */}
                 <div className="relative">
                   <div
-                    className="mobile-image-gallery aspect-square bg-white rounded-2xl overflow-hidden relative group border border-gray-200 cursor-crosshair"
-                    onMouseEnter={() => setIsHovering(true)}
-                    onMouseLeave={() => setIsHovering(false)}
+                    className={`mobile-image-gallery aspect-square bg-white rounded-2xl overflow-hidden relative group border border-gray-200 ${showVideo && youtubeVideoId ? '' : 'cursor-crosshair'}`}
+                    onMouseEnter={() => { if (!showVideo) setIsHovering(true); }}
+                    onMouseLeave={() => { if (!showVideo) setIsHovering(false); }}
                     onMouseMove={(e) => {
+                      if (showVideo) return;
                       const rect = e.currentTarget.getBoundingClientRect();
                       const x = ((e.clientX - rect.left) / rect.width) * 100;
                       const y = ((e.clientY - rect.top) / rect.height) * 100;
                       setZoomPosition({ x, y });
                     }}
-                    onClick={() => setIsZoomOpen(true)}
+                    onClick={() => { if (!showVideo) setIsZoomOpen(true); }}
                   >
                     {/* Main Image or Video */}
                     {showVideo && youtubeVideoId ? (
-                      <div className="w-full h-full absolute inset-0">
+                      <div className="w-full h-full absolute inset-0 z-10">
                         <iframe
                           width="100%"
                           height="100%"
