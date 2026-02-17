@@ -108,7 +108,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             
             {/* Catalog Dropdown Content */}
             <div 
-              className={`mt-2 rounded-2xl bg-white border border-gray-100 overflow-hidden transition-all duration-300 ease-out ${isCatalogDropdownOpen ? 'max-h-[400px] opacity-100 shadow-sm' : 'max-h-0 opacity-0 border-transparent'}`}
+              className={`mt-0 rounded-2xl bg-white border border-gray-100 overflow-hidden transition-all duration-300 ease-out ${isCatalogDropdownOpen ? 'max-h-[400px] opacity-100 shadow-sm' : 'max-h-0 opacity-0 border-transparent'}`}
             >
               <div className="divide-y divide-gray-50">
                 {catalogGroups.map((group, idx) => (
