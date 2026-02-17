@@ -332,6 +332,17 @@ const StoreProductDetail = ({
     return () => clearTimeout(timer);
   }, [product.id]);
   const galleryImages = product.galleryImages && product.galleryImages.length ? product.galleryImages.map(url => normalizeImageUrl(url)) : [normalizeImageUrl(product.image)];
+  // Helper function to extract YouTube video ID
+  const getYouTubeVideoId = (url: string): string | null => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  // Get YouTube video ID if available
+  const youtubeVideoId = product.videoUrl ? getYouTubeVideoId(product.videoUrl) : null;
+  const [showVideo, setShowVideo] = useState(false);
   const [selectedImage, setSelectedImage] = useState(galleryImages[0]);
   const fallbackColor = product.variantDefaults?.color || 'Default';
   const fallbackSize = product.variantDefaults?.size || 'Standard';
@@ -406,6 +417,7 @@ const StoreProductDetail = ({
   const handleThumbnailSelect = (img: string, index: number) => {
     setSelectedImage(img);
     setSelectedImageIndex(index);
+    setShowVideo(false);
   };
 
   const handlePrevImage = () => {
@@ -633,12 +645,27 @@ const StoreProductDetail = ({
                     }}
                     onClick={() => setIsZoomOpen(true)}
                   >
-                    {/* Main Image */}
-                    <LazyImage
-                      src={selectedImage}
-                      alt={product.name}
-                      className="w-full h-full object-contain"
-                    />
+                    {/* Main Image or Video */}
+                    {showVideo && youtubeVideoId ? (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <iframe
+                          width="100%"
+                          height="100%"
+                          src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1`}
+                          title="Product Video"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="w-full h-full"
+                        />
+                      </div>
+                    ) : (
+                      <LazyImage
+                        src={selectedImage}
+                        alt={product.name}
+                        className="w-full h-full object-contain"
+                      />
+                    )}
 
                     {/* Hover Zoom Lens Effect */}
                     {isHovering && (
@@ -767,6 +794,31 @@ const StoreProductDetail = ({
                         <LazyImage src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
                       </button>
                     ))}
+                    {/* Video Thumbnail if available */}
+                    {youtubeVideoId && (
+                      <button
+                        onClick={() => {
+                          setShowVideo(true);
+                          setSelectedImageIndex(-1);
+                        }}
+                        className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 p-1 transition-all overflow-hidden transform hover:scale-105 relative ${showVideo
+                            ? 'border-theme-primary shadow-md'
+                            : 'border-gray-200 hover:border-theme-primary/70'
+                          }`}
+                        aria-label="Play product video"
+                      >
+                        <img 
+                          src={`https://img.youtube.com/vi/${youtubeVideoId}/mqdefault.jpg`}
+                          alt="Video thumbnail" 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                          <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        </div>
+                      </button>
+                    )}
                   </div>
 
                   {/* Right Arrow */}

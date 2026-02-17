@@ -124,6 +124,7 @@ export interface Product {
   galleryImages?: string[];
   slug?: string;
   discount?: string;
+  videoUrl?: string; // YouTube video URL
   tag?: string;
   description?: string;
   rating?: number;
