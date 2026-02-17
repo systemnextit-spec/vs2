@@ -919,26 +919,31 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       <div className="flex flex-col gap-3 xxs:gap-4 mb-4 xxs:mb-5">
         <h1 className="text-base xxs:text-lg sm:text-xl lg:text-[22px] font-bold text-[#023337] dark:text-white tracking-[0.11px] font-['Lato']">Products</h1>
         
-        <div className="flex flex-col xxs:flex-row flex-wrap items-stretch xxs:items-center gap-2 xxs:gap-3 sm:gap-4 lg:gap-6 w-full lg:w-auto">
-          {/* Search Bar */}
-          <div className="bg-[#f9f9f9] dark:bg-gray-700 h-[32px] xxs:h-[34px] rounded-lg flex items-center px-2 w-full xxs:w-auto xxs:flex-1 sm:w-[200px] md:w-[292px] sm:flex-none">
-            <SearchIcon />
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent text-[11px] xxs:text-[12px] text-[#7b7b7b] dark:text-gray-400 ml-2 flex-1 outline-none min-w-0"
-            />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 w-full">
+          {/* Left side: Search + Deep Search */}
+          <div className="flex flex-col xxs:flex-row items-stretch xxs:items-center gap-2 xxs:gap-3 sm:gap-4 flex-1">
+            {/* Search Bar */}
+            <div className="bg-[#f9f9f9] dark:bg-gray-700 h-[32px] xxs:h-[34px] rounded-lg flex items-center px-2 w-full xxs:w-auto xxs:flex-1 sm:w-[200px] md:w-[292px] sm:flex-none">
+              <SearchIcon />
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-transparent text-[11px] xxs:text-[12px] text-[#7b7b7b] dark:text-gray-400 ml-2 flex-1 outline-none min-w-0"
+              />
+            </div>
+
+            {/* Deep Search - Hidden on very small screens */}
+            <button className="hidden xs:flex bg-[#f9f9f9] dark:bg-gray-700 h-[34px] rounded-lg items-center gap-2 px-3 sm:px-4">
+              <SortIcon />
+              <span className="text-[12px] text-black dark:text-white">Deep Search</span>
+            </button>
           </div>
 
-          {/* Deep Search - Hidden on very small screens */}
-          <button className="hidden xs:flex bg-[#f9f9f9] dark:bg-gray-700 h-[34px] rounded-lg items-center gap-2 px-3 sm:px-4">
-            <SortIcon />
-            <span className="text-[12px] text-black dark:text-white">Deep Search</span>
-          </button>
-
-          {/* View Mode */}
+          {/* Right side: View + Add Product */}
+          <div className="flex flex-col xxs:flex-row items-stretch xxs:items-center gap-2 xxs:gap-3 sm:gap-4">
+            {/* View Mode */}
           <div className="relative" data-dropdown>
             <button
               onClick={() => setShowViewDropdown(!showViewDropdown)}
@@ -991,14 +996,15 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
             )}
           </div>
 
-          {/* Add Product */}
-          <button
-            onClick={onAddProduct}
-            className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] h-[36px] xxs:h-[40px] sm:h-[48px] rounded-lg flex items-center justify-center gap-1 px-3 sm:px-4 w-full xxs:w-auto"
-          >
-            <AddSquareIcon />
-            <span className="text-[13px] xxs:text-[15px] font-bold text-white tracking-[-0.3px] font-['Lato']">Add Product</span>
-          </button>
+            {/* Add Product */}
+            <button
+              onClick={onAddProduct}
+              className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] h-[36px] xxs:h-[40px] sm:h-[48px] rounded-lg flex items-center justify-center gap-1 px-3 sm:px-4 w-full xxs:w-auto"
+            >
+              <AddSquareIcon />
+              <span className="text-[13px] xxs:text-[15px] font-bold text-white tracking-[-0.3px] font-['Lato']">Add Product</span>
+            </button>
+          </div>
 
           {/* Save/Reset Order Buttons */}
           {hasOrderChanges && (
@@ -1033,9 +1039,12 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       </div>
 
       {/* Second Row: Import/Export & Filters */}
-      <div className="flex flex-col gap-3 xxs:gap-4 mb-4 xxs:mb-5">
-        <div className="flex flex-wrap items-center gap-2 xxs:gap-3 sm:gap-4">
-          {/* Import */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-start justify-end gap-3 xxs:gap-4 mb-4 xxs:mb-5">
+        {/* Right side: All controls */}
+        <div className="flex flex-col gap-2 xxs:gap-3">
+          {/* Import/Export/PerPage row */}
+          <div className="flex flex-wrap items-center gap-2 xxs:gap-3 sm:gap-4 justify-end">
+            {/* Import */}
           <button onClick={() => importInputRef.current?.click()} className="flex items-center gap-1 text-[11px] xxs:text-[12px] text-[#161719] dark:text-gray-300 hover:text-[#ff6a00] transition-colors">
             {/* <Download size={20} className="text-[#161719]" /> */}
             <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="xxs:w-5 xxs:h-5">
@@ -1079,11 +1088,12 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                 ))}
               </div>
             )}
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2 xxs:gap-3 sm:gap-4">
-          {/* Filter Label */}
+          {/* Filter row */}
+          <div className="flex flex-wrap items-center gap-2 xxs:gap-3 sm:gap-4 justify-end">
+            {/* Filter Label */}
           <div className="flex items-center gap-1 xxs:gap-2">
             <SortIcon />
             <span className="text-[11px] xxs:text-[12px] text-black dark:text-white">Filter:</span>
@@ -1186,6 +1196,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                 </button>
               </div>
             )}
+          </div>
           </div>
         </div>
       </div>
