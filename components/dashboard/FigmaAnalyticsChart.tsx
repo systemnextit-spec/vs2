@@ -13,11 +13,13 @@ interface ChartDataEntry {
 interface BarProps {
   value: number;
   color: string;
+  maxValue: number;
 }
 
 interface BarGroupProps {
   date: string;
   data: ChartDataEntry;
+  maxValue: number;
 }
 
 interface VisitorCardProps {
@@ -129,9 +131,13 @@ const VisitorCard: React.FC<VisitorCardProps> = ({ icon, title, subtitle, value,
  * Bar Component
  * Individual bar with height calculation and label
  */
-const Bar: React.FC<BarProps> = ({ value, color }) => {
-  // Scaling factor to make 70 fit nicely in the 160px container
-  const height = (value / 75) * 160; 
+const Bar: React.FC<BarProps> = ({ value, color, maxValue }) => {
+  // Dynamic scaling: bars scale relative to the max value in dataset
+  // Minimum height of 32px so even small values are visible
+  const maxHeight = 200;
+  const minHeight = value > 0 ? 32 : 0;
+  const scale = maxValue > 0 ? maxValue : 1;
+  const height = Math.max(minHeight, (value / scale) * maxHeight); 
   
   return (
     <div className="relative flex flex-col items-center group">
@@ -154,13 +160,13 @@ const Bar: React.FC<BarProps> = ({ value, color }) => {
  * BarGroup Component
  * Represents one day of data (3 bars grouped together)
  */
-const BarGroup: React.FC<BarGroupProps> = ({ date, data }) => {
+const BarGroup: React.FC<BarGroupProps> = ({ date, data, maxValue }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className="flex items-end gap-[2px] h-[160px]">
-        <Bar value={data.mobile} color="linear-gradient(180deg, #38bdf8 1.829%, #1e90ff 100%)" />
-        <Bar value={data.tab} color="linear-gradient(180deg, #ff9f1c 0%, #ff6a00 100%)" />
-        <Bar value={data.desktop} color="linear-gradient(180deg, #a08bff 0%, #5943ff 100%)" />
+      <div className="flex items-end gap-[2px] h-[220px]">
+        <Bar value={data.mobile} color="linear-gradient(180deg, #38bdf8 1.829%, #1e90ff 100%)" maxValue={chartMaxValue} />
+        <Bar value={data.tab} color="linear-gradient(180deg, #ff9f1c 0%, #ff6a00 100%)" maxValue={chartMaxValue} />
+        <Bar value={data.desktop} color="linear-gradient(180deg, #a08bff 0%, #5943ff 100%)" maxValue={chartMaxValue} />
       </div>
       <div className="mt-3 text-[11px] text-gray-500 font-medium">
         {date}
@@ -312,6 +318,12 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
     return days;
   })();
 
+  // Calculate max value across all chart data for dynamic bar scaling
+  const chartMaxValue = Math.max(
+    1,
+    ...displayChartData.flatMap(d => [d.mobile, d.tab, d.desktop])
+  );
+
   return (
     <div className="w-full p-6 bg-[#F8F9FA]">
       <div className="grid grid-cols-[300px_1fr] gap-5">
@@ -355,7 +367,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-start">
             {/* Y-Axis Label Section */}
-            <div className="flex items-center h-[180px] mr-4">
+            <div className="flex items-center h-[240px] mr-4">
               <div className="rotate-[-90.00deg] text-gray-400 text-[10px] whitespace-nowrap w-8 select-none">
                 Units of measure
               </div>
@@ -366,7 +378,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
             {/* Main Charting Area */}
             <div className="flex-1 flex justify-between items-end pl-4 pr-4">
               {displayChartData.map((day, idx) => (
-                <BarGroup key={idx} date={day.date} data={day} />
+                <BarGroup key={idx} date={day.date} data={day} maxValue={chartMaxValue} />
               ))}
             </div>
           </div>
