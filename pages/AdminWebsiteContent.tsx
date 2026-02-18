@@ -27,7 +27,8 @@ import {
   CampaignTab,
   PopupTab,
   WebsiteInfoTab,
-  ChatSettingsTab
+  ChatSettingsTab,
+  LandingPageTab
 } from '../components/AdminCustomization';
 import AdminLandingPage from './AdminLandingPage';
 
@@ -348,14 +349,12 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
         )}
 
         {activeTab === 'landing_page' && (
-          <AdminLandingPage
+          <LandingPageTab
+            websiteConfiguration={websiteConfiguration}
+            setWebsiteConfiguration={setWebsiteConfiguration}
+            tenantId={tenantId}
             tenantSubdomain={tenantSubdomain}
-            products={products}
-            landingPages={landingPages}
-            onCreateLandingPage={onCreateLandingPage}
-            onUpdateLandingPage={onUpdateLandingPage}
-            onTogglePublish={onToggleLandingPublish}
-            onPreviewLandingPage={onPreviewLandingPage}
+            onSave={onUpdateWebsiteConfig}
           />
         )}
       </div>

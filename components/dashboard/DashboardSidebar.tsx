@@ -106,8 +106,8 @@ const menuItems: SidebarItem[] = [
       { id: 'website_content_carousel', label: 'Carousel', icon: <ChevronRight className="w-4 h-4" /> },
       { id: 'website_content_banners', label: 'Campaigns', icon: <ChevronRight className="w-4 h-4" /> },
       { id: 'website_content_popups', label: 'Popups', icon: <ChevronRight className="w-4 h-4" /> },
-      { id: 'website_content_landing_page', label: 'Landing Page', icon: <ChevronRight className="w-4 h-4" /> },
       { id: 'chat_settings', label: 'Chat', icon: <ChevronRight className="w-4 h-4" /> },
+      { id: 'website_content_landing_page', label: 'Landing Page', icon: <ChevronRight className="w-4 h-4" /> },
     ]
   },
   { id: 'gallery', label: 'Gallery', icon: <img src="https://hdnfltv.com/image/nitimages/solar_gallery-linear.webp" alt="Gallery" className="w-5 h-5 object-contain" /> },
@@ -197,8 +197,8 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         { id: 'website_content_carousel', label: t('carousel'), icon: <ChevronRight className="w-4 h-4" /> },
         { id: 'website_content_banners', label: t('campaigns'), icon: <ChevronRight className="w-4 h-4" /> },
         { id: 'website_content_popups', label: t('popups'), icon: <ChevronRight className="w-4 h-4" /> },
-        { id: 'website_content_landing_page', label: t('landing_pages'), icon: <ChevronRight className="w-4 h-4" /> },
         { id: 'chat_settings', label: t('chat'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'website_content_landing_page', label: t('landing_pages'), icon: <ChevronRight className="w-4 h-4" /> },
       ]
     },
     { id: 'gallery', label: t('gallery'), icon: <img src="https://hdnfltv.com/image/nitimages/solar_gallery-linear.webp" alt="Gallery" className="w-5 h-5 object-contain" /> },
