@@ -320,9 +320,9 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
 
   // Calculate max value across all chart data for dynamic bar scaling
   const chartMaxValue = Math.max(
-    1,
-    ...displayChartData.flatMap(d => [d.mobile, d.tab, d.desktop])
-  );
+      1,
+      ...displayChartData.flatMap(d => [d.mobile, d.tab, d.desktop])
+    );
 
   return (
     <div className="w-full p-6 bg-[#F8F9FA]">
