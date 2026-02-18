@@ -8,7 +8,8 @@ import {
   Loader2,
   CheckCircle2,
   MessageCircle,
-  CalendarDays
+  CalendarDays,
+  FileText
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ThemeConfig, WebsiteConfig, Product } from '../types';
@@ -28,6 +29,7 @@ import {
   WebsiteInfoTab,
   ChatSettingsTab
 } from '../components/AdminCustomization';
+import AdminLandingPage from './AdminLandingPage';
 
 // ============================================================================
 // Props Interface
@@ -42,6 +44,13 @@ interface AdminWebsiteContentProps {
   onUpdateWebsiteConfig?: (config: WebsiteConfig) => Promise<void>;
   initialTab?: string;
   products?: Product[];
+  // Landing Page props
+  landingPages?: any[];
+  onCreateLandingPage?: (page: any) => void;
+  onUpdateLandingPage?: (page: any) => void;
+  onToggleLandingPublish?: (pageId: string, status: string) => void;
+  onPreviewLandingPage?: (page: any) => void;
+  tenantSubdomain?: string;
 }
 
 // ============================================================================
@@ -57,7 +66,13 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
   websiteConfig,
   onUpdateWebsiteConfig,
   initialTab = 'carousel',
-  products = []
+  products = [],
+  landingPages = [],
+  onCreateLandingPage,
+  onUpdateLandingPage,
+  onToggleLandingPublish,
+  onPreviewLandingPage,
+  tenantSubdomain = ''
 }) => {
   // ---------------------------------------------------------------------------
   // Tab State
@@ -270,6 +285,7 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
         <TabButton id="campaigns" label="Campaigns" icon={<CalendarDays size={16} />} activeTab={activeTab} onTabChange={setActiveTab} />
         <TabButton id="popup" label="Popups" icon={<Layers size={16} />} activeTab={activeTab} onTabChange={setActiveTab} />
         <TabButton id="chat_settings" label="Chat" icon={<MessageCircle size={16} />} activeTab={activeTab} onTabChange={setActiveTab} />
+        <TabButton id="landing_page" label="Landing Page" icon={<FileText size={16} />} activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
       {/* Tab Content */}
@@ -328,6 +344,18 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
             websiteConfiguration={websiteConfiguration}
             setWebsiteConfiguration={setWebsiteConfiguration}
             onSave={onUpdateWebsiteConfig}
+          />
+        )}
+
+        {activeTab === 'landing_page' && (
+          <AdminLandingPage
+            tenantSubdomain={tenantSubdomain}
+            products={products}
+            landingPages={landingPages}
+            onCreateLandingPage={onCreateLandingPage}
+            onUpdateLandingPage={onUpdateLandingPage}
+            onTogglePublish={onToggleLandingPublish}
+            onPreviewLandingPage={onPreviewLandingPage}
           />
         )}
       </div>
