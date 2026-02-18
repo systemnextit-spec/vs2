@@ -59,7 +59,7 @@ const CategoryStyle1 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
       <div className="flex items-center justify-between mb-3 sm:mb-4 px-2">
         <div className="flex items-center gap-2">
           <h2 className="text-base sm:text-lg font-bold text-gray-900">Categories</h2>
-          <div className="h-0.5 w-8 sm:w-12 bg-gradient-theme-r rounded-full"></div>
+          <div className="h-[3px] w-8 sm:w-12 bg-gradient-theme-r rounded-full mt-1"></div>
         </div>
         <div className="flex items-center gap-2">
           <div className="hidden sm:flex items-center gap-1.5">
