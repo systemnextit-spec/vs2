@@ -1,284 +1,239 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
-import FigmaViewsChart from './FigmaViewsChart';
-import CustomDateRangePicker, { DateRange } from './CustomDateRangePicker';
+import React from 'react';
 
-type DateRangeType = 'day' | 'month' | 'year' | 'all' | 'custom';
-
-interface ChartDataPoint {
+/**
+ * Types and Interfaces
+ */
+interface ChartDataEntry {
   date: string;
   mobile: number;
-  tablet: number;
+  tab: number;
   desktop: number;
 }
 
-interface FigmaAnalyticsChartProps {
-  timeFilter?: string;
-  onTimeFilterChange?: (filter: string) => void;
-  onDateRangeChange?: (range: { start: Date; end: Date }) => void;
-  tenantId?: string;
-  chartData?: ChartDataPoint[];
+interface BarProps {
+  value: number;
+  color: string;
 }
 
-const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
-  timeFilter = 'December 2025',
-  onTimeFilterChange = () => {},
-  onDateRangeChange,
-  tenantId,
-  chartData: propChartData
-}) => {
-  const [dateRange, setDateRange] = useState<DateRangeType>('month');
-  const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
-  const [showCustomPicker, setShowCustomPicker] = useState(false);
-  const [customDateRange, setCustomDateRange] = useState<DateRange>({ startDate: null, endDate: null });
-  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
-  const [loading, setLoading] = useState(true);
+interface BarGroupProps {
+  date: string;
+  data: ChartDataEntry;
+}
 
-  const dateRangeOptions = [
-    { id: 'day' as DateRangeType, label: 'Day' },
-    { id: 'month' as DateRangeType, label: 'Month' },
-    { id: 'year' as DateRangeType, label: 'Year' },
-    { id: 'all' as DateRangeType, label: 'All Time' },
-  ];
+interface VisitorCardProps {
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  value: number;
+  bgColor: string;
+  iconColor: string;
+  titleColor: string;
+}
 
-  // Fetch visitor chart data
-  useEffect(() => {
-    if (propChartData) {
-      setChartData(propChartData);
-      setLoading(false);
-      return;
-    }
+/**
+ * Icon Components
+ */
+const OnlineNowIcon: React.FC<{ color: string }> = ({ color }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="2" fill={color} />
+    <path d="M8 8C9.1 6.9 10.5 6.3 12 6.3C13.5 6.3 14.9 6.9 16 8" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M4 4C6.2 1.8 9.1 0.5 12 0.5C14.9 0.5 17.8 1.8 20 4" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
 
-    const fetchChartData = async () => {
-      const activeTenantId = tenantId || localStorage.getItem('activeTenantId');
-      if (!activeTenantId) {
-        setLoading(false);
-        return;
-      }
+const TodayVisitorsIcon: React.FC<{ color: string }> = ({ color }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="9" cy="7" r="4" stroke={color} strokeWidth="1.5"/>
+    <path d="M23 21V19C22.9992 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
 
-      try {
-        setLoading(true);
-        const hostname = window.location.hostname;
-        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
-        const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
-        
-        let url = `${apiUrl}/api/visitors/${activeTenantId}/stats`;
-        const params = new URLSearchParams();
+const TotalVisitorsIcon: React.FC<{ color: string }> = ({ color }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="1.5"/>
+    <ellipse cx="12" cy="12" rx="5" ry="10" stroke={color} strokeWidth="1.5"/>
+    <line x1="2" y1="12" x2="22" y2="12" stroke={color} strokeWidth="1.5"/>
+  </svg>
+);
 
-        if (dateRange === 'custom' && customDateRange.startDate && customDateRange.endDate) {
-          params.set('startDate', customDateRange.startDate.toISOString());
-          params.set('endDate', customDateRange.endDate.toISOString());
-        } else if (dateRange === 'month') {
-          params.set('month', String(selectedMonth.getMonth() + 1));
-          params.set('year', String(selectedMonth.getFullYear()));
-        } else {
-          params.set('period', dateRange);
-        }
-
-        const response = await fetch(`${url}?${params.toString()}`);
-        if (response.ok) {
-          const data = await response.json();
-          setChartData(data.chartData || []);
-        }
-      } catch (error) {
-        console.error('Error fetching chart data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchChartData();
-  }, [propChartData, tenantId, dateRange, selectedMonth, customDateRange]);
-
-  // Get display data - last 7 entries or fill with empty
-  const displayData = useMemo(() => {
-    const formatDate = (dateStr: string) => {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
-    };
-
-    if (chartData.length === 0) {
-      // Generate last 7 days as fallback
-      const days = [];
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        days.push({
-          date: formatDate(date.toISOString()),
-          mobile: 0,
-          tab: 0,
-          desktop: 0
-        });
-      }
-      return days;
-    }
-    return chartData.slice(-7).map(item => ({
-      date: formatDate(item.date),
-      mobile: item.mobile,
-      tab: item.tablet,
-      desktop: item.desktop
-    }));
-  }, [chartData]);
-
-  // Calculate max value for scaling bars
-  const maxValue = useMemo(() => {
-    return Math.max(
-      100,
-      ...displayData.flatMap(d => [d.mobile, d.tab, d.desktop])
-    );
-  }, [displayData]);
-
-  // Calculate bar height (max 160px, min 8px for zero values, min 50px for values with data)
-  const getBarHeight = (value: number) => {
-    const maxHeight = 160;
-    const minVisibleHeight = 8; // Very small for zero values
-    if (value === 0) return minVisibleHeight;
-    if (maxValue === 0) return minVisibleHeight;
-    return Math.max(50, Math.round((value / maxValue) * maxHeight));
-  };
-
-  const handleDateRangeClick = (rangeType: DateRangeType) => {
-    setDateRange(rangeType);
-    setShowCustomPicker(false);
-    onTimeFilterChange(rangeType);
-    // Also notify parent of the date range
-    if (onDateRangeChange) {
-      onDateRangeChange({ start: selectedMonth, end: selectedMonth });
-    }
-  };
-
-  const handleMonthChange = (direction: 'prev' | 'next') => {
-    const newMonth = new Date(selectedMonth);
-    newMonth.setMonth(newMonth.getMonth() + (direction === 'next' ? 1 : -1));
-    setSelectedMonth(newMonth);
-    onTimeFilterChange('month');
-    if (onDateRangeChange) {
-      onDateRangeChange({ start: newMonth, end: newMonth });
-    }
-  };
-
-  const handleCustomApply = (range: DateRange) => {
-    setCustomDateRange(range);
-    setDateRange('custom');
-    setShowCustomPicker(false);
-    if (range.startDate && range.endDate && onDateRangeChange) {
-      onDateRangeChange({ start: range.startDate, end: range.endDate });
-    }
-  };
-
-  const formatCustomRange = () => {
-    if (!customDateRange.startDate || !customDateRange.endDate) return 'Custom';
-    const formatDate = (d: Date) => d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-    return `${formatDate(customDateRange.startDate)} - ${formatDate(customDateRange.endDate)}`;
-  };
-
+/**
+ * Visitor Card Component
+ */
+const VisitorCard: React.FC<VisitorCardProps> = ({ icon, title, subtitle, value, bgColor, iconColor, titleColor }) => {
   return (
-    <div className="flex flex-col gap-3 sm:gap-4">
-      {/* Filters - Wrap on mobile */}
-      <div className="flex flex-wrap justify-end items-center gap-1.5 sm:gap-2 relative">
-        {dateRangeOptions.map((option) => (
-          <button
-            key={option.id}
-            onClick={() => handleDateRangeClick(option.id)}
-            className={`px-2 py-1 rounded-lg flex justify-center items-center gap-2.5 cursor-pointer transition-all ${
-              dateRange === option.id
-                ? 'bg-gradient-to-b from-orange-500 to-amber-500'
-                : 'bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
-            }`}
-          >
-            <span className={`text-sm font-medium font-['Poppins'] ${
-              dateRange === option.id ? 'text-white' : 'text-neutral-400 dark:text-gray-300'
-            }`}>
-              {option.label}
-            </span>
-          </button>
-        ))}
-
-        {/* Month Selector - shown when Month is selected */}
-        {dateRange === 'month' && (
-          <div className="px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-lg flex justify-center items-center gap-1 sm:gap-2">
-            <button 
-              onClick={() => handleMonthChange('prev')}
-              className="text-white hover:opacity-80"
-            >
-              <ChevronLeft size={14} />
-            </button>
-            <span className="text-white text-xs sm:text-sm font-normal font-['Lato'] min-w-[100px] text-center">
-              {selectedMonth.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
-            </span>
-            <button 
-              onClick={() => handleMonthChange('next')}
-              className="text-white hover:opacity-80"
-            >
-              <ChevronRight size={14} />
-            </button>
-          </div>
-        )}
-
-        {/* Custom Date Range Display */}
-        {dateRange === 'custom' && customDateRange.startDate && (
-          <div className="px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-lg flex justify-center items-center gap-1">
-            <span className="text-white text-xs sm:text-sm font-normal font-['Lato']">
-              {formatCustomRange()}
-            </span>
-          </div>
-        )}
-
-        {/* Custom Button with Dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => {
-              if (dateRange === 'custom') {
-                setShowCustomPicker(!showCustomPicker);
-              } else {
-                setShowCustomPicker(true);
-              }
-            }}
-            className={`px-2 py-1 rounded-lg flex justify-center items-center gap-1.5 cursor-pointer transition-all ${
-              dateRange === 'custom'
-                ? 'bg-gradient-to-b from-orange-500 to-amber-500'
-                : 'bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
-            }`}
-          >
-            <span className={`text-sm font-medium font-['Poppins'] ${
-              dateRange === 'custom' ? 'text-white' : 'text-neutral-400 dark:text-gray-300'
-            }`}>
-              Custom
-            </span>
-            <ChevronDown size={14} className={`${dateRange === 'custom' ? 'text-white' : 'text-neutral-400'} ${showCustomPicker ? 'rotate-180' : ''} transition-transform`} />
-          </button>
-          
-          <CustomDateRangePicker
-            isOpen={showCustomPicker}
-            onClose={() => setShowCustomPicker(false)}
-            onApply={handleCustomApply}
-            initialDateRange={customDateRange}
-          />
-        </div>
-      </div>
-
-      {/* Chart */}
-      <FigmaViewsChart 
-        chartData={displayData}
+    <div 
+      className="relative w-full h-[81px] rounded-xl shadow-sm flex items-center px-5 gap-4 overflow-hidden"
+      style={{ backgroundColor: bgColor }}
+    >
+      {/* Background Ellipse */}
+      <div 
+        className="absolute w-[198px] h-[198px] rounded-full opacity-20"
+        style={{ 
+          background: `radial-gradient(circle, ${iconColor} 0%, ${iconColor}88 100%)`,
+          right: '-37px',
+          top: '-83px'
+        }}
       />
       
-      {/* Legend */}
-      <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 md:gap-12 px-2 mt-4 pb-4">
-        <div className="flex justify-center items-center gap-1.5 sm:gap-2.5">
-          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full" />
-          <div className="text-center text-neutral-600 dark:text-gray-400 text-[10px] sm:text-xs font-medium font-['DM_Sans']">Mobile View</div>
+      {/* Icon */}
+      <div className="w-[38px] h-[38px] flex items-center justify-center z-10">
+        {icon}
+      </div>
+      
+      {/* Text Content */}
+      <div className="flex-1 z-10">
+        <div className="font-medium text-base leading-tight" style={{ color: titleColor }}>
+          {title}
         </div>
-        <div className="flex justify-center items-center gap-1.5 sm:gap-2.5">
-          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full" />
-          <div className="text-center text-neutral-600 dark:text-gray-400 text-[10px] sm:text-xs font-medium font-['DM_Sans']">Tab View</div>
+        <div className="text-[13px] text-[#161719] leading-tight mt-0.5">
+          {subtitle}
         </div>
-        <div className="flex justify-center items-center gap-1.5 sm:gap-2.5">
-          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-b from-violet-400 to-indigo-600 rounded-full" />
-          <div className="text-center text-neutral-600 dark:text-gray-400 text-[10px] sm:text-xs font-medium font-['DM_Sans']">Desktop View</div>
+      </div>
+      
+      {/* Value */}
+      <div className="text-[28px] font-medium text-[#161719] z-10">
+        {value}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Bar Component
+ * Individual bar with height calculation and label
+ */
+const Bar: React.FC<BarProps> = ({ value, color }) => {
+  // Scaling factor to make 70 fit nicely in the 160px container
+  const height = (value / 75) * 160; 
+  
+  return (
+    <div className="relative flex flex-col items-center group">
+      <div 
+        style={{ 
+          height: `${height}px`,
+          background: color
+        }}
+        className="w-6 flex items-center justify-center relative transition-all duration-300 hover:brightness-90 cursor-default rounded-t-sm"
+      >
+        <span className="rotate-[-90.00deg] text-white text-[10px] font-bold pointer-events-none">
+          {value}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * BarGroup Component
+ * Represents one day of data (3 bars grouped together)
+ */
+const BarGroup: React.FC<BarGroupProps> = ({ date, data }) => {
+  return (
+    <div className="flex flex-col items-center">
+      <div className="flex items-end gap-[2px] h-[160px]">
+        <Bar value={data.mobile} color="linear-gradient(180deg, #38bdf8 1.829%, #1e90ff 100%)" />
+        <Bar value={data.tab} color="linear-gradient(180deg, #ff9f1c 0%, #ff6a00 100%)" />
+        <Bar value={data.desktop} color="linear-gradient(180deg, #a08bff 0%, #5943ff 100%)" />
+      </div>
+      <div className="mt-3 text-[11px] text-gray-500 font-medium">
+        {date}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * VisitorChart Component
+ * Displays visitor stats cards alongside a multi-category bar chart
+ */
+const VisitorChart: React.FC = () => {
+  const chartData: ChartDataEntry[] = [
+    { date: 'Jan 25', mobile: 30, tab: 35, desktop: 40 },
+    { date: 'Jan 26', mobile: 30, tab: 35, desktop: 55 },
+    { date: 'Jan 27', mobile: 30, tab: 35, desktop: 70 },
+    { date: 'Jan 28', mobile: 30, tab: 35, desktop: 55 },
+    { date: 'Jan 29', mobile: 30, tab: 35, desktop: 40 },
+    { date: 'Jan 30', mobile: 30, tab: 35, desktop: 60 },
+    { date: 'Jan 31', mobile: 30, tab: 35, desktop: 40 },
+  ];
+
+  return (
+    <div className="w-full p-6 bg-[#F8F9FA]">
+      <div className="grid grid-cols-[300px_1fr] gap-5">
+        {/* Left Side: Visitor Cards */}
+        <div className="flex flex-col gap-3.5">
+          <VisitorCard
+            icon={<OnlineNowIcon color="#38bdf8" />}
+            title="Online Now"
+            subtitle="Active visitors on site"
+            value={35}
+            bgColor="rgba(34, 161, 255, 0.08)"
+            iconColor="#38bdf8"
+            titleColor="#008dff"
+          />
+          
+          <VisitorCard
+            icon={<TodayVisitorsIcon color="#ff6a00" />}
+            title="Today visitors"
+            subtitle="Last 7 days: 4"
+            value={35}
+            bgColor="rgba(255, 130, 14, 0.08)"
+            iconColor="#ff6a00"
+            titleColor="#f50"
+          />
+          
+          <VisitorCard
+            icon={<TotalVisitorsIcon color="#5943ff" />}
+            title="Total visitors"
+            subtitle="15 page view"
+            value={35}
+            bgColor="rgba(115, 97, 255, 0.08)"
+            iconColor="#5943ff"
+            titleColor="#3f34be"
+          />
+        </div>
+
+        {/* Right Side: Bar Chart */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-start">
+            {/* Y-Axis Label Section */}
+            <div className="flex items-center h-[180px] mr-4">
+              <div className="rotate-[-90.00deg] text-gray-400 text-[10px] whitespace-nowrap w-8 select-none">
+                Units of measure
+              </div>
+              {/* Simple Divider Line */}
+              <div className="w-[1px] h-full bg-gray-100 ml-2" />
+            </div>
+
+            {/* Main Charting Area */}
+            <div className="flex-1 flex justify-between items-end pl-4 pr-4">
+              {chartData.map((day, idx) => (
+                <BarGroup key={idx} date={day.date} data={day} />
+              ))}
+            </div>
+          </div>
+
+          {/* Legend Section */}
+          <div className="mt-8 flex flex-wrap justify-center gap-x-12 gap-y-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-5 h-5 rounded-full bg-gradient-to-b from-[#38bdf8] to-[#1e90ff]" />
+              <span className="text-xs font-medium text-gray-600">Mobile View</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <div className="w-5 h-5 rounded-full bg-gradient-to-b from-[#ff9f1c] to-[#ff6a00]" />
+              <span className="text-xs font-medium text-gray-600">Tab View</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <div className="w-5 h-5 rounded-full bg-gradient-to-b from-[#a08bff] to-[#5943ff]" />
+              <span className="text-xs font-medium text-gray-600">Desktop View</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default FigmaAnalyticsChart;
+export default VisitorChart;
