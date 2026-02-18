@@ -13,7 +13,7 @@ export const AdminNoticeTicker: React.FC<AdminNoticeTickerProps> = ({ noticeText
         <div className="marquee-content">
           <span className="marquee-text">{noticeText}</span>
         </div>
-        <div className="marquee-content" aria-hidden="true">
+        <div className="" aria-hidden="true">
           <span className="marquee-text">{noticeText}</span>
         </div>
       </div>
@@ -28,7 +28,7 @@ export const AdminNoticeTicker: React.FC<AdminNoticeTickerProps> = ({ noticeText
           display: flex;
           justify-content: center;
           min-width: 100%;
-          animation: scroll-left-to-right 12s linear infinite;
+          animation: scroll-right-to-left 12s linear infinite;
         }
         .marquee-text {
           font-size: 0.875rem;
