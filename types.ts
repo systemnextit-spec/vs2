@@ -698,3 +698,18 @@ export interface StoreStudioSettings {
   allowElementEditing: boolean;
 }
 
+export interface TenantProfile {
+  id: string;
+  name: string;
+  subdomain: string;
+  customDomain?: string;
+  contactEmail: string;
+  contactName?: string;
+  plan: TenantPlan;
+  status: TenantStatus;
+  createdAt: string;
+  updatedAt: string;
+  branding?: TenantBranding;
+  profileImage?: string;
+}
+
