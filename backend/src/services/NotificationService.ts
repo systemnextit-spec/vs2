@@ -21,16 +21,25 @@ type NotificationCallback = (notification: Notification) => void;
 
 // Get the API base URL - works in both browser (Vite) and Node.js environments
 const getApiBaseUrl = (): string => {
+  // Browser environment (Vite) - check import.meta.env first
+  if (typeof window !== 'undefined') {
+    try {
+      // @ts-ignore - import.meta is available in Vite
+      if (import.meta.env && import.meta.env.VITE_API_BASE_URL) {
+        // @ts-ignore
+        return import.meta.env.VITE_API_BASE_URL;
+      }
+    } catch (e) {
+      // import.meta might not be available in all contexts
+    }
+    return window.location.origin;
+  }
   // Node.js environment
   if (typeof process !== 'undefined' && process.env?.VITE_API_BASE_URL) {
     return process.env.VITE_API_BASE_URL;
   }
   if (typeof process !== 'undefined' && process.env?.API_BASE_URL) {
     return process.env.API_BASE_URL;
-  }
-  // Browser environment - use current origin
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
   }
   // Server-side fallback - use PORT env var
   const port = process.env?.PORT || '3000';
@@ -57,8 +66,8 @@ class NotificationService {
     this.disconnect();
 
     this.tenantId = tenantId;
-    // Use current origin for socket (must match current domain for websocket)
-    const socketUrl = typeof window !== 'undefined' ? window.location.origin : this.apiBaseUrl;
+    // Use API base URL for socket connection (backend server)
+    const socketUrl = this.apiBaseUrl;
     this.socket = io(socketUrl, {
       withCredentials: true,
       transports: ['polling', 'websocket'], // Start with polling, then upgrade to websocket
@@ -202,4 +211,3 @@ class NotificationService {
 
 // Export singleton instance
 export const notificationService = new NotificationService();
-export default notificationService;
