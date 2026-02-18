@@ -97,8 +97,6 @@ const CategoryStyle1 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
           })}
         </div>
       </div>
-      <div className="absolute left-0 to p-12 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none z-10" />
-      <div className="absolute right-0 to p-12 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none z-10" />
       <style>{`@keyframes marquee-cat{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}.animate-marquee-cat{animation:marquee-cat linear infinite}`}</style>
     </div>
   );

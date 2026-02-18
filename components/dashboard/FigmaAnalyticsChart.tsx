@@ -141,7 +141,7 @@ const SVGBarChart: React.FC<{ data: ChartDataEntry[]; maxValue: number }> = ({ d
       viewBox={`0 0 ${svgWidth} ${svgHeight}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="xMidYMax meet"
+      preserveAspectRatio="xMinYMax meet"
       className="overflow-visible"
     >
       <defs>
