@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 /**
  * Types and Interfaces
@@ -28,6 +28,27 @@ interface VisitorCardProps {
   bgColor: string;
   iconColor: string;
   titleColor: string;
+  loading?: boolean;
+}
+
+interface FigmaAnalyticsChartProps {
+  timeFilter?: string;
+  onTimeFilterChange?: (filter: string) => void;
+  onDateRangeChange?: (range: { start: Date; end: Date }) => void;
+  tenantId?: string;
+  visitorStats?: {
+    onlineNow?: number;
+    todayVisitors?: number;
+    totalVisitors?: number;
+    last7Days?: number;
+    pageViews?: number;
+    chartData?: Array<{
+      date: string;
+      mobile: number;
+      tablet: number;
+      desktop: number;
+    }>;
+  };
 }
 
 /**
@@ -61,7 +82,7 @@ const TotalVisitorsIcon: React.FC<{ color: string }> = ({ color }) => (
 /**
  * Visitor Card Component
  */
-const VisitorCard: React.FC<VisitorCardProps> = ({ icon, title, subtitle, value, bgColor, iconColor, titleColor }) => {
+const VisitorCard: React.FC<VisitorCardProps> = ({ icon, title, subtitle, value, bgColor, iconColor, titleColor, loading = false }) => {
   return (
     <div 
       className="relative w-full h-[81px] rounded-xl shadow-sm flex items-center px-5 gap-4 overflow-hidden"
@@ -94,7 +115,11 @@ const VisitorCard: React.FC<VisitorCardProps> = ({ icon, title, subtitle, value,
       
       {/* Value */}
       <div className="text-[28px] font-medium text-[#161719] z-10">
-        {value}
+        {loading ? (
+          <div className="w-10 h-8 bg-gray-200 animate-pulse rounded" />
+        ) : (
+          value
+        )}
       </div>
     </div>
   );
@@ -145,19 +170,147 @@ const BarGroup: React.FC<BarGroupProps> = ({ date, data }) => {
 };
 
 /**
- * VisitorChart Component
- * Displays visitor stats cards alongside a multi-category bar chart
+ * Format date string to "Jan 25" format
  */
-const VisitorChart: React.FC = () => {
-  const chartData: ChartDataEntry[] = [
-    { date: 'Jan 25', mobile: 30, tab: 35, desktop: 40 },
-    { date: 'Jan 26', mobile: 30, tab: 35, desktop: 55 },
-    { date: 'Jan 27', mobile: 30, tab: 35, desktop: 70 },
-    { date: 'Jan 28', mobile: 30, tab: 35, desktop: 55 },
-    { date: 'Jan 29', mobile: 30, tab: 35, desktop: 40 },
-    { date: 'Jan 30', mobile: 30, tab: 35, desktop: 60 },
-    { date: 'Jan 31', mobile: 30, tab: 35, desktop: 40 },
-  ];
+const formatDate = (dateStr: string): string => {
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
+  } catch {
+    return dateStr;
+  }
+};
+
+/**
+ * FigmaAnalyticsChart Component
+ * Displays visitor stats cards alongside a multi-category bar chart with real data
+ */
+const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
+  tenantId,
+  visitorStats: propStats
+}) => {
+  const [stats, setStats] = useState({
+    onlineNow: 0,
+    todayVisitors: 0,
+    totalVisitors: 0,
+    last7Days: 0,
+    pageViews: 0
+  });
+  const [chartData, setChartData] = useState<ChartDataEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // If stats are passed as props, use them
+    if (propStats) {
+      setStats({
+        onlineNow: propStats.onlineNow || 0,
+        todayVisitors: propStats.todayVisitors || 0,
+        totalVisitors: propStats.totalVisitors || 0,
+        last7Days: propStats.last7Days || 0,
+        pageViews: propStats.pageViews || 0
+      });
+      if (propStats.chartData && propStats.chartData.length > 0) {
+        setChartData(propStats.chartData.map(d => ({
+          date: formatDate(d.date),
+          mobile: d.mobile,
+          tab: d.tablet,
+          desktop: d.desktop
+        })));
+      }
+      setLoading(false);
+      return;
+    }
+
+    // Fetch from API
+    const fetchStats = async () => {
+      const activeTenantId = tenantId || localStorage.getItem('activeTenantId');
+      if (!activeTenantId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const hostname = window.location.hostname;
+        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+        const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
+        
+        // Fetch stats and online count in parallel
+        const [statsRes, onlineRes] = await Promise.all([
+          fetch(`${apiUrl}/api/visitors/${activeTenantId}/stats?period=7d`),
+          fetch(`${apiUrl}/api/visitors/${activeTenantId}/online`)
+        ]);
+
+        if (statsRes.ok && onlineRes.ok) {
+          const statsData = await statsRes.json();
+          const onlineData = await onlineRes.json();
+
+          setStats({
+            onlineNow: onlineData.online || 0,
+            todayVisitors: statsData.todayVisitors || 0,
+            totalVisitors: statsData.totalVisitors || 0,
+            last7Days: statsData.periodVisitors || 0,
+            pageViews: statsData.totalPageViews || 0
+          });
+
+          // Set chart data from API response
+          if (statsData.chartData && statsData.chartData.length > 0) {
+            setChartData(statsData.chartData.map((d: any) => ({
+              date: formatDate(d.date),
+              mobile: d.mobile || 0,
+              tab: d.tablet || 0,
+              desktop: d.desktop || 0
+            })));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching visitor stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+    
+    // Refresh online count every 30 seconds
+    const interval = setInterval(async () => {
+      const activeTenantId = tenantId || localStorage.getItem('activeTenantId');
+      if (!activeTenantId) return;
+      
+      try {
+        const hostname = window.location.hostname;
+        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+        const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
+        const onlineRes = await fetch(`${apiUrl}/api/visitors/${activeTenantId}/online`);
+        if (onlineRes.ok) {
+          const onlineData = await onlineRes.json();
+          setStats(prev => ({ ...prev, onlineNow: onlineData.online || 0 }));
+        }
+      } catch (error) {
+        console.error('Error refreshing online count:', error);
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [propStats, tenantId]);
+
+  // Generate default empty chart data if none from API
+  const displayChartData = chartData.length > 0 ? chartData : (() => {
+    const days: ChartDataEntry[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      days.push({
+        date: formatDate(d.toISOString()),
+        mobile: 0,
+        tab: 0,
+        desktop: 0
+      });
+    }
+    return days;
+  })();
 
   return (
     <div className="w-full p-6 bg-[#F8F9FA]">
@@ -168,30 +321,33 @@ const VisitorChart: React.FC = () => {
             icon={<OnlineNowIcon color="#38bdf8" />}
             title="Online Now"
             subtitle="Active visitors on site"
-            value={35}
+            value={stats.onlineNow}
             bgColor="rgba(34, 161, 255, 0.08)"
             iconColor="#38bdf8"
             titleColor="#008dff"
+            loading={loading}
           />
           
           <VisitorCard
             icon={<TodayVisitorsIcon color="#ff6a00" />}
             title="Today visitors"
-            subtitle="Last 7 days: 4"
-            value={35}
+            subtitle={`Last 7 days: ${stats.last7Days}`}
+            value={stats.todayVisitors}
             bgColor="rgba(255, 130, 14, 0.08)"
             iconColor="#ff6a00"
             titleColor="#f50"
+            loading={loading}
           />
           
           <VisitorCard
             icon={<TotalVisitorsIcon color="#5943ff" />}
             title="Total visitors"
-            subtitle="15 page view"
-            value={35}
+            subtitle={`${stats.pageViews} page view`}
+            value={stats.totalVisitors}
             bgColor="rgba(115, 97, 255, 0.08)"
             iconColor="#5943ff"
             titleColor="#3f34be"
+            loading={loading}
           />
         </div>
 
@@ -209,7 +365,7 @@ const VisitorChart: React.FC = () => {
 
             {/* Main Charting Area */}
             <div className="flex-1 flex justify-between items-end pl-4 pr-4">
-              {chartData.map((day, idx) => (
+              {displayChartData.map((day, idx) => (
                 <BarGroup key={idx} date={day.date} data={day} />
               ))}
             </div>
@@ -236,4 +392,4 @@ const VisitorChart: React.FC = () => {
   );
 };
 
-export default VisitorChart;
+export default FigmaAnalyticsChart;
