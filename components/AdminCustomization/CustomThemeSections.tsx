@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Monitor, Smartphone, CheckCircle2, Circle, RefreshCw, ExternalLink } from 'lucide-react';
+import { Monitor, Smartphone, CheckCircle2, Circle, ExternalLink, Image, Globe } from 'lucide-react';
 import { WebsiteConfig } from './types';
 import { THEME_DEMO_IMAGES } from './constants';
 
@@ -57,7 +57,7 @@ const ToggleSwitch: React.FC<{ enabled: boolean; onToggle: () => void }> = ({ en
   </div>
 );
 
-// Style option pill component (radio-button style from Figma)
+// Style option pill component
 const StyleOptionPill: React.FC<{
   label: string;
   isSelected: boolean;
@@ -121,24 +121,12 @@ const ThemeSection: React.FC<{
     width: '100%',
     transition: 'opacity 0.25s ease',
   }}>
-    {/* Section Header: Title + Toggle */}
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-      <h3
-        style={{
-          fontFamily: '"Lato", sans-serif',
-          fontWeight: 700,
-          fontSize: '20px',
-          color: '#023337',
-          letterSpacing: '0.1px',
-          margin: 0,
-        }}
-      >
+      <h3 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '20px', color: '#023337', letterSpacing: '0.1px', margin: 0 }}>
         {title}
       </h3>
       <ToggleSwitch enabled={enabled} onToggle={onToggle} />
     </div>
-
-    {/* Style Options Row */}
     <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch', width: '100%' }}>
       {Array.from({ length: count }).map((_, i) => {
         const styleValue = `style${i + 1}`;
@@ -163,11 +151,11 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
 }) => {
   const [deviceMode, setDeviceMode] = useState<'web' | 'mobile'>('web');
   const [previewSection, setPreviewSection] = useState<string>('headerStyle');
-  const [iframeKey, setIframeKey] = useState(0);
+  const [previewTab, setPreviewTab] = useState<'style' | 'store'>('style');
 
   const sections = deviceMode === 'web' ? WEB_SECTIONS : MOBILE_SECTIONS;
 
-  // Build store URL for the live preview
+  // Build store URL for the live store tab
   const storeUrl = useMemo(() => {
     if (!tenantSubdomain) return '';
     const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:';
@@ -179,6 +167,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
   const handleStyleSelect = useCallback((sectionKey: string, styleValue: string) => {
     setWebsiteConfiguration((prev) => ({ ...prev, [sectionKey]: styleValue }));
     setPreviewSection(sectionKey);
+    setPreviewTab('style'); // Switch to style preview on selection
   }, [setWebsiteConfiguration]);
 
   const handleToggle = useCallback((sectionKey: string) => {
@@ -199,7 +188,6 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
     return val === 'none' ? 'style1' : val;
   };
 
-  // Get preview image for the current section
   const getPreviewImage = () => {
     const style = getCurrentStyle(previewSection);
     return THEME_DEMO_IMAGES[previewSection]?.[style] || '';
@@ -211,73 +199,32 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
     return found ? found.title : 'Preview';
   };
 
-  const refreshPreview = () => {
-    setIframeKey((k) => k + 1);
-  };
-
   return (
     <div style={{ display: 'flex', gap: '24px', position: 'relative', alignItems: 'flex-start' }}>
       {/* Left: Sections Panel */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '28px', minWidth: 0 }}>
-
         {/* Web / Mobile Toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              border: '1px solid #38bdf8',
-              borderRadius: '24px',
-              padding: '4px',
-              backgroundColor: 'transparent',
-              overflow: 'hidden',
-            }}
-          >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #38bdf8', borderRadius: '24px', padding: '4px', overflow: 'hidden' }}>
             <button
               onClick={() => setDeviceMode('web')}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '4px 14px',
-                borderRadius: '20px',
-                border: 'none',
-                cursor: 'pointer',
-                height: '26px',
-                fontFamily: '"Poppins", sans-serif',
-                fontSize: '12px',
-                fontWeight: 400,
-                transition: 'all 0.25s ease',
-                ...(deviceMode === 'web'
-                  ? { background: 'linear-gradient(to right, #38bdf8, #1e90ff)', color: 'white' }
-                  : { background: 'white', color: '#1a1a1a' }),
+                display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 14px', borderRadius: '20px', border: 'none', cursor: 'pointer', height: '26px',
+                fontFamily: '"Poppins", sans-serif', fontSize: '12px', fontWeight: 400, transition: 'all 0.25s ease',
+                ...(deviceMode === 'web' ? { background: 'linear-gradient(to right, #38bdf8, #1e90ff)', color: 'white' } : { background: 'white', color: '#1a1a1a' }),
               }}
             >
-              <Monitor size={14} />
-              Web
+              <Monitor size={14} /> Web
             </button>
             <button
               onClick={() => setDeviceMode('mobile')}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '4px 14px',
-                borderRadius: '20px',
-                border: 'none',
-                cursor: 'pointer',
-                height: '26px',
-                fontFamily: '"Poppins", sans-serif',
-                fontSize: '12px',
-                fontWeight: 400,
-                transition: 'all 0.25s ease',
-                ...(deviceMode === 'mobile'
-                  ? { background: 'linear-gradient(to right, #38bdf8, #1e90ff)', color: 'white' }
-                  : { background: 'white', color: '#1a1a1a' }),
+                display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 14px', borderRadius: '20px', border: 'none', cursor: 'pointer', height: '26px',
+                fontFamily: '"Poppins", sans-serif', fontSize: '12px', fontWeight: 400, transition: 'all 0.25s ease',
+                ...(deviceMode === 'mobile' ? { background: 'linear-gradient(to right, #38bdf8, #1e90ff)', color: 'white' } : { background: 'white', color: '#1a1a1a' }),
               }}
             >
-              <Smartphone size={14} />
-              Mobile
+              <Smartphone size={14} /> Mobile
             </button>
           </div>
         </div>
@@ -304,84 +251,52 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
 
       {/* Right: Preview Panel (sticky) */}
       <div
-        style={{
-          width: '438px',
-          flexShrink: 0,
-          position: 'sticky',
-          top: '20px',
-          alignSelf: 'flex-start',
-          height: 'fit-content',
-        }}
+        style={{ width: '438px', flexShrink: 0, position: 'sticky', top: '20px', alignSelf: 'flex-start', height: 'fit-content' }}
         className="hidden lg:block"
       >
-        <div
-          style={{
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            overflow: 'hidden',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-          }}
-        >
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
           {/* Preview Header */}
-          <div style={{
-            padding: '12px 16px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderBottom: '1px solid #f0f0f0',
-          }}>
+          <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f0f0f0' }}>
             <div>
-              <h4
-                style={{
-                  fontFamily: '"Lato", sans-serif',
-                  fontWeight: 700,
-                  fontSize: '20px',
-                  color: '#023337',
-                  letterSpacing: '0.1px',
-                  margin: 0,
-                }}
-              >
+              <h4 style={{ fontFamily: '"Lato", sans-serif', fontWeight: 700, fontSize: '20px', color: '#023337', margin: 0 }}>
                 Preview
               </h4>
               <p style={{ margin: '2px 0 0', fontFamily: '"Lato", sans-serif', fontSize: '13px', color: '#64748b' }}>
-                {getPreviewTitle()}
+                {previewTab === 'style' ? getPreviewTitle() : 'Live Store'}
               </p>
             </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              {/* Style Preview / Live Store toggle */}
+              <button
+                onClick={() => setPreviewTab('style')}
+                title="Style preview"
+                style={{
+                  width: '32px', height: '32px', borderRadius: '6px', border: '1px solid #e5e7eb', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s ease',
+                  backgroundColor: previewTab === 'style' ? '#ff6a00' : 'white',
+                }}
+              >
+                <Image size={14} style={{ color: previewTab === 'style' ? 'white' : '#64748b' }} />
+              </button>
               {storeUrl && (
                 <>
                   <button
-                    onClick={refreshPreview}
-                    title="Refresh preview"
+                    onClick={() => setPreviewTab('store')}
+                    title="Live store preview"
                     style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '6px',
-                      border: '1px solid #e5e7eb',
-                      backgroundColor: 'white',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.15s ease',
+                      width: '32px', height: '32px', borderRadius: '6px', border: '1px solid #e5e7eb', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s ease',
+                      backgroundColor: previewTab === 'store' ? '#ff6a00' : 'white',
                     }}
                   >
-                    <RefreshCw size={14} style={{ color: '#64748b' }} />
+                    <Globe size={14} style={{ color: previewTab === 'store' ? 'white' : '#64748b' }} />
                   </button>
                   <button
                     onClick={() => window.open(storeUrl, '_blank')}
                     title="Open store in new tab"
                     style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '6px',
-                      border: '1px solid #e5e7eb',
-                      backgroundColor: 'white',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.15s ease',
+                      width: '32px', height: '32px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s ease',
                     }}
                   >
                     <ExternalLink size={14} style={{ color: '#64748b' }} />
@@ -392,65 +307,48 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
           </div>
 
           {/* Preview Content */}
-          <div
-            style={{
-              width: '100%',
-              height: '680px',
-              overflow: 'hidden',
-              backgroundColor: '#f8fafc',
-              position: 'relative',
-            }}
-          >
-            {storeUrl ? (
-              <iframe
-                key={iframeKey}
-                src={storeUrl}
-                title="Store Live Preview"
-                style={{
-                  width: deviceMode === 'mobile' ? '375px' : '100%',
-                  height: '100%',
-                  border: 'none',
-                  transformOrigin: 'top left',
-                  transform: deviceMode === 'mobile' ? 'none' : 'scale(0.55)',
-                  ...(deviceMode !== 'mobile' ? {
-                    width: '182%',
-                    height: '182%',
-                  } : {
-                    margin: '0 auto',
-                    display: 'block',
-                  }),
-                }}
-                sandbox="allow-scripts allow-same-origin allow-popups"
-              />
-            ) : getPreviewImage() ? (
-              <img
-                src={getPreviewImage()}
-                alt="Theme Preview"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  objectPosition: 'top center',
-                }}
-              />
+          <div style={{ width: '100%', height: '680px', overflow: 'hidden', backgroundColor: '#f8fafc', position: 'relative' }}>
+            {previewTab === 'style' ? (
+              // Style demo image — updates instantly on click
+              getPreviewImage() ? (
+                <img
+                  key={previewSection + getCurrentStyle(previewSection)}
+                  src={getPreviewImage()}
+                  alt={getPreviewTitle()}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top center', transition: 'opacity 0.2s ease' }}
+                />
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontFamily: '"Poppins", sans-serif', fontSize: '15px', gap: '12px' }}>
+                  <Image size={32} style={{ color: '#cbd5e1' }} />
+                  <span>Select a style to preview</span>
+                </div>
+              )
             ) : (
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#94a3b8',
-                  fontFamily: '"Poppins", sans-serif',
-                  fontSize: '15px',
-                  gap: '12px',
-                }}
-              >
-                <Monitor size={32} style={{ color: '#cbd5e1' }} />
-                <span>Select a style to preview</span>
-              </div>
+              // Live store iframe — proper fit using scale transform
+              storeUrl ? (
+                <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}>
+                  <iframe
+                    src={storeUrl}
+                    title="Store Live Preview"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '1440px',
+                      height: '2240px',
+                      border: 'none',
+                      transformOrigin: 'top left',
+                      transform: 'scale(0.304)',
+                    }}
+                    sandbox="allow-scripts allow-same-origin allow-popups"
+                  />
+                </div>
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontFamily: '"Poppins", sans-serif', fontSize: '15px', gap: '12px' }}>
+                  <Globe size={32} style={{ color: '#cbd5e1' }} />
+                  <span>Store preview unavailable</span>
+                </div>
+              )
             )}
           </div>
         </div>

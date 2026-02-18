@@ -713,3 +713,11 @@ export interface TenantProfile {
   profileImage?: string;
 }
 
+// export interface theme6 {
+//   primaryColor: string;
+//   secondaryColor: string;
+//   depthAccentColor: string;
+//   fontColor: string;
+// }
+
+
