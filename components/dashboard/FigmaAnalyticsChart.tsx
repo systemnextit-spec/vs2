@@ -92,6 +92,11 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
 
   // Get display data - last 7 entries or fill with empty
   const displayData = useMemo(() => {
+    const formatDate = (dateStr: string) => {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+    };
+
     if (chartData.length === 0) {
       // Generate last 7 days as fallback
       const days = [];
@@ -99,30 +104,29 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
         const date = new Date();
         date.setDate(date.getDate() - i);
         days.push({
-          date: date.toISOString().split('T')[0],
+          date: formatDate(date.toISOString()),
           mobile: 0,
-          tablet: 0,
+          tab: 0,
           desktop: 0
         });
       }
       return days;
     }
-    return chartData.slice(-7);
+    return chartData.slice(-7).map(item => ({
+      date: formatDate(item.date),
+      mobile: item.mobile,
+      tab: item.tablet,
+      desktop: item.desktop
+    }));
   }, [chartData]);
 
   // Calculate max value for scaling bars
   const maxValue = useMemo(() => {
     return Math.max(
       100,
-      ...displayData.flatMap(d => [d.mobile, d.tablet, d.desktop])
+      ...displayData.flatMap(d => [d.mobile, d.tab, d.desktop])
     );
   }, [displayData]);
-
-  // Format date for display
-  const formatDateLabel = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
-  };
 
   // Calculate bar height (max 160px, min 8px for zero values, min 50px for values with data)
   const getBarHeight = (value: number) => {
@@ -255,8 +259,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
 
       {/* Chart */}
       <FigmaViewsChart 
-        data={displayData}
-        loading={loading}
+        chartData={displayData}
       />
       
       {/* Legend */}
