@@ -526,6 +526,8 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const initialConfigRef = useRef<string>('');
+  const [newSocialPlatform, setNewSocialPlatform] = useState<string>('Facebook');
+  const [newSocialUrl, setNewSocialUrl] = useState<string>('');
 
   // Initialize socialLogins and offers in websiteConfiguration if not present
   useEffect(() => {
@@ -689,13 +691,21 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
   };
 
   const addSocialLink = (): void => {
+    if (!newSocialUrl.trim()) {
+      toast.error('Please enter a URL for the social link');
+      return;
+    }
     setWebsiteConfiguration((prev) => ({
       ...prev,
       socialLinks: [
         ...prev.socialLinks,
-        { id: Date.now().toString(), platform: 'Facebook', url: '' }
+        { id: Date.now().toString(), platform: newSocialPlatform, url: newSocialUrl }
       ]
     }));
+    // Reset inputs after adding
+    setNewSocialUrl('');
+    setNewSocialPlatform('Facebook');
+    toast.success('Social link added');
   };
 
   const updateSocialLink = (index: number, key: keyof SocialLink, value: string): void => {
@@ -895,21 +905,100 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
           />
         </div>
 
+
+        {/* Display Added Social Links */}
+        {websiteConfiguration.socialLinks && websiteConfiguration.socialLinks.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <p style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 500, fontSize: '14px', color: 'black', margin: 0 }}>
+              Added Social Links
+            </p>
+            {websiteConfiguration.socialLinks
+              .filter(link => !['Facebook', 'Messenger', 'Instagram', 'Daraz'].includes(link.platform))
+              .map((link, index) => {
+                const actualIndex = websiteConfiguration.socialLinks.findIndex(l => l.id === link.id);
+                return (
+                  <div key={link.id || index} style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', backgroundColor: '#f9f9f9', padding: '12px', borderRadius: '8px' }}>
+                    <FigmaSelect
+                      label=""
+                      value={link.platform}
+                      onChange={(v) => updateSocialLink(actualIndex, 'platform', v)}
+                      options={[
+                        { value: 'Facebook', label: 'Facebook' },
+                        { value: 'Instagram', label: 'Instagram' },
+                        { value: 'Twitter', label: 'Twitter' },
+                        { value: 'LinkedIn', label: 'LinkedIn' },
+                        { value: 'YouTube', label: 'YouTube' },
+                        { value: 'TikTok', label: 'TikTok' },
+                        { value: 'WhatsApp', label: 'WhatsApp' },
+                        { value: 'Telegram', label: 'Telegram' },
+                        { value: 'Messenger', label: 'Messenger' },
+                        { value: 'Daraz', label: 'Daraz' },
+                        { value: 'Other', label: 'Other' },
+                      ]}
+                      width="180px"
+                    />
+                    <FigmaInput
+                      label=""
+                      value={link.url || ''}
+                      onChange={(v) => updateSocialLink(actualIndex, 'url', v)}
+                      placeholder="Social link URL"
+                      flex
+                    />
+                    <button
+                      onClick={() => removeSocialLink(actualIndex)}
+                      style={{
+                        width: '48px',
+                        height: '48px',
+                        backgroundColor: 'rgba(218,0,0,0.1)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Trash2 size={20} color="#da0000" />
+                    </button>
+                  </div>
+                );
+              })}
+          </div>
+        )}
         {/* Row 5: Social Link & Add Button */}
         <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end' }}>
-          <div style={{ width: '547px' }}>
-            <FigmaInput
-              label="Social Link"
-              value=""
-              onChange={() => {}}
-              placeholder="Social Link"
-            />
-          </div>
+          <FigmaSelect
+            label="Platform"
+            value={newSocialPlatform}
+            onChange={(v) => setNewSocialPlatform(v)}
+            options={[
+              { value: 'Facebook', label: 'Facebook' },
+              { value: 'Instagram', label: 'Instagram' },
+              { value: 'Twitter', label: 'Twitter' },
+              { value: 'LinkedIn', label: 'LinkedIn' },
+              { value: 'YouTube', label: 'YouTube' },
+              { value: 'TikTok', label: 'TikTok' },
+              { value: 'WhatsApp', label: 'WhatsApp' },
+              { value: 'Telegram', label: 'Telegram' },
+              { value: 'Messenger', label: 'Messenger' },
+              { value: 'Daraz', label: 'Daraz' },
+              { value: 'Other', label: 'Other' },
+            ]}
+            width="200px"
+          />
+          <FigmaInput
+            label="Social Link URL"
+            value={newSocialUrl}
+            onChange={(v) => setNewSocialUrl(v)}
+            placeholder="https://facebook.com/yourpage"
+            flex
+          />
           <button
             onClick={addSocialLink}
             style={{
-              flex: 1,
               height: '48px',
+              minWidth: '150px',
               background: 'linear-gradient(180deg, #ff6a00 0%, #ff9f1c 100%)',
               border: 'none',
               borderRadius: '8px',
