@@ -35,7 +35,7 @@ export const AdminNoticeTicker: React.FC<AdminNoticeTickerProps> = ({ noticeText
           white-space: nowrap;
           padding: 0 2rem;
         }
-        @keyframes scroll-left-to-right {
+        @keyframes scroll-right-to-left {
           0% {
             transform: translateX(-100%);
           }
