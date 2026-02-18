@@ -83,6 +83,7 @@ interface FigmaCatalogManagerProps {
   childCategories: ChildCategory[];
   brands: Brand[];
   tags: Tag[];
+  products?: any[]; // For calculating actual product counts
   onAddCategory: (item: Category) => void;
   onUpdateCategory: (item: Category) => void;
   onDeleteCategory: (id: string) => void;
@@ -103,6 +104,7 @@ interface FigmaCatalogManagerProps {
 const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
   view, onNavigate,
   categories, subCategories, childCategories, brands, tags,
+  products = [],
   onAddCategory, onUpdateCategory, onDeleteCategory,
   onAddSubCategory, onUpdateSubCategory, onDeleteSubCategory,
   onAddChildCategory, onUpdateChildCategory, onDeleteChildCategory,
@@ -133,15 +135,34 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     { id: 'catalog_tags', label: 'Tags', icon: <TagIcon /> },
   ];
 
-  // Get current tab data
+  // Calculate product counts for catalog items
+  const enrichWithProductCount = (items: any[], type: 'category' | 'brand' | 'tag' | 'subCategory' | 'childCategory') => {
+    return items.map(item => {
+      let count = 0;
+      if (type === 'category') {
+        count = products.filter(p => p.category === item.name).length;
+      } else if (type === 'brand') {
+        count = products.filter(p => p.brand === item.name).length;
+      } else if (type === 'tag') {
+        count = products.filter(p => Array.isArray(p.tags) && p.tags.includes(item.name)).length;
+      } else if (type === 'subCategory') {
+        count = products.filter(p => p.subCategory === item.name).length;
+      } else if (type === 'childCategory') {
+        count = products.filter(p => p.childCategory === item.name).length;
+      }
+      return { ...item, productCount: count };
+    });
+  };
+
+  // Get current tab data with product counts
   const getCurrentData = (): any[] => {
     switch (view) {
-      case 'catalog_categories': return categories;
-      case 'catalog_subcategories': return subCategories;
-      case 'catalog_childcategories': return childCategories;
-      case 'catalog_brands': return brands;
-      case 'catalog_tags': return tags;
-      default: return categories;
+      case 'catalog_categories': return enrichWithProductCount(categories, 'category');
+      case 'catalog_subcategories': return enrichWithProductCount(subCategories, 'subCategory');
+      case 'catalog_childcategories': return enrichWithProductCount(childCategories, 'childCategory');
+      case 'catalog_brands': return enrichWithProductCount(brands, 'brand');
+      case 'catalog_tags': return enrichWithProductCount(tags, 'tag');
+      default: return enrichWithProductCount(categories, 'category');
     }
   };
 
@@ -497,7 +518,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                       </td>
                     )}
                     <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200 text-center">
-                      {item.productCount || 5}
+                      {item.productCount || 0}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <span className={`inline-flex px-[9px] py-0.5 rounded-[30px] text-[12px] font-medium ${
