@@ -90,7 +90,9 @@ const FigmaBestSellingProducts: React.FC<FigmaBestSellingProductsProps> = ({
 
                 {/* Price */}
                 <div className="flex-1 self-stretch px-5 pb-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
-                  <div className="text-right justify-center text-teal-950 dark:text-white text-base font-bold font-['Lato'] leading-5">{product.price}</div>
+                  <div className="text-right justify-center text-teal-950 dark:text-white text-base font-bold font-['Lato'] leading-5">
+                    {/* {product.price} */}
+                  </div>
                 </div>
               </div>
             ))}

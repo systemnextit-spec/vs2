@@ -280,6 +280,11 @@ const AdminCustomization: React.FC<AdminCustomizationProps> = ({
         await onUpdateTheme(themePayload);
       }
 
+
+      // Clear all server-side cache for the tenant so style changes are reflected in real-time
+      if (tenantId) {
+        await DataService.clearServerCache(tenantId);
+      }
       const elapsed = Date.now() - startTime;
       if (elapsed < 1000) {
         await new Promise(resolve => setTimeout(resolve, 1000 - elapsed));
@@ -506,6 +511,7 @@ const AdminCustomization: React.FC<AdminCustomizationProps> = ({
                 websiteConfiguration={websiteConfiguration}
                 setWebsiteConfiguration={setWebsiteConfiguration}
                 tenantSubdomain={tenantSubdomain}
+                isSaved={isSaved}
               />
             </div>
           </>

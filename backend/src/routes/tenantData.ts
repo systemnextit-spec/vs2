@@ -1,7 +1,7 @@
 import { Router, Request } from 'express';
 import { z } from 'zod';
 import { getTenantData, setTenantData, getTenantDataBatch } from '../services/tenantDataService';
-import { getCached, setCachedWithTTL, CacheKeys, deleteCached } from '../services/redisCache';
+import { getCached, setCachedWithTTL, CacheKeys, deleteCached, clearAllTenantCache } from '../services/redisCache';
 import { getTenantBySubdomain } from '../services/tenantsService';
 import { createAuditLog } from './auditLogs';
 import { Server as SocketIOServer } from 'socket.io';
@@ -339,6 +339,21 @@ tenantDataRouter.put('/:tenantId/product_display_order', async (req, res, next) 
   }
 });
 
+
+// Clear all cache for a tenant (used after customization save for real-time updates)
+tenantDataRouter.post('/:tenantId/clear-cache', async (req, res, next) => {
+  try {
+    const tenantId = req.params.tenantId;
+    if (!tenantId) {
+      return res.status(400).json({ error: 'tenantId is required' });
+    }
+    const clearedCount = await clearAllTenantCache(tenantId);
+    console.log(`[TenantData] Cache cleared for tenant ${tenantId}: ${clearedCount} entries`);
+    res.json({ success: true, clearedCount });
+  } catch (error) {
+    next(error);
+  }
+});
 // Generic tenant data endpoints
 // NOTE: These MUST be defined AFTER specific routes like store_studio_config
 

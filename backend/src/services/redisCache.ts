@@ -245,6 +245,46 @@ export async function invalidateTenantCache(tenantId: string): Promise<void> {
 }
 
 /**
+ * Clear ALL cache entries for a tenant (bootstrap + individual keys)
+ * Used after saving customization to ensure real-time updates
+ */
+export async function clearAllTenantCache(tenantId: string): Promise<number> {
+  let clearedCount = 0;
+  const patterns = [`bootstrap:${tenantId}`, `tenant:${tenantId}`];
+
+  // Clear L1 memory cache
+  for (const pattern of patterns) {
+    for (const key of L1.keys()) {
+      if (key.startsWith(pattern)) {
+        L1.delete(key);
+        clearedCount++;
+      }
+    }
+  }
+
+  // Clear L2 Redis cache
+  const client = getRedis();
+  if (client) {
+    try {
+      for (const pattern of patterns) {
+        const keys = await client.keys(`${pattern}*`);
+        if (keys.length) {
+          await client.del(...keys);
+          clearedCount += keys.length;
+        }
+      }
+    } catch (e: any) {
+      if (!e?.message?.includes('Connection is closed') && !e?.message?.includes('ECONNREFUSED')) {
+        console.error('[Redis] Clear all tenant cache error:', e);
+      }
+    }
+  }
+
+  console.log(`[Redis] Cleared ${clearedCount} cache entries for tenant ${tenantId}`);
+  return clearedCount;
+}
+
+/**
  * Cache with automatic TTL based on data type
  */
 export async function setCachedWithTTL<T>(

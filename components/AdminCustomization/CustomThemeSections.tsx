@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Monitor, Smartphone, CheckCircle2, Circle, ExternalLink, Image, Globe } from 'lucide-react';
 import { WebsiteConfig } from './types';
 import { THEME_DEMO_IMAGES } from './constants';
@@ -24,6 +24,7 @@ interface CustomThemeSectionsProps {
   websiteConfiguration: WebsiteConfig;
   setWebsiteConfiguration: React.Dispatch<React.SetStateAction<WebsiteConfig>>;
   tenantSubdomain?: string;
+  isSaved?: boolean;
 }
 
 // Toggle Switch sub-component
@@ -148,12 +149,32 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
   websiteConfiguration,
   setWebsiteConfiguration,
   tenantSubdomain,
+  isSaved,
 }) => {
   const [deviceMode, setDeviceMode] = useState<'web' | 'mobile'>('web');
   const [previewSection, setPreviewSection] = useState<string>('headerStyle');
   const [previewTab, setPreviewTab] = useState<'style' | 'store'>('style');
 
   const sections = deviceMode === 'web' ? WEB_SECTIONS : MOBILE_SECTIONS;
+
+  // Ref for the live store iframe
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeCacheBuster, setIframeCacheBuster] = useState(0);
+
+  // Refresh iframe when save completes
+  useEffect(() => {
+    if (isSaved) {
+      setIframeCacheBuster(prev => prev + 1);
+      // Also try to reload the iframe directly
+      if (iframeRef.current) {
+        try {
+          iframeRef.current.src = iframeRef.current.src;
+        } catch (e) {
+          // Cross-origin iframe, cache buster will handle it
+        }
+      }
+    }
+  }, [isSaved]);
 
   // Build store URL for the live store tab
   const storeUrl = useMemo(() => {

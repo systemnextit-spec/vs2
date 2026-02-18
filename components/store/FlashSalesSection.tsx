@@ -185,7 +185,7 @@ export const FlashSalesSection = ({ products, showCounter, countdown, onProductC
                 <Flame className="text-white w-4 h-4 sm:w-5 sm:h-5 md:w-[22px] md:h-[22px]" />
               </div>
               <div className="min-w-0">
-                <h2 className="text-sm sm:text-xl md:text-2xl font-bold text-white truncate">Deal of The Day</h2>
+                <h2 className="text-sm sm:text-xl md:text-2xl font-bold text-white truncate">Flash Sales</h2>
                 <p className="text-white/80 text-[10px] sm:text-xs md:text-sm hidden xs:block">Limited time offers</p>
               </div>
             </div>

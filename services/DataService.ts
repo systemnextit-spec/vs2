@@ -1352,6 +1352,23 @@ async getPaymentMethods(tenantId?: string): Promise<PaymentMethod[]> {
     }
   }
 
+
+  /**
+   * Clear all server-side (Redis) cache for a tenant.
+   * Call after saving customization to ensure store picks up changes immediately.
+   */
+  async clearServerCache(tenantId: string): Promise<void> {
+    try {
+      const scope = this.resolveTenantScope(tenantId);
+      await this.requestTenantApi(`/api/tenant-data/${scope}/clear-cache`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      console.log(`[DataService] Server cache cleared for tenant ${scope}`);
+    } catch (error) {
+      console.warn('[DataService] Failed to clear server cache:', error);
+    }
+  }
   async listTenants(forceRefresh = false): Promise<Tenant[]> {
     // Check cache first for instant load (skip if force refresh)
     if (!forceRefresh) {
