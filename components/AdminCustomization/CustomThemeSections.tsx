@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
-import { Monitor, Smartphone } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { Monitor, Smartphone, CheckCircle2, Circle } from 'lucide-react';
 import { WebsiteConfig } from './types';
 import { THEME_DEMO_IMAGES } from './constants';
 
-// Figma-styled section configuration
-const FIGMA_THEME_SECTIONS = [
-  { title: 'Header Section', key: 'headerStyle', count: 5, layout: 'full' },
-  // { title: 'Showcase Section', key: 'showcaseSectionStyle', count: 5, layout: 'grid' },
-  { title: 'Category Section', key: 'categorySectionStyle', count: 5, layout: 'grid' },
-  // { title: 'Product Section', key: 'productSectionStyle', count: 5, layout: 'grid' },
-  { title: 'Product card', key: 'productCardStyle', count: 5, layout: 'cards' },
-  // { title: 'Brand Section', key: 'brandSectionStyle', count: 5, layout: 'grid' },
-  { title: 'Footer Section', key: 'footerStyle', count: 5, layout: 'grid' },
-  { title: 'Bottom Nav Section', key: 'bottomNavStyle', count: 5, layout: 'grid' },
+// Web sections configuration
+const WEB_SECTIONS = [
+  { title: 'Header Section', key: 'headerStyle', label: 'Header', count: 5 },
+  { title: 'Showcase Section', key: 'showcaseSectionStyle', label: 'Showcase', count: 5 },
+  { title: 'Category Section', key: 'categorySectionStyle', label: 'Category', count: 5 },
+  { title: 'Product Section', key: 'productSectionStyle', label: 'Product', count: 5 },
+  { title: 'Brand Section', key: 'brandSectionStyle', label: 'Brand', count: 5 },
+  { title: 'Footer Section', key: 'footerStyle', label: 'Footer', count: 5 },
+];
+
+// Mobile sections configuration
+const MOBILE_SECTIONS = [
+  { title: 'Mobile Header', key: 'mobileHeaderStyle', label: 'Header', count: 5 },
+  { title: 'Product Card', key: 'productCardStyle', label: 'Card', count: 5 },
+  { title: 'Bottom Nav', key: 'bottomNavStyle', label: 'Nav', count: 5 },
 ];
 
 interface CustomThemeSectionsProps {
@@ -20,305 +25,282 @@ interface CustomThemeSectionsProps {
   setWebsiteConfiguration: React.Dispatch<React.SetStateAction<WebsiteConfig>>;
 }
 
-// Style option card component
-const StyleOptionCard: React.FC<{
-  sectionKey: string;
-  styleIndex: number;
+// Toggle Switch sub-component
+const ToggleSwitch: React.FC<{ enabled: boolean; onToggle: () => void }> = ({ enabled, onToggle }) => (
+  <div
+    onClick={(e) => { e.stopPropagation(); onToggle(); }}
+    style={{
+      width: '38px',
+      height: '20px',
+      borderRadius: '20px',
+      backgroundColor: enabled ? '#ff6a00' : '#d1d5db',
+      cursor: 'pointer',
+      position: 'relative',
+      transition: 'background-color 0.25s ease',
+      flexShrink: 0,
+    }}
+  >
+    <div
+      style={{
+        width: '16px',
+        height: '16px',
+        borderRadius: '50%',
+        backgroundColor: 'white',
+        position: 'absolute',
+        top: '2px',
+        left: enabled ? '20px' : '2px',
+        transition: 'left 0.25s ease',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+      }}
+    />
+  </div>
+);
+
+// Style option pill component (radio-button style from Figma)
+const StyleOptionPill: React.FC<{
+  label: string;
   isSelected: boolean;
   onSelect: () => void;
-  imageUrl?: string;
-  layout?: string;
-}> = ({ sectionKey, styleIndex, isSelected, onSelect, imageUrl, layout }) => {
-  const [imageError, setImageError] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-
-  // Determine card height based on layout type - increased for better visibility
-  const getCardHeight = () => {
-    if (layout === 'full') return '140px';
-    if (layout === 'cards') return '320px';
-    return '140px';
-  };
-
-  return (
-    <div
-      onClick={onSelect}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+}> = ({ label, isSelected, onSelect }) => (
+  <div
+    onClick={onSelect}
+    style={{
+      flex: '1 0 0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      padding: '8px 12px',
+      borderRadius: '8px',
+      border: isSelected ? '1.5px solid #ff6a00' : '1.5px solid rgba(0,0,0,0.1)',
+      backgroundColor: 'white',
+      cursor: 'pointer',
+      overflow: 'hidden',
+      transition: 'all 0.2s ease',
+      minWidth: 0,
+    }}
+  >
+    {isSelected ? (
+      <CheckCircle2 size={22} style={{ color: '#ff6a00', flexShrink: 0 }} />
+    ) : (
+      <Circle size={22} style={{ color: '#d1d5db', flexShrink: 0 }} />
+    )}
+    <span
       style={{
-        backgroundColor: 'white',
-        border: isSelected ? '2px solid #ff6a00' : '1.5px solid #e5e7eb',
-        borderRadius: '12px',
-        overflow: 'hidden',
-        paddingBottom: '12px',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        boxShadow: isSelected 
-          ? '0 4px 20px rgba(255, 106, 0, 0.25)' 
-          : isHovered 
-            ? '0 8px 25px rgba(0, 0, 0, 0.12)' 
-            : '0 2px 8px rgba(0, 0, 0, 0.06)',
-        transform: isHovered ? 'translateY(-2px)' : 'translateY(0)',
+        fontFamily: '"Lato", sans-serif',
+        fontWeight: 500,
+        fontSize: '15px',
+        color: '#1a1a1a',
+        letterSpacing: '-0.32px',
+        whiteSpace: 'nowrap',
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', width: '100%' }}>
-        {/* Preview Image */}
-        <div
-          style={{
-            width: '100%',
-            height: getCardHeight(),
-            backgroundColor: '#fafafa',
-            overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderBottom: '1px solid #f0f0f0',
-          }}
-        >
-          {imageUrl && !imageError ? (
-            <img
-              src={imageUrl}
-              alt={`Style ${styleIndex + 1}`}
-              style={{ 
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'contain',
-                objectPosition: 'center',
-                padding: '4px',
-              }}
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <div style={{ 
-              width: '100%', 
-              height: '100%', 
-              background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#94a3b8',
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: '14px',
-              fontWeight: 500,
-            }}>
-              Style {styleIndex + 1}
-            </div>
-          )}
-        </div>
+      {label}
+    </span>
+  </div>
+);
 
-        {/* Select/Selected Button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect();
-          }}
-          style={{
-            width: '90%',
-            maxWidth: '160px',
-            height: '36px',
-            borderRadius: '8px',
-            border: isSelected ? 'none' : '1.5px solid #e5e7eb',
-            cursor: 'pointer',
-            fontFamily: '"Lato", sans-serif',
-            fontWeight: 700,
-            fontSize: '14px',
-            letterSpacing: '-0.3px',
-            transition: 'all 0.2s ease',
-            ...(isSelected
-              ? {
-                  background: 'linear-gradient(135deg, #ff6a00 0%, #ff9f1c 100%)',
-                  color: 'white',
-                  boxShadow: '0 2px 8px rgba(255, 106, 0, 0.3)',
-                }
-              : {
-                  backgroundColor: '#f8fafc',
-                  color: '#475569',
-                }),
-          }}
-        >
-          {isSelected ? '✓ Selected' : 'Select'}
-        </button>
-      </div>
+// Section block component
+const ThemeSection: React.FC<{
+  title: string;
+  sectionKey: string;
+  label: string;
+  count: number;
+  currentStyle: string;
+  enabled: boolean;
+  onStyleSelect: (key: string, value: string) => void;
+  onToggle: () => void;
+}> = ({ title, sectionKey, label, count, currentStyle, enabled, onStyleSelect, onToggle }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', opacity: enabled ? 1 : 0.5, transition: 'opacity 0.25s ease' }}>
+    {/* Section Header: Title + Toggle */}
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+      <h3
+        style={{
+          fontFamily: '"Lato", sans-serif',
+          fontWeight: 700,
+          fontSize: '20px',
+          color: '#023337',
+          letterSpacing: '0.1px',
+          margin: 0,
+        }}
+      >
+        {title}
+      </h3>
+      <ToggleSwitch enabled={enabled} onToggle={onToggle} />
     </div>
-  );
-};
+
+    {/* Style Options Row */}
+    <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch', width: '100%' }}>
+      {Array.from({ length: count }).map((_, i) => {
+        const styleValue = `style${i + 1}`;
+        return (
+          <StyleOptionPill
+            key={i}
+            label={`${label} ${i + 1}`}
+            isSelected={enabled && currentStyle === styleValue}
+            onSelect={() => enabled && onStyleSelect(sectionKey, styleValue)}
+          />
+        );
+      })}
+    </div>
+  </div>
+);
 
 export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
   websiteConfiguration,
-  setWebsiteConfiguration
+  setWebsiteConfiguration,
 }) => {
-  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [deviceMode, setDeviceMode] = useState<'web' | 'mobile'>('web');
+  const [previewSection, setPreviewSection] = useState<string>('headerStyle');
 
-  // Get the preview image for the currently selected styles
-  const getPreviewImage = () => {
-    const headerStyle = (websiteConfiguration.headerStyle as string) || 'style1';
-    return THEME_DEMO_IMAGES.headerStyle?.[headerStyle] || '';
+  const sections = deviceMode === 'web' ? WEB_SECTIONS : MOBILE_SECTIONS;
+
+  const handleStyleSelect = useCallback((sectionKey: string, styleValue: string) => {
+    setWebsiteConfiguration((prev) => ({ ...prev, [sectionKey]: styleValue }));
+    setPreviewSection(sectionKey);
+  }, [setWebsiteConfiguration]);
+
+  const handleToggle = useCallback((sectionKey: string) => {
+    setWebsiteConfiguration((prev) => {
+      const currentVal = (prev[sectionKey as keyof WebsiteConfig] as string) || 'style1';
+      const newVal = currentVal === 'none' ? 'style1' : 'none';
+      return { ...prev, [sectionKey]: newVal };
+    });
+  }, [setWebsiteConfiguration]);
+
+  const isSectionEnabled = (sectionKey: string) => {
+    const val = (websiteConfiguration[sectionKey as keyof WebsiteConfig] as string) || 'style1';
+    return val !== 'none';
   };
 
-  const handleStyleSelect = (sectionKey: string, styleValue: string) => {
-    setWebsiteConfiguration(prev => ({ ...prev, [sectionKey]: styleValue }));
+  const getCurrentStyle = (sectionKey: string) => {
+    const val = (websiteConfiguration[sectionKey as keyof WebsiteConfig] as string) || 'style1';
+    return val === 'none' ? 'style1' : val;
+  };
+
+  // Get preview image for the current section
+  const getPreviewImage = () => {
+    const style = getCurrentStyle(previewSection);
+    return THEME_DEMO_IMAGES[previewSection]?.[style] || '';
+  };
+
+  const getPreviewTitle = () => {
+    const all = [...WEB_SECTIONS, ...MOBILE_SECTIONS];
+    const found = all.find((s) => s.key === previewSection);
+    return found ? found.title : 'Preview';
   };
 
   return (
-    <div style={{ display: 'flex', gap: '24px', position: 'relative' }}>
-      {/* Left: Theme Sections */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '48px' }}>
-        {FIGMA_THEME_SECTIONS.map((section) => {
-          const currentStyle = (websiteConfiguration[section.key as keyof WebsiteConfig] as string) || 'style1';
-          const sectionDemos = THEME_DEMO_IMAGES[section.key] || {};
+    <div style={{ display: 'flex', gap: '24px', position: 'relative', alignItems: 'flex-start' }}>
+      {/* Left: Sections Panel */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '28px', minWidth: 0 }}>
 
+        {/* Web / Mobile Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              border: '1px solid #38bdf8',
+              borderRadius: '24px',
+              padding: '4px',
+              backgroundColor: 'transparent',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Web Button */}
+            <button
+              onClick={() => setDeviceMode('web')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '4px 14px',
+                borderRadius: '20px',
+                border: 'none',
+                cursor: 'pointer',
+                height: '26px',
+                fontFamily: '"Poppins", sans-serif',
+                fontSize: '12px',
+                fontWeight: 400,
+                transition: 'all 0.25s ease',
+                ...(deviceMode === 'web'
+                  ? { background: 'linear-gradient(to right, #38bdf8, #1e90ff)', color: 'white' }
+                  : { background: 'white', color: '#1a1a1a' }),
+              }}
+            >
+              <Monitor size={14} />
+              Web
+            </button>
+            {/* Mobile Button */}
+            <button
+              onClick={() => setDeviceMode('mobile')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '4px 14px',
+                borderRadius: '20px',
+                border: 'none',
+                cursor: 'pointer',
+                height: '26px',
+                fontFamily: '"Poppins", sans-serif',
+                fontSize: '12px',
+                fontWeight: 400,
+                transition: 'all 0.25s ease',
+                ...(deviceMode === 'mobile'
+                  ? { background: 'linear-gradient(to right, #38bdf8, #1e90ff)', color: 'white' }
+                  : { background: 'white', color: '#1a1a1a' }),
+              }}
+            >
+              <Smartphone size={14} />
+              Mobile
+            </button>
+          </div>
+        </div>
+
+        {/* Theme Sections */}
+        {sections.map((section) => {
+          const enabled = isSectionEnabled(section.key);
+          const currentStyle = getCurrentStyle(section.key);
           return (
-            <div key={section.key} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-              {/* Section Title */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <h3
-                  style={{
-                    fontFamily: '"Lato", sans-serif',
-                    fontWeight: 700,
-                    fontSize: '24px',
-                    color: '#023337',
-                    letterSpacing: '0.11px',
-                    margin: 0,
-                  }}
-                >
-                  {section.title}
-                </h3>
-                <span style={{
-                  fontSize: '13px',
-                  color: '#64748b',
-                  fontFamily: 'Poppins, sans-serif',
-                  backgroundColor: '#f1f5f9',
-                  padding: '4px 10px',
-                  borderRadius: '20px',
-                }}>
-                  {section.count} styles
-                </span>
-              </div>
-
-              {/* Style Options Grid */}
-              {section.layout === 'full' ? (
-                // Full-width layout for Header Section
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {Array.from({ length: section.count }).map((_, i) => {
-                    const styleValue = `style${i + 1}`;
-                    const isSelected = currentStyle === styleValue;
-                    const imageUrl = sectionDemos[styleValue];
-
-                    return (
-                      <StyleOptionCard
-                        key={i}
-                        sectionKey={section.key}
-                        styleIndex={i}
-                        isSelected={isSelected}
-                        onSelect={() => handleStyleSelect(section.key, styleValue)}
-                        imageUrl={imageUrl}
-                        layout={section.layout}
-                      />
-                    );
-                  })}
-                </div>
-              ) : section.layout === 'cards' ? (
-                // Special layout for Product Cards - 3 columns first row, 2 columns second row
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
-                    {Array.from({ length: 3 }).map((_, i) => {
-                      const styleValue = `style${i + 1}`;
-                      const isSelected = currentStyle === styleValue;
-                      const imageUrl = sectionDemos[styleValue];
-
-                      return (
-                        <StyleOptionCard
-                          key={i}
-                          sectionKey={section.key}
-                          styleIndex={i}
-                          isSelected={isSelected}
-                          onSelect={() => handleStyleSelect(section.key, styleValue)}
-                          imageUrl={imageUrl}
-                          layout={section.layout}
-                        />
-                      );
-                    })}
-                  </div>
-                  <div style={{ display: 'flex', gap: '18px' }}>
-                    {Array.from({ length: 2 }).map((_, i) => {
-                      const actualIndex = i + 3;
-                      const styleValue = `style${actualIndex + 1}`;
-                      const isSelected = currentStyle === styleValue;
-                      const imageUrl = sectionDemos[styleValue];
-
-                      return (
-                        <div key={actualIndex} style={{ width: '209px' }}>
-                          <StyleOptionCard
-                            sectionKey={section.key}
-                            styleIndex={actualIndex}
-                            isSelected={isSelected}
-                            onSelect={() => handleStyleSelect(section.key, styleValue)}
-                            imageUrl={imageUrl}
-                            layout={section.layout}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                // Two-column grid layout for other sections
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '18px' }}>
-                  {Array.from({ length: section.count }).map((_, i) => {
-                    const styleValue = `style${i + 1}`;
-                    const isSelected = currentStyle === styleValue;
-                    const imageUrl = sectionDemos[styleValue];
-
-                    return (
-                      <StyleOptionCard
-                        key={i}
-                        sectionKey={section.key}
-                        styleIndex={i}
-                        isSelected={isSelected}
-                        onSelect={() => handleStyleSelect(section.key, styleValue)}
-                        imageUrl={imageUrl}
-                        layout={section.layout}
-                      />
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <ThemeSection
+              key={section.key}
+              title={section.title}
+              sectionKey={section.key}
+              label={section.label}
+              count={section.count}
+              currentStyle={currentStyle}
+              enabled={enabled}
+              onStyleSelect={handleStyleSelect}
+              onToggle={() => handleToggle(section.key)}
+            />
           );
         })}
       </div>
 
-      {/* Right: Preview Panel - Sticky */}
+      {/* Right: Preview Panel (sticky) */}
       <div
         style={{
-          width: '456px',
+          width: '438px',
+          flexShrink: 0,
           position: 'sticky',
           top: '20px',
           alignSelf: 'flex-start',
           height: 'fit-content',
-          display: 'none', // Hidden on mobile
         }}
         className="hidden lg:block"
       >
         <div
           style={{
             backgroundColor: 'white',
-            borderRadius: '16px',
+            borderRadius: '8px',
             overflow: 'hidden',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-            border: '1px solid rgba(0,0,0,0.06)',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
           }}
         >
-          {/* Preview Header */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '18px 20px',
-              background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-            }}
-          >
+          {/* Preview Title */}
+          <div style={{ padding: '16px 12px 0' }}>
             <h4
               style={{
                 fontFamily: '"Lato", sans-serif',
@@ -329,46 +311,20 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
                 margin: 0,
               }}
             >
-              Live Preview
+              Preview
             </h4>
-            <button
-              onClick={() => setPreviewMode(previewMode === 'desktop' ? 'mobile' : 'desktop')}
-              style={{
-                background: 'white',
-                border: '1px solid #e2e8f0',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                padding: '8px 12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-              }}
-              title={`Switch to ${previewMode === 'desktop' ? 'mobile' : 'desktop'} view`}
-            >
-              {previewMode === 'desktop' ? (
-                <>
-                  <Monitor size={18} style={{ color: '#023337' }} />
-                  <span style={{ fontSize: '13px', color: '#023337', fontWeight: 500 }}>Desktop</span>
-                </>
-              ) : (
-                <>
-                  <Smartphone size={18} style={{ color: '#023337' }} />
-                  <span style={{ fontSize: '13px', color: '#023337', fontWeight: 500 }}>Mobile</span>
-                </>
-              )}
-            </button>
+            <p style={{ margin: '4px 0 0', fontFamily: '"Lato", sans-serif', fontSize: '13px', color: '#64748b' }}>
+              {getPreviewTitle()}
+            </p>
           </div>
 
-          {/* Preview Content */}
+          {/* Preview Image */}
           <div
             style={{
               width: '100%',
-              height: '677px',
+              height: '650px',
               overflow: 'hidden',
-              backgroundColor: '#f5f5f5',
+              marginTop: '12px',
             }}
           >
             {getPreviewImage() ? (
@@ -379,7 +335,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
                   width: '100%',
                   height: '100%',
                   objectFit: 'contain',
-                  objectPosition: 'top',
+                  objectPosition: 'top center',
                   backgroundColor: '#f8fafc',
                 }}
               />
@@ -393,22 +349,13 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#94a3b8',
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: '16px',
+                  fontFamily: '"Poppins", sans-serif',
+                  fontSize: '15px',
                   gap: '12px',
+                  backgroundColor: '#f8fafc',
                 }}
               >
-                <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  backgroundColor: '#e2e8f0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <Monitor size={28} style={{ color: '#94a3b8' }} />
-                </div>
+                <Monitor size={32} style={{ color: '#cbd5e1' }} />
                 <span>Select a style to preview</span>
               </div>
             )}
