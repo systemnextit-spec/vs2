@@ -253,6 +253,63 @@ ordersRouter.put('/:tenantId/:orderId', async (req, res, next) => {
   }
 });
 
+
+// Update an order (PATCH - same as PUT for compatibility)
+ordersRouter.patch('/:tenantId/:orderId', async (req, res, next) => {
+  try {
+    const { tenantId, orderId } = req.params;
+    if (!tenantId || !orderId) {
+      return res.status(400).json({ error: 'tenantId and orderId are required' });
+    }
+    
+    // Get existing orders
+    const existingOrders = await getTenantData<Order[]>(tenantId, 'orders') || [];
+    
+    // Find and update the order
+    const orderIndex = existingOrders.findIndex(o => o.id === orderId);
+    if (orderIndex === -1) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    
+    const oldOrder = existingOrders[orderIndex];
+    const updatedOrder = { ...oldOrder, ...req.body };
+    existingOrders[orderIndex] = updatedOrder;
+    
+    // Save orders
+    await setTenantData(tenantId, 'orders', existingOrders);
+    
+    // Emit real-time update
+    emitOrderUpdate(req, tenantId, 'order-updated', updatedOrder);
+    
+    // Create audit log
+    const user = (req as any).user;
+    const statusChanged = oldOrder.status !== updatedOrder.status;
+    await createAuditLog({
+      tenantId,
+      userId: user?._id || user?.id || 'system',
+      userName: user?.name || 'System',
+      userRole: user?.role || 'system',
+      action: statusChanged ? `Order Status: ${oldOrder.status} → ${updatedOrder.status}` : 'Order Updated',
+      actionType: 'update',
+      resourceType: 'order',
+      resourceId: orderId,
+      resourceName: `Order ${orderId}`,
+      details: statusChanged 
+        ? `Order ${orderId} status changed from ${oldOrder.status} to ${updatedOrder.status}`
+        : `Order ${orderId} updated`,
+      metadata: { oldStatus: oldOrder.status, newStatus: updatedOrder.status, changes: req.body },
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+      status: 'success'
+    });
+    
+    console.log(`[Orders] Order ${orderId} updated for tenant ${tenantId}`);
+    res.json({ data: updatedOrder, success: true });
+  } catch (error) {
+    console.error('[Orders] Error updating order:', error);
+    next(error);
+  }
+});
 // Delete an order
 ordersRouter.delete('/:tenantId/:orderId', async (req, res, next) => {
   try {
