@@ -145,7 +145,10 @@ const HeaderStyle2 = memo<DesktopHeaderBarProps>(({
           </button>
           <div className="relative" ref={menuRef}>
             <button type="button" className="p-2 text-gray-600 hover:text-theme-primary" onClick={user ? onMenuToggle : onLoginClick}>
-              <User size={22} strokeWidth={1.5} />px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all flex items-center gap-1.5
+              <User size={22} strokeWidth={1.5} />
+              
+              {/* px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all flex items-center gap-1.5 */}
+
             </button>
             {user && isMenuOpen && (
               <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
