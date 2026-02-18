@@ -146,7 +146,7 @@ const Bar: React.FC<BarProps> = ({ value, color, maxValue }) => {
           height: `${height}px`,
           background: color
         }}
-        className="w-6 flex items-center justify-center relative transition-all duration-300 hover:brightness-90 cursor-default rounded-t-sm"
+        className="w-[14px] flex items-center justify-center relative transition-all duration-300 hover:brightness-90 cursor-default rounded-t-sm"
       >
         <span className="rotate-[-90.00deg] text-white text-[10px] font-bold pointer-events-none">
           {value}
@@ -302,14 +302,23 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
     return () => clearInterval(interval);
   }, [propStats, tenantId]);
 
-  // Generate default empty chart data if none from API
-  const displayChartData = chartData.length > 0 ? chartData : (() => {
+  // Always generate full 7-day range, filling zeros for days without data
+  const displayChartData = (() => {
     const days: ChartDataEntry[] = [];
+    const chartMap = new Map<string, ChartDataEntry>();
+    
+    // Index existing chart data by formatted date
+    chartData.forEach(d => {
+      chartMap.set(d.date, d);
+    });
+    
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
-      days.push({
-        date: formatDate(d.toISOString()),
+      const dateStr = formatDate(d.toISOString());
+      const existing = chartMap.get(dateStr);
+      days.push(existing || {
+        date: dateStr,
         mobile: 0,
         tab: 0,
         desktop: 0
@@ -319,7 +328,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
   })();
 
   // Calculate max value across all chart data for dynamic bar scaling
-  const chartMaxValue = Math.max(
+  const maxValue = Math.max(
       1,
       ...displayChartData.flatMap(d => [d.mobile, d.tab, d.desktop])
     );
@@ -378,7 +387,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
             {/* Main Charting Area */}
             <div className="flex-1 flex justify-between items-end pl-4 pr-4">
               {displayChartData.map((day, idx) => (
-                <BarGroup key={idx} date={day.date} data={day} maxValue={chartMaxValue} />
+                <BarGroup key={idx} date={day.date} data={day} maxValue={maxValue} />
               ))}
             </div>
           </div>
