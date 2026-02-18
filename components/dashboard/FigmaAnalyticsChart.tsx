@@ -122,7 +122,7 @@ const VisitorCard: React.FC<VisitorCardProps> = ({ icon, title, subtitle, value,
  * Renders a dynamic SVG grouped bar chart matching the Figma design
  */
 const SVGBarChart: React.FC<{ data: ChartDataEntry[]; maxValue: number }> = ({ data, maxValue }) => {
-  const chartHeight = 100;
+  const chartHeight = 90;
   const barWidth = 24;
   const barGap = 4;
   const groupWidth = barWidth * 3 + barGap * 2; // 80
@@ -141,7 +141,7 @@ const SVGBarChart: React.FC<{ data: ChartDataEntry[]; maxValue: number }> = ({ d
       viewBox={`0 0 ${svgWidth} ${svgHeight}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="xMinYMax meet"
+      preserveAspectRatio="xMidYMax meet"
       className="overflow-visible"
     >
       <defs>
