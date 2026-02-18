@@ -37,10 +37,10 @@ export const AdminNoticeTicker: React.FC<AdminNoticeTickerProps> = ({ noticeText
         }
         @keyframes scroll-right-to-left {
           0% {
-            transform: translateX(-100%);
+            transform: translateX(100%);
           }
           100% {
-            transform: translateX(0%);
+            transform: translateX(-100%);
           }
         }
       `}</style>
