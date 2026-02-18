@@ -1,33 +1,28 @@
 import React, { useEffect, useState } from 'react';
 
-// Online Now Icon (Broadcast/Radio signal style)
-const OnlineNowIcon: React.FC = () => (
-  <svg width="36" height="36" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="19" cy="19" r="4" fill="#0EA5E9"/>
-    <path d="M11 11C13.1217 8.87827 16.0435 7.68629 19.0833 7.68629C22.1232 7.68629 25.045 8.87827 27.1667 11" stroke="#0EA5E9" strokeWidth="2.5" strokeLinecap="round"/>
-    <path d="M27.1667 27.1667C25.045 29.2884 22.1232 30.4804 19.0833 30.4804C16.0435 30.4804 13.1217 29.2884 11 27.1667" stroke="#0EA5E9" strokeWidth="2.5" strokeLinecap="round"/>
-    <path d="M7 7C10.1826 3.81738 14.5435 2 19.0833 2C23.6232 2 27.984 3.81738 31.1667 7" stroke="#0EA5E9" strokeWidth="2.5" strokeLinecap="round"/>
-    <path d="M31.1667 31.1667C27.984 34.3493 23.6232 36.1667 19.0833 36.1667C14.5435 36.1667 10.1826 34.3493 7 31.1667" stroke="#0EA5E9" strokeWidth="2.5" strokeLinecap="round"/>
+// Icon components matching Figma design
+const OnlineNowIcon: React.FC<{ color: string }> = ({ color }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="2" fill={color} />
+    <path d="M8 8C9.1 6.9 10.5 6.3 12 6.3C13.5 6.3 14.9 6.9 16 8" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M4 4C6.2 1.8 9.1 0.5 12 0.5C14.9 0.5 17.8 1.8 20 4" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
   </svg>
 );
 
-// Today Visitors Icon (Users style)
-const TodayVisitorsIcon: React.FC = () => (
-  <svg width="36" height="36" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M26.5 28V26C26.5 24.4087 25.8679 22.8826 24.7426 21.7574C23.6174 20.6321 22.0913 20 20.5 20H11.5C9.90871 20 8.38258 20.6321 7.25736 21.7574C6.13214 22.8826 5.5 24.4087 5.5 26V28" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M16 16C19.3137 16 22 13.3137 22 10C22 6.68629 19.3137 4 16 4C12.6863 4 10 6.68629 10 10C10 13.3137 12.6863 16 16 16Z" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M32.5 28V26C32.4987 24.6706 32.0478 23.3822 31.2217 22.3462C30.3957 21.3102 29.2446 20.5882 27.9583 20.3" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M24.9583 4.3C26.2477 4.58649 27.4022 5.30895 28.2302 6.34696C29.0582 7.38497 29.5094 8.67688 29.5094 10.01C29.5094 11.3431 29.0582 12.635 28.2302 13.673C27.4022 14.711 26.2477 15.4335 24.9583 15.72" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+const TodayVisitorsIcon: React.FC<{ color: string }> = ({ color }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="9" cy="7" r="4" stroke={color} strokeWidth="1.5"/>
+    <path d="M23 21V19C22.9992 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
-// Total Visitors Icon (Globe style)
-const TotalVisitorsIcon: React.FC = () => (
-  <svg width="36" height="36" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="19" cy="19" r="14" stroke="#4338CA" strokeWidth="2.5"/>
-    <ellipse cx="19" cy="19" rx="7" ry="14" stroke="#4338CA" strokeWidth="2"/>
-    <line x1="5" y1="19" x2="33" y2="19" stroke="#4338CA" strokeWidth="2"/>
-    <line x1="19" y1="5" x2="19" y2="33" stroke="#4338CA" strokeWidth="2"/>
+const TotalVisitorsIcon: React.FC<{ color: string }> = ({ color }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="1.5"/>
+    <ellipse cx="12" cy="12" rx="5" ry="10" stroke={color} strokeWidth="1.5"/>
+    <line x1="2" y1="12" x2="22" y2="12" stroke={color} strokeWidth="1.5"/>
   </svg>
 );
 
@@ -36,7 +31,11 @@ interface VisitorCardProps {
   title: string;
   subtitle: string;
   value: number;
-  theme: 'blue' | 'orange' | 'purple';
+  themeColors: {
+    gradient: string;
+    iconColor: string;
+    titleColor: string;
+  };
   loading?: boolean;
 }
 
@@ -45,49 +44,349 @@ const VisitorCard: React.FC<VisitorCardProps> = ({
   title,
   subtitle,
   value,
-  theme,
+  themeColors,
   loading = false
 }) => {
-  const themes = {
-    blue: {
-      circleClass: 'bg-sky-500/20',
-      titleColor: 'text-sky-500',
-    },
-    orange: {
-      circleClass: 'bg-orange-500/25',
-      titleColor: 'text-orange-600',
-    },
-    purple: {
-      circleClass: 'bg-gradient-to-b from-violet-700/20 to-violet-900/20',
-      titleColor: 'text-indigo-700',
+  const cardStyle: React.CSSProperties = {
+    width: '100%',
+    height: '81px',
+    background: 'linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+    borderRadius: '12px',
+    boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.10)',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 20px',
+    gap: '16px',
+    position: 'relative',
+    overflow: 'hidden'
+  };
+
+  const ellipseStyle: React.CSSProperties = {
+    position: 'absolute',
+    width: '198px',
+    height: '198px',
+    right: '-37px',
+    top: '-83px',
+    background: themeColors.gradient,
+    borderRadius: '50%',
+    opacity: 0.2
+  };
+
+  const iconContainerStyle: React.CSSProperties = {
+    width: '38px',
+    height: '38px',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10
+  };
+
+  const textContainerStyle: React.CSSProperties = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    minWidth: 0,
+    zIndex: 10
+  };
+
+  const titleStyle: React.CSSProperties = {
+    color: themeColors.titleColor,
+    fontSize: '16px',
+    fontWeight: 500,
+    lineHeight: '1.2',
+    fontFamily: 'Poppins, sans-serif'
+  };
+
+  const subtitleStyle: React.CSSProperties = {
+    color: '#161719',
+    fontSize: '13px',
+    fontWeight: 400,
+    lineHeight: '1.2',
+    fontFamily: 'Poppins, sans-serif',
+    marginTop: '2px'
+  };
+
+  const valueStyle: React.CSSProperties = {
+    color: '#161719',
+    fontSize: '28px',
+    fontWeight: 500,
+    lineHeight: '1',
+    fontFamily: 'Poppins, sans-serif',
+    flexShrink: 0,
+    zIndex: 10
+  };
+
+  const loadingStyle: React.CSSProperties = {
+    width: '40px',
+    height: '32px',
+    backgroundColor: '#E5E7EB',
+    borderRadius: '4px',
+    animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+  };
+
+  return (
+    <div style={cardStyle}>
+      <div style={ellipseStyle} />
+      <div style={iconContainerStyle}>
+        {icon}
+      </div>
+      <div style={textContainerStyle}>
+        <div style={titleStyle}>{title}</div>
+        <div style={subtitleStyle}>{subtitle}</div>
+      </div>
+      <div style={valueStyle}>
+        {loading ? <div style={loadingStyle} /> : value}
+      </div>
+    </div>
+  );
+};
+
+interface BarChartProps {
+  chartData: Array<{
+    date: string;
+    mobile: number;
+    tablet: number;
+    desktop: number;
+  }>;
+  loading?: boolean;
+}
+
+const BarChart: React.FC<BarChartProps> = ({ chartData, loading = false }) => {
+  const containerStyle: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+    borderRadius: '12px',
+    boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.10)',
+    padding: '20px',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column'
+  };
+
+  const headerStyle: React.CSSProperties = {
+    fontSize: '16px',
+    fontWeight: 500,
+    color: '#161719',
+    fontFamily: 'Poppins, sans-serif',
+    marginBottom: '16px'
+  };
+
+  const chartAreaStyle: React.CSSProperties = {
+    flex: 1,
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingTop: '40px'
+  };
+
+  const yAxisLabelStyle: React.CSSProperties = {
+    position: 'absolute',
+    left: '10px',
+    top: '50%',
+    transform: 'translateY(-50%) rotate(-90deg)',
+    transformOrigin: 'center center',
+    fontSize: '10px',
+    color: '#4b494e',
+    fontFamily: 'DM Sans, sans-serif',
+    whiteSpace: 'nowrap'
+  };
+
+  const barsContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    width: '100%',
+    maxWidth: '689px',
+    height: '200px',
+    gap: '20px',
+    paddingLeft: '40px'
+  };
+
+  const dayGroupStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '4px',
+    flex: 1
+  };
+
+  const barsWrapperStyle: React.CSSProperties = {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'flex-end'
+  };
+
+  const barStyle = (height: number, gradient: string): React.CSSProperties => ({
+    width: '24px',
+    height: `${height}px`,
+    background: gradient,
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: '2px'
+  });
+
+  const barLabelStyle: React.CSSProperties = {
+    position: 'absolute',
+    left: '50%',
+    top: '5px',
+    transform: 'translateX(-50%) rotate(-90deg)',
+    transformOrigin: 'center center',
+    fontSize: '14px',
+    fontWeight: 600,
+    color: 'white',
+    fontFamily: 'Lato, sans-serif',
+    whiteSpace: 'nowrap'
+  };
+
+  const dateLabelStyle: React.CSSProperties = {
+    fontSize: '12px',
+    color: '#4b494e',
+    fontFamily: 'DM Sans, sans-serif',
+    fontWeight: 400
+  };
+
+  const legendContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '48px',
+    marginTop: '20px'
+  };
+
+  const legendItemStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px'
+  };
+
+  const legendColorStyle = (gradient: string): React.CSSProperties => ({
+    width: '20px',
+    height: '20px',
+    borderRadius: '22px',
+    background: gradient,
+    flexShrink: 0
+  });
+
+  const legendTextStyle: React.CSSProperties = {
+    fontSize: '12px',
+    fontWeight: 500,
+    color: '#4b494e',
+    fontFamily: 'DM Sans, sans-serif'
+  };
+
+  // Color gradients matching Figma
+  const mobileGradient = 'linear-gradient(180deg, #38bdf8 1.829%, #1e90ff 100%)';
+  const tabletGradient = 'linear-gradient(180deg, #ff9f1c 0%, #ff6a00 100%)';
+  const desktopGradient = 'linear-gradient(180deg, #a08bff 0%, #5943ff 100%)';
+
+  // Scale values to fit chart height (max 200px)
+  const getBarHeight = (value: number, maxValue: number): number => {
+    const minHeight = 40;
+    const maxHeight = 193;
+    if (maxValue === 0) return minHeight;
+    return Math.max(minHeight, Math.min(maxHeight, (value / maxValue) * maxHeight));
+  };
+
+  const maxValue = Math.max(
+    ...chartData.flatMap(d => [d.mobile, d.tablet, d.desktop])
+  );
+
+  // Format date (e.g., "Jan 25")
+  const formatDate = (dateStr: string): string => {
+    try {
+      const date = new Date(dateStr);
+      const month = date.toLocaleDateString('en-US', { month: 'short' });
+      const day = date.getDate();
+      return `${month} ${day}`;
+    } catch {
+      return dateStr;
     }
   };
 
-  const config = themes[theme];
+  if (loading) {
+    const loadingContainerStyle: React.CSSProperties = {
+      ...containerStyle,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '300px'
+    };
+
+    const loadingTextStyle: React.CSSProperties = {
+      fontSize: '14px',
+      color: '#9CA3AF',
+      fontFamily: 'Poppins, sans-serif'
+    };
+
+    return (
+      <div style={loadingContainerStyle}>
+        <div style={loadingTextStyle}>Loading chart data...</div>
+      </div>
+    );
+  }
+
+  if (chartData.length === 0) {
+    return (
+      <div style={containerStyle}>
+        <div style={headerStyle}>Visitor Analytics</div>
+        <div style={{ ...chartAreaStyle, justifyContent: 'center', fontSize: '14px', color: '#9CA3AF' }}>
+          No data available
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full h-[81px] bg-white dark:bg-gray-800 rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.10)] overflow-hidden flex items-center px-4 relative">
-      {/* Background decorative circle */}
-      <div className={`w-[198px] h-[198px] absolute -right-[37px] -top-[83px] ${config.circleClass} rounded-full`} />
+    <div style={containerStyle}>
+      <div style={headerStyle}>Visitor Analytics</div>
       
-      {/* Icon */}
-      <div className="w-[38px] h-[38px] flex-shrink-0 z-10">
-        {icon}
+      <div style={chartAreaStyle}>
+        <div style={yAxisLabelStyle}>Units of measure</div>
+        
+        <div style={barsContainerStyle}>
+          {chartData.map((day, index) => (
+            <div key={index} style={dayGroupStyle}>
+              <div style={barsWrapperStyle}>
+                {/* Mobile bar */}
+                <div style={barStyle(getBarHeight(day.mobile, maxValue), mobileGradient)}>
+                  <div style={barLabelStyle}>{day.mobile}</div>
+                </div>
+                
+                {/* Tablet bar */}
+                <div style={barStyle(getBarHeight(day.tablet, maxValue), tabletGradient)}>
+                  <div style={barLabelStyle}>{day.tablet}</div>
+                </div>
+                
+                {/* Desktop bar */}
+                <div style={barStyle(getBarHeight(day.desktop, maxValue), desktopGradient)}>
+                  <div style={barLabelStyle}>{day.desktop}</div>
+                </div>
+              </div>
+              
+              <div style={dateLabelStyle}>{formatDate(day.date)}</div>
+            </div>
+          ))}
+        </div>
       </div>
-      
-      {/* Text */}
-      <div className="flex-1 flex flex-col justify-center ml-4 min-w-0 z-10">
-        <div className={`${config.titleColor} text-base font-medium font-['Poppins']`}>{title}</div>
-        <div className="text-black dark:text-gray-300 text-[13px] font-normal font-['Poppins']">{subtitle}</div>
-      </div>
-      
-      {/* Value */}
-      <div className="text-black dark:text-white text-xl sm:text-2xl lg:text-xl sm:text-2xl lg:text-[28px] font-medium font-['Poppins'] flex-shrink-0 z-10">
-        {loading ? (
-          <div className="w-10 h-8 bg-gray-200 dark:bg-gray-600 animate-pulse rounded" />
-        ) : (
-          value
-        )}
+
+      {/* Legend */}
+      <div style={legendContainerStyle}>
+        <div style={legendItemStyle}>
+          <div style={legendColorStyle(mobileGradient)} />
+          <div style={legendTextStyle}>Mobile View</div>
+        </div>
+        <div style={legendItemStyle}>
+          <div style={legendColorStyle(tabletGradient)} />
+          <div style={legendTextStyle}>Tab View</div>
+        </div>
+        <div style={legendItemStyle}>
+          <div style={legendColorStyle(desktopGradient)} />
+          <div style={legendTextStyle}>Desktop View</div>
+        </div>
       </div>
     </div>
   );
@@ -100,6 +399,12 @@ interface FigmaVisitorStatsProps {
     totalVisitors?: number;
     last7Days?: number;
     pageViews?: number;
+    chartData?: Array<{
+      date: string;
+      mobile: number;
+      tablet: number;
+      desktop: number;
+    }>;
   };
   tenantId?: string;
 }
@@ -113,7 +418,13 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
     todayVisitors: 0,
     totalVisitors: 0,
     last7Days: 0,
-    pageViews: 0
+    pageViews: 0,
+    chartData: [] as Array<{
+      date: string;
+      mobile: number;
+      tablet: number;
+      desktop: number;
+    }>
   });
   const [loading, setLoading] = useState(true);
 
@@ -125,7 +436,8 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
         todayVisitors: visitorStats.todayVisitors || 0,
         totalVisitors: visitorStats.totalVisitors || 0,
         last7Days: visitorStats.last7Days || 0,
-        pageViews: visitorStats.pageViews || 0
+        pageViews: visitorStats.pageViews || 0,
+        chartData: visitorStats.chartData || []
       });
       setLoading(false);
       return;
@@ -159,7 +471,8 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
             todayVisitors: statsData.todayVisitors || 0,
             totalVisitors: statsData.totalVisitors || 0,
             last7Days: statsData.periodVisitors || 0,
-            pageViews: statsData.totalPageViews || 0
+            pageViews: statsData.totalPageViews || 0,
+            chartData: statsData.chartData || []
           });
         }
       } catch (error) {
@@ -193,37 +506,73 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
     return () => clearInterval(interval);
   }, [visitorStats, tenantId]);
 
+  const containerStyle: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
+    display: 'grid',
+    gridTemplateColumns: '372px 1fr',
+    gap: '20px',
+    fontFamily: 'Poppins, sans-serif'
+  };
+
+  const cardsContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '14px'
+  };
+
+  const blueTheme = {
+    gradient: 'radial-gradient(circle at 50% 50%, #38bdf8 0%, #1e90ff 100%)',
+    iconColor: '#38bdf8',
+    titleColor: '#008dff'
+  };
+
+  const orangeTheme = {
+    gradient: 'radial-gradient(circle at 50% 50%, #ff9f1c 0%, #ff6a00 100%)',
+    iconColor: '#ff6a00',
+    titleColor: '#f50'
+  };
+
+  const purpleTheme = {
+    gradient: 'radial-gradient(circle at 50% 50%, #a08bff 0%, #5943ff 100%)',
+    iconColor: '#5943ff',
+    titleColor: '#3f34be'
+  };
+
   return (
-    <div className="h-full flex flex-col justify-center items-stretch gap-3.5">
-      {/* Online Now - Blue theme */}
-      <VisitorCard
-        icon={<OnlineNowIcon />}
-        title="Online Now"
-        subtitle="Active visitors on site"
-        value={stats.onlineNow}
-        theme="blue"
-        loading={loading}
-      />
-      
-      {/* Today Visitors - Orange theme */}
-      <VisitorCard
-        icon={<TodayVisitorsIcon />}
-        title="Today visitors"
-        subtitle={`Last 7 days: ${stats.last7Days}`}
-        value={stats.todayVisitors}
-        theme="orange"
-        loading={loading}
-      />
-      
-      {/* Total Visitors - Purple theme */}
-      <VisitorCard
-        icon={<TotalVisitorsIcon />}
-        title="Total visitors"
-        subtitle={`${stats.pageViews} page view`}
-        value={stats.totalVisitors}
-        theme="purple"
-        loading={loading}
-      />
+    <div style={containerStyle}>
+      {/* Left: Visitor Cards */}
+      <div style={cardsContainerStyle}>
+        <VisitorCard
+          icon={<OnlineNowIcon color={blueTheme.iconColor} />}
+          title="Online Now"
+          subtitle="Active visitors on site"
+          value={stats.onlineNow}
+          themeColors={blueTheme}
+          loading={loading}
+        />
+        
+        <VisitorCard
+          icon={<TodayVisitorsIcon color={orangeTheme.iconColor} />}
+          title="Today visitors"
+          subtitle={`Last 7 days: ${stats.last7Days}`}
+          value={stats.todayVisitors}
+          themeColors={orangeTheme}
+          loading={loading}
+        />
+        
+        <VisitorCard
+          icon={<TotalVisitorsIcon color={purpleTheme.iconColor} />}
+          title="Total visitors"
+          subtitle={`${stats.pageViews} page view`}
+          value={stats.totalVisitors}
+          themeColors={purpleTheme}
+          loading={loading}
+        />
+      </div>
+
+      {/* Right: Bar Chart */}
+      <BarChart chartData={stats.chartData} loading={loading} />
     </div>
   );
 };
