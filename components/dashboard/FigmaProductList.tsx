@@ -1062,35 +1062,6 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
         <div className="flex flex-col gap-2 xxs:gap-3">
           {/* Import/Export/PerPage row */}
           <div className="flex flex-wrap items-center gap-2 xxs:gap-3 sm:gap-4 justify-end">
-          {/* Products Per Page */}
-          <div className="relative" data-dropdown>
-            <button
-              onClick={() => setShowPerPageDropdown(!showPerPageDropdown)}
-              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 w-auto"
-            >
-              <span className="text-[11px] xxs:text-[12px] text-black dark:text-white">{productsPerPage >= 999 ? 'All' : productsPerPage}</span>
-              <ChevronDown size={12} className="text-gray-600 dark:text-gray-400 xxs:w-[14px] xxs:h-[14px]" />
-            </button>
-            {showPerPageDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-[80px] xxs:w-[100px]">
-                {[5, 10, 15, 20, 50].map(num => (
-                  <button
-                    key={num}
-                    onClick={() => { setProductsPerPage(num); setShowPerPageDropdown(false); }}
-                    className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
-                  >
-                    {num}
-                  </button>
-                ))}
-                <button
-                  onClick={() => { setProductsPerPage(9999); setShowPerPageDropdown(false); }}
-                  className="w-full px-2 xxs:px-3 py-1.5 xxs:py-2 text-left text-[11px] xxs:text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
-                >
-                  All
-                </button>
-              </div>
-            )}
-            </div>
           </div>
 
           {/* Filter row */}
@@ -1576,9 +1547,39 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* Footer: Print & Pagination */}
       {filteredProducts.length > 0 && (
-        <div className="flex flex-col items-center mt-6 pt-4 gap-4">
-          {/* Pagination - Centered */}
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between mt-6 pt-4 gap-4">
+          {/* Products Per Page - Left */}
+          <div className="relative order-2 sm:order-1" data-dropdown>
+            <button
+              onClick={() => setShowPerPageDropdown(!showPerPageDropdown)}
+              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 px-3 py-2 w-auto min-w-[80px]"
+            >
+              <span className="text-[12px] text-black dark:text-white">{productsPerPage >= 999 ? 'All' : productsPerPage}</span>
+              <ChevronDown size={14} className="text-gray-600 dark:text-gray-400" />
+            </button>
+            {showPerPageDropdown && (
+              <div className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-full">
+                {[5, 10, 15, 20, 50].map(num => (
+                  <button
+                    key={num}
+                    onClick={() => { setProductsPerPage(num); setShowPerPageDropdown(false); }}
+                    className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
+                  >
+                    {num}
+                  </button>
+                ))}
+                <button
+                  onClick={() => { setProductsPerPage(9999); setShowPerPageDropdown(false); }}
+                  className="w-full px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200"
+                >
+                  All
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Pagination - Center */}
+          <div className="flex items-center gap-2 order-1 sm:order-2">
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
