@@ -1076,7 +1076,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           <div className="relative" data-dropdown>
             <button
               onClick={() => { setShowCategoryDropdown(!showCategoryDropdown); setShowBrandDropdown(false); setShowStatusDropdown(false); }}
-              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[100px] xxs:max-w-[119px]"
+              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[120px] xxs:max-w-[140px]"
             >
               <span className="text-[11px] xxs:text-[12px] text-black dark:text-white truncate">
                 {categoryFilter === 'all' ? 'All Category' : categoryFilter}
@@ -1108,7 +1108,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           <div className="relative" data-dropdown>
             <button
               onClick={() => { setShowBrandDropdown(!showBrandDropdown); setShowCategoryDropdown(false); setShowStatusDropdown(false); }}
-              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[90px] xxs:max-w-[110px]"
+              className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center justify-between gap-1 xxs:gap-2 px-2 xxs:px-3 py-1.5 xxs:py-2 min-w-0 max-w-[110px] xxs:max-w-[130px]"
             >
               <span className="text-[11px] xxs:text-[12px] text-black dark:text-white truncate">
                 {brandFilter === 'all' ? 'All Brands' : brandFilter}
