@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { Monitor, Smartphone, CheckCircle2, Circle } from 'lucide-react';
+import React, { useState, useCallback, useMemo } from 'react';
+import { Monitor, Smartphone, CheckCircle2, Circle, RefreshCw, ExternalLink } from 'lucide-react';
 import { WebsiteConfig } from './types';
 import { THEME_DEMO_IMAGES } from './constants';
 
@@ -23,6 +23,7 @@ const MOBILE_SECTIONS = [
 interface CustomThemeSectionsProps {
   websiteConfiguration: WebsiteConfig;
   setWebsiteConfiguration: React.Dispatch<React.SetStateAction<WebsiteConfig>>;
+  tenantSubdomain?: string;
 }
 
 // Toggle Switch sub-component
@@ -60,10 +61,11 @@ const ToggleSwitch: React.FC<{ enabled: boolean; onToggle: () => void }> = ({ en
 const StyleOptionPill: React.FC<{
   label: string;
   isSelected: boolean;
+  disabled: boolean;
   onSelect: () => void;
-}> = ({ label, isSelected, onSelect }) => (
+}> = ({ label, isSelected, disabled, onSelect }) => (
   <div
-    onClick={onSelect}
+    onClick={() => !disabled && onSelect()}
     style={{
       flex: '1 0 0',
       display: 'flex',
@@ -73,11 +75,12 @@ const StyleOptionPill: React.FC<{
       padding: '8px 12px',
       borderRadius: '8px',
       border: isSelected ? '1.5px solid #ff6a00' : '1.5px solid rgba(0,0,0,0.1)',
-      backgroundColor: 'white',
-      cursor: 'pointer',
+      backgroundColor: isSelected ? '#fff8f3' : 'white',
+      cursor: disabled ? 'not-allowed' : 'pointer',
       overflow: 'hidden',
       transition: 'all 0.2s ease',
       minWidth: 0,
+      opacity: disabled ? 0.4 : 1,
     }}
   >
     {isSelected ? (
@@ -88,9 +91,9 @@ const StyleOptionPill: React.FC<{
     <span
       style={{
         fontFamily: '"Lato", sans-serif',
-        fontWeight: 500,
+        fontWeight: isSelected ? 600 : 500,
         fontSize: '15px',
-        color: '#1a1a1a',
+        color: isSelected ? '#ff6a00' : '#1a1a1a',
         letterSpacing: '-0.32px',
         whiteSpace: 'nowrap',
       }}
@@ -111,7 +114,13 @@ const ThemeSection: React.FC<{
   onStyleSelect: (key: string, value: string) => void;
   onToggle: () => void;
 }> = ({ title, sectionKey, label, count, currentStyle, enabled, onStyleSelect, onToggle }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', opacity: enabled ? 1 : 0.5, transition: 'opacity 0.25s ease' }}>
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    width: '100%',
+    transition: 'opacity 0.25s ease',
+  }}>
     {/* Section Header: Title + Toggle */}
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
       <h3
@@ -138,7 +147,8 @@ const ThemeSection: React.FC<{
             key={i}
             label={`${label} ${i + 1}`}
             isSelected={enabled && currentStyle === styleValue}
-            onSelect={() => enabled && onStyleSelect(sectionKey, styleValue)}
+            disabled={!enabled}
+            onSelect={() => onStyleSelect(sectionKey, styleValue)}
           />
         );
       })}
@@ -149,11 +159,22 @@ const ThemeSection: React.FC<{
 export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
   websiteConfiguration,
   setWebsiteConfiguration,
+  tenantSubdomain,
 }) => {
   const [deviceMode, setDeviceMode] = useState<'web' | 'mobile'>('web');
   const [previewSection, setPreviewSection] = useState<string>('headerStyle');
+  const [iframeKey, setIframeKey] = useState(0);
 
   const sections = deviceMode === 'web' ? WEB_SECTIONS : MOBILE_SECTIONS;
+
+  // Build store URL for the live preview
+  const storeUrl = useMemo(() => {
+    if (!tenantSubdomain) return '';
+    const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:';
+    const host = typeof window !== 'undefined' ? window.location.host : '';
+    const mainDomain = host.split('.').slice(-2).join('.');
+    return `${protocol}//${tenantSubdomain}.${mainDomain}`;
+  }, [tenantSubdomain]);
 
   const handleStyleSelect = useCallback((sectionKey: string, styleValue: string) => {
     setWebsiteConfiguration((prev) => ({ ...prev, [sectionKey]: styleValue }));
@@ -190,6 +211,10 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
     return found ? found.title : 'Preview';
   };
 
+  const refreshPreview = () => {
+    setIframeKey((k) => k + 1);
+  };
+
   return (
     <div style={{ display: 'flex', gap: '24px', position: 'relative', alignItems: 'flex-start' }}>
       {/* Left: Sections Panel */}
@@ -208,7 +233,6 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
               overflow: 'hidden',
             }}
           >
-            {/* Web Button */}
             <button
               onClick={() => setDeviceMode('web')}
               style={{
@@ -232,7 +256,6 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
               <Monitor size={14} />
               Web
             </button>
-            {/* Mobile Button */}
             <button
               onClick={() => setDeviceMode('mobile')}
               style={{
@@ -299,35 +322,107 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
             boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
           }}
         >
-          {/* Preview Title */}
-          <div style={{ padding: '16px 12px 0' }}>
-            <h4
-              style={{
-                fontFamily: '"Lato", sans-serif',
-                fontWeight: 700,
-                fontSize: '20px',
-                color: '#023337',
-                letterSpacing: '0.1px',
-                margin: 0,
-              }}
-            >
-              Preview
-            </h4>
-            <p style={{ margin: '4px 0 0', fontFamily: '"Lato", sans-serif', fontSize: '13px', color: '#64748b' }}>
-              {getPreviewTitle()}
-            </p>
+          {/* Preview Header */}
+          <div style={{
+            padding: '12px 16px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottom: '1px solid #f0f0f0',
+          }}>
+            <div>
+              <h4
+                style={{
+                  fontFamily: '"Lato", sans-serif',
+                  fontWeight: 700,
+                  fontSize: '20px',
+                  color: '#023337',
+                  letterSpacing: '0.1px',
+                  margin: 0,
+                }}
+              >
+                Preview
+              </h4>
+              <p style={{ margin: '2px 0 0', fontFamily: '"Lato", sans-serif', fontSize: '13px', color: '#64748b' }}>
+                {getPreviewTitle()}
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {storeUrl && (
+                <>
+                  <button
+                    onClick={refreshPreview}
+                    title="Refresh preview"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '6px',
+                      border: '1px solid #e5e7eb',
+                      backgroundColor: 'white',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <RefreshCw size={14} style={{ color: '#64748b' }} />
+                  </button>
+                  <button
+                    onClick={() => window.open(storeUrl, '_blank')}
+                    title="Open store in new tab"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '6px',
+                      border: '1px solid #e5e7eb',
+                      backgroundColor: 'white',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <ExternalLink size={14} style={{ color: '#64748b' }} />
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
-          {/* Preview Image */}
+          {/* Preview Content */}
           <div
             style={{
               width: '100%',
-              height: '650px',
+              height: '680px',
               overflow: 'hidden',
-              marginTop: '12px',
+              backgroundColor: '#f8fafc',
+              position: 'relative',
             }}
           >
-            {getPreviewImage() ? (
+            {storeUrl ? (
+              <iframe
+                key={iframeKey}
+                src={storeUrl}
+                title="Store Live Preview"
+                style={{
+                  width: deviceMode === 'mobile' ? '375px' : '100%',
+                  height: '100%',
+                  border: 'none',
+                  transformOrigin: 'top left',
+                  transform: deviceMode === 'mobile' ? 'none' : 'scale(0.55)',
+                  ...(deviceMode !== 'mobile' ? {
+                    width: '182%',
+                    height: '182%',
+                  } : {
+                    margin: '0 auto',
+                    display: 'block',
+                  }),
+                }}
+                sandbox="allow-scripts allow-same-origin allow-popups"
+              />
+            ) : getPreviewImage() ? (
               <img
                 src={getPreviewImage()}
                 alt="Theme Preview"
@@ -336,7 +431,6 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
                   height: '100%',
                   objectFit: 'contain',
                   objectPosition: 'top center',
-                  backgroundColor: '#f8fafc',
                 }}
               />
             ) : (
@@ -352,7 +446,6 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
                   fontFamily: '"Poppins", sans-serif',
                   fontSize: '15px',
                   gap: '12px',
-                  backgroundColor: '#f8fafc',
                 }}
               >
                 <Monitor size={32} style={{ color: '#cbd5e1' }} />

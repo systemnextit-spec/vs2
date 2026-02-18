@@ -1,6 +1,7 @@
 import { ThemeConfig, WebsiteConfig, SocialLink, CarouselItem, FooterLink, Popup, Campaign, Product } from '../../types';
 
 export interface AdminCustomizationProps {
+  tenantSubdomain?: string;
   tenantId: string;
   logo: string | null;
   onUpdateLogo: (logo: string | null) => void;

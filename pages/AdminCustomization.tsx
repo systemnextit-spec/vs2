@@ -29,6 +29,7 @@ import {
 
 const AdminCustomization: React.FC<AdminCustomizationProps> = ({
   tenantId,
+  tenantSubdomain,
   logo,
   onUpdateLogo,
   themeConfig,
@@ -504,6 +505,7 @@ const AdminCustomization: React.FC<AdminCustomizationProps> = ({
               <CustomThemeSections
                 websiteConfiguration={websiteConfiguration}
                 setWebsiteConfiguration={setWebsiteConfiguration}
+                tenantSubdomain={tenantSubdomain}
               />
             </div>
           </>
