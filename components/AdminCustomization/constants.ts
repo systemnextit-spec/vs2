@@ -92,11 +92,11 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style5: 'https://hdnfltv.com/image/nitimages/category-5.webp',
   },
   productSectionStyle: {
-    style1: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&q=80&fm=webp',
-    style2: 'https://images.unsplash.com/photo-1556742111-a301076d9d18?w=1200&q=80&fm=webp',
-    style3: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&q=80&fm=webp',
-    style4: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1200&q=80&fm=webp',
-    style5: 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=1200&q=80&fm=webp',
+    style1: 'https://hdnfltv.com/image/nitimages/product_card_-_1.webp',
+    style2: 'https://hdnfltv.com/image/nitimages/product_card_-_2.webp',
+    style3: 'https://hdnfltv.com/image/nitimages/product_card_-_3.webp',
+    style4: 'https://hdnfltv.com/image/nitimages/product_card_-_4.webp',
+    style5: 'https://hdnfltv.com/image/nitimages/product_card_-_5.webp',
   },
   productCardStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/product_card_-_1.webp',

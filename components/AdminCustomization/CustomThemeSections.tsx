@@ -6,10 +6,10 @@ import { THEME_DEMO_IMAGES } from './constants';
 // Web sections configuration
 const WEB_SECTIONS = [
   { title: 'Header Section', key: 'headerStyle', label: 'Header', count: 5 },
-  { title: 'Showcase Section', key: 'showcaseSectionStyle', label: 'Showcase', count: 5 },
+  // { title: 'Showcase Section', key: 'showcaseSectionStyle', label: 'Showcase', count: 5 },
   { title: 'Category Section', key: 'categorySectionStyle', label: 'Category', count: 5 },
-  { title: 'Product Section', key: 'productSectionStyle', label: 'Product', count: 5 },
-  { title: 'Brand Section', key: 'brandSectionStyle', label: 'Brand', count: 5 },
+  // { title: 'Product Section', key: 'productSectionStyle', label: 'Product', count: 5 },
+  // { title: 'Brand Section', key: 'brandSectionStyle', label: 'Brand', count: 5 },
   { title: 'Footer Section', key: 'footerStyle', label: 'Footer', count: 5 },
 ];
 
@@ -161,18 +161,13 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeCacheBuster, setIframeCacheBuster] = useState(0);
 
-  // Refresh iframe when save completes
+  // Refresh iframe and switch to live store preview when save completes
   useEffect(() => {
     if (isSaved) {
+      // Switch to live store tab so user sees the result
+      setPreviewTab('store');
+      // Bump cache buster to force iframe reload with fresh data
       setIframeCacheBuster(prev => prev + 1);
-      // Also try to reload the iframe directly
-      if (iframeRef.current) {
-        try {
-          iframeRef.current.src = iframeRef.current.src;
-        } catch (e) {
-          // Cross-origin iframe, cache buster will handle it
-        }
-      }
     }
   }, [isSaved]);
 
@@ -349,7 +344,9 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
               storeUrl ? (
                 <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}>
                   <iframe
-                    src={storeUrl}
+                    ref={iframeRef}
+                    key={iframeCacheBuster}
+                    src={`${storeUrl}${storeUrl.includes('?') ? '&' : '?'}_cb=${iframeCacheBuster}`}
                     title="Store Live Preview"
                     style={{
                       position: 'absolute',
