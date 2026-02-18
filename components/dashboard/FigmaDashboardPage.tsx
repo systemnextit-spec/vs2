@@ -3,7 +3,6 @@ import {
   DashboardLayout,
   FigmaOverview,
   FigmaOrderStatus,
-  FigmaVisitorStats,
   FigmaBestSellingProducts,
   FigmaTopProducts,
   FigmaSalesPerformance,
@@ -181,21 +180,14 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
           onLangChange={setLanguage}
         />
 
-        {/* Visitor Stats + Analytics Bar Chart Row */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 px-3 sm:px-4 lg:px-6">
-          {/* Visitor Stats - Left Side */}
-          <div className="md:col-span-4 lg:col-span-3">
-            <FigmaVisitorStats tenantId={tenantId} />
-          </div>
-
-          {/* Analytics Bar Chart - Right Side */}
-          <div className="md:col-span-8 lg:col-span-9">
-            <FigmaAnalyticsChart
-              timeFilter={timeFilter}
-              onTimeFilterChange={(filter) => setTimeFilter(filter as any)}
-              onDateRangeChange={(range) => setSelectedMonth(range.start)}
-            />
-          </div>
+        {/* Analytics Bar Chart */}
+        <div className="px-3 sm:px-4 lg:px-6">
+          <FigmaAnalyticsChart
+            timeFilter={timeFilter}
+            onTimeFilterChange={(filter) => setTimeFilter(filter as any)}
+            onDateRangeChange={(range) => setSelectedMonth(range.start)}
+            tenantId={tenantId}
+          />
         </div>
 
         {/* Order Status Row */}

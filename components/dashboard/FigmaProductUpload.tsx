@@ -1618,7 +1618,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         </div>
 
         {/* Right Sidebar - Desktop only */}
-        <div className="hidden lg:block w-[320px] lg:w-[381px] flex-shrink-0 space-y-4 sticky top-6 self-start">
+        <div className="hidden lg:block w-[320px] lg:w-[381px] flex-shrink-0 space-y-4 sticky top-6 self-start max-h-[calc(100vh-3rem)] overflow-y-auto">
           {/* Action Buttons */}
           <div className="flex gap-2">
             <button
