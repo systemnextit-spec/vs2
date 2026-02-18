@@ -189,33 +189,45 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
   }, [products, productDisplayOrder, storeStudioEnabled]);
 
   // Compute product lists using ordered products
-  const { flashSalesProducts, bestSaleProducts, popularProducts, activeProducts } = useMemo(() => {
+  const { flashSalesProducts, bestSaleProducts, popularProducts, newArrivalProducts, activeProducts } = useMemo(() => {
     const now = new Date();
     const active = orderedProducts.filter(p => p.status === 'Active' || !p.status);
     
+    // Flash Sale: products with flashSale flag OR tagged "Flash Sale"
     const flash = active.filter(p => {
-      if (!(p as any).flashSale) return false;
-      const start = (p as any).flashSaleStartDate ? new Date((p as any).flashSaleStartDate) : null;
-      const end = (p as any).flashSaleEndDate ? new Date((p as any).flashSaleEndDate) : null;
-      if (start && now < start) return false;
-      if (end && now > end) return false;
-      return true;
+      const hasFlashTag = (p as any).tags?.includes('Flash Sale');
+      if ((p as any).flashSale) {
+        const start = (p as any).flashSaleStartDate ? new Date((p as any).flashSaleStartDate) : null;
+        const end = (p as any).flashSaleEndDate ? new Date((p as any).flashSaleEndDate) : null;
+        if (start && now < start) return false;
+        if (end && now > end) return false;
+        return true;
+      }
+      return hasFlashTag;
     });
 
+    // Best Sale: top sold products
     const bestSale = active
       .filter(p => (p.totalSold || 0) > 0)
       .sort((a, b) => (b.totalSold || 0) - (a.totalSold || 0))
       .slice(0, 12);
 
+    // Most Popular: tagged "Most Popular" OR high rating
     const popular = active
-      .filter(p => (p.rating || 0) >= 4)
+      .filter(p => (p as any).tags?.includes('Most Popular') || (p.rating || 0) >= 4)
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 12);
+
+    // New Arrival: tagged "New Arrival"
+    const newArrival = active
+      .filter(p => (p as any).tags?.includes('New Arrival'))
       .slice(0, 12);
 
     return { 
       flashSalesProducts: flash, 
       bestSaleProducts: bestSale, 
       popularProducts: popular,
+      newArrivalProducts: newArrival,
       activeProducts: active 
     };
   }, [orderedProducts]);
@@ -368,6 +380,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
       case 'product-grid':
         const gridProducts = settings?.filterType === 'best-sale' ? bestSaleProducts
           : settings?.filterType === 'popular' ? popularProducts
+          : settings?.filterType === 'new-arrival' ? newArrivalProducts
           : activeProducts;
         if (gridProducts.length === 0) return null;
         return (
@@ -735,7 +748,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
     }
   }, [
     websiteConfig, categories, brands, tags,
-    flashSalesProducts, bestSaleProducts, popularProducts, activeProducts,
+    flashSalesProducts, bestSaleProducts, popularProducts, newArrivalProducts, activeProducts,
     flashSaleCountdown, getTagProducts,
     onProductClick, onBuyNow, onQuickView, onAddToCart, onCategoryClick, onBrandClick, onOpenChat,
     logo

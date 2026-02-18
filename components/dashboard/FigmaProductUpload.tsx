@@ -86,7 +86,7 @@ interface FormData {
   flashSale: boolean;
   flashSaleStartDate: string;
   flashSaleEndDate: string;
-  tag: string;
+  tag: string[];
   deepSearch: string;
 }
 
@@ -354,7 +354,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     flashSale: false,
     flashSaleStartDate: '',
     flashSaleEndDate: '',
-    tag: '',
+    tag: [],
     deepSearch: ''
   });
 
@@ -389,6 +389,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         flashSale: editProduct.flashSale || false,
         flashSaleStartDate: editProduct.flashSaleStartDate || '',
         flashSaleEndDate: editProduct.flashSaleEndDate || '',
+        tag: editProduct.tags || [],
         deepSearch: editProduct.deepSearch || ''
       }));
     }
@@ -863,7 +864,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       sku: formData.sku,
       stock: formData.quantity || 0,
       status: 'Draft',
-      tags: formData.tag ? [formData.tag] : [],
+      tags: formData.tag.length > 0 ? formData.tag : [],
       tenantId: tenantId,
       shopName: formData.shopName,
       flashSale: formData.flashSale,
@@ -918,7 +919,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       sku: formData.sku,
       stock: formData.quantity,
       status: 'Active',
-      tags: formData.tag ? [formData.tag] : [],
+      tags: formData.tag.length > 0 ? formData.tag : [],
       tenantId: tenantId,
       shopName: formData.shopName,
       flashSale: formData.flashSale,
@@ -1715,14 +1716,59 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
               </button>
             </div>
 
-            {/* Tags */}
+            {/* Product Tags */}
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Product Tags</label>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {['Flash Sale', 'New Arrival', 'Most Popular'].map((tagName) => {
+                  const isSelected = formData.tag.includes(tagName);
+                  return (
+                    <button
+                      key={tagName}
+                      type="button"
+                      onClick={() => {
+                        if (isSelected) {
+                          updateField('tag', formData.tag.filter((t: string) => t !== tagName));
+                        } else {
+                          updateField('tag', [...formData.tag, tagName]);
+                        }
+                      }}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+                        isSelected
+                          ? tagName === 'Flash Sale'
+                            ? 'bg-red-500 text-white border-red-500 shadow-md'
+                            : tagName === 'New Arrival'
+                            ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                            : 'bg-purple-500 text-white border-purple-500 shadow-md'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      {isSelected ? '\u2713 ' : ''}{tagName}
+                    </button>
+                  );
+                })}
+              </div>
+              {/* Custom Tags */}
               <SelectField
-                value={formData.tag}
-                onChange={(v) => updateField('tag', v)}
-                options={localTags.map(t => ({ value: t.name, label: t.name }))}
-                placeholder="Select Tag"
+                value=""
+                onChange={(v) => {
+                  if (v && !formData.tag.includes(v)) {
+                    updateField('tag', [...formData.tag, v]);
+                  }
+                }}
+                options={localTags.filter(t => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t.name)).map(t => ({ value: t.name, label: t.name }))}
+                placeholder="Add custom tag..."
               />
+              {formData.tag.filter((t: string) => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t)).length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {formData.tag.filter((t: string) => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t)).map((t: string) => (
+                    <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                      {t}
+                      <button type="button" onClick={() => updateField('tag', formData.tag.filter((x: string) => x !== t))} className="text-gray-400 hover:text-red-500">\u00d7</button>
+                    </span>
+                  ))}
+                </div>
+              )}
               <button 
                 onClick={() => { setCatalogModalTab('tag'); setShowCatalogModal(true); }}
                 className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
@@ -1912,14 +1958,59 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
               </button>
             </div>
 
-            {/* Tags - Mobile */}
+            {/* Product Tags - Mobile */}
             <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1.5">Product Tags</label>
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {['Flash Sale', 'New Arrival', 'Most Popular'].map((tagName) => {
+                  const isSelected = formData.tag.includes(tagName);
+                  return (
+                    <button
+                      key={tagName}
+                      type="button"
+                      onClick={() => {
+                        if (isSelected) {
+                          updateField('tag', formData.tag.filter((t: string) => t !== tagName));
+                        } else {
+                          updateField('tag', [...formData.tag, tagName]);
+                        }
+                      }}
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all border ${
+                        isSelected
+                          ? tagName === 'Flash Sale'
+                            ? 'bg-red-500 text-white border-red-500'
+                            : tagName === 'New Arrival'
+                            ? 'bg-blue-500 text-white border-blue-500'
+                            : 'bg-purple-500 text-white border-purple-500'
+                          : 'bg-white text-gray-700 border-gray-300'
+                      }`}
+                    >
+                      {isSelected ? '\u2713 ' : ''}{tagName}
+                    </button>
+                  );
+                })}
+              </div>
+              {/* Custom Tags Mobile */}
               <SelectField
-                value={formData.tag}
-                onChange={(v) => updateField('tag', v)}
-                options={localTags.map(t => ({ value: t.name, label: t.name }))}
-                placeholder="Select Tag"
+                value=""
+                onChange={(v) => {
+                  if (v && !formData.tag.includes(v)) {
+                    updateField('tag', [...formData.tag, v]);
+                  }
+                }}
+                options={localTags.filter(t => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t.name)).map(t => ({ value: t.name, label: t.name }))}
+                placeholder="Add custom tag..."
               />
+              {formData.tag.filter((t: string) => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t)).length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {formData.tag.filter((t: string) => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t)).map((t: string) => (
+                    <span key={t} className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-700">
+                      {t}
+                      <button type="button" onClick={() => updateField('tag', formData.tag.filter((x: string) => x !== t))} className="text-gray-400 hover:text-red-500">\u00d7</button>
+                    </span>
+                  ))}
+                </div>
+              )}
               <button 
                 onClick={() => { setCatalogModalTab('tag'); setShowCatalogModal(true); }}
                 className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
