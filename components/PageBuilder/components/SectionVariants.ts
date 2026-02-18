@@ -18,7 +18,7 @@ export interface SectionCategory {
 // Demo images for style previews
 export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
   headerStyle: {
-    style1: 'https://hdnfltv.com/image/nitimages/header_-_1.webp',
+    style1: 'https://hdnfltv.com/image/nitimages/pasted_1771447828354.webp',
     style2: 'https://hdnfltv.com/image/nitimages/header-2.webp',
     style3: 'https://hdnfltv.com/image/nitimages/header-3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/header-4.webp',

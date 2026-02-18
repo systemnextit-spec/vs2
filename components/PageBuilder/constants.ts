@@ -38,7 +38,7 @@ export const DEFAULT_LAYOUT: Omit<StoreLayout, 'tenantId' | 'lastUpdated'> = {
 
 // Style descriptions for each section type
 const HEADER_STYLES: StylePreview[] = [
-  { id: 'style1', name: 'Clean Modern', description: 'Glassmorphism with frosted glass', thumbnail: 'https://hdnfltv.com/image/nitimages/header_-_1.webp' },
+  { id: 'style1', name: 'Clean Modern', description: 'Glassmorphism with frosted glass', thumbnail: 'https://hdnfltv.com/image/nitimages/pasted_1771447828354.webp' },
   { id: 'style2', name: 'Compact Single Row', description: 'Minimal single-row navigation', thumbnail: 'https://hdnfltv.com/image/nitimages/header-2.webp' },
   { id: 'style3', name: 'Gradient Colorful', description: 'Theme gradient background', thumbnail: 'https://hdnfltv.com/image/nitimages/header-3.webp' },
   { id: 'style4', name: 'E-commerce Pro', description: 'Dark top bar, category dropdown', thumbnail: 'https://hdnfltv.com/image/nitimages/header-4.webp' },
