@@ -6,10 +6,11 @@ import { THEME_DEMO_IMAGES } from './constants';
 // Web sections configuration
 const WEB_SECTIONS = [
   { title: 'Header Section', key: 'headerStyle', label: 'Header', count: 5 },
-  // { title: 'Showcase Section', key: 'showcaseSectionStyle', label: 'Showcase', count: 5 },
+  { title: 'Showcase Section', key: 'showcaseSectionStyle', label: 'Showcase', count: 5 },
   { title: 'Category Section', key: 'categorySectionStyle', label: 'Category', count: 5 },
-  // { title: 'Product Section', key: 'productSectionStyle', label: 'Product', count: 5 },
-  // { title: 'Brand Section', key: 'brandSectionStyle', label: 'Brand', count: 5 },
+  { title: 'Product Section', key: 'productSectionStyle', label: 'Product', count: 0 },
+  { title: 'Product Card', key: 'productCardStyle', label: 'Card', count: 5 },  //product card
+  { title: 'Brand Section', key: 'brandSectionStyle', label: 'Brand', count: 0 },
   { title: 'Footer Section', key: 'footerStyle', label: 'Footer', count: 5 },
 ];
 
