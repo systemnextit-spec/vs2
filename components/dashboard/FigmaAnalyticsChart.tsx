@@ -164,9 +164,9 @@ const BarGroup: React.FC<BarGroupProps> = ({ date, data, maxValue }) => {
   return (
     <div className="flex flex-col items-center">
       <div className="flex items-end gap-[2px] h-[220px]">
-        <Bar value={data.mobile} color="linear-gradient(180deg, #38bdf8 1.829%, #1e90ff 100%)" maxValue={maxValue} />
-        <Bar value={data.tab} color="linear-gradient(180deg, #ff9f1c 0%, #ff6a00 100%)" maxValue={maxValue} />
-        <Bar value={data.desktop} color="linear-gradient(180deg, #a08bff 0%, #5943ff 100%)" maxValue={maxValue} />
+        <Bar value={data.mobile} color="linear-gradient(180deg, #38bdf8 1.829%, #1e90ff 100%)" maxValue={chartMaxValue} />
+        <Bar value={data.tab} color="linear-gradient(180deg, #ff9f1c 0%, #ff6a00 100%)" maxValue={chartMaxValue} />
+        <Bar value={data.desktop} color="linear-gradient(180deg, #a08bff 0%, #5943ff 100%)" maxValue={chartMaxValue} />
       </div>
       <div className="mt-3 text-[11px] text-gray-500 font-medium">
         {date}
@@ -378,7 +378,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
             {/* Main Charting Area */}
             <div className="flex-1 flex justify-between items-end pl-4 pr-4">
               {displayChartData.map((day, idx) => (
-                <BarGroup key={idx} date={day.date} data={day} maxValue={maxValue} />
+                <BarGroup key={idx} date={day.date} data={day} maxValue={chartMaxValue} />
               ))}
             </div>
           </div>
