@@ -42,7 +42,8 @@ const TagStyle1 = memo(({ tags, onTagClick }: Omit<Props, 'style'>) => {
   };
 
   const activeTags = useMemo(() => 
-    tags?.filter(t => !t.status || t.status === 'Active' || t.status?.toLowerCase() === 'active') || []
+    tags?.filter(t => !t.status || t.status === 'Active' || t.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity)) || []
   , [tags]);
 
   if (!activeTags.length) return null;
@@ -86,7 +87,8 @@ TagStyle1.displayName = 'TagStyle1';
 // Style 2: Compact Cloud - Tag cloud layout
 const TagStyle2 = memo(({ tags, onTagClick }: Omit<Props, 'style'>) => {
   const activeTags = useMemo(() => 
-    tags?.filter(t => !t.status || t.status === 'Active' || t.status?.toLowerCase() === 'active')?.slice(0, 20) || []
+    tags?.filter(t => !t.status || t.status === 'Active' || t.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))?.slice(0, 20) || []
   , [tags]);
 
   if (!activeTags.length) return null;
@@ -119,7 +121,8 @@ TagStyle2.displayName = 'TagStyle2';
 // Style 3: Minimal Inline - Simple inline text tags
 const TagStyle3 = memo(({ tags, onTagClick }: Omit<Props, 'style'>) => {
   const activeTags = useMemo(() => 
-    tags?.filter(t => !t.status || t.status === 'Active' || t.status?.toLowerCase() === 'active')?.slice(0, 15) || []
+    tags?.filter(t => !t.status || t.status === 'Active' || t.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))?.slice(0, 15) || []
   , [tags]);
 
   if (!activeTags.length) return null;

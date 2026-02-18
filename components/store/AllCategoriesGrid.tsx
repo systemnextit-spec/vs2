@@ -53,6 +53,7 @@ CategoryCard.displayName = 'CategoryCard';
 export const AllCategoriesGrid = memo(({ categories, onCategoryClick, title = 'CATEGORIES' }: Props) => {
   const processed = useMemo(() => 
     categories?.filter(c => !c.status || c.status === 'Active' || c.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))
       .map(c => ({ 
         name: c.name, 
         icon: c.icon || 'grid',

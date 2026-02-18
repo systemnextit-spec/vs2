@@ -470,6 +470,7 @@ export interface Category {
   icon?: string;
   image?: string;
   status: 'Active' | 'Inactive';
+  serial?: number;
 }
 
 export interface SubCategory {
@@ -479,6 +480,7 @@ export interface SubCategory {
   categoryId: string;
   name: string;
   status: 'Active' | 'Inactive';
+  serial?: number;
 }
 
 export interface ChildCategory {
@@ -487,6 +489,7 @@ export interface ChildCategory {
   subCategoryId: string;
   name: string;
   status: 'Active' | 'Inactive';
+  serial?: number;
 }
 
 export interface Brand {
@@ -495,6 +498,7 @@ export interface Brand {
   name: string;
   logo: string;
   status: 'Active' | 'Inactive';
+  serial?: number;
 }
 
 export interface Tag {
@@ -502,6 +506,7 @@ export interface Tag {
   tenantId?: string;
   name: string;
   status: 'Active' | 'Inactive';
+  serial?: number;
   icon?: string;
   durationDays?: number;
   expiresAt?: string;

@@ -26,6 +26,7 @@ const CategoryStyle1 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
 
   const processed = useMemo(() => 
     categories?.filter(c => !c.status || c.status === 'Active' || c.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))
       .slice(0, 30)
       .map(c => ({ name: c.name, icon: c.icon || 'grid', image: c.image, slug: c.slug })) || []
   , [categories]);
@@ -108,6 +109,7 @@ CategoryStyle1.displayName = 'CategoryStyle1';
 const CategoryStyle2 = memo(({ categories, onCategoryClick, sectionRef }: Omit<Props, 'style'>) => {
   const processed = useMemo(() => 
     categories?.filter(c => !c.status || c.status === 'Active' || c.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))
       .slice(0, 12)
       .map(c => ({ name: c.name, icon: c.icon || 'grid', image: c.image, slug: c.slug })) || []
   , [categories]);
@@ -152,6 +154,7 @@ const CategoryStyle3 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   
   const processed = useMemo(() => 
     categories?.filter(c => !c.status || c.status === 'Active' || c.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))
       .slice(0, 20)
       .map(c => ({ name: c.name, icon: c.icon || 'grid', image: c.image, slug: c.slug })) || []
   , [categories]);
@@ -217,6 +220,7 @@ const CategoryStyle4 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   
   const processed = useMemo(() => 
     categories?.filter(c => !c.status || c.status === 'Active' || c.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))
       .slice(0, 16)
       .map(c => ({ name: c.name, icon: c.icon || 'grid', image: c.image, slug: c.slug })) || []
   , [categories]);
@@ -285,6 +289,7 @@ const CategoryStyle5 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   
   const processed = useMemo(() => 
     categories?.filter(c => !c.status || c.status === 'Active' || c.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))
       .slice(0, 10)
       .map(c => ({ name: c.name, icon: c.icon || 'grid', image: c.image, slug: c.slug })) || []
   , [categories]);

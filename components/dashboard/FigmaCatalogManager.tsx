@@ -1,5 +1,8 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Plus, Search, Edit, Trash2, X, Image as ImageIcon, ChevronDown, ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { Plus, Search, Edit, Trash2, X, Image as ImageIcon, ChevronDown, ChevronLeft, ChevronRight, MoreVertical, GripVertical } from 'lucide-react';
+import { DndContext, closestCenter, DragEndEvent, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Category, SubCategory, ChildCategory, Brand, Tag } from '../../types';
 import { convertFileToWebP } from '../../services/imageUtils';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
@@ -75,6 +78,30 @@ const ArrowLeftIcon = () => (
   </svg>
 );
 
+
+// Sortable table row wrapper for DnD reordering
+function SortableRow({ id, children }: { id: string; children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 1000 : 'auto',
+    position: 'relative',
+    backgroundColor: isDragging ? '#f0f9ff' : undefined,
+  };
+  return (
+    <tr ref={setNodeRef} style={style} className={`h-[68px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${isDragging ? 'shadow-lg' : ''}`}>
+      <td className="px-2 py-3 w-[40px]">
+        <button className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded" {...attributes} {...listeners}>
+          <GripVertical className="h-4 w-4 text-gray-400" />
+        </button>
+      </td>
+      {children}
+    </tr>
+  );
+}
+
 interface FigmaCatalogManagerProps {
   view: string;
   onNavigate?: (view: string) => void;
@@ -99,6 +126,11 @@ interface FigmaCatalogManagerProps {
   onAddTag: (item: Tag) => void;
   onUpdateTag: (item: Tag) => void;
   onDeleteTag: (id: string) => void;
+  onReorderCategories?: (items: Category[]) => void;
+  onReorderSubCategories?: (items: SubCategory[]) => void;
+  onReorderChildCategories?: (items: ChildCategory[]) => void;
+  onReorderBrands?: (items: Brand[]) => void;
+  onReorderTags?: (items: Tag[]) => void;
 }
 
 const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
@@ -109,7 +141,9 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
   onAddSubCategory, onUpdateSubCategory, onDeleteSubCategory,
   onAddChildCategory, onUpdateChildCategory, onDeleteChildCategory,
   onAddBrand, onUpdateBrand, onDeleteBrand,
-  onAddTag, onUpdateTag, onDeleteTag
+  onAddTag, onUpdateTag, onDeleteTag,
+  onReorderCategories, onReorderSubCategories, onReorderChildCategories,
+  onReorderBrands, onReorderTags
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -125,6 +159,16 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showPerPageDropdown, setShowPerPageDropdown] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [localOrder, setLocalOrder] = useState<any[]>([]);
+  const [hasOrderChanges, setHasOrderChanges] = useState(false);
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 8 },
+    })
+  );
 
   // Tab configuration
   const catalogTabs = [
@@ -166,6 +210,15 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     }
   };
 
+  // Sync local order when source data or view changes
+  useEffect(() => {
+    const data = getCurrentData();
+    const sorted = [...data].sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity));
+    setLocalOrder(sorted);
+    setHasOrderChanges(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, categories, subCategories, childCategories, brands, tags, products]);
+
   const getTitle = () => {
     switch (view) {
       case 'catalog_categories': return 'Category';
@@ -177,9 +230,9 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     }
   };
 
-  // Filter data
+  // Filter data - uses localOrder for DnD reorder support
   const filteredData = useMemo(() => {
-    let data = getCurrentData();
+    let data = [...localOrder];
     
     if (searchTerm.trim()) {
       const query = searchTerm.toLowerCase();
@@ -191,7 +244,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     }
 
     return data;
-  }, [view, categories, subCategories, childCategories, brands, tags, searchTerm, statusFilter]);
+  }, [localOrder, searchTerm, statusFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -220,6 +273,40 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // DnD handlers
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setLocalOrder((items) => {
+      const oldIndex = items.findIndex((item: any) => item.id === active.id);
+      const newIndex = items.findIndex((item: any) => item.id === over.id);
+      if (oldIndex === -1 || newIndex === -1) return items;
+      return arrayMove(items, oldIndex, newIndex);
+    });
+    setHasOrderChanges(true);
+  }, []);
+
+  const handleSaveOrder = useCallback(() => {
+    setIsSavingOrder(true);
+    // Strip productCount and assign serial values
+    const withSerial = localOrder.map((item: any, idx: number) => {
+      const { productCount, ...rest } = item;
+      return { ...rest, serial: idx + 1 };
+    });
+
+    switch (view) {
+      case 'catalog_categories': onReorderCategories?.(withSerial); break;
+      case 'catalog_subcategories': onReorderSubCategories?.(withSerial); break;
+      case 'catalog_childcategories': onReorderChildCategories?.(withSerial); break;
+      case 'catalog_brands': onReorderBrands?.(withSerial); break;
+      case 'catalog_tags': onReorderTags?.(withSerial); break;
+    }
+
+    setHasOrderChanges(false);
+    setIsSavingOrder(false);
+  }, [localOrder, view, onReorderCategories, onReorderSubCategories, onReorderChildCategories, onReorderBrands, onReorderTags]);
+
   // Selection handlers
   const handleSelectAll = () => {
     if (selectedIds.length === paginatedData.length) {
@@ -241,7 +328,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     if (item) {
       setFormData({ ...item });
     } else {
-      const defaults: any = { name: '', status: 'Active', priority: 0, durationDays: 0 };
+      const defaults: any = { name: '', status: 'Active', Serial: 0, durationDays: 0 };
       if (view === 'catalog_categories') defaults.icon = '';
       if (view === 'catalog_subcategories') defaults.categoryId = categories[0]?.id || '';
       if (view === 'catalog_childcategories') defaults.subCategoryId = subCategories[0]?.id || '';
@@ -399,6 +486,17 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
               )}
             </div>
 
+            {/* Save Order Button */}
+            {hasOrderChanges && (
+              <button
+                onClick={handleSaveOrder}
+                disabled={isSavingOrder}
+                className="bg-gradient-to-r from-[#22c55e] to-[#16a34a] h-[48px] rounded-lg flex items-center gap-2 px-5 text-white font-bold text-[15px] font-['Lato'] shadow-md hover:opacity-90 disabled:opacity-50 transition-all animate-pulse"
+              >
+                {isSavingOrder ? 'Saving...' : 'Save Order'}
+              </button>
+            )}
+
             {/* Add Button */}
             <button
               onClick={() => handleOpenModal()}
@@ -445,10 +543,13 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
         {/* Data Table - Hide on mobile */}
         <div className="bg-white dark:bg-gray-800 overflow-visible">
           <div className="hidden sm:block overflow-x-auto overflow-y-visible">
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={paginatedData.map((item: any) => item.id)} strategy={verticalListSortingStrategy}>
             <table className="w-full min-w-[700px] text-sm">
               {/* Table Header - Gradient Background */}
               <thead className="bg-[#E0F2FE] dark:bg-gray-700">
                 <tr>
+                  <th className="px-2 py-3 w-[40px]"></th>
                   <th className="px-4 py-3 text-left w-[50px]">
                     <input
                       type="checkbox"
@@ -475,7 +576,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
               </thead>
               <tbody className="divide-y divide-[#b9b9b9]/50 dark:divide-gray-600">
                 {paginatedData.length > 0 ? paginatedData.map((item, index) => (
-                  <tr key={item.id} className="h-[68px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <SortableRow key={item.id} id={item.id}>
                     <td className="px-4 py-3">
                       <input
                         type="checkbox"
@@ -552,10 +653,10 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                         </button>
                       </div>
                     </td>
-                  </tr>
+                  </SortableRow>
                 )) : (
                   <tr>
-                    <td colSpan={10} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan={11} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                       <div className="flex flex-col items-center">
                         <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center mb-3">
                           <Search size={24} className="text-gray-400 dark:text-gray-500" />
@@ -568,6 +669,8 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                 )}
               </tbody>
             </table>
+            </SortableContext>
+            </DndContext>
           </div>
 
           {/* Mobile Card View */}
@@ -851,7 +954,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                 </div>
               ) : (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Serial</label>
                   <input
                     type="number"
                     value={formData.priority || 0}
