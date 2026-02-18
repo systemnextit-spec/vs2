@@ -60,7 +60,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             Welcome back, {user?.name || 'Admin'}
           </div>
           <div className="text-slate-500 text-xs sm:text-sm font-medium">
-            Monitor your business analytics and statistics.
+              Monitor your business.
           </div>
         </div>
         

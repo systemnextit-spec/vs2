@@ -270,7 +270,7 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
             Welcome back, {user?.name || 'Yuvraj'}
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1 hidden md:block font-['Poppins']">
-            Monitor your business analytics and statistics.
+            Monitor your business.
           </p>
         </div>
 
