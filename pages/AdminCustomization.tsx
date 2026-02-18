@@ -286,8 +286,8 @@ const AdminCustomization: React.FC<AdminCustomizationProps> = ({
         await DataService.clearServerCache(tenantId);
       }
       const elapsed = Date.now() - startTime;
-      if (elapsed < 1000) {
-        await new Promise(resolve => setTimeout(resolve, 1000 - elapsed));
+      if (elapsed < 10000) {
+        await new Promise(resolve => setTimeout(resolve, 10000 - elapsed));
       }
 
       toast.dismiss(loadingToast);

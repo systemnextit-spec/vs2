@@ -8,7 +8,7 @@ const WEB_SECTIONS = [
   { title: 'Header Section', key: 'headerStyle', label: 'Header', count: 5 },
   { title: 'Showcase Section', key: 'showcaseSectionStyle', label: 'Showcase', count: 5 },
   { title: 'Category Section', key: 'categorySectionStyle', label: 'Category', count: 5 },
-  { title: 'Product Section', key: 'productSectionStyle', label: 'Product', count: 5 },
+  { title: 'Product Card V2', key: 'productSectionStyle', label: 'Product', count: 5 },
   { title: 'Product Card', key: 'productCardStyle', label: 'Card', count: 5 },  //product card
   { title: 'Brand Section', key: 'brandSectionStyle', label: 'Brand', count: 5 },
   { title: 'Footer Section', key: 'footerStyle', label: 'Footer', count: 5 },
@@ -161,14 +161,21 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
   // Ref for the live store iframe
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeCacheBuster, setIframeCacheBuster] = useState(0);
+  const [isThemeLoading, setIsThemeLoading] = useState(false);
 
   // Refresh iframe and switch to live store preview when save completes
   useEffect(() => {
     if (isSaved) {
       // Switch to live store tab so user sees the result
       setPreviewTab('store');
+      // Show theme loading animation
+      setIsThemeLoading(true);
       // Bump cache buster to force iframe reload with fresh data
       setIframeCacheBuster(prev => prev + 1);
+      // After 5 seconds, hide loading and show actual preview
+      setTimeout(() => {
+        setIsThemeLoading(false);
+      }, 5000);
     }
   }, [isSaved]);
 
@@ -343,24 +350,72 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
             ) : (
               // Live store iframe — proper fit using scale transform
               storeUrl ? (
-                <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}>
-                  <iframe
-                    ref={iframeRef}
-                    key={iframeCacheBuster}
-                    src={`${storeUrl}${storeUrl.includes('?') ? '&' : '?'}_cb=${iframeCacheBuster}`}
-                    title="Store Live Preview"
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '1440px',
-                      height: '2240px',
-                      border: 'none',
-                      transformOrigin: 'top left',
-                      transform: 'scale(0.304)',
-                    }}
-                    sandbox="allow-scripts allow-same-origin allow-popups"
-                  />
+                <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: deviceMode === 'mobile' ? '#1a1a1a' : '#f8fafc' }}>
+                  {isThemeLoading ? (
+                    // Theme implementation loading state
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px', padding: '40px' }}>
+                      <div style={{ position: 'relative', width: '80px', height: '80px' }}>
+                        <div style={{ 
+                          position: 'absolute', 
+                          width: '100%', 
+                          height: '100%', 
+                          border: '4px solid #e5e7eb', 
+                          borderTop: '4px solid #ff6a00', 
+                          borderRadius: '50%', 
+                          animation: 'spin 1s linear infinite' 
+                        }} />
+                      </div>
+                      <div style={{ textAlign: 'center', fontFamily: '"Lato", sans-serif' }}>
+                        <p style={{ fontSize: '18px', fontWeight: 600, color: '#023337', margin: '0 0 8px 0' }}>
+                          Your theme is implementing
+                        </p>
+                        <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
+                          Please wait while we verify your theme is visible...
+                        </p>
+                      </div>
+                      <style dangerouslySetInnerHTML={{ __html: `
+                        @keyframes spin {
+                          0% { transform: rotate(0deg); }
+                          100% { transform: rotate(360deg); }
+                        }
+                      ` }} />
+                    </div>
+                  ) : deviceMode === 'mobile' ? (
+                    // Mobile preview with phone frame
+                    <div style={{ width: '375px', height: '667px', position: 'relative', borderRadius: '36px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.1)', border: '8px solid #1a1a1a' }}>
+                      <iframe
+                        ref={iframeRef}
+                        key={`mobile-${iframeCacheBuster}`}
+                        src={`${storeUrl}${storeUrl.includes('?') ? '&' : '?'}_cb=${iframeCacheBuster}`}
+                        title="Mobile Store Preview"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          border: 'none',
+                        }}
+                        sandbox="allow-scripts allow-same-origin allow-popups"
+                      />
+                    </div>
+                  ) : (
+                    // Desktop preview scaled down
+                    <iframe
+                      ref={iframeRef}
+                      key={`web-${iframeCacheBuster}`}
+                      src={`${storeUrl}${storeUrl.includes('?') ? '&' : '?'}_cb=${iframeCacheBuster}`}
+                      title="Store Live Preview"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '1440px',
+                        height: '2240px',
+                        border: 'none',
+                        transformOrigin: 'top left',
+                        transform: 'scale(0.304)',
+                      }}
+                      sandbox="allow-scripts allow-same-origin allow-popups"
+                    />
+                  )}
                 </div>
               ) : (
                 <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontFamily: '"Poppins", sans-serif', fontSize: '15px', gap: '12px' }}>
