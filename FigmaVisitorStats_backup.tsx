@@ -11,7 +11,7 @@ const OnlineNowIcon: React.FC = () => (
   </svg>
 );
 
-// Today Visitors Icon (Users style)
+// Today s Icon (Users style)
 const TodayVisitorsIcon: React.FC = () => (
   <svg width="36" height="36" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M26.5 28V26C26.5 24.4087 25.8679 22.8826 24.7426 21.7574C23.6174 20.6321 22.0913 20 20.5 20H11.5C9.90871 20 8.38258 20.6321 7.25736 21.7574C6.13214 22.8826 5.5 24.4087 5.5 26V28" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
