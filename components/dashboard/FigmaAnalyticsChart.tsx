@@ -167,8 +167,8 @@ const SVGBarChart: React.FC<{ data: ChartDataEntry[]; maxValue: number }> = ({ d
 
         const bars = [
           { h: mH, v: day.mobile, fill: 'url(#barGradBlue)', xOff: 0 },
-          { h: tH, v: day.tab, fill: 'url(#barGradOrange)', xOff: barWidth + barGap },
-          { h: dH, v: day.desktop, fill: 'url(#barGradPurple)', xOff: (barWidth + barGap) * 2 },
+          { h: dH, v: day.desktop, fill: 'url(#barGradPurple)', xOff: barWidth + barGap },
+          { h: tH, v: day.tab, fill: 'url(#barGradOrange)', xOff: (barWidth + barGap) * 2 },
         ];
 
         return (
