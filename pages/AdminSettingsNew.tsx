@@ -3,6 +3,7 @@ import { Truck, CreditCard, MessageCircle, Link2, MessageSquare, Coins, Store, U
 import { useComingSoon } from '../components/ComingSoonModal';
 import { GalleryPicker } from '../components/GalleryPicker';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 import { convertFileToWebP, dataUrlToFile } from '../services/imageUtils';
 import { uploadPreparedImageToServer } from '../services/imageUploadService';
 
@@ -494,6 +495,7 @@ const figmaStyles = {
 };
 
 const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, currentUser, onUpdateProfile, activeTenant }) => {
+  const { state: authState } = useAuth();
   const [activeTab, setActiveTab] = useState<'manage_shop' | 'profile_details'>('manage_shop');
   const { showComingSoon, ComingSoonPopup } = useComingSoon();
   const [profileForm, setProfileForm] = useState({
@@ -601,7 +603,7 @@ const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, current
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${authState.token}`,
         },
         body: JSON.stringify({
           name: profileForm.name,
@@ -653,7 +655,7 @@ const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, current
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${authState.token}`,
         },
         body: JSON.stringify({
           oldPassword: passwordForm.oldPassword,

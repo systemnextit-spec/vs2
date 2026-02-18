@@ -7,6 +7,7 @@ import {
 import { CourierConfig, User as UserType, Tenant, Role } from '../types';
 import { convertFileToWebP } from '../services/imageUtils';
 import { GalleryPicker } from '../components/GalleryPicker';
+import { useAuth } from '../context/AuthContext';
 import AdminControl from './AdminControlNew';
 
 interface AdminSettingsProps {
@@ -161,6 +162,7 @@ type SettingsTab = 'manage_shop' | 'profile_details';
 
 const AdminSettings: React.FC<AdminSettingsProps> = ({ 
   onNavigate, user, activeTenant, logo, onUpdateLogo,
+  const { state: authState } = useAuth();
   users = [], roles = [], onAddUser, onUpdateUser, onDeleteUser,
   onAddRole, onUpdateRole, onDeleteRole, onUpdateUserRole, userPermissions = {}
 }) => {
@@ -272,7 +274,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${authState.token}`,
         },
         body: JSON.stringify(profileForm),
       });
