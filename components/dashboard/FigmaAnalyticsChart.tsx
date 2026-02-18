@@ -10,17 +10,7 @@ interface ChartDataEntry {
   desktop: number;
 }
 
-interface BarProps {
-  value: number;
-  color: string;
-  maxValue: number;
-}
 
-interface BarGroupProps {
-  date: string;
-  data: ChartDataEntry;
-  maxValue: number;
-}
 
 interface VisitorCardProps {
   icon: React.ReactNode;
@@ -128,50 +118,109 @@ const VisitorCard: React.FC<VisitorCardProps> = ({ icon, title, subtitle, value,
 };
 
 /**
- * Bar Component
- * Individual bar with height calculation and label
+ * SVG Bar Chart Component
+ * Renders a dynamic SVG grouped bar chart matching the Figma design
  */
-const Bar: React.FC<BarProps> = ({ value, color, maxValue }) => {
-  // Dynamic scaling: bars scale relative to the max value in dataset
-  // Minimum height of 32px so even small values are visible
-  const maxHeight = 200;
-  const minHeight = value > 0 ? 32 : 0;
-  const scale = maxValue > 0 ? maxValue : 1;
-  const height = Math.max(minHeight, (value / scale) * maxHeight); 
-  
-  return (
-    <div className="relative flex flex-col items-center group">
-      <div 
-        style={{ 
-          height: `${height}px`,
-          background: color
-        }}
-        className="w-[14px] flex items-center justify-center relative transition-all duration-300 hover:brightness-90 cursor-default rounded-t-sm"
-      >
-        <span className="rotate-[-90.00deg] text-white text-[10px] font-bold pointer-events-none">
-          {value}
-        </span>
-      </div>
-    </div>
-  );
-};
+const SVGBarChart: React.FC<{ data: ChartDataEntry[]; maxValue: number }> = ({ data, maxValue }) => {
+  const chartHeight = 193;
+  const barWidth = 24;
+  const barGap = 4;
+  const groupWidth = barWidth * 3 + barGap * 2; // 80
+  const groupGap = Math.max(8, (689 - data.length * groupWidth) / Math.max(1, data.length - 1));
+  const svgWidth = data.length * groupWidth + Math.max(0, data.length - 1) * groupGap;
+  const svgHeight = chartHeight + 25;
 
-/**
- * BarGroup Component
- * Represents one day of data (3 bars grouped together)
- */
-const BarGroup: React.FC<BarGroupProps> = ({ date, data, maxValue }) => {
+  const getBarHeight = (value: number) => {
+    if (value === 0 || maxValue === 0) return 0;
+    return Math.max(24, (value / maxValue) * chartHeight);
+  };
+
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex items-end gap-[2px] h-[220px]">
-        <Bar value={data.mobile} color="linear-gradient(180deg, #38bdf8 1.829%, #1e90ff 100%)" maxValue={maxValue} />
-        <Bar value={data.tab} color="linear-gradient(180deg, #ff9f1c 0%, #ff6a00 100%)" maxValue={maxValue} />
-        <Bar value={data.desktop} color="linear-gradient(180deg, #a08bff 0%, #5943ff 100%)" maxValue={maxValue} />
-      </div>
-      <div className="mt-3 text-[11px] text-gray-500 font-medium">
-        {date}
-      </div>
-    </div>
+    <svg
+      width="100%"
+      viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMax meet"
+      className="overflow-visible"
+    >
+      <defs>
+        <linearGradient id="barGradBlue" x1="0" y1="0" x2="0" y2="1">
+          <stop stopColor="#38BDF8" />
+          <stop offset="1" stopColor="#1E90FF" />
+        </linearGradient>
+        <linearGradient id="barGradOrange" x1="0" y1="0" x2="0" y2="1">
+          <stop stopColor="#FF9F1C" />
+          <stop offset="1" stopColor="#FF6A00" />
+        </linearGradient>
+        <linearGradient id="barGradPurple" x1="0" y1="0" x2="0" y2="1">
+          <stop stopColor="#A08BFF" />
+          <stop offset="1" stopColor="#5943FF" />
+        </linearGradient>
+      </defs>
+
+      {data.map((day, i) => {
+        const gx = i * (groupWidth + groupGap);
+        const mH = getBarHeight(day.mobile);
+        const tH = getBarHeight(day.tab);
+        const dH = getBarHeight(day.desktop);
+
+        const bars = [
+          { h: mH, v: day.mobile, fill: 'url(#barGradBlue)', xOff: 0 },
+          { h: tH, v: day.tab, fill: 'url(#barGradOrange)', xOff: barWidth + barGap },
+          { h: dH, v: day.desktop, fill: 'url(#barGradPurple)', xOff: (barWidth + barGap) * 2 },
+        ];
+
+        return (
+          <g key={i}>
+            {bars.map((bar, j) => {
+              if (bar.h <= 0) return null;
+              const bx = gx + bar.xOff;
+              const by = chartHeight - bar.h;
+              const cx = bx + barWidth / 2;
+              const cy = chartHeight - bar.h / 2;
+              return (
+                <g key={j}>
+                  <rect
+                    x={bx}
+                    y={by}
+                    width={barWidth}
+                    height={bar.h}
+                    fill={bar.fill}
+                    rx="1"
+                  />
+                  {bar.h >= 28 && (
+                    <text
+                      x={cx}
+                      y={cy}
+                      fill="white"
+                      fontSize="10"
+                      fontWeight="bold"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      transform={`rotate(-90 ${cx} ${cy})`}
+                    >
+                      {bar.v}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+            {/* Date label */}
+            <text
+              x={gx + groupWidth / 2}
+              y={chartHeight + 16}
+              fill="#4B494E"
+              fontSize="11"
+              fontWeight="500"
+              textAnchor="middle"
+            >
+              {day.date}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
   );
 };
 
@@ -335,7 +384,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
 
   return (
     <div className="w-full p-6 bg-[#F8F9FA]">
-      <div className="grid grid-cols-[300px_1fr] gap-5">
+      <div className="grid grid-cols-[400px_1fr] gap-5">
         {/* Left Side: Visitor Cards */}
         <div className="flex flex-col gap-3.5">
           <VisitorCard
@@ -372,28 +421,15 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
           />
         </div>
 
-        {/* Right Side: Bar Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-start">
-            {/* Y-Axis Label Section */}
-            <div className="flex items-center h-[240px] mr-4">
-              <div className="rotate-[-90.00deg] text-gray-400 text-[10px] whitespace-nowrap w-8 select-none">
-                Units of measure
-              </div>
-              {/* Simple Divider Line */}
-              <div className="w-[1px] h-full bg-gray-100 ml-2" />
-            </div>
-
-            {/* Main Charting Area */}
-            <div className="flex-1 flex justify-between items-end pl-4 pr-4">
-              {displayChartData.map((day, idx) => (
-                <BarGroup key={idx} date={day.date} data={day} maxValue={maxValue} />
-              ))}
-            </div>
+        {/* Right Side: SVG Bar Chart */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
+          {/* SVG Chart Area */}
+          <div className="flex-1 flex items-end px-2">
+            <SVGBarChart data={displayChartData} maxValue={maxValue} />
           </div>
 
           {/* Legend Section */}
-          <div className="mt-8 flex flex-wrap justify-center gap-x-12 gap-y-4">
+          <div className="mt-6 flex flex-wrap justify-center gap-x-12 gap-y-4">
             <div className="flex items-center gap-2.5">
               <div className="w-5 h-5 rounded-full bg-gradient-to-b from-[#38bdf8] to-[#1e90ff]" />
               <span className="text-xs font-medium text-gray-600">Mobile View</span>
