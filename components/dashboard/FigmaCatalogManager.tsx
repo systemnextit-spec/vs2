@@ -354,12 +354,12 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                 onClick={() => setShowPerPageDropdown(!showPerPageDropdown)}
                 className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg flex items-center gap-2 px-3 py-2 w-[119px]"
               >
-                <span className="text-[12px] text-black dark:text-white">{itemsPerPage} {getTitle()}</span>
+                <span className="text-[12px] text-black dark:text-white">{itemsPerPage >= 999 ? 'All' : `${itemsPerPage} ${getTitle()}`}</span>
                 <ChevronDown size={14} className="text-gray-600 dark:text-gray-400" />
               </button>
               {showPerPageDropdown && (
                 <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-600 z-50 py-1 w-full">
-                  {[10, 20, 50, 100].map(num => (
+                  {[5, 10, 15, 20, 50].map(num => (
                     <button
                       key={num}
                       onClick={() => { setItemsPerPage(num); setShowPerPageDropdown(false); setCurrentPage(1); }}
@@ -368,6 +368,12 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                       {num} {getTitle()}
                     </button>
                   ))}
+                  <button
+                    onClick={() => { setItemsPerPage(9999); setShowPerPageDropdown(false); setCurrentPage(1); }}
+                    className="w-full px-3 py-2 text-left text-[12px] text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                  >
+                    All
+                  </button>
                 </div>
               )}
             </div>

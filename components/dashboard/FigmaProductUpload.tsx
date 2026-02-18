@@ -338,11 +338,11 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     brandName: '',
     modelName: '',
     details: [{ type: '', description: '' }],
-    affiliateSource: 'AliExpress',
+    affiliateSource: '',
     sourceProductUrl: '',
     sourceSku: '',
     useDefaultDelivery: false,
-    deliveryChargeDefault: 120,
+    deliveryChargeDefault: 0,
     deliveryByCity: [{ city: 'Dhaka', charge: 80 }],
     keywords: '',
     seoDescription: '',
@@ -422,7 +422,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     !!formData.subCategory?.trim(),
     !!formData.childCategory?.trim(),
     !!formData.brandName?.trim(),
-    !!formData.tag?.trim(),
+    formData.tag.length > 0,
     formData.galleryImages.length > 0,
     !!formData.videoUrl?.trim(),
     !!formData.shortDescription?.trim(),
@@ -978,6 +978,23 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   placeholder="Ex: Samsung Galaxy S25 Ultra"
                   className="w-full h-9 xxs:h-10 bg-[#f9f9f9] rounded-lg px-2 xxs:px-3 text-[13px] xxs:text-[14px] placeholder:text-[#a2a2a2] outline-none"
                 />
+                
+                {/* Manual Slug Input - Only show when Auto Slug is OFF */}
+                {!formData.autoSlug && (
+                  <div className="mt-2">
+                    <label className="text-[12px] xxs:text-[13px] text-gray-600 mb-1 block">
+                      Product Slug (URL)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.slug}
+                      onChange={(e) => updateField('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-'))}
+                      placeholder="ex: samsung-galaxy-s25-ultra"
+                      className="w-full h-9 xxs:h-10 bg-[#f9f9f9] rounded-lg px-2 xxs:px-3 text-[13px] xxs:text-[14px] placeholder:text-[#a2a2a2] outline-none border border-gray-300 focus:border-blue-500"
+                    />
+                    <p className="text-[11px] text-gray-500 mt-1">URL-friendly name (lowercase, hyphens only)</p>
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col gap-1.5 xxs:gap-2">
