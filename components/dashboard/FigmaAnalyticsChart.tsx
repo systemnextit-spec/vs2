@@ -254,86 +254,24 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
       </div>
 
       {/* Chart */}
-      <div className="w-full min-h-[280px] sm:min-h-[320px] relative bg-white dark:bg-gray-800 rounded-lg overflow-x-auto overflow-y-visible">
-        <div className="absolute -left-8 top-1/3 flex items-center gap-2 z-10 hidden sm:flex">
-          <div className="origin-center -rotate-90 text-center text-neutral-600 dark:text-gray-400 text-xs font-normal font-['DM_Sans'] whitespace-nowrap">Units of measure</div>
-          <div className="w-px h-40 bg-stone-300 dark:bg-gray-600" />
+      <FigmaViewsChart 
+        data={displayData}
+        loading={loading}
+      />
+      
+      {/* Legend */}
+      <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 md:gap-12 px-2 mt-4 pb-4">
+        <div className="flex justify-center items-center gap-1.5 sm:gap-2.5">
+          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full" />
+          <div className="text-center text-neutral-600 dark:text-gray-400 text-[10px] sm:text-xs font-medium font-['DM_Sans']">Mobile View</div>
         </div>
-        
-        {/* Dynamic bars */}
-        <div className="ml-12 mr-4 pt-4 pb-2 flex justify-between items-end gap-2 min-h-[200px]">
-          {loading ? (
-            // Loading skeleton
-            Array.from({ length: 7 }).map((_, i) => (
-              <div key={i} className="inline-flex flex-col justify-center items-center gap-1">
-                <div className="inline-flex justify-start items-end gap-1">
-                  <div className="w-6 h-20 bg-gray-200 animate-pulse" />
-                  <div className="w-6 h-24 bg-gray-200 animate-pulse" />
-                  <div className="w-6 h-28 bg-gray-200 animate-pulse" />
-                </div>
-                <div className="w-10 h-3 bg-gray-200 animate-pulse rounded" />
-              </div>
-            ))
-          ) : (
-            displayData.map((day, index) => (
-              <div key={index} className="inline-flex flex-col justify-center items-center gap-1">
-                <div className="inline-flex justify-start items-end gap-1">
-                  {/* Mobile - Blue */}
-                  <div 
-                    className="w-7 relative bg-gradient-to-b from-sky-400 to-blue-500 rounded-t-sm flex items-start justify-center pt-2 transition-all duration-300"
-                    style={{ height: `${getBarHeight(day.mobile)}px` }}
-                  >
-                    {day.mobile > 0 && (
-                      <span className="text-white text-sm font-semibold font-['Lato'] transform -rotate-90 origin-center whitespace-nowrap">
-                        {day.mobile}
-                      </span>
-                    )}
-                  </div>
-                  {/* Tablet - Orange */}
-                  <div 
-                    className="w-7 relative bg-gradient-to-b from-amber-400 to-orange-500 rounded-t-sm flex items-start justify-center pt-2 transition-all duration-300"
-                    style={{ height: `${getBarHeight(day.tablet)}px` }}
-                  >
-                    {day.tablet > 0 && (
-                      <span className="text-white text-sm font-semibold font-['Lato'] transform -rotate-90 origin-center whitespace-nowrap">
-                        {day.tablet}
-                      </span>
-                    )}
-                  </div>
-                  {/* Desktop - Purple */}
-                  <div 
-                    className="w-7 relative bg-gradient-to-b from-violet-400 to-indigo-600 rounded-t-sm flex items-start justify-center pt-2 transition-all duration-300"
-                    style={{ height: `${getBarHeight(day.desktop)}px` }}
-                  >
-                    {day.desktop > 0 && (
-                      <span className="text-white text-sm font-semibold font-['Lato'] transform -rotate-90 origin-center whitespace-nowrap">
-                        {day.desktop}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="justify-start text-neutral-600 dark:text-gray-400 text-xs font-normal font-['DM_Sans']">
-                  {formatDateLabel(day.date)}
-                </div>
-              </div>
-            ))
-          )}
+        <div className="flex justify-center items-center gap-1.5 sm:gap-2.5">
+          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full" />
+          <div className="text-center text-neutral-600 dark:text-gray-400 text-[10px] sm:text-xs font-medium font-['DM_Sans']">Tab View</div>
         </div>
-        
-        {/* Legend */}
-        <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 md:gap-12 px-2 mt-4 pb-4">
-          <div className="flex justify-center items-center gap-1.5 sm:gap-2.5">
-            <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full" />
-            <div className="text-center text-neutral-600 dark:text-gray-400 text-[10px] sm:text-xs font-medium font-['DM_Sans']">Mobile View</div>
-          </div>
-          <div className="flex justify-center items-center gap-1.5 sm:gap-2.5">
-            <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full" />
-            <div className="text-center text-neutral-600 dark:text-gray-400 text-[10px] sm:text-xs font-medium font-['DM_Sans']">Tab View</div>
-          </div>
-          <div className="flex justify-center items-center gap-1.5 sm:gap-2.5">
-            <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-b from-violet-400 to-indigo-600 rounded-full" />
-            <div className="text-center text-neutral-600 dark:text-gray-400 text-[10px] sm:text-xs font-medium font-['DM_Sans']">Desktop View</div>
-          </div>
+        <div className="flex justify-center items-center gap-1.5 sm:gap-2.5">
+          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-b from-violet-400 to-indigo-600 rounded-full" />
+          <div className="text-center text-neutral-600 dark:text-gray-400 text-[10px] sm:text-xs font-medium font-['DM_Sans']">Desktop View</div>
         </div>
       </div>
     </div>

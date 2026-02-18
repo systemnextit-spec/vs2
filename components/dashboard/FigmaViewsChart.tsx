@@ -96,7 +96,7 @@ const FigmaViewsChart: React.FC<FigmaViewsChartProps> = ({
       </div>
 
       {/* Legend */}
-      <div className="flex justify-center items-center gap-3 sm:gap-4 lg:gap-6 "md:gap-12 mt-4 pb-2">
+      <div className="flex justify-center items-center gap-3 sm:gap-4 lg:gap-6 md:gap-12 mt-4 pb-2">
         <div className="flex justify-center items-center gap-2.5">
           <div className="w-5 h-5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full" />
           <div className="text-center text-neutral-600 text-xs font-medium font-['DM_Sans']">Mobile View</div>
