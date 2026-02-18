@@ -53,7 +53,7 @@ const CategoryStyle1 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   const duplicatedItems = [...processed, ...processed];
 
   return (
-    <div ref={sectionRef} className="relative py-2 sm:py-3 overflow-hidden"
+    <div ref={sectionRef} className="relative pt-4 sm:pt-5 pb-2 sm:pb-3 overflow-hidden"
       onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setTimeout(() => setIsPaused(false), 3000)}>
       <div className="flex items-center justify-between mb-3 sm:mb-4 px-2">
