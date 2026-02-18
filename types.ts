@@ -502,6 +502,9 @@ export interface Tag {
   tenantId?: string;
   name: string;
   status: 'Active' | 'Inactive';
+  icon?: string;
+  durationDays?: number;
+  expiresAt?: string;
 }
 
 export interface GalleryItem {

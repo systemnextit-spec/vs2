@@ -220,7 +220,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     if (item) {
       setFormData({ ...item });
     } else {
-      const defaults: any = { name: '', status: 'Active', priority: 0 };
+      const defaults: any = { name: '', status: 'Active', priority: 0, durationDays: 0 };
       if (view === 'catalog_categories') defaults.icon = '';
       if (view === 'catalog_subcategories') defaults.categoryId = categories[0]?.id || '';
       if (view === 'catalog_childcategories') defaults.subCategoryId = subCategories[0]?.id || '';
@@ -799,16 +799,46 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                 </div>
               )}
 
-              {/* Priority */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
-                <input
-                  type="number"
-                  value={formData.priority || 0}
-                  onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
+              {/* Priority / Duration */}
+              {view === 'catalog_tags' ? (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Duration (Days)</label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">How many days this tag stays active. 0 = permanent.</p>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.durationDays || 0}
+                    onChange={(e) => {
+                      const days = parseInt(e.target.value) || 0;
+                      const updates: any = { ...formData, durationDays: days };
+                      if (days > 0) {
+                        const expiry = new Date();
+                        expiry.setDate(expiry.getDate() + days);
+                        updates.expiresAt = expiry.toISOString();
+                      } else {
+                        updates.expiresAt = undefined;
+                      }
+                      setFormData(updates);
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                  {formData.durationDays > 0 && (
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                      Expires: {new Date(Date.now() + (formData.durationDays || 0) * 86400000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
+                  <input
+                    type="number"
+                    value={formData.priority || 0}
+                    onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+              )}
 
               {/* Status */}
               <div>

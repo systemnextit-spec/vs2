@@ -278,7 +278,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     parentSubCategory: '',
     image: '',
     isFlashSale: false,
-    isMostSales: false
+    isMostSales: false,
+    durationDays: 0
   });
   const [savingCatalog, setSavingCatalog] = useState(false);
 
@@ -775,7 +776,14 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       } else if (catalogModalTab === 'brand') {
         newItem.logo = newCatalogItem.image;
       } else if (catalogModalTab === 'tag') {
+        newItem.icon = newCatalogItem.image;
         newItem.image = newCatalogItem.image;
+        if (newCatalogItem.durationDays > 0) {
+          newItem.durationDays = newCatalogItem.durationDays;
+          const expiry = new Date();
+          expiry.setDate(expiry.getDate() + newCatalogItem.durationDays);
+          newItem.expiresAt = expiry.toISOString();
+        }
       }
 
       // Add to existing data
@@ -819,7 +827,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         parentSubCategory: '',
         image: '',
         isFlashSale: false,
-        isMostSales: false
+        isMostSales: false,
+        durationDays: 0
       });
       setShowCatalogModal(false);
     } catch (error) {
@@ -2095,7 +2104,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   key={tab.key}
                   onClick={() => {
                     setCatalogModalTab(tab.key as any);
-                    setNewCatalogItem({ name: '', parentCategory: '', parentSubCategory: '', image: '', isFlashSale: false, isMostSales: false });
+                    setNewCatalogItem({ name: '', parentCategory: '', parentSubCategory: '', image: '', isFlashSale: false, isMostSales: false, durationDays: 0 });
                   }}
                   className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
                     catalogModalTab === tab.key 
@@ -2348,6 +2357,31 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                       </button>
                     )}
                   </div>
+                </div>
+              )}
+
+              {/* Tag Duration - for Tag */}
+              {catalogModalTab === 'tag' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Duration (Days)
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Set how many days this tag will stay active in the store. Leave 0 for permanent.
+                  </p>
+                  <input
+                    type="number"
+                    min="0"
+                    value={newCatalogItem.durationDays || ''}
+                    onChange={(e) => setNewCatalogItem(prev => ({ ...prev, durationDays: parseInt(e.target.value) || 0 }))}
+                    placeholder="e.g. 7 for one week"
+                    className="w-full h-11 border rounded-lg px-3 text-sm outline-none focus:border-[#ff6a00]"
+                  />
+                  {newCatalogItem.durationDays > 0 && (
+                    <p className="text-xs text-green-600 mt-1">
+                      Tag will expire on: {new Date(Date.now() + newCatalogItem.durationDays * 86400000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </p>
+                  )}
                 </div>
               )}
 
