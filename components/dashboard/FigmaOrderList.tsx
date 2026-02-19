@@ -84,6 +84,13 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
   initialSelectedOrderId,
   onClearSelectedOrderId
 }) => {
+  // Helper function to truncate text to 5 words
+  const truncateToWords = (text: string | undefined, wordLimit: number = 5): string => {
+    if (!text) return 'Custom Order';
+    const words = text.trim().split(/\s+/);
+    if (words.length <= wordLimit) return text;
+    return words.slice(0, wordLimit).join(' ') + '...';
+  };
   const [activeTab, setActiveTab] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -900,7 +907,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                         <Package2 size={12} className="text-gray-400 xxs:w-[14px] xxs:h-[14px]" />
                       </div>
                     )}
-                    <span className="text-gray-700 truncate text-[10px] xxs:text-sm max-w-[80px] xxs:max-w-none" title={order.productName || 'Custom Order'}>{order.productName || 'Custom Order'}</span>
+                    <span className="text-gray-700 truncate text-[10px] xxs:text-sm max-w-[80px] xxs:max-w-none" title={order.productName || 'Custom Order'}>{truncateToWords(order.productName)}</span>
                   </div>
                 </td>
                 <td className="px-2 xxs:px-3 py-2 xxs:py-3">
@@ -1063,7 +1070,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-gray-900 truncate">{order.productName || 'Custom Order'}</p>
+                <p className="text-sm font-medium text-gray-900 truncate">{truncateToWords(order.productName)}</p>
                 <p className="text-xs text-gray-500">{order.customer} • {formatCurrency(order.amount)}</p>
                 <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-600'}`}>
                   {STATUS_LABELS[order.status] || order.status}
