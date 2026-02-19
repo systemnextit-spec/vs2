@@ -1,4 +1,4 @@
-import { useState, useMemo, Suspense, lazy, useEffect, useRef } from 'react';
+import { useState, useMemo, Suspense, lazy, useLayoutEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft, Package, Tag as TagIcon, X, SlidersHorizontal, Hash } from 'lucide-react';
 import { Product, Category, Brand, WebsiteConfig, User, Order, Tag } from '../../../types';
 import { ProductCard } from '../../StoreProductComponents';
@@ -40,21 +40,15 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
   const [searchTerm, setSearchTerm] = useState('');
   const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
   
-  // Preserve scroll position when category changes
+  // Preserve scroll position when switching categories in sidebar
   const scrollPosRef = useRef(0);
-  const prevCategoryRef = useRef(selectedCategory);
-  
-  // useEffect(() => {
-  //   // If category changed, restore scroll position
-  //   if (prevCategoryRef.current !== selectedCategory) {
-  //     const savedScroll = scrollPosRef.current;
-  //     // Restore scroll after React finishes rendering
-  //     requestAnimationFrame(() => {
-  //       window.scrollTo({ top: savedScroll, behavior: 'auto' });
-  //     });
-  //   }
-  //   prevCategoryRef.current = selectedCategory;
-  // }, [selectedCategory]);
+
+  // Restore scroll position synchronously after DOM update (before paint)
+  useLayoutEffect(() => {
+    if (scrollPosRef.current > 0) {
+      window.scrollTo(0, scrollPosRef.current);
+    }
+  }, [selectedCategory]);
   
   // Save scroll position before category changes
   const handleCategoryChangeWithScroll = (categoryName: string | null) => {
@@ -204,7 +198,7 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
           onToggleCart={onToggleCart} onCheckoutFromCart={onCheckoutFromCart} user={user} onLoginClick={onLoginClick}
           onLogoutClick={onLogoutClick} onProfileClick={onProfileClick} logo={logo} websiteConfig={websiteConfig}
           searchValue={searchTerm} onSearchChange={setSearchTerm} onCategoriesClick={onBack} onProductsClick={onBack}
-          categoriesList={activeCats.map(c => c.name)} onCategorySelect={onCategoryChange} onProductClick={onProductClick}
+          categoriesList={activeCats.map(c => c.name)} onCategorySelect={handleCategoryChangeWithScroll} onProductClick={onProductClick}
           categories={categories} subCategories={subCategories} childCategories={childCategories} brands={brands} tags={tags} />
       </Suspense>
 
