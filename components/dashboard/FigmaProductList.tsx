@@ -474,10 +474,19 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     return Date.now() + Math.floor(Math.random() * 10000);
   }, []);
 
-  // Helper function to detect Daraz/Lazada format
+  // Helper function to detect Daraz/Lazada format (both Basic and Advanced templates)
   const isDarazFormat = (headers: string[]): boolean => {
-    const darazHeaders = ['Product Name(English)', '*Product Name(English)', 'Product Images1', '*Product Images1', 'Main Description'];
-    return darazHeaders.some(h => headers.some(header => header.includes(h.replace('*', ''))));
+    // Advanced Daraz headers
+    const advancedHeaders = ['Product Name(English)', '*Product Name(English)', 'Product Images1', '*Product Images1', 'Main Description'];
+    // Basic Daraz headers (simpler column names)
+    const basicHeaders = ['SellerSKU', '*SellerSKU', 'Seller SKU', '*Seller SKU', 'Image 1', 'Image1', '*Image 1', '*Image1', 'Short Description', '*Short Description', 'Package Weight', '*Package Weight', 'Package Content', '*Package Content', 'Color Family'];
+    const normalizedHeaders = headers.map(h => h.replace(/^\*/, '').trim());
+    const hasAdvanced = advancedHeaders.some(h => normalizedHeaders.some(header => header.includes(h.replace('*', ''))));
+    const hasBasic = basicHeaders.some(h => normalizedHeaders.some(header => header === h.replace('*', '').trim()));
+    // Also detect by presence of "Product Name" (without parenthetical language) + any image/sku pattern
+    const hasProductName = normalizedHeaders.some(h => h === 'Product Name' || h === 'Product Name(English)');
+    const hasImageOrSku = normalizedHeaders.some(h => /^Image\s*\d/i.test(h) || /SellerSKU|Seller SKU/i.test(h));
+    return hasAdvanced || hasBasic || (hasProductName && hasImageOrSku);
   };
 
   // Helper function to strip HTML tags for clean text
@@ -498,8 +507,9 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     }
     existingIds.add(newId);
 
-    // Collect all product images (Product Images1 through Product Images8 + White Background Image)
+    // Collect all product images (supports both Advanced and Basic Daraz formats)
     const imageKeys = [
+      // Advanced format: Product Images1 through Product Images8
       'Product Images1', '*Product Images1',
       'Product Images2',
       'Product Images3',
@@ -508,7 +518,16 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       'Product Images6',
       'Product Images7',
       'Product Images8',
-      'White Background Image'
+      'White Background Image',
+      // Basic format: Image 1 through Image 8 (with and without space)
+      'Image 1', '*Image 1', 'Image1', '*Image1',
+      'Image 2', 'Image2',
+      'Image 3', 'Image3',
+      'Image 4', 'Image4',
+      'Image 5', 'Image5',
+      'Image 6', 'Image6',
+      'Image 7', 'Image7',
+      'Image 8', 'Image8',
     ];
     
     const galleryImages: string[] = [];
@@ -519,13 +538,13 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       }
     });
 
-    // Get product name (handle asterisk variations)
-    const productName = row['*Product Name(English)'] || row['Product Name(English)'] || row['*Product Name'] || row['Product Name'] || '';
+    // Get product name (handle asterisk variations + basic format)
+    const productName = row['*Product Name(English)'] || row['Product Name(English)'] || row['*Product Name'] || row['Product Name'] || row['Name'] || '';
     const productNameBengali = row['Product Name(Bengali)'] || '';
 
-    // Get description (Main Description column contains HTML)
-    const mainDescription = row['Main Description'] || row['Description'] || '';
-    const highlights = row['Highlights'] || '';
+    // Get description (supports both Advanced 'Main Description' and Basic 'Short Description')
+    const mainDescription = row['Main Description'] || row['*Short Description'] || row['Short Description'] || row['Description'] || row['Product Description'] || '';
+    const highlights = row['Highlights'] || row['*Highlights'] || '';
 
     // Build full description with Bengali name and highlights if available
     let fullDescription = mainDescription;
@@ -555,8 +574,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     return {
       id: newId,
       name: productName || 'Unnamed Product',
-      price: parseFloat(row['Price'] || row['*Price'] || row['Sale Price'] || '0') || 0,
-      originalPrice: parseFloat(row['Original Price'] || row['Regular Price'] || '0') || 0,
+      price: parseFloat(row['Price'] || row['*Price'] || row['Sale Price'] || row['*Sale Price'] || row['Special Price'] || row['*Special Price'] || '0') || 0,
+      originalPrice: parseFloat(row['Original Price'] || row['Regular Price'] || row['Price'] || row['*Price'] || '0') || 0,
       costPrice: 0,
       image: galleryImages[0] || '',
       galleryImages: galleryImages,
@@ -565,8 +584,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       subCategory: row['Sub Category'] || '',
       childCategory: row['Child Category'] || '',
       brand: row['Brand'] || row['*Brand'] || '',
-      sku: row['SKU'] || row['Product ID'] || `SKU-${newId}`,
-      stock: parseInt(row['Stock'] || row['Quantity'] || '0') || 0,
+      sku: row['SellerSKU'] || row['*SellerSKU'] || row['Seller SKU'] || row['*Seller SKU'] || row['SKU'] || row['Product ID'] || `SKU-${newId}`,
+      stock: parseInt(row['Stock'] || row['Quantity'] || row['*Quantity'] || row['Available Stock'] || '0') || 0,
       status: 'Active' as const,
       tags: [],
       slug: slug || `product-${newId}`,
@@ -584,7 +603,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     
     return {
       id: newId,
-      name: row.name || row.Name || row.product_name || 'Unnamed Product',
+      name: row.name || row.Name || row.product_name || row['Product Name'] || row['*Product Name'] || 'Unnamed Product',
       price: parseFloat(row.price || row.Price || row.salesPrice || row.sales_price || '0') || 0,
       originalPrice: parseFloat(row.originalPrice || row.original_price || row.regularPrice || row.regular_price || '0') || 0,
       costPrice: parseFloat(row.costPrice || row.cost_price || '0') || 0,
