@@ -77,7 +77,7 @@ const TotalVisitorsIcon: React.FC<{ color: string }> = ({ color }) => (
 const VisitorCard: React.FC<VisitorCardProps> = ({ icon, title, subtitle, value, bgColor, iconColor, titleColor, loading = false }) => {
   return (
     <div 
-      className="relative w-full h-[81px] rounded-xl shadow-sm flex items-center px-5 gap-4 overflow-hidden"
+      className="relative w-full h-[81px] rounded-xl shadow-sm flex items-center px-3 xs:px-4 sm:px-5 gap-2 xs:gap-3 sm:gap-4 overflow-hidden"
       style={{ backgroundColor: bgColor }}
     >
       {/* Background Ellipse */}
@@ -386,7 +386,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
     <div className="w-full p-6 bg-[#F8F9FA]">
       <div className="grid grid-cols-[400px_1fr] gap-5">
         {/* Left Side: Visitor Cards */}
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-2.5 xs:gap-3 sm:gap-3.5">
           <VisitorCard
             icon={<OnlineNowIcon color="#38bdf8" />}
             title="Online Now"
@@ -429,16 +429,16 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({
           </div>
 
           {/* Legend Section */}
-          <div className="mt-6 flex flex-wrap justify-center gap-x-12 gap-y-4">
-            <div className="flex items-center gap-2.5">
+          <div className="mt-6 flex flex-wrap justify-center gap-x-6 xs:gap-x-8 sm:gap-x-12 gap-y-3 xs:gap-y-4">
+            <div className="flex items-center gap-2 xs:gap-2.5">
               <div className="w-5 h-5 rounded-full bg-gradient-to-b from-[#38bdf8] to-[#1e90ff]" />
               <span className="text-xs font-medium text-gray-600">Mobile View</span>
             </div>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2 xs:gap-2.5">
               <div className="w-5 h-5 rounded-full bg-gradient-to-b from-[#ff9f1c] to-[#ff6a00]" />
               <span className="text-xs font-medium text-gray-600">Tab View</span>
             </div>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2 xs:gap-2.5">
               <div className="w-5 h-5 rounded-full bg-gradient-to-b from-[#a08bff] to-[#5943ff]" />
               <span className="text-xs font-medium text-gray-600">Desktop View</span>
             </div>

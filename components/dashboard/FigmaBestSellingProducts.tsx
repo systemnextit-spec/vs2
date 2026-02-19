@@ -27,8 +27,8 @@ const FigmaBestSellingProducts: React.FC<FigmaBestSellingProductsProps> = ({
   onProductClick
 }) => {
   return (
-    <div className="w-full px-4 sm:px-5 py-4 sm:py-[18px] bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-3 overflow-hidden">
-      <div className="w-full flex flex-col justify-start items-end gap-4 sm:gap-5">
+    <div className="w-full px-3 xs:px-4 sm:px-5 py-3 xs:py-4 sm:py-[18px] bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-2 xs:gap-3 overflow-hidden">
+      <div className="w-full flex flex-col justify-start items-end gap-3 xs:gap-4 sm:gap-5">
         {/* Header */}
         <div className="w-full h-8 flex justify-start items-center gap-2.5">
           <div className="justify-start text-zinc-800 dark:text-white text-base sm:text-lg font-bold font-['Lato']">Best Selling Product</div>

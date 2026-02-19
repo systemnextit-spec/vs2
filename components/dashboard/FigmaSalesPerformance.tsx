@@ -154,14 +154,14 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
   };
 
   return (
-    <div className="w-full h-80 sm:h-96 p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-2 overflow-hidden">
+    <div className="w-full h-80 sm:h-96 p-2.5 xs:p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-1.5 xs:gap-2 overflow-hidden">
       {/* Header */}
-      <div className="w-full flex justify-between items-center gap-2.5">
+      <div className="w-full flex justify-between items-center gap-2 xs:gap-2.5">
         <div className="text-zinc-800 dark:text-white text-lg font-bold font-['Lato']">Sale Performance</div>
       </div>
 
       {/* Legend - Wrap on mobile */}
-      <div className="flex flex-wrap justify-start items-center gap-3 sm:gap-6">
+      <div className="flex flex-wrap justify-start items-center gap-2 xs:gap-3 sm:gap-6">
         <div className="text-sky-400 text-sm font-bold font-['Poppins']">Placed Order</div>
         <div className="text-orange-500 text-sm font-bold font-['Poppins']">Order Delivered</div>
         <div className="text-red-600 text-sm font-bold font-['Poppins']">Order Cancel</div>

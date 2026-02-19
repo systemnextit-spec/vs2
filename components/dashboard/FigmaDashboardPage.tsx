@@ -162,14 +162,14 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
     >
       {/* Orders Page */}
       {currentPage === 'orders' && (
-        <div className="pb-4">
+        <div className="pb-3 sm:pb-4">
           <FigmaOrderList orders={orders} />
         </div>
       )}
 
       {/* Dashboard Page */}
       {currentPage === 'dashboard' && (
-    <div className="space-y-3 sm:space-y-4 pb-4">
+    <div className="space-y-2 xs:space-y-3 sm:space-y-4 pb-3 sm:pb-3 sm:pb-4">
         {/* Overview Section */}
         <FigmaOverview
           stats={{
@@ -184,7 +184,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
         />
 
         {/* Analytics Bar Chart */}
-        <div className="px-3 sm:px-4 lg:px-6">
+        <div className="px-2 xs:px-3 sm:px-4 lg:px-6">
           <FigmaAnalyticsChart
             timeFilter={timeFilter}
             onTimeFilterChange={(filter) => setTimeFilter(filter as any)}
@@ -206,7 +206,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
         />
 
         {/* Sales Performance + Sales by Category Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 px-3 sm:px-4 lg:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 xs:gap-3 sm:gap-4 px-2 xs:px-3 sm:px-4 lg:px-6">
           {/* Sales Performance Chart - Left Side */}
           <div className="lg:col-span-8">
             <FigmaSalesPerformance orders={orders} timeFilter={timeFilter} selectedMonth={selectedMonth} />
@@ -219,7 +219,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
         </div>
 
         {/* Best Selling Products + Top Products Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 px-3 sm:px-4 lg:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 xs:gap-3 sm:gap-4 px-2 xs:px-3 sm:px-4 lg:px-6">
           {/* Best Selling Products Table - Left Side */}
           <div className="lg:col-span-8">
             <FigmaBestSellingProducts products={bestSellingData} />

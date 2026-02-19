@@ -65,10 +65,10 @@ const FigmaOrderStatus: React.FC<FigmaOrderStatusProps> = ({
   ];
 
   return (
-    <div className="px-2 sm:px-4 md:px-5 lg:px-6 w-full">
+    <div className="px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 w-full">
       <h2 className="text-black dark:text-white text-base font-semibold mb-3 font-['Poppins']">Order</h2>
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 xs:gap-3 sm:gap-4">
         {orderItems.map((item, index) => (
           <div key={index} className="min-h-[48px] h-auto sm:h-12 bg-white dark:bg-gray-800 rounded-lg shadow-[0px_2px_9.6px_0px_rgba(0,0,0,0.08)] flex items-center px-2 sm:px-3 py-2 sm:py-0">
             <div className={`w-7 h-7 sm:w-8 sm:h-8 ${item.bgColor} rounded-lg flex items-center justify-center flex-shrink-0`}>

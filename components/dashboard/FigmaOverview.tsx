@@ -146,7 +146,7 @@ const FigmaOverview: React.FC<FigmaOverviewProps> = ({
         {/* Left side - 2 rows of cards */}
         <div className="flex-1 flex flex-col gap-4 min-w-0">
           {/* Row 1 */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 xs:gap-2 sm:gap-4">
             <StatCard
               title={t("total_products")}
               value={stats.totalProducts || 0}
@@ -168,7 +168,7 @@ const FigmaOverview: React.FC<FigmaOverviewProps> = ({
           </div>
           
           {/* Row 2 */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 xs:gap-2 sm:gap-4">
             <StatCard
               title={t("low_stock")}
               value={stats.lowStock || 0 }

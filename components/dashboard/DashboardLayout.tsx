@@ -55,7 +55,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <div className="sticky top-0 h-screen overflow-y-auto">
           {/* Logo + Close Button (mobile) */}
           <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 xs:gap-2">
               
               <span className="text-lg font-semibold text-gray-900 dark:text-white font-['Poppins']">
               <img src="https://hdnfltv.com/image/nitimages/04aad350-812e-4678-a009-7d576378b603.webp" alt="System Next IT" className="w-full h-auto" /> 
@@ -105,7 +105,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-3 xs:space-y-4 sm:space-y-6">
             {children}
           </div>
         </div>

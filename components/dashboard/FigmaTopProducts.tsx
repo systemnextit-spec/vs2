@@ -37,10 +37,10 @@ const FigmaTopProducts: React.FC<FigmaTopProductsProps> = ({
     );
   }, [products, searchQuery]);
   return (
-    <div className="w-full h-full px-4 py-5 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-4 overflow-hidden">
+    <div className="w-full h-full px-3 xs:px-4 py-4 xs:py-5 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-3 xs:gap-4 overflow-hidden">
       {/* Header */}
-      <div className="w-full flex flex-col justify-start items-start gap-3">
-        <div className="w-full flex justify-start items-center gap-3">
+      <div className="w-full flex flex-col justify-start items-start gap-2 xs:gap-3">
+        <div className="w-full flex justify-start items-center gap-2 xs:gap-3">
           <div className="flex-1 justify-start text-zinc-800 dark:text-white text-base sm:text-lg font-bold font-['Lato']">Top Products</div>
           {/* <button 
             onClick={onAllProductsClick}
@@ -51,7 +51,7 @@ const FigmaTopProducts: React.FC<FigmaTopProductsProps> = ({
         </div>
 
         {/* Search Bar */}
-        <div className="w-full p-2 bg-neutral-50 dark:bg-gray-700 rounded-lg outline outline-1 outline-offset-[-1px] outline-neutral-200 dark:outline-gray-600 flex justify-start items-center gap-1.5 overflow-hidden">
+        <div className="w-full p-2 bg-neutral-50 dark:bg-gray-700 rounded-lg outline outline-1 outline-offset-[-1px] outline-neutral-200 dark:outline-gray-600 flex justify-start items-center gap-1 xs:gap-1.5 overflow-hidden">
           <div className="flex justify-start items-center gap-2 flex-1">
             <div className="w-4 h-4 sm:w-5 sm:h-5 relative">
               <svg width="100%" height="100%" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
