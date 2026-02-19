@@ -522,28 +522,6 @@ const StoreHome: React.FC<StoreHomeProps> = ({
               </Suspense>
             )}
 
-            {/* All Products */}
-            {activeProducts.length > 0 && (
-              <Suspense fallback={<ProductGridSkeleton count={10} />}>
-                <LazySection fallback={<ProductGridSkeleton count={10} />} rootMargin="0px 0px 300px" minHeight="500px">
-                  <ProductGridSection
-                    title="Our Products"
-                    products={activeProducts}
-                    accentColor="blue"
-                    keyPrefix="all"
-                    maxProducts={50}
-                    reverseOrder={false}
-                    onProductClick={onProductClick}
-                    onBuyNow={handleBuyNow}
-                    onQuickView={setQuickViewProduct}
-                    onAddToCart={handleAddProductToCartFromCard}
-                    productCardStyle={websiteConfig?.productCardStyle}
-                    productSectionStyle={websiteConfig?.productSectionStyle}
-                  />
-                </LazySection>
-              </Suspense>
-            )}
-
             {/* Tag-based Product Sections */}
             {tags?.filter(t => !t.status || t.status === 'Active' || t.status?.toLowerCase() === 'active').map((tag, idx) => {
               const tagProducts = activeProducts.filter(p => 
@@ -572,6 +550,28 @@ const StoreHome: React.FC<StoreHomeProps> = ({
                 </Suspense>
               );
             })}
+
+            {/* All Products */}
+            {activeProducts.length > 0 && (
+              <Suspense fallback={<ProductGridSkeleton count={10} />}>
+                <LazySection fallback={<ProductGridSkeleton count={10} />} rootMargin="0px 0px 300px" minHeight="500px">
+                  <ProductGridSection
+                    title="Our Products"
+                    products={activeProducts}
+                    accentColor="blue"
+                    keyPrefix="all"
+                    maxProducts={50}
+                    reverseOrder={false}
+                    onProductClick={onProductClick}
+                    onBuyNow={handleBuyNow}
+                    onQuickView={setQuickViewProduct}
+                    onAddToCart={handleAddProductToCartFromCard}
+                    productCardStyle={websiteConfig?.productCardStyle}
+                    productSectionStyle={websiteConfig?.productSectionStyle}
+                  />
+                </LazySection>
+              </Suspense>
+            )}
           </>
         )}
       </main>
