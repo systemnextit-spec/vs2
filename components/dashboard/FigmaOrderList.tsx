@@ -1233,7 +1233,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden">
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-3 sm:p-4 lg:p-6 border-b bg-gray-50">
+            <div className="flex justify-between items-center p-3 sm:p-4 lg:p-4 xl:p-5 border-b bg-gray-50">
               <div>
                 <div className="flex items-center gap-3">
                   <h2 className="text-xl font-bold text-gray-900">Edit Order</h2>
@@ -1247,12 +1247,12 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
             </div>
 
             {/* Modal Body */}
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 lg:p-8">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-4 xl:p-5 lg:p-8">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                 {/* Left: Form Fields */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Customer Info */}
-                  <div className="bg-gray-50 p-3 sm:p-4 lg:p-6 rounded-xl border">
+                  <div className="bg-gray-50 p-3 sm:p-4 lg:p-4 xl:p-5 rounded-xl border">
                     <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
                       <div className="w-1 h-5 bg-blue-600 rounded-full"></div> Customer Information
                     </h3>
@@ -1303,7 +1303,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                   </div>
 
                   {/* Order Settings */}
-                  <div className="bg-gray-50 p-3 sm:p-4 lg:p-6 rounded-xl border">
+                  <div className="bg-gray-50 p-3 sm:p-4 lg:p-4 xl:p-5 rounded-xl border">
                     <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
                       <div className="w-1 h-5 bg-emerald-600 rounded-full"></div> Order Settings
                     </h3>
@@ -1368,7 +1368,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                 {/* Right: Actions */}
                 <div className="space-y-6">
                   {/* Order Snapshot */}
-                  <div className="bg-gray-900 text-gray-300 p-3 sm:p-4 lg:p-6 rounded-xl">
+                  <div className="bg-gray-900 text-gray-300 p-3 sm:p-4 lg:p-4 xl:p-5 rounded-xl">
                     <div className="flex items-center gap-2 mb-4 text-white font-semibold border-b border-gray-700 pb-2">
                       <Package2 size={18} /> Order Snapshot
                     </div>
@@ -1654,7 +1654,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowAddOrderModal(false); }}>
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 lg:p-6 border-b">
+            <div className="flex items-center justify-between p-3 sm:p-4 lg:p-4 xl:p-5 border-b">
               <h2 className="text-xl font-semibold text-gray-900">Add New Order</h2>
               <button 
                 onClick={() => setShowAddOrderModal(false)}
@@ -1826,7 +1826,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
             </div>
 
             {/* Footer */}
-            <div className="flex justify-end gap-3 p-3 sm:p-4 lg:p-6 border-t bg-gray-50 rounded-b-2xl">
+            <div className="flex justify-end gap-3 p-3 sm:p-4 lg:p-4 xl:p-5 border-t bg-gray-50 rounded-b-2xl">
               <button
                 onClick={() => setShowAddOrderModal(false)}
                 className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors"

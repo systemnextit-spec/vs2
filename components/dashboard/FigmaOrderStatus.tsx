@@ -65,7 +65,7 @@ const FigmaOrderStatus: React.FC<FigmaOrderStatusProps> = ({
   ];
 
   return (
-    <div className="px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 w-full">
+    <div className="px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-4 w-full">
       <h2 className="text-black dark:text-white text-base font-semibold mb-3 font-['Poppins']">Order</h2>
       
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 xs:gap-3 sm:gap-4">

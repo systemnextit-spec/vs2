@@ -262,7 +262,7 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
   };
 
   return (
-    <div className="w-full bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 px-2 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-3 md:py-4 transition-colors duration-300">
+    <div className="w-full bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 px-2 sm:px-4 md:px-5 lg:px-3 xl:px-4 py-2 sm:py-3 md:py-4 transition-colors duration-300">
       <div className="flex items-center justify-between gap-1 xs:gap-2">
         {/* Welcome Section - Hidden on very small screens */}
         <div className="flex-1 min-w-0 hidden sm:block">

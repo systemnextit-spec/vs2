@@ -827,7 +827,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md p-3 sm:p-4 lg:p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md p-3 sm:p-4 lg:p-4 xl:p-5">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                 {editItem ? 'Edit' : 'Add'} {getTitle()}

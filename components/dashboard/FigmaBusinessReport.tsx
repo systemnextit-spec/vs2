@@ -2902,7 +2902,7 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
                         setExpenseDetailsOpen(expense);
                         setActionMenuOpen(null);
                       }}
-                      className="w-full h-[48px] flex items-center gap-2 px-3 sm:px-4 lg:px-6 hover:bg-gray-50"
+                      className="w-full h-[48px] flex items-center gap-2 px-3 sm:px-4 lg:px-3 xl:px-4 hover:bg-gray-50"
                     >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M12 20h9"/>
@@ -2918,7 +2918,7 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
                         setIsAddExpenseOpen(true);
                         setActionMenuOpen(null);
                       }}
-                      className="w-full h-[48px] flex items-center gap-2 px-3 sm:px-4 lg:px-6 hover:bg-gray-50"
+                      className="w-full h-[48px] flex items-center gap-2 px-3 sm:px-4 lg:px-3 xl:px-4 hover:bg-gray-50"
                     >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M12 20h9"/>
@@ -2929,7 +2929,7 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
                     {/* Delete */}
                     <button
                       onClick={() => handleDeleteExpense(expense.id)}
-                      className="w-full h-[48px] flex items-center gap-2 px-3 sm:px-4 lg:px-6 hover:bg-gray-50"
+                      className="w-full h-[48px] flex items-center gap-2 px-3 sm:px-4 lg:px-3 xl:px-4 hover:bg-gray-50"
                     >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#da0000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="3 6 5 6 21 6"/>

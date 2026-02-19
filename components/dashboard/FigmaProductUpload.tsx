@@ -953,11 +953,11 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
   return (
     <div className="min-h-screen bg-[#f9f9f9] pb-6 xxs:pb-8 font-['Lato']">
       {/* Header */}
-      <div className="px-2 xxs:px-3 sm:px-4 lg:px-6 py-3 xxs:py-4 sm:py-6">
+      <div className="px-2 xxs:px-3 sm:px-4 lg:px-3 xl:px-4 py-3 xxs:py-4 sm:py-6">
         <h1 className="text-base xxs:text-lg sm:text-xl lg:text-[24px] font-bold text-black">Product Upload</h1>
       </div>
 
-      <div className="px-2 xxs:px-3 sm:px-4 lg:px-6 flex flex-col lg:flex-row gap-3 xxs:gap-4 lg:gap-6">
+      <div className="px-2 xxs:px-3 sm:px-4 lg:px-3 xl:px-4 flex flex-col lg:flex-row gap-3 xxs:gap-4 lg:gap-4 xl:gap-5">
         {/* Left Column - Form */}
         <div className="flex-1 space-y-3 xxs:space-y-4">
           {/* General Information */}
@@ -1178,7 +1178,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
 
           {/* Pricing */}
           <Section title="Pricing">
-            <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-4 xl:gap-5">
               <InputField
                 label="Sell/Current Price"
                 required
@@ -1208,7 +1208,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
           {/* Inventory */}
           <Section title="Inventory">
             <div className="space-y-3 xxs:space-y-4">
-              <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-4 xl:gap-5">
                 <InputField
                   label="Product Priority"
                   value={formData.priority}
@@ -1230,7 +1230,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   placeholder="Piece, kg, liter, meter etc."
                 />
               </div>
-              <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-4 xl:gap-5">
                 <InputField
                   label="Warranty"
                   value={formData.warranty}
@@ -1251,7 +1251,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   rightIcon={<Scan size={18} className="text-gray-400 xxs:w-5 xxs:h-5" />}
                 />
               </div>
-              <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-4 xl:gap-5">
                 <InputField
                   label="Initial Sold Count"
                   value={formData.initialSoldCount}
@@ -2387,7 +2387,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
 
               {/* Flash Sale & Most Sales - for Category */}
               {catalogModalTab === 'category' && (
-                <div className="flex gap-3 sm:gap-4 lg:gap-6">
+                <div className="flex gap-3 sm:gap-4 lg:gap-4 xl:gap-5">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
