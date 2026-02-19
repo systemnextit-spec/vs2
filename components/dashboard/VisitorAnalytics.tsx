@@ -70,54 +70,87 @@ const VisitorCard = ({ icon, title, subtitle, value, bgColor, iconColor, titleCo
   </div>
 );
 
-// === SVG Bar Chart ===
-const SVGBarChart = ({ data, maxValue }: { data: any[]; maxValue: number }) => {
-  const chartHeight = 160;
-  const barWidth = 22;
-  const barGap = 3;
-  const groupWidth = barWidth * 3 + barGap * 2;
-  const groupGap = 32;
-  const horizontalPadding = 10;
-  const extraRightBuffer = 50;
-  const svgWidth = data.length * groupWidth + (data.length - 1) * groupGap + horizontalPadding * 2 + extraRightBuffer;
-  const svgHeight = chartHeight + 40;
+// === Traffic Chart Section (Figma Design) ===
+const TrafficChartSection = ({ chartData, loading }: { chartData: any[]; loading: boolean }) => {
+  const legendItems = [
+    { color: "bg-[linear-gradient(90deg,rgba(56,189,248,1)_0%,rgba(30,144,255,1)_100%)]", label: "Mobile View" },
+    { color: "bg-[linear-gradient(180deg,rgba(255,106,0,1)_0%,rgba(255,159,28,1)_100%)]", label: "Tab View" },
+    { color: "bg-[linear-gradient(180deg,rgba(160,139,255,1)_0%,rgba(89,67,255,1)_100%)]", label: "Desktop View" },
+  ];
 
-  const getBarHeight = (value: number) => {
-    if (value === 0 || maxValue === 0) return 4;
-    return (value / maxValue) * chartHeight;
+  // Calculate dynamic heights based on max value
+  const maxValue = Math.max(...chartData.flatMap(d => [d.mobile, d.tab, d.desktop]), 1);
+  const getHeight = (value: number) => {
+    const minHeight = 82;
+    const maxHeight = 193;
+    return Math.max(minHeight, Math.min(maxHeight, (value / maxValue) * maxHeight));
   };
 
   return (
-    <svg
-      width={svgWidth}
-      height={svgHeight}
-      viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="overflow-visible"
-    >
-      <defs>
-        <linearGradient id="barBlue" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#38BDF8" /><stop offset="1" stopColor="#1E90FF" /></linearGradient>
-        <linearGradient id="barOrange" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#FF9F1C" /><stop offset="1" stopColor="#FF6A00" /></linearGradient>
-        <linearGradient id="barPurple" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#A08BFF" /><stop offset="1" stopColor="#5943FF" /></linearGradient>
-      </defs>
-      {data.map((day: any, i: number) => {
-        const gx = i * (groupWidth + groupGap) + horizontalPadding;
-        const bars = [
-          { h: getBarHeight(day.mobile), fill: 'url(#barBlue)', xOff: 0 },
-          { h: getBarHeight(day.desktop), fill: 'url(#barPurple)', xOff: barWidth + barGap },
-          { h: getBarHeight(day.tab), fill: 'url(#barOrange)', xOff: (barWidth + barGap) * 2 },
-        ];
-        return (
-          <g key={i}>
-            {bars.map((bar, j) => (
-              <rect key={j} x={gx + bar.xOff} y={chartHeight - bar.h} width={barWidth} height={bar.h} fill={bar.fill} rx="3" />
+    <div className="relative w-full h-[273px] bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+      {loading ? (
+        <div className="h-full w-full flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-slate-100 border-t-slate-400 rounded-full animate-spin" />
+        </div>
+      ) : (
+        <>
+          {/* Y-axis label */}
+          <div className="inline-flex h-[196px] items-center gap-2 absolute top-[13px] left-2.5">
+            <div className="relative w-fit ml-[-39.50px] mr-[-31.50px] rotate-[-90.00deg] [font-family:'DM_Sans',Helvetica] font-normal text-[#4b494e] dark:text-gray-400 text-xs text-center tracking-[0] leading-[normal]">
+              Units of measure
+            </div>
+            <div className="relative self-stretch w-px bg-gray-200 dark:bg-gray-600 mt-[-0.35px] mb-[-0.35px] mr-[-0.65px]" />
+          </div>
+
+          {/* Chart bars */}
+          <div className="flex w-[689px] items-end justify-between absolute top-4 left-[47px]">
+            {chartData.map((data, index) => (
+              <div key={index} className="inline-flex flex-col items-center justify-center gap-1 relative flex-[0_0_auto]">
+                <div className="inline-flex items-end gap-1 relative flex-[0_0_auto]">
+                  {/* Mobile bar */}
+                  <div className="relative w-6 bg-[linear-gradient(180deg,rgba(56,189,248,1)_0%,rgba(30,144,255,1)_100%)]" style={{ height: `${getHeight(data.mobile)}px` }}>
+                    <div className="text-center absolute top-[5px] left-[calc(50.00%_-_10px)] -rotate-90 [font-family:'Lato',Helvetica] font-semibold text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+                      {data.mobile}
+                    </div>
+                  </div>
+
+                  {/* Tablet bar */}
+                  <div className="relative w-6 bg-[linear-gradient(180deg,rgba(255,159,28,1)_0%,rgba(255,106,0,1)_100%)]" style={{ height: `${getHeight(data.tab)}px` }}>
+                    <div className="text-right absolute top-[5px] left-[calc(50.00%_-_10px)] -rotate-90 [font-family:'Lato',Helvetica] font-semibold text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+                      {data.tab}
+                    </div>
+                  </div>
+
+                  {/* Desktop bar */}
+                  <div className="relative w-6 bg-[linear-gradient(180deg,rgba(160,139,255,1)_0%,rgba(89,67,255,1)_100%)]" style={{ height: `${getHeight(data.desktop)}px` }}>
+                    <div className="text-right absolute top-[5px] left-[calc(50.00%_-_10px)] -rotate-90 [font-family:'Lato',Helvetica] font-semibold text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+                      {data.desktop}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Date label */}
+                <div className="relative w-fit [font-family:'DM_Sans',Helvetica] font-normal text-[#4b494e] dark:text-gray-400 text-xs tracking-[0] leading-[normal]">
+                  {data.date}
+                </div>
+              </div>
             ))}
-            <text x={gx + groupWidth / 2} y={chartHeight + 24} fill="#64748B" fontSize="11" fontWeight="600" textAnchor="middle">{day.date}</text>
-          </g>
-        );
-      })}
-    </svg>
+          </div>
+
+          {/* Legend */}
+          <div className="inline-flex items-center gap-12 absolute top-[238px] left-[calc(50.00%_-_192px)]">
+            {legendItems.map((item, index) => (
+              <div key={index} className="inline-flex items-center justify-center gap-2.5 relative flex-[0_0_auto]">
+                <div className={`relative w-5 h-5 rounded-[22px] ${item.color}`} />
+                <div className="relative w-fit [font-family:'DM_Sans',Helvetica] font-medium text-[#4b494e] dark:text-gray-400 text-xs text-center tracking-[0] leading-[normal]">
+                  {item.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 
@@ -210,83 +243,52 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
     return () => clearInterval(interval);
   }, [tenantId]);
 
-  const maxValue = Math.max(1, ...chartData.flatMap((d: any) => [d.mobile, d.tab, d.desktop]));
-
   return (
-    <div className="bg-[#F1F5F9] p-4 sm:p-6 font-sans antialiased text-slate-900 dark:bg-gray-800 dark:text-slate-100 rounded-2xl overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
-          {/* Left: Visitor Stat Cards */}
-          <section className="lg:col-span-4 flex flex-col gap-4">
-            <div className="flex-1">
-              <VisitorCard
-                icon={<OnlineNowIcon color="#0EA5E9" />}
-                title="Online Now"
-                subtitle="Active visitors browsing right now"
-                value={stats.onlineNow}
-                bgColor="rgba(14, 165, 233, 0.08)"
-                iconColor="#0EA5E9"
-                titleColor="#0369A1"
-                loading={loading}
-              />
-            </div>
-            <div className="flex-1">
-              <VisitorCard
-                icon={<TodayVisitorsIcon color="#F97316" />}
-                title="Today Visitors"
-                subtitle={`Last 7 days avg: ${Math.round(stats.last7Days / 7)}`}
-                value={stats.todayVisitors}
-                bgColor="rgba(249, 115, 22, 0.08)"
-                iconColor="#F97316"
-                titleColor="#C2410C"
-                loading={loading}
-              />
-            </div>
-            <div className="flex-1">
-              <VisitorCard
-                icon={<TotalVisitorsIcon color="#6366F1" />}
-                title="Total Visitors"
-                subtitle={`${(stats.pageViews / 1000).toFixed(1)}k cumulative views`}
-                value={stats.totalVisitors}
-                bgColor="rgba(99, 102, 241, 0.08)"
-                iconColor="#6366F1"
-                titleColor="#4338CA"
-                loading={loading}
-              />
-            </div>
-          </section>
-
-          {/* Right: Device Breakdown Chart */}
-          <main className="lg:col-span-8 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 flex flex-col min-h-[280px] dark:bg-gray-800 dark:border-gray-700 min-w-0 overflow-hidden">
-            <div className="flex items-center justify-between mb-8 shrink-0">
-              <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Device Breakdown</h2>
-              <div className="flex items-center gap-2 bg-slate-50 dark:bg-gray-700 px-3 py-1.5 rounded-full border border-slate-100 dark:border-gray-600">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">Real-time</span>
-              </div>
-            </div>
-
-            <div className="flex-1 flex flex-col justify-center overflow-hidden">
-              <div className="overflow-x-auto scrollbar-hide touch-pan-x">
-                <div className="min-w-max px-4 h-[220px]">
-                  {loading ? (
-                    <div className="h-full w-full flex items-center justify-center">
-                      <div className="w-8 h-8 border-4 border-slate-100 border-t-slate-400 rounded-full animate-spin" />
-                    </div>
-                  ) : (
-                    <SVGBarChart data={chartData} maxValue={maxValue} />
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Legend */}
-            <footer className="mt-8 pt-6 border-t border-slate-50 dark:border-gray-700 flex flex-wrap justify-center sm:justify-start gap-x-8 gap-y-4 shrink-0">
-              <div className="flex items-center gap-2.5"><div className="w-4 h-4 rounded-md bg-gradient-to-br from-[#38bdf8] to-[#1e90ff]" /><span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Mobile</span></div>
-              <div className="flex items-center gap-2.5"><div className="w-4 h-4 rounded-md bg-gradient-to-br from-[#ff9f1c] to-[#ff6a00]" /><span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Tablet</span></div>
-              <div className="flex items-center gap-2.5"><div className="w-4 h-4 rounded-md bg-gradient-to-br from-[#a08bff] to-[#5943ff]" /><span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Desktop</span></div>
-            </footer>
-          </main>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
+      {/* Left: Visitor Stat Cards */}
+      <section className="lg:col-span-4 flex flex-col gap-4">
+        <div className="flex-1">
+          <VisitorCard
+            icon={<OnlineNowIcon color="#0EA5E9" />}
+            title="Online Now"
+            subtitle="Active visitors browsing right now"
+            value={stats.onlineNow}
+            bgColor="rgba(14, 165, 233, 0.08)"
+            iconColor="#0EA5E9"
+            titleColor="#0369A1"
+            loading={loading}
+          />
         </div>
+        <div className="flex-1">
+          <VisitorCard
+            icon={<TodayVisitorsIcon color="#F97316" />}
+            title="Today Visitors"
+            subtitle={`Last 7 days avg: ${Math.round(stats.last7Days / 7)}`}
+            value={stats.todayVisitors}
+            bgColor="rgba(249, 115, 22, 0.08)"
+            iconColor="#F97316"
+            titleColor="#C2410C"
+            loading={loading}
+          />
+        </div>
+        <div className="flex-1">
+          <VisitorCard
+            icon={<TotalVisitorsIcon color="#6366F1" />}
+            title="Total Visitors"
+            subtitle={`${(stats.pageViews / 1000).toFixed(1)}k cumulative views`}
+            value={stats.totalVisitors}
+            bgColor="rgba(99, 102, 241, 0.08)"
+            iconColor="#6366F1"
+            titleColor="#4338CA"
+            loading={loading}
+          />
+        </div>
+      </section>
+
+      {/* Right: Traffic Chart (Figma Design) */}
+      <div className="lg:col-span-8 min-w-0">
+        <TrafficChartSection chartData={chartData} loading={loading} />
+      </div>
     </div>
   );
 };
