@@ -429,7 +429,7 @@ const AdminCustomersReview: React.FC<AdminCustomersReviewProps> = ({ orders, pro
       {/* Top Header Section */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-teal-950">
-          Customers <span className="font-normal">Review</span>
+          Customers & Reviews
         </h1>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:items-center">

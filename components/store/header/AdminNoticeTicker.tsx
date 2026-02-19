@@ -24,7 +24,7 @@ export const AdminNoticeTicker: React.FC<AdminNoticeTickerProps> = ({ noticeText
         .marquee-content {
           display: inline-block;
           white-space: nowrap;
-          animation: scroll-right-to-left 15s linear infinite;
+          animation: scroll-right-to-left 25s linear infinite;
         }
         .marquee-text {
           font-size: 0.875rem;
