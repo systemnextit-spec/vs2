@@ -132,7 +132,7 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
   const Sidebar = () => (<>
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="bg-gradient-theme-r px-4 py-3"><h3 className="text-white font-bold text-sm">Categories</h3></div>
-      <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
+      <div className="divide-y divide-gray-50">
         {activeCats.map(c => {
           const active = eq(selectedCategory, c.name);
           return (<button key={c.id} onClick={() => { handleCategoryChangeWithScroll(c.name); setSelectedBrand(null); setSelectedTag(null); closeFilter(); }}
@@ -152,7 +152,7 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
     {activeTags.length > 0 && (
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3"><h3 className="text-white font-bold text-sm flex items-center gap-2"><Hash size={14} /> Tags</h3></div>
-        <div className="divide-y divide-gray-50 max-h-[300px] overflow-y-auto">
+        <div className="divide-y divide-gray-50">
           {activeTags.map(t => {
             const active = isTagFilter ? eq(tagFromUrl, t.name) : selectedTag === t.name;
             return (<button key={t.id} onClick={() => { 
@@ -177,7 +177,7 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
     {/* Brands Section */}
     {catBrands.length > 0 && <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="bg-gradient-to-r from-gray-700 to-gray-800 px-4 py-3"><h3 className="text-white font-bold text-sm">Brands</h3></div>
-      <div className="divide-y divide-gray-50 max-h-[300px] overflow-y-auto">
+      <div className="divide-y divide-gray-50">
         {catBrands.map(b => (<button key={b.id} onClick={() => { setSelectedBrand(p => p === b.name ? null : b.name); closeFilter(); }}
           className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-all hover:bg-gray-50 ${selectedBrand === b.name ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-700'}`}>
           {b.logo ? <img src={normalizeImageUrl(b.logo)} alt={b.name} className="w-8 h-8 rounded-lg object-contain border border-gray-100 bg-white p-1" />
