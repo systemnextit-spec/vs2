@@ -57,7 +57,7 @@ interface FormData {
   salesPrice: number;
   costPrice: number;
   quantity: number;
-  priority: number;
+  serial: number;
   unitName: string;
   warranty: string;
   sku: string;
@@ -326,7 +326,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     salesPrice: 0,
     costPrice: 0,
     quantity: 0,
-    priority: 0,
+    serial: 0,
     unitName: '',
     warranty: '',
     sku: '',
@@ -433,7 +433,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     formData.initialSoldCount > 0,
     !!formData.productionStart,
     !!formData.expirationEnd,
-    formData.priority > 0,
+    formData.serial > 0,
     !!formData.seoTitle?.trim(),
     !!formData.seoDescription?.trim(),
     !!formData.keywords?.trim(),
@@ -1210,9 +1210,9 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
             <div className="space-y-3 xxs:space-y-4">
               <div className="grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 lg:gap-4 xl:gap-5">
                 <InputField
-                  label="Product Priority"
-                  value={formData.priority}
-                  onChange={(v) => updateField('priority', parseFloat(v) || 0)}
+                  label="Product serial"
+                  value={formData.serial}
+                  onChange={(v) => updateField('serial', parseFloat(v) || 0)}
                   placeholder="0%"
                   type="number"
                 />

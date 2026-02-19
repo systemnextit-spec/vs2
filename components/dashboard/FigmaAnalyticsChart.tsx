@@ -43,7 +43,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
           const onlineData = await onlineRes.json();
 
           setStats({
-            onlineNow: onlineData.count || 0,
+            onlineNow: onlineData.online || 0,
             todayVisitors: statsData.todayVisitors || 0,
             totalVisitors: statsData.totalVisitors || 0,
             last7Days: statsData.periodVisitors || 0,
@@ -97,7 +97,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
         const onlineRes = await fetch(`${apiUrl}/api/visitors/${activeTenantId}/online`);
         if (onlineRes.ok) {
           const onlineData = await onlineRes.json();
-          setStats(prev => ({ ...prev, onlineNow: onlineData.count || 0 }));
+          setStats(prev => ({ ...prev, onlineNow: onlineData.online || 0 }));
         }
       } catch (error) {
         console.error('Error refreshing online count:', error);
