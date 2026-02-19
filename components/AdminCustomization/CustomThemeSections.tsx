@@ -189,6 +189,7 @@ const ThemeSection: React.FC<{
   onToggle: () => void;
   onExpand: () => void;
   demoImages?: Record<string, string>;
+  listMode?: boolean;
 }> = ({
   title,
   icon,
@@ -202,6 +203,7 @@ const ThemeSection: React.FC<{
   onToggle,
   onExpand,
   demoImages,
+  listMode = false,
 }) => (
   <div style={{
     borderRadius: '14px',
@@ -259,33 +261,121 @@ const ThemeSection: React.FC<{
 
     {/* Expandable Style Options */}
     <div style={{
-      maxHeight: isExpanded ? '220px' : '0',
+      maxHeight: isExpanded ? (listMode ? `${count * 72 + 16}px` : '220px') : '0',
       overflow: 'hidden',
       transition: 'max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
     }}>
-      <div style={{
-        padding: '4px 16px 16px',
-        display: 'flex',
-        gap: '10px',
-        alignItems: 'stretch',
-        overflowX: 'auto',
-      }}>
-        {Array.from({ length: count }).map((_, i) => {
-          const styleValue = `style${i + 1}`;
-          const thumb = demoImages?.[styleValue] || '';
-          return (
-            <StyleCard
-              key={i}
-              index={i}
-              label={`${label} ${i + 1}`}
-              isSelected={enabled && currentStyle === styleValue}
-              disabled={!enabled}
-              onSelect={() => onStyleSelect(sectionKey, styleValue)}
-              thumbnailUrl={thumb}
-            />
-          );
-        })}
-      </div>
+      {listMode ? (
+        /* List Layout for Header */
+        <div style={{ padding: '8px 12px 12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {Array.from({ length: count }).map((_, i) => {
+            const styleValue = `style${i + 1}`;
+            const thumb = demoImages?.[styleValue] || '';
+            const isSelected = enabled && currentStyle === styleValue;
+            return (
+              <div
+                key={i}
+                onClick={() => enabled && onStyleSelect(sectionKey, styleValue)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '8px 12px',
+                  borderRadius: '10px',
+                  border: isSelected ? '2px solid #ff6a00' : '2px solid transparent',
+                  backgroundColor: isSelected ? (isDarkMode ? '#451a03' : '#fff7ed') : (isDarkMode ? '#374151' : '#f8fafc'),
+                  cursor: !enabled ? 'not-allowed' : 'pointer',
+                  opacity: !enabled ? 0.35 : 1,
+                  transition: 'all 0.2s ease',
+                  boxShadow: isSelected ? '0 2px 8px rgba(255,106,0,0.12)' : 'none',
+                }}
+                onMouseEnter={(e) => {
+                  if (enabled && !isSelected) {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#4b5563' : '#f1f5f9';
+                    e.currentTarget.style.borderColor = '#ffd6b3';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#374151' : '#f8fafc';
+                    e.currentTarget.style.borderColor = 'transparent';
+                  }
+                }}
+              >
+                {/* Thumbnail */}
+                <div style={{
+                  width: '80px',
+                  height: '44px',
+                  borderRadius: '6px',
+                  overflow: 'hidden',
+                  flexShrink: 0,
+                  backgroundColor: '#e2e8f0',
+                  border: '1px solid #e2e8f0',
+                }}>
+                  {thumb ? (
+                    <img src={thumb} alt={`${label} ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} loading="lazy" />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f1f5f9, #e2e8f0)' }}>
+                      <LayoutGrid size={14} style={{ color: '#94a3b8' }} />
+                    </div>
+                  )}
+                </div>
+                {/* Label */}
+                <span style={{
+                  fontFamily: '"Inter", "Lato", sans-serif',
+                  fontWeight: isSelected ? 600 : 500,
+                  fontSize: '13px',
+                  color: isSelected ? '#ff6a00' : (isDarkMode ? '#d1d5db' : '#475569'),
+                  flex: 1,
+                }}>
+                  {label} {i + 1}
+                </span>
+                {/* Selected indicator */}
+                {isSelected && (
+                  <div style={{
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '50%',
+                    backgroundColor: '#ff6a00',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    boxShadow: '0 2px 6px rgba(255,106,0,0.3)',
+                  }}>
+                    <CheckCircle2 size={14} style={{ color: 'white' }} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* Grid/Card Layout for other sections */
+        <div style={{
+          padding: '4px 16px 16px',
+          display: 'flex',
+          gap: '10px',
+          alignItems: 'stretch',
+          overflowX: 'auto',
+        }}>
+          {Array.from({ length: count }).map((_, i) => {
+            const styleValue = `style${i + 1}`;
+            const thumb = demoImages?.[styleValue] || '';
+            return (
+              <StyleCard
+                key={i}
+                index={i}
+                label={`${label} ${i + 1}`}
+                isSelected={enabled && currentStyle === styleValue}
+                disabled={!enabled}
+                onSelect={() => onStyleSelect(sectionKey, styleValue)}
+                thumbnailUrl={thumb}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   </div>
 );
@@ -518,6 +608,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
                   setPreviewTab('style');
                 }}
                 demoImages={THEME_DEMO_IMAGES[section.key]}
+                listMode={section.key.toLowerCase().includes('header')}
               />
             );
           })}
