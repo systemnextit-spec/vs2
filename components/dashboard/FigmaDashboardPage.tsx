@@ -187,6 +187,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
 
         {/* Analytics Bar Chart */}
         <div className="px-2 xs:px-3 sm:px-4 lg:px-3 xl:px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 xs:gap-3 sm:gap-4">
           <VisitorStatsSection
             // timeFilter={timeFilter}
             // onTimeFilterChange={(filter) => setTimeFilter(filter as any)}
@@ -201,7 +202,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
           //   onDateRangeChange={(range) => setSelectedMonth(range.start)}
           //   tenantId={tenantId}
           />
-       
+       </div>
         </div>
 
          
