@@ -123,7 +123,7 @@ const FigmaAnalyticsChart = () => {
         </section>
 
         {/* Traffic Chart Section */}
-        <div className="relative w-[854px] h-[273px] bg-white rounded-lg overflow-hidden border border-slate-100">
+        <div className="relative w-[999px] h-[273px] bg-white rounded-lg overflow-hidden border border-slate-100">
           <div className="inline-flex h-[196px] items-center gap-2 absolute top-[13px] left-2.5">
             <div
               className="relative w-fit ml-[-39.50px] mr-[-31.50px] rotate-[-90.00deg] font-normal text-slate-400 text-xs text-center tracking-[0] leading-[normal]"
