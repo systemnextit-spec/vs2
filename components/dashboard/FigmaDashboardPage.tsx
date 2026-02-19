@@ -30,6 +30,7 @@ interface FigmaDashboardPageProps {
   onLogoutClick?: () => void;
   hasUnreadChat?: boolean;
   onOpenAdminChat?: () => void;
+  onOrderNotificationClick?: (orderId: string) => void;
 }
 
 const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
@@ -41,7 +42,8 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
   onNavigate,
   onLogoutClick,
   hasUnreadChat = false,
-  onOpenAdminChat
+  onOpenAdminChat,
+  onOrderNotificationClick
 }) => {
   const { language, setLanguage } = useLanguage();
   const [timeFilter, setTimeFilter] = useState<'day' | 'month' | 'year' | 'all' | 'custom'>('year');
@@ -152,6 +154,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
         notificationCount: unreadCount,
         notifications: notifications,
         onMarkNotificationRead: markAsRead,
+        onOrderNotificationClick: onOrderNotificationClick,
         // Chat props
         unreadChatCount: hasUnreadChat ? 1 : 0,
         onChatClick: onOpenAdminChat

@@ -756,6 +756,7 @@ const AdminApp: React.FC<AdminAppProps> = ({
             onLogoutClick={onLogout}
             hasUnreadChat={hasUnreadChat}
             onOpenAdminChat={onOpenAdminChat}
+            onOrderNotificationClick={handleOrderNotificationClick}
           />
         </>
       ) : (
