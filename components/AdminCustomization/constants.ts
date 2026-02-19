@@ -60,6 +60,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/header-3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/header-4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/header_-_5.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/pasted_1771520591605.webp',
   },
   mobileHeaderStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/mobile_header_-_1_1768841563.webp',
@@ -67,6 +68,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/mobile_header_3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/mobile_header_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/mobile_header_5.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/pasted_1771520591605.webp',
   },
   showcaseSectionStyle: {
     style1: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1200&q=80&fm=webp',
@@ -198,8 +200,8 @@ export const FOOTER_LINK_SECTIONS: Array<{
 ];
 
 export const THEME_VIEW_SECTIONS = [
-  { title: 'Header Section', key: 'headerStyle', count: 5 },
-  { title: 'Mobile Header', key: 'mobileHeaderStyle', count: 5 },
+  { title: 'Header Section', key: 'headerStyle', count: 6 },
+  { title: 'Mobile Header', key: 'mobileHeaderStyle', count: 6 },
   {
     title: 'Category Section',
     key: 'categorySectionStyle',

@@ -11,7 +11,7 @@ import ComponentLibrary from './components/ComponentLibrary';
 const BROKEN_IMAGE_PLACEHOLDER = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EBroken Image%3C/text%3E%3C/svg%3E';
 
 // Types
-type SectionType = 'announcement-bar' | 'header' | 'hero' | 'featured-collection' | 'rich-text' | 'image-with-text' | 'image-banner' | 'slideshow' | 'video' | 'newsletter' | 'collection-list' | 'product-grid' | 'testimonials' | 'contact-form' | 'map' | 'multicolumn' | 'collapsible-content' | 'custom-html' | 'footer' | 'featured-product' | 'blog-posts' | 'brand-list' | 'flash-sale' | 'categories' | 'brands' | 'tags-products';
+type SectionType = 'announcement-bar' | 'header' | 'hero' | 'featured-collection' | 'rich-text' | 'image-with-text' | 'image-banner' | 'slideshow' | 'video' | 'newsletter' | 'collection-list' | 'product-grid' | 'testimonials' | 'contact-form' | 'map' | 'multicolumn' | 'collapsible-content' | 'custom-html' | 'footer' | 'featured-product' | 'blog-posts' | 'brand-list' | 'flash-sale' | 'categories' | 'brands' | 'tags-products' | 'showcaseSection';
 type BlockType = 'heading' | 'text' | 'button' | 'image' | 'link' | 'product' | 'collection' | 'video' | 'icon' | 'price' | 'quantity' | 'divider';
 
 interface Block { id: string; type: BlockType; settings: Record<string, any>; }
@@ -57,7 +57,7 @@ const Icons = {
 };
 
 // Section definitions with proper settings for each type
-const SECTION_DEFINITIONS: Record<SectionType, { icon: JSX.Element; label: string; category: 'header' | 'sections' | 'footer'; description: string; allowedBlocks: BlockType[]; defaultSettings: Record<string, any> }> = {
+const SECTION_DEFINITIONS: Partial<Record<SectionType, { icon: JSX.Element; label: string; category: 'header' | 'sections' | 'footer'; description: string; allowedBlocks: BlockType[]; defaultSettings: Record<string, any> }>> = {
   'announcement-bar': { icon: <Icons.Megaphone />, label: 'Announcement bar', category: 'header', description: 'Show important announcements', allowedBlocks: ['text', 'link'], defaultSettings: { text: 'Welcome! Free shipping on orders over $50', backgroundColor: '#1a1a2e', textColor: '#ffffff', dismissible: true } },
   'header': { icon: <Icons.Layout />, label: 'Header', category: 'header', description: 'Site header with navigation', allowedBlocks: ['link', 'image'], defaultSettings: { logoText: 'Store', sticky: true, transparent: false, menuStyle: 'horizontal' } },
   'hero': { icon: <Icons.Star />, label: 'Hero banner', category: 'sections', description: 'Full-width hero section', allowedBlocks: ['heading', 'text', 'button', 'image'], defaultSettings: { heading: 'Welcome to Our Store', subheading: 'Discover amazing products', buttonText: 'Shop Now', buttonLink: '/products', imageUrl: '', overlayOpacity: 40, height: 'large', alignment: 'center' } },
@@ -84,6 +84,8 @@ const SECTION_DEFINITIONS: Record<SectionType, { icon: JSX.Element; label: strin
   'featured-product': { icon: <Icons.Star />, label: 'Featured product', category: 'sections', description: 'Highlight a single product', allowedBlocks: ['heading', 'text', 'button', 'price'], defaultSettings: { productId: '', showQuantity: true, showVariants: true, mediaSize: 'medium' } },
   'blog-posts': { icon: <Icons.FileText />, label: 'Blog posts', category: 'sections', description: 'Display blog posts', allowedBlocks: ['heading'], defaultSettings: { heading: 'Latest Posts', postsToShow: 3, showDate: true, showAuthor: true, showExcerpt: true } },
   'brand-list': { icon: <Icons.Grid />, label: 'Brand list', category: 'sections', description: 'Logo carousel/grid', allowedBlocks: ['image'], defaultSettings: { heading: 'Our Partners', logos: [], columns: 6, grayscale: true } }
+
+
 };
 
 const BLOCK_DEFINITIONS: Record<BlockType, { icon: JSX.Element; label: string; defaultSettings: Record<string, any> }> = {

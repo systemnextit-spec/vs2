@@ -234,7 +234,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
   const maxValue = Math.max(1, ...chartData.flatMap(d => [d.mobile, d.tab, d.desktop]));
 
   return (
-    <div className="bg-[#F1F5F9] p-4 sm:p-6 md:p-8 font-sans antialiased text-slate-900">
+    <div className="bg-[#F1F5F9] p-4 sm:p-6 md:p-8 font-sans antialiased text-slate-900 dark:bg-gray-800 dark:text-slate-100 rounded-2xl">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6 lg:items-stretch">
           <section className="flex flex-col gap-4 lg:h-full">
@@ -278,7 +278,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
             </div>
           </section>
 
-          <main className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-8 flex flex-col lg:h-full min-h-[400px]">
+          <main className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-8 flex flex-col lg:h-full min-h-[400px] dark:bg-gray-800 dark:border-gray-700">
             <div className="flex items-center justify-between mb-8 shrink-0">
               <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Device Breakdown</h2>
               <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">

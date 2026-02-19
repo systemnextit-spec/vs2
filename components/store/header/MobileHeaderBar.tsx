@@ -178,6 +178,39 @@ const MobileHeaderStyle5: React.FC<MobileHeaderBarProps> = ({
   </header>
 );
 
+// Style 6: Vibrant Orange Gradient - Figma design
+const MobileHeaderStyle6: React.FC<MobileHeaderBarProps> = ({
+  resolvedHeaderLogo, logoKey, onHomeClick, wishlistBadgeCount, cartBadgeCount,
+  onWishlistOpen, onCartOpen, onAccountClick, onMenuOpen, onSearchOpen, websiteConfig
+}) => (
+  <header className="md:hidden bg-gradient-to-r from-[#FF6A00] to-[#FF9F1C] px-3 py-2.5 top-0 z-50 shadow-lg">
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2">
+        <button type="button" className="w-10 h-10 flex items-center justify-center rounded-xl text-white/90 hover:bg-white/10 active:scale-95 transition-all" onClick={onMenuOpen} aria-label="Open menu"><Menu size={22} strokeWidth={2} /></button>
+        <button type="button" className="flex items-center group" onClick={onHomeClick}>
+          {resolvedHeaderLogo ? (
+            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-8 max-w-[100px] object-contain brightness-0 invert transition-all duration-300 group-active:scale-95" />
+          ) : (
+            <h1 className="text-lg font-bold text-white font-['Poppins']">{websiteConfig?.websiteName || 'My Store'}</h1>
+          )}
+        </button>
+      </div>
+      <div className="flex items-center gap-0.5">
+        <button type="button" className="w-10 h-10 flex items-center justify-center rounded-xl text-white/90 hover:bg-white/10 active:scale-95 transition-all" onClick={onSearchOpen} aria-label="Search"><Search size={20} strokeWidth={2} /></button>
+        <button type="button" className="relative w-10 h-10 flex items-center justify-center rounded-xl text-white/90 hover:bg-white/10 active:scale-95 transition-all" onClick={onWishlistOpen} aria-label="Wishlist">
+          <Heart size={20} strokeWidth={2} />
+          {wishlistBadgeCount > 0 && <span className="absolute top-1 right-1 bg-white text-orange-600 text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{wishlistBadgeCount}</span>}
+        </button>
+        <button type="button" className="relative w-10 h-10 flex items-center justify-center rounded-xl text-white/90 hover:bg-white/10 active:scale-95 transition-all" onClick={onCartOpen} aria-label="Cart">
+          <ShoppingCart size={20} strokeWidth={2} />
+          {cartBadgeCount > 0 && <span className="absolute top-1 right-1 bg-white text-orange-600 text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartBadgeCount}</span>}
+        </button>
+        <button type="button" className="w-10 h-10 flex items-center justify-center rounded-xl text-white/90 hover:bg-white/10 active:scale-95 transition-all" onClick={onAccountClick} aria-label="Account"><User size={20} strokeWidth={2} /></button>
+      </div>
+    </div>
+  </header>
+);
+
 export const MobileHeaderBar: React.FC<MobileHeaderBarProps> = (props) => {
   const style = props.websiteConfig?.mobileHeaderStyle || 'style1';
   
@@ -190,6 +223,8 @@ export const MobileHeaderBar: React.FC<MobileHeaderBarProps> = (props) => {
       return <MobileHeaderStyle4 {...props} />;
     case 'style5':
       return <MobileHeaderStyle5 {...props} />;
+    case 'style6':
+      return <MobileHeaderStyle6 {...props} />;
     case 'style1':
     default:
       return <MobileHeaderStyle1 {...props} />;

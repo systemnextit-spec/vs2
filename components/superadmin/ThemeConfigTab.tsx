@@ -65,8 +65,8 @@ const styleSections: Array<{
   hasNone?: boolean;
   description: string;
 }> = [
-  { key: 'headerStyle', title: 'Header Section', count: 5, description: 'Desktop header layout and style' },
-  { key: 'mobileHeaderStyle', title: 'Mobile Header', count: 5, description: 'Mobile header layout and navigation' },
+  { key: 'headerStyle', title: 'Header Section', count: 6, description: 'Desktop header layout and style' },
+  { key: 'mobileHeaderStyle', title: 'Mobile Header', count: 6, description: 'Mobile header layout and navigation' },
   { key: 'categorySectionStyle', title: 'Category Section', count: 5, hasNone: true, description: 'Category display style on homepage' },
   { key: 'productCardStyle', title: 'Product Card', count: 5, description: 'Product card design and layout' },
   { key: 'footerStyle', title: 'Footer Section', count: 5, description: 'Footer layout and information display' },
@@ -81,6 +81,7 @@ const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/header-3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/header-4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/header_-_5.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/pasted_1771520591605.webp',
   },
   mobileHeaderStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/mobile_header_-_1_1768841563.webp',
@@ -88,6 +89,7 @@ const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/mobile_header_3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/mobile_header_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/mobile_header_5.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/pasted_1771520591605.webp',
   },
   categorySectionStyle: {
     none: '',

@@ -4,6 +4,8 @@ import { normalizeImageUrl } from '../../../utils/imageUrlHelper';
 import type { HeaderSearchProps } from './headerTypes';
 import { DesktopSearchBar } from './HeaderSearchBar';
 import type { User as UserType, WebsiteConfig } from '../../../types';
+import HeaderStyle6Desktop from './HeaderStyle6';
+
 
 interface DesktopHeaderBarProps {
   resolvedHeaderLogo: string | null;
@@ -391,6 +393,8 @@ export const DesktopHeaderBar = memo<DesktopHeaderBarProps>((props) => {
       return <HeaderStyle4 {...props} />;
     case 'style5':
       return <HeaderStyle5 {...props} />;
+    case 'style6':
+      return <HeaderStyle6Desktop {...props} />;
     case 'style1':
     default:
       return <HeaderStyle1 {...props} />;

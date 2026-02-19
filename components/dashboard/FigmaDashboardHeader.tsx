@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
-import HeaderStyle6 from '../store/header/HeaderStyle6'; 
+import React, { useState, useRef, useEffect } from 'react'; 
 import {
   Globe,
   PlayCircle,
@@ -125,8 +124,7 @@ const SEARCHABLE_MENU_ITEMS: SearchMenuItem[] = [
   { id: 'billing', label: 'Billing & Subscription', keywords: ['billing', 'subscription', 'payment', 'plan', 'upgrade'], category: 'System' },
 ];
 
-// Header Style 6 - Figma design implementation
-<HeaderStyle6 />
+
 
 // Dark Mode Toggle Button Component
 const DarkModeToggle: React.FC = () => {
@@ -280,6 +278,7 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
 
         {/* Action Buttons */}
         <div className="flex items-center gap-1 sm:gap-2 md:gap-3 flex-1 sm:flex-none justify-end">
+        
           {/* View Website Button */}
           {tenantSubdomain ? (
             <a
