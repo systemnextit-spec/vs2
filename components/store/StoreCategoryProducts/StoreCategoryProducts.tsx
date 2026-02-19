@@ -1,4 +1,4 @@
-import { useState, useMemo, Suspense, lazy } from 'react';
+import { useState, useMemo, Suspense, lazy, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft, Package, Tag as TagIcon, X, SlidersHorizontal, Hash } from 'lucide-react';
 import { Product, Category, Brand, WebsiteConfig, User, Order, Tag } from '../../../types';
 import { ProductCard } from '../../StoreProductComponents';
@@ -39,6 +39,28 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
   const [mobileFilter, setMobileFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
+  
+  // Preserve scroll position when category changes
+  const scrollPosRef = useRef(0);
+  const prevCategoryRef = useRef(selectedCategory);
+  
+  useEffect(() => {
+    // If category changed, restore scroll position
+    if (prevCategoryRef.current !== selectedCategory) {
+      const savedScroll = scrollPosRef.current;
+      // Restore scroll after React finishes rendering
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: savedScroll, behavior: 'auto' });
+      });
+    }
+    prevCategoryRef.current = selectedCategory;
+  }, [selectedCategory]);
+  
+  // Save scroll position before category changes
+  const handleCategoryChangeWithScroll = (categoryName: string | null) => {
+    scrollPosRef.current = window.scrollY;
+    onCategoryChange(categoryName);
+  };
   
   const isAll = selectedCategory === '__all__';
   const isBrandFilter = selectedCategory.startsWith('brand:');
@@ -119,7 +141,7 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
       <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
         {activeCats.map(c => {
           const active = eq(selectedCategory, c.name);
-          return (<button key={c.id} onClick={() => { onCategoryChange(c.name); setSelectedBrand(null); setSelectedTag(null); closeFilter(); }}
+          return (<button key={c.id} onClick={() => { handleCategoryChangeWithScroll(c.name); setSelectedBrand(null); setSelectedTag(null); closeFilter(); }}
             className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-all hover:bg-theme-primary/10 group ${active ? 'bg-theme-primary/10 text-theme-primary font-semibold' : 'text-gray-700'}`}>
             <div className="flex items-center gap-3">
               {c.image ? <img src={normalizeImageUrl(c.image)} alt={c.name} className="w-8 h-8 rounded-lg object-cover border border-gray-100" />
@@ -141,7 +163,7 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
             const active = isTagFilter ? eq(tagFromUrl, t.name) : selectedTag === t.name;
             return (<button key={t.id} onClick={() => { 
               if (isTagFilter) {
-                onCategoryChange(`tag:${t.name}`);
+                handleCategoryChangeWithScroll(`tag:${t.name}`);
               } else {
                 setSelectedTag(prev => prev === t.name ? null : t.name);
               }
@@ -177,7 +199,7 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Suspense fallback={null}>
-        <LazyStoreHeader onTrackOrder={() => setIsTrackOrderOpen(true)} onHomeClick={onHome || onBack} onImageSearchClick={onImageSearchClick} productCatalog={activeProducts}
+        <LazyStoreHeader onTrackOrder={() => setIsTrackOrderOpen(true)} onHomeClick={onHome || onBack} ImageSearchClick={onImageSearchClick} productCatalog={activeProducts}
           wishlistCount={wishlistCount} wishlist={wishlist} onToggleWishlist={onToggleWishlist} cart={cart}
           onToggleCart={onToggleCart} onCheckoutFromCart={onCheckoutFromCart} user={user} onLoginClick={onLoginClick}
           onLogoutClick={onLogoutClick} onProfileClick={onProfileClick} logo={logo} websiteConfig={websiteConfig}

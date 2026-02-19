@@ -332,15 +332,9 @@ export const useStoreHome = ({
   }, [categories]);
 
   const handleCategoryClick = useCallback((categoryName: string) => {
-    // Preserve scroll position when changing categories
-    const scrollY = window.scrollY;
     const categorySlug = slugify(categoryName);
     if (onCategoryFilterChange) onCategoryFilterChange(categorySlug);
     setSelectedCategoryView(categoryName);
-    // Restore scroll position after state update
-    requestAnimationFrame(() => {
-      window.scrollTo(0, scrollY);
-    });
   }, [onCategoryFilterChange]);
 
   const handleClearCategoryFilter = useCallback(() => {
