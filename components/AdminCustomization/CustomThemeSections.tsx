@@ -75,7 +75,8 @@ const StyleCard: React.FC<{
   disabled: boolean;
   onSelect: () => void;
   thumbnailUrl?: string;
-}> = ({ index, label, isSelected, disabled, onSelect, thumbnailUrl }) => (
+  isDarkMode?: boolean;
+}> = ({ index, label, isSelected, disabled, onSelect, thumbnailUrl, isDarkMode = false }) => (
   <div
     onClick={() => !disabled && onSelect()}
     style={{
@@ -190,6 +191,7 @@ const ThemeSection: React.FC<{
   onExpand: () => void;
   demoImages?: Record<string, string>;
   listMode?: boolean;
+  isDarkMode?: boolean;
 }> = ({
   title,
   icon,
@@ -204,6 +206,7 @@ const ThemeSection: React.FC<{
   onExpand,
   demoImages,
   listMode = false,
+  isDarkMode = false,
 }) => (
   <div style={{
     borderRadius: '14px',
@@ -261,13 +264,13 @@ const ThemeSection: React.FC<{
 
     {/* Expandable Style Options */}
     <div style={{
-      maxHeight: isExpanded ? (listMode ? `${count * 72 + 16}px` : '220px') : '0',
+      maxHeight: isExpanded ? (listMode ? `${count * 98 + 20}px` : '220px') : '0',
       overflow: 'hidden',
       transition: 'max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
     }}>
       {listMode ? (
-        /* List Layout for Header */
-        <div style={{ padding: '8px 12px 12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        /* List Layout for Header - Full-width banner style */
+        <div style={{ padding: '8px 12px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {Array.from({ length: count }).map((_, i) => {
             const styleValue = `style${i + 1}`;
             const thumb = demoImages?.[styleValue] || '';
@@ -277,75 +280,106 @@ const ThemeSection: React.FC<{
                 key={i}
                 onClick={() => enabled && onStyleSelect(sectionKey, styleValue)}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '8px 12px',
+                  position: 'relative',
                   borderRadius: '10px',
-                  border: isSelected ? '2px solid #ff6a00' : '2px solid transparent',
-                  backgroundColor: isSelected ? (isDarkMode ? '#451a03' : '#fff7ed') : (isDarkMode ? '#374151' : '#f8fafc'),
-                  cursor: !enabled ? 'not-allowed' : 'pointer',
-                  opacity: !enabled ? 0.35 : 1,
-                  transition: 'all 0.2s ease',
-                  boxShadow: isSelected ? '0 2px 8px rgba(255,106,0,0.12)' : 'none',
+                  border: isSelected ? '2.5px solid #ff6a00' : '2px solid transparent',
+                  cursor: enabled ? 'pointer' : 'not-allowed',
+                  opacity: enabled ? 1 : 0.35,
+                  transition: 'all 0.25s ease',
+                  overflow: 'hidden',
+                  boxShadow: isSelected
+                    ? '0 4px 16px rgba(255,106,0,0.2), 0 0 0 1px rgba(255,106,0,0.1)'
+                    : '0 1px 4px rgba(0,0,0,0.06)',
+                  backgroundColor: isSelected ? '#fff7ed' : (isDarkMode ? '#374151' : '#f8fafc'),
                 }}
                 onMouseEnter={(e) => {
                   if (enabled && !isSelected) {
-                    e.currentTarget.style.backgroundColor = isDarkMode ? '#4b5563' : '#f1f5f9';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
                     e.currentTarget.style.borderColor = '#ffd6b3';
                   }
                 }}
                 onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
                   if (!isSelected) {
-                    e.currentTarget.style.backgroundColor = isDarkMode ? '#374151' : '#f8fafc';
+                    e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)';
                     e.currentTarget.style.borderColor = 'transparent';
                   }
                 }}
               >
-                {/* Thumbnail */}
+                {/* Full-width image */}
                 <div style={{
-                  width: '80px',
-                  height: '44px',
-                  borderRadius: '6px',
+                  width: '100%',
+                  height: '52px',
                   overflow: 'hidden',
-                  flexShrink: 0,
-                  backgroundColor: '#e2e8f0',
-                  border: '1px solid #e2e8f0',
+                  backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
                 }}>
                   {thumb ? (
-                    <img src={thumb} alt={`${label} ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} loading="lazy" />
+                    <img
+                      src={thumb}
+                      alt={`${label} ${i + 1}`}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'top center',
+                        display: 'block',
+                      }}
+                      loading="lazy"
+                    />
                   ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f1f5f9, #e2e8f0)' }}>
-                      <LayoutGrid size={14} style={{ color: '#94a3b8' }} />
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: useDarkMode
+                        ? 'linear-gradient(135deg, #374151, #1f2937)'
+                        : 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
+                    }}>
+                      <LayoutGrid size={18} style={{ color: '#94a3b8' }} />
                     </div>
                   )}
                 </div>
-                {/* Label */}
-                <span style={{
-                  fontFamily: '"Inter", "Lato", sans-serif',
-                  fontWeight: isSelected ? 600 : 500,
-                  fontSize: '13px',
-                  color: isSelected ? '#ff6a00' : (isDarkMode ? '#d1d5db' : '#475569'),
-                  flex: 1,
+                {/* Bottom bar with label + check */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 12px',
+                  backgroundColor: isSelected
+                    ? (isDarkMode ? '#451a03' : '#fff7ed')
+                    : (isDarkMode ? '#1f2937' : '#ffffff'),
+                  borderTop: isSelected
+                    ? '1px solid rgba(255,106,0,0.15)'
+                    : (isDarkMode ? '1px solid #374151' : '1px solid #f1f5f9'),
                 }}>
-                  {label} {i + 1}
-                </span>
-                {/* Selected indicator */}
-                {isSelected && (
-                  <div style={{
-                    width: '22px',
-                    height: '22px',
-                    borderRadius: '50%',
-                    backgroundColor: '#ff6a00',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    boxShadow: '0 2px 6px rgba(255,106,0,0.3)',
+                  <span style={{
+                    fontFamily: '"Inter", "Lato", sans-serif',
+                    fontWeight: isSelected ? 600 : 500,
+                    fontSize: '13px',
+                    color: isSelected ? '#ff6a00' : (isDarkMode ? '#e2e8f0' : '#334155'),
+                    letterSpacing: '-0.1px',
                   }}>
-                    <CheckCircle2 size={14} style={{ color: 'white' }} />
-                  </div>
-                )}
+                    {label} {i + 1}
+                  </span>
+                  {isSelected && (
+                    <div style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      backgroundColor: '#ff6a00',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      boxShadow: '0 2px 6px rgba(255,106,0,0.35)',
+                    }}>
+                      <CheckCircle2 size={13} style={{ color: 'white' }} />
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })}
@@ -371,6 +405,7 @@ const ThemeSection: React.FC<{
                 disabled={!enabled}
                 onSelect={() => onStyleSelect(sectionKey, styleValue)}
                 thumbnailUrl={thumb}
+              isDarkMode={isDarkMode}
               />
             );
           })}
@@ -495,7 +530,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
                   fontFamily: '"Inter", "Lato", sans-serif',
                   fontWeight: 700,
                   fontSize: '18px',
-                  color: isDarkMode ? '#f1f5f9' : '#0f172a',
+                  color: useDarkMode ? '#f1f5f9' : '#0f172a',
                   margin: 0,
                   letterSpacing: '-0.3px',
                 }}
@@ -519,7 +554,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: isDarkMode ? '#374151' : '#f1f5f9',
+              backgroundColor: useDarkMode ? '#374151' : '#f1f5f9',
               borderRadius: '10px',
               padding: '3px',
               gap: '2px',
@@ -609,6 +644,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
                 }}
                 demoImages={THEME_DEMO_IMAGES[section.key]}
                 listMode={section.key.toLowerCase().includes('header')}
+                isDarkMode={true}
               />
             );
           })}
@@ -629,7 +665,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
       >
         <div
           style={{
-            backgroundColor: isDarkMode ? '#1f2937' : 'white',
+            backgroundColor: useDarkMode ? '#1f2937' : 'white',
             borderRadius: '16px',
             overflow: 'hidden',
             boxShadow: '0 4px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)',
