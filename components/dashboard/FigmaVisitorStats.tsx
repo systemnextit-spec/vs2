@@ -49,14 +49,14 @@ const VisitorCard: React.FC<VisitorCardProps> = ({
 }) => {
   const cardStyle: React.CSSProperties = {
     width: '100%',
-    height: '81px',
+    minHeight: '81px',
     background: 'linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
     borderRadius: '12px',
     boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.10)',
     display: 'flex',
     alignItems: 'center',
-    padding: '0 20px',
-    gap: '16px',
+    padding: '12px 16px',
+    gap: '12px',
     position: 'relative',
     overflow: 'hidden'
   };
@@ -73,8 +73,8 @@ const VisitorCard: React.FC<VisitorCardProps> = ({
   };
 
   const iconContainerStyle: React.CSSProperties = {
-    width: '38px',
-    height: '38px',
+    width: '32px',
+    height: '32px',
     flexShrink: 0,
     display: 'flex',
     alignItems: 'center',
@@ -509,9 +509,6 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
   const containerStyle: React.CSSProperties = {
     width: '100%',
     height: '100%',
-    display: 'grid',
-    gridTemplateColumns: '372px 1fr',
-    gap: '20px',
     fontFamily: 'Poppins, sans-serif'
   };
 
@@ -540,7 +537,7 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
   };
 
   return (
-    <div style={containerStyle}>
+    <div style={containerStyle} className="grid grid-cols-1 lg:grid-cols-[372px_1fr] gap-4 lg:gap-5">
       {/* Left: Visitor Cards */}
       <div style={cardsContainerStyle}>
         <VisitorCard
