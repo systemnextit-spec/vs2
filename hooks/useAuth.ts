@@ -6,6 +6,9 @@ import { useCallback, Dispatch, SetStateAction } from 'react';
 import type { User, Tenant } from '../types';
 import { isAdminRole, getAuthErrorMessage } from '../utils/appHelpers';
 
+import { signInWithPopup } from 'firebase/auth';
+import { auth, provider } from '../config/firebase';
+
 // Default tenant ID
 const DEFAULT_TENANT_ID = 'opbd';
 
@@ -233,9 +236,80 @@ export function useAuth({
     }
   }, [activeTenantId, setUsers, setUser, setActiveTenantId]);
 
-  const handleGoogleLogin = useCallback(async (): Promise<never> => {
-    throw new Error('Google login is not available in this environment.');
-  }, []);
+  const handleGoogleLogin = useCallback(async (): Promise<boolean> => {
+    try {
+      // Sign in with Google Firebase
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      if (!user) {
+        throw new Error('No user data received from Google');
+      }
+
+      // Get the ID token from Firebase
+      const idToken = await user.getIdToken();
+      
+      // Get tenant info
+      const tenantIdToUse = activeTenantId || DEFAULT_TENANT_ID;
+      const tenantSubdomain = getTenantSubdomain();
+
+      // Send the ID token to backend for verification and user creation/login
+      const payload: any = {
+        idToken,
+        email: user.email,
+        name: user.displayName,
+        photoURL: user.photoURL,
+        provider: 'google',
+        role: 'customer'
+      };
+
+      if (tenantSubdomain && tenantSubdomain !== 'www' && tenantSubdomain !== 'admin') {
+        payload.tenantSubdomain = tenantSubdomain;
+      } else if (tenantIdToUse) {
+        payload.tenantId = tenantIdToUse;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Google login failed');
+      }
+
+      const data = await response.json();
+
+      // Store the user and tokens
+      if (data.user) {
+        setUser(data.user);
+        localStorage.setItem('admin_auth_user', JSON.stringify(data.user));
+      }
+
+      if (data.token) {
+        localStorage.setItem('admin_auth_token', data.token);
+      }
+
+      if (data.user?.tenantId) {
+        setActiveTenantId(data.user.tenantId);
+      }
+
+      return true;
+    } catch (error: any) {
+      console.error('Google login error:', error);
+      
+      // Check if it's a Firebase error
+      if (error.code === 'auth/popup-closed-by-user') {
+        throw new Error('Sign-in popup was closed');
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        throw new Error('Sign-in cancelled');
+      }
+      
+      throw new Error(error.message || 'Failed to sign in with Google');
+    }
+  }, [activeTenantId, setUser, setActiveTenantId]);
 
   const handleLogout = useCallback(async () => {
     // Clear JWT tokens

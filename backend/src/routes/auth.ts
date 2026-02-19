@@ -324,6 +324,136 @@ authRouter.post('/register', async (req: Request, res: Response, next: NextFunct
   }
 });
 
+
+/**
+ * POST /api/auth/google
+ * Authenticate with Google OAuth
+ */
+authRouter.post('/google', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { idToken, email, name, photoURL, provider, role, tenantId, tenantSubdomain } = req.body;
+
+    if (!idToken || !email) {
+      return res.status(400).json({ error: 'Missing required fields', code: 'VALIDATION_ERROR' });
+    }
+
+    // Verify the Google ID token by calling Google's tokeninfo endpoint
+    const verifyResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+    
+    if (!verifyResponse.ok) {
+      return res.status(401).json({ error: 'Invalid Google token', code: 'INVALID_TOKEN' });
+    }
+
+    const tokenInfo = await verifyResponse.json();
+
+    // Verify the email matches
+    if (tokenInfo.email !== email) {
+      return res.status(401).json({ error: 'Email mismatch', code: 'EMAIL_MISMATCH' });
+    }
+
+    // Determine tenant
+    let finalTenantId = tenantId;
+    if (!finalTenantId && tenantSubdomain) {
+      const tenant = await getTenantBySubdomain(tenantSubdomain);
+      if (tenant) {
+        finalTenantId = tenant._id?.toString() || tenant.id;
+      }
+    }
+
+    // Check if user already exists
+    let user = await User.findOne({ email: email.toLowerCase() });
+
+    if (user) {
+      // User exists - update last login and photo if needed
+      user.lastLogin = new Date();
+      if (photoURL && !user.image) {
+        user.image = photoURL;
+      }
+      await user.save();
+    } else {
+      // Create new user with Google data
+      const userData: Partial<IUser> = {
+        name: name || email.split('@')[0],
+        email: email.toLowerCase(),
+        password: await bcrypt.hash(Math.random().toString(36).substring(7), 10), // Random password
+        role: role || 'customer',
+        provider: 'google',
+        providerId: tokenInfo.sub,
+        image: photoURL,
+        isActive: true,
+        lastLogin: new Date()
+      };
+
+      if (finalTenantId) {
+        userData.tenantId = finalTenantId;
+      }
+
+      user = new User(userData);
+      await user.save();
+    }
+
+    // Generate JWT token
+    const payload: JWTPayload = {
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+      tenantId: user.tenantId,
+      roleId: user.roleId?.toString()
+    };
+
+    const token = jwt.sign(payload, env.jwtSecret, {
+      expiresIn: env.jwtExpiresIn as any
+    });
+
+    // Get user permissions
+    const permissions = user.roleId 
+      ? await getUserPermissions(user._id.toString(), user.roleId.toString())
+      : [];
+
+    // Return user data
+    res.json({
+      user: {
+        id: user._id.toString(),
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        tenantId: user.tenantId,
+        profilePicture: user.image,
+        phone: user.phone,
+        address: user.address,
+        isActive: user.isActive
+      },
+      token,
+      permissions
+    });
+
+    // Create audit log
+    await createAuditLog({
+      tenantId: user.tenantId,
+      userId: user._id.toString(),
+      userName: user.name,
+      userRole: user.role,
+      action: 'Google OAuth Login',
+      actionType: 'login',
+      resourceType: 'user',
+      resourceId: user._id.toString(),
+      resourceName: user.name,
+      details: `${user.name} (${user.email}) logged in via Google OAuth`,
+      metadata: { email: user.email, provider: 'google' },
+      status: 'success'
+    });
+
+  } catch (error) {
+    console.error('Google auth error:', error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors, code: 'VALIDATION_ERROR' });
+    }
+    next(error);
+  }
+});
+
+
 /**
  * GET /api/auth/me
  * Get current user profile

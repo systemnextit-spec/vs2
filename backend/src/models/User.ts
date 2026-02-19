@@ -13,6 +13,8 @@ export interface IUser extends Document {
   roleId?: mongoose.Types.ObjectId;
   tenantId?: string;
   isActive: boolean;
+  provider?: 'local' | 'google' | 'facebook';
+  providerId?: string;
   lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -34,6 +36,8 @@ const UserSchema = new Schema<IUser>({
   roleId: { type: Schema.Types.ObjectId, ref: 'Role' },
   tenantId: { type: String, index: true },
   isActive: { type: Boolean, default: true },
+    provider: { type: String, enum: ['local', 'google', 'facebook'], default: 'local' },
+  providerId: { type: String },
   lastLogin: { type: Date }
 }, {
   timestamps: true
