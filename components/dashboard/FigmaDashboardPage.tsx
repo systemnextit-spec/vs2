@@ -15,7 +15,7 @@ import { useNotifications } from '../../hooks/useNotifications';
 import { useTenant } from '../../hooks/useTenant';
 import { useLanguage } from '../../context/LanguageContext';
 import { DataService } from '../../services/DataService';
-import { VisitorStatsSection } from './VisitorAnalytics/src/screens/FrameScreen/sections/VisitorStatsSection';
+// import { VisitorStatsSection } from './VisitorAnalytics/src/screens/FrameScreen/sections/VisitorStatsSection';
 import { TrafficChartSection } from './VisitorAnalytics/src/screens/FrameScreen/sections/TrafficChartSection';
 
 interface FigmaDashboardPageProps {
@@ -189,12 +189,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
         <div className="px-2 xs:px-3 sm:px-4 lg:px-3 xl:px-4">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xs:gap-3 sm:gap-4">
               
-          <VisitorStatsSection
-            // timeFilter={timeFilter}
-            // onTimeFilterChange={(filter) => setTimeFilter(filter as any)}
-            // onDateRangeChange={(range) => setSelectedMonth(range.start)}
-            // tenantId={tenantId}
-          />
+         
 
             
       <TrafficChartSection
