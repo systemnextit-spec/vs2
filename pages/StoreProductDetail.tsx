@@ -1039,8 +1039,12 @@ const StoreProductDetail = ({
                 <div className="space-y-2 text-sm text-gray-600 border-t border-gray-100 pt-4 mt-auto">
                   <p><span className="font-semibold text-gray-800 w-24 inline-block">Category:</span> <span className="text-theme-primary">{product.category || 'Electronics'}</span></p>
                   {Array.isArray(product.tags) && product.tags.length > 0 && (
-                    <><p><span className="font-semibold text-gray-800 w-24 inline-block">Tags:</span> {product.tags.join(', ')}</p> <p><span className="font-semibold text-gray-800 w-24 inline-block">SKU: {product.sku}</span></p></>
-                  )}
+                    <p><span className="font-semibold text-gray-800 w-24 inline-block">Tags:</span> {product.tags.join(", ")}</p>
+                           )}
+                    {product.sku && <p><span className="font-semibold text-gray-800 w-24 inline-block">SKU:</span> {product.sku}</p>}
+                    {product.serial ? <p><span className="font-semibold text-gray-800 w-24 inline-block">Serial:</span> #{product.serial}</p> : null}
+                    {product.warranty && <p><span className="font-semibold text-gray-800 w-24 inline-block">Warranty:</span> {product.warranty}</p>}
+                    {(product.initialSoldCount || product.soldCount) ? <p><span className="font-semibold text-gray-800 w-24 inline-block">Sold:</span> {(product.initialSoldCount || 0) + (product.soldCount || 0)}+ sold</p> : null}
                 </div>
               </div>
             </div>

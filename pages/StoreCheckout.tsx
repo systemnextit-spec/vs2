@@ -751,7 +751,7 @@ const StoreCheckout = ({
                   <p className="text-xs text-gray-500 mt-1">Variant: <span className="font-semibold text-gray-700">{variant.color} / {variant.size}</span></p>
                   <div className="flex items-center gap-3 mt-2">
                     <div className="flex items-center border border-gray-200 rounded px-2 py-0.5 text-xs bg-gray-50">
-                      <span className="px-2">{quantity}</span>
+                      <span className="px-2">{quantity} {product.unitName || "pcs"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-gray-800">৳ {formattedProductPrice}</span>

@@ -147,6 +147,13 @@ export interface Product {
   flashSaleStartDate?: string; // ISO date string
   flashSaleEndDate?: string; // ISO date string
   soldCount?: number; // Adding '?' makes it optional if some products don't have it
+  serial?: number;
+  unitName?: string;
+  warranty?: string;
+  barcode?: string;
+  initialSoldCount?: number;
+  productionStart?: string;
+  expirationEnd?: string;
 }
 
 export interface Popup {

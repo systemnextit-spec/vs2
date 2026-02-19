@@ -391,7 +391,14 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         flashSaleStartDate: editProduct.flashSaleStartDate || '',
         flashSaleEndDate: editProduct.flashSaleEndDate || '',
         tag: editProduct.tags || [],
-        deepSearch: editProduct.deepSearch || ''
+        deepSearch: editProduct.deepSearch || '',
+        serial: editProduct.serial || 0,
+        unitName: editProduct.unitName || '',
+        warranty: editProduct.warranty || '',
+        barcode: editProduct.barcode || '',
+        initialSoldCount: editProduct.initialSoldCount || 0,
+        productionStart: editProduct.productionStart || '',
+        expirationEnd: editProduct.expirationEnd || ''
       }));
     }
   }, [editProduct]);
@@ -814,7 +821,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         updateField('childCategory', newCatalogItem.name.trim());
       } else if (catalogModalTab === 'tag') {
         setLocalTags(prev => [...prev, newItem as Tag]);
-        updateField('tag', newCatalogItem.name.trim());
+        updateField('tag', [newCatalogItem.name.trim()]);
       } else if (catalogModalTab === 'brand') {
         setLocalBrands(prev => [...prev, newItem as Brand]);
         updateField('brandName', newCatalogItem.name.trim());
@@ -880,7 +887,14 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       flashSaleStartDate: formData.flashSaleStartDate || undefined,
       flashSaleEndDate: formData.flashSaleEndDate || undefined,
       variantGroups: validVariants.length > 0 ? validVariants : undefined,
-      deepSearch: formData.deepSearch || ""
+      deepSearch: formData.deepSearch || "",
+      serial: formData.serial || 0,
+      unitName: formData.unitName || "",
+      warranty: formData.warranty || "",
+      barcode: formData.barcode || "",
+      initialSoldCount: formData.initialSoldCount || 0,
+      productionStart: formData.productionStart || "",
+      expirationEnd: formData.expirationEnd || ""
     };
 
     // Save to backend via onAddProduct
@@ -935,7 +949,14 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       flashSaleStartDate: formData.flashSaleStartDate || undefined,
       flashSaleEndDate: formData.flashSaleEndDate || undefined,
       variantGroups: validVariants.length > 0 ? validVariants : undefined,
-      deepSearch: formData.deepSearch || ""
+      deepSearch: formData.deepSearch || "",
+      serial: formData.serial || 0,
+      unitName: formData.unitName || "",
+      warranty: formData.warranty || "",
+      barcode: formData.barcode || "",
+      initialSoldCount: formData.initialSoldCount || 0,
+      productionStart: formData.productionStart || "",
+      expirationEnd: formData.expirationEnd || ""
     };
 
     onAddProduct(newProduct);

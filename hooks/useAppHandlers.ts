@@ -344,6 +344,9 @@ export function useAppHandlers(props: UseAppHandlersProps) {
       productId: selectedProduct?.id,
       productName: selectedProduct?.name,
       quantity: formData.quantity || checkoutQuantity,
+      unit: selectedProduct?.unitName || 'pcs',
+      productImage: selectedProduct?.images?.[0] || '',
+      sku: selectedProduct?.sku || '',
       deliveryType: formData.deliveryType,
       deliveryCharge: formData.deliveryCharge,
       // Payment method info (for manual MFS payments)
@@ -400,6 +403,9 @@ export function useAppHandlers(props: UseAppHandlersProps) {
       productId: product.id,
       productName: product.name,
       quantity: payload.quantity,
+      unit: product.unitName || 'pcs',
+      productImage: product.images?.[0] || '',
+      sku: product.sku || '',
       source: 'landing_page',
       landingPageId: payload.pageId
     };
