@@ -495,7 +495,7 @@ const figmaStyles = {
 };
 
 const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, currentUser, onUpdateProfile, activeTenant }) => {
-  const { state: authState } = useAuth();
+  const authState = useAuth();
   const [activeTab, setActiveTab] = useState<'manage_shop' | 'profile_details'>('manage_shop');
   const { showComingSoon, ComingSoonPopup } = useComingSoon();
   const [profileForm, setProfileForm] = useState({

@@ -162,10 +162,10 @@ type SettingsTab = 'manage_shop' | 'profile_details';
 
 const AdminSettings: React.FC<AdminSettingsProps> = ({ 
   onNavigate, user, activeTenant, logo, onUpdateLogo,
-  const { state: authState } = useAuth();
   users = [], roles = [], onAddUser, onUpdateUser, onDeleteUser,
   onAddRole, onUpdateRole, onDeleteRole, onUpdateUserRole, userPermissions = {}
 }) => {
+  const authState = useAuth();
   const [activeTab, setActiveTab] = useState<SettingsTab>('manage_shop');
   const shopLogoRef = useRef<HTMLInputElement>(null);
   const [shopLogo, setShopLogo] = useState<string | null>(null);
