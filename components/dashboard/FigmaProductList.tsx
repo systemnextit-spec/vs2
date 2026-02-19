@@ -583,7 +583,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       category: row['Category'] || row['*Category'] || '',
       subCategory: row['Sub Category'] || '',
       childCategory: row['Child Category'] || '',
-      brand: row['Brand'] || row['*Brand'] || '',
+      brand: row['Brand'] || row['*Brand'] || row['Brand Name'] || '',
       sku: row['SellerSKU'] || row['*SellerSKU'] || row['Seller SKU'] || row['*Seller SKU'] || row['SKU'] || row['Product ID'] || `SKU-${newId}`,
       stock: parseInt(row['Stock'] || row['Quantity'] || row['*Quantity'] || row['Available Stock'] || '0') || 0,
       status: 'Active' as const,
@@ -625,22 +625,36 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   // Process parsed data (common logic for CSV/TSV/XLSX)
   const processImportedData = useCallback((data: any[], headers: string[]) => {
     try {
+      console.log('[Import] Headers:', headers);
+      console.log('[Import] Total rows:', data.length);
+      if (data.length > 0) {
+        console.log('[Import] First row keys:', Object.keys(data[0]));
+        console.log('[Import] First row sample:', JSON.stringify(data[0]).substring(0, 500));
+      }
+      
       // Get existing product IDs to avoid duplicates
       const existingIds = new Set(propProducts.map(p => p.id));
       
       const useDarazFormat = isDarazFormat(headers);
       
-      if (useDarazFormat) {
-        console.log('Detected Daraz/Lazada format, using specialized parser');
-      }
+      console.log('[Import] Detected format:', useDarazFormat ? 'Daraz/Lazada' : 'Standard');
       
-      const importedProducts: Product[] = data.map((row: any) => {
+      const allParsed: Product[] = data.map((row: any) => {
         if (useDarazFormat) {
           return parseDarazProduct(row, existingIds);
         } else {
           return parseStandardProduct(row, existingIds);
         }
-      }).filter((p: Product) => p.name !== 'Unnamed Product' || p.price > 0 || p.image);
+      });
+      
+      console.log('[Import] All parsed products:', allParsed.length);
+      if (allParsed.length > 0) {
+        console.log('[Import] First parsed product:', { name: allParsed[0].name, price: allParsed[0].price, image: allParsed[0].image, sku: allParsed[0].sku });
+      }
+      
+      const importedProducts = allParsed.filter((p: Product) => p.name !== 'Unnamed Product' || p.price > 0 || p.image);
+      
+      console.log('[Import] After filter:', importedProducts.length, 'of', allParsed.length);
 
       if (importedProducts.length === 0) {
         toast.error('No valid products found in file');
@@ -705,19 +719,36 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       reader.readAsArrayBuffer(file);
     } else {
       // Handle CSV/TSV files
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        delimiter: isTSV ? '\t' : undefined, // Use tab delimiter for TSV
-        complete: (results) => {
-          const headers = results.meta.fields || [];
-          processImportedData(results.data, headers);
-        },
-        error: (error) => {
-          toast.error('Failed to parse file');
-          console.error('File parse error:', error);
-        }
-      });
+      // Daraz exports are often tab-separated even with .csv extension
+      // Read a small sample to auto-detect delimiter
+      const sampleReader = new FileReader();
+      sampleReader.onload = (e) => {
+        const sampleText = (e.target?.result as string || '').substring(0, 2000);
+        // Auto-detect: if first line has more tabs than commas, it's tab-separated
+        const firstLine = sampleText.split('\n')[0] || '';
+        const tabCount = (firstLine.match(/\t/g) || []).length;
+        const commaCount = (firstLine.match(/,/g) || []).length;
+        const detectedDelimiter = isTSV || tabCount > commaCount ? '\t' : (commaCount > 0 ? ',' : undefined);
+        
+        console.log('[Import] File delimiter detection - tabs:', tabCount, 'commas:', commaCount, 'using:', detectedDelimiter === '\t' ? 'TAB' : detectedDelimiter || 'auto');
+        
+        Papa.parse(file, {
+          header: true,
+          skipEmptyLines: true,
+          delimiter: detectedDelimiter,
+          complete: (results) => {
+            const headers = results.meta.fields || [];
+            console.log('[Import] Papa parsed headers:', headers);
+            console.log('[Import] Papa parsed rows:', results.data.length);
+            processImportedData(results.data, headers);
+          },
+          error: (error) => {
+            toast.error('Failed to parse file');
+            console.error('File parse error:', error);
+          }
+        });
+      };
+      sampleReader.readAsText(file.slice(0, 2000));
     }
     
     if (importInputRef.current) importInputRef.current.value = '';

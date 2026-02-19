@@ -99,6 +99,7 @@ interface AppRoutesProps {
   onBulkDeleteProducts: (ids: number[]) => void;
   onBulkUpdateProducts: (ids: number[], updates: Partial<Product>) => void;
   onBulkFlashSale: (ids: number[], action: 'add' | 'remove') => void;
+  onBulkAddProducts: (products: Product[]) => void;
   onProductOrderChange?: (order: number[]) => Promise<void>;
   onUpdateLogo: (logo: string | null) => void;
   onUpdateTheme: (config: ThemeConfig) => Promise<void>;
@@ -206,6 +207,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
     onBulkDeleteProducts,
     onBulkUpdateProducts,
     onBulkFlashSale,
+    onBulkAddProducts,
     onProductOrderChange,
     onUpdateLogo,
     onUpdateTheme,
@@ -311,6 +313,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
             onBulkDeleteProducts={onBulkDeleteProducts}
             onBulkUpdateProducts={onBulkUpdateProducts}
             onBulkFlashSale={onBulkFlashSale}
+            onBulkAddProducts={onBulkAddProducts}
             onProductOrderChange={onProductOrderChange}
             onUpdateLogo={onUpdateLogo}
             onUpdateTheme={onUpdateTheme}
