@@ -343,10 +343,14 @@ authRouter.post('/google', async (req: Request, res: Response, next: NextFunctio
     if (!verifyResponse.ok) {
       return res.status(401).json({ error: 'Invalid Google token', code: 'INVALID_TOKEN' });
     }
+    if (!verifyResponse.ok) {
+      const errorText = await verifyResponse.text();
+      console.error('[Google Auth] Token verification failed:', verifyResponse.status, errorText);
+      return res.status(401).json({ error: 'Invalid Google token', code: 'INVALID_TOKEN', details: errorText });
+    }
+    // Verify the email matches
 
     const tokenInfo = await verifyResponse.json();
-
-    // Verify the email matches
     if (tokenInfo.email !== email) {
       return res.status(401).json({ error: 'Email mismatch', code: 'EMAIL_MISMATCH' });
     }
