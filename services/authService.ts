@@ -61,7 +61,16 @@ const PERMISSIONS_KEY = 'admin_auth_permissions';
 // Helper to get auth header
 export const getAuthHeader = (): HeadersInit => {
   const token = localStorage.getItem(TOKEN_KEY);
+  if (!token) {
+    console.warn('[authService] No auth token found - user may need to log in');
+  }
   return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+};
+
+// Check if token exists and is valid
+export const hasValidToken = (): boolean => {
+  const token = localStorage.getItem(TOKEN_KEY);
+  return !!token;
 };
 
 // Helper to handle API responses
