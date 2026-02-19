@@ -213,11 +213,10 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
   const maxValue = Math.max(1, ...chartData.flatMap((d: any) => [d.mobile, d.tab, d.desktop]));
 
   return (
-    <div className="bg-[#F1F5F9] p-4 sm:p-6 md:p-8 font-sans antialiased text-slate-900 dark:bg-gray-800 dark:text-slate-100 rounded-2xl">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6 lg:items-stretch">
+    <div className="bg-[#F1F5F9] p-4 sm:p-6 font-sans antialiased text-slate-900 dark:bg-gray-800 dark:text-slate-100 rounded-2xl overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
           {/* Left: Visitor Stat Cards */}
-          <section className="flex flex-col gap-4 lg:h-full">
+          <section className="lg:col-span-4 flex flex-col gap-4">
             <div className="flex-1">
               <VisitorCard
                 icon={<OnlineNowIcon color="#0EA5E9" />}
@@ -257,7 +256,7 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
           </section>
 
           {/* Right: Device Breakdown Chart */}
-          <main className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-8 flex flex-col lg:h-full min-h-[400px] dark:bg-gray-800 dark:border-gray-700">
+          <main className="lg:col-span-8 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 flex flex-col min-h-[280px] dark:bg-gray-800 dark:border-gray-700 min-w-0 overflow-hidden">
             <div className="flex items-center justify-between mb-8 shrink-0">
               <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Device Breakdown</h2>
               <div className="flex items-center gap-2 bg-slate-50 dark:bg-gray-700 px-3 py-1.5 rounded-full border border-slate-100 dark:border-gray-600">
@@ -288,7 +287,6 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
             </footer>
           </main>
         </div>
-      </div>
     </div>
   );
 };
