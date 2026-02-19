@@ -46,6 +46,7 @@ export interface StoreHeaderProps {
   onProductClick?: (product: Product) => void;
   onMobileMenuOpenRef?: (openFn: () => void) => void;
   tenantId?: string;
+  ImageSearchClick?: () => void;
 }
 
 export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {

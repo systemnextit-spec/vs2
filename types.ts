@@ -360,6 +360,7 @@ export interface WebsiteConfig {
   brandSectionStyle?: string;
   productSectionStyle?: string;
   // New Additions
+  voiceSearchLanguage?: string; // Adding it as optional (?) is usually safer
   carouselItems: CarouselItem[];
   searchHints?: string;
   orderLanguage?: 'English' | 'Bangla';
