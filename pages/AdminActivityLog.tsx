@@ -760,11 +760,11 @@ const AdminActivityLog: React.FC<AdminActivityLogProps> = ({ tenantId }) => {
         onClick={onClose}
       >
         <div 
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden"
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden "
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-3 sm:px-4 lg:px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center justify-between px-3 sm:px-4 lg:px-6 py-4 border-b border-gray-100 dark:bg-gray-800">
             <span className="text-sm text-gray-500 font-poppins">SI : {slNumber}</span>
             <span className="text-sm text-gray-500 font-poppins">{formatDateTime(log.createdAt)}</span>
           </div>
