@@ -258,9 +258,9 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
   }, [tenantId]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
       {/* Left: Visitor Stat Cards */}
-      <section className="lg:col-span-4 flex flex-col gap-4">
+      <section className="lg:col-span-4 flex flex-col gap-3 sm:gap-4">
         <div className="flex-1">
           <VisitorCard
             icon={<OnlineNowIcon color="#0EA5E9" />}
@@ -300,7 +300,7 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
       </section>
 
       {/* Right: Traffic Chart (Figma Design) */}
-      <div className="lg:col-span-8 min-w-0">
+      <div className="lg:col-span-8 min-w-0 w-full">
         <TrafficChartSection chartData={chartData} loading={loading} />
       </div>
     </div>
