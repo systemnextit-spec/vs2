@@ -55,14 +55,14 @@ const HeaderStyle6Desktop = memo<DesktopHeaderBarProps>(({
       {/* Top utility bar */}
       <div className="bg-gradient-to-r from-orange-600 to-orange-500 text-white/80 text-xs">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[100px] py-1.5 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             {websiteConfig?.phones?.[0] && <span className="flex items-center gap-1"><Phone size={12} /> {websiteConfig.phones[0]}</span>}
             {websiteConfig?.emails?.[0] && <span className="flex items-center gap-1"><Mail size={12} /> {websiteConfig.emails[0]}</span>}
-          </div>
-          <div className="flex items-center gap-4">
+          </div> */}
+          {/* <div className="flex items-center gap-4">
             <button type="button" onClick={onTrackOrder} className="hover:text-white transition-colors flex items-center gap-1"><Truck size={12} /> Track Order</button>
             <button type="button" onClick={user ? onProfileClick : onLoginClick} className="hover:text-white transition-colors">{user ? 'My Account' : 'Login / Register'}</button>
-          </div>
+          </div> */}
         </div>
       </div>
 
