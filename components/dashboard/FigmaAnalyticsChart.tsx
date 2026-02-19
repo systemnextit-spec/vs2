@@ -34,7 +34,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
         const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
 
         const [statsRes, onlineRes] = await Promise.all([
-          fetch(`${apiUrl}/api/visitors/${activeTenantId}/stats?period=7d`),
+          fetch(`${apiUrl}/api/visitors/${activeTenantId}/stats?period=30d`),
           fetch(`${apiUrl}/api/visitors/${activeTenantId}/online`)
         ]);
 
@@ -44,35 +44,44 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
 
           setStats({
             onlineNow: onlineData.count || 0,
-            todayVisitors: statsData.today || 0,
-            totalVisitors: statsData.total || 0,
-            last7Days: statsData.last7Days || 0,
-            pageViews: statsData.pageViews || 0
+            todayVisitors: statsData.todayVisitors || 0,
+            totalVisitors: statsData.totalVisitors || 0,
+            last7Days: statsData.periodVisitors || 0,
+            pageViews: statsData.totalPageViews || 0
           });
 
-          if (statsData.chartData && Array.isArray(statsData.chartData)) {
-            setChartData(statsData.chartData.map((item: any) => ({
-              date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-              mobile: item.mobile || 0,
-              tab: item.tablet || item.tab || 0,
-              desktop: item.desktop || 0,
-              desktopHeight: Math.max(82, Math.min(193, ((item.desktop || 0) / Math.max(...statsData.chartData.map((d: any) => d.desktop || 0), 1)) * 193))
-            })));
-          } else {
-            setChartData(Array.from({ length: 7 }, (_, i) => {
-              const d = new Date();
-              d.setDate(d.getDate() - (6 - i));
-              return { date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), mobile: 0, tab: 0, desktop: 0, desktopHeight: 125 };
-            }));
+          // Build last 8 days array, filling gaps with zeros
+          const last8DaysArr: any[] = [];
+          for (let i = 7; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0]; // YYYY-MM-DD
+            const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const found = (statsData.chartData || []).find((c: any) => c.date === dateStr);
+            last8DaysArr.push({
+              date: label,
+              mobile: found?.mobile || 0,
+              tab: found?.tablet || found?.tab || 0,
+              desktop: found?.desktop || 0,
+            });
           }
+          const maxVal = Math.max(...last8DaysArr.map((d: any) => Math.max(d.desktop, d.mobile, d.tab)), 1);
+          setChartData(last8DaysArr.map(item => ({
+            ...item,
+            desktopHeight: Math.max(82, Math.min(193, (item.desktop / maxVal) * 193)),
+            mobileHeight: Math.max(50, Math.min(120, (item.mobile / maxVal) * 120)),
+            tabHeight: Math.max(60, Math.min(150, (item.tab / maxVal) * 150)),
+          })));
         }
       } catch (error) {
         console.error('Error fetching visitor data:', error);
-        setChartData(Array.from({ length: 7 }, (_, i) => {
+        const fallback: any[] = [];
+        for (let i = 7; i >= 0; i--) {
           const d = new Date();
-          d.setDate(d.getDate() - (6 - i));
-          return { date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), mobile: 0, tab: 0, desktop: 0, desktopHeight: 125 };
-        }));
+          d.setDate(d.getDate() - i);
+          fallback.push({ date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), mobile: 0, tab: 0, desktop: 0, desktopHeight: 82, mobileHeight: 50, tabHeight: 60 });
+        }
+        setChartData(fallback);
       } finally {
         setLoading(false);
       }
@@ -218,7 +227,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
                 className="inline-flex flex-col items-center justify-center gap-1 relative flex-[0_0_auto]"
               >
                 <div className="inline-flex items-end gap-1 relative flex-[0_0_auto]">
-                  <div className="relative w-6 h-[82px] bg-[linear-gradient(180deg,rgba(56,189,248,1)_0%,rgba(30,144,255,1)_100%)] rounded-t-sm">
+                  <div className="relative w-6 bg-[linear-gradient(180deg,rgba(56,189,248,1)_0%,rgba(30,144,255,1)_100%)] rounded-t-sm" style={{ height: `${data.mobileHeight || 82}px` }}>
                     <div
                       className="text-center absolute top-[5px] left-[calc(50.00%_-_10px)] -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
                       style={{ fontFamily: "Lato, Helvetica, sans-serif" }}
@@ -227,7 +236,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
                     </div>
                   </div>
 
-                  <div className="relative w-6 h-[102px] bg-[linear-gradient(180deg,rgba(255,159,28,1)_0%,rgba(255,106,0,1)_100%)] rounded-t-sm">
+                  <div className="relative w-6 bg-[linear-gradient(180deg,rgba(255,159,28,1)_0%,rgba(255,106,0,1)_100%)] rounded-t-sm" style={{ height: `${data.tabHeight || 60}px` }}>
                     <div
                       className="text-right absolute top-[5px] left-[calc(50.00%_-_10px)] -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
                       style={{ fontFamily: "Lato, Helvetica, sans-serif" }}
