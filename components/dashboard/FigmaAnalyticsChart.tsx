@@ -74,7 +74,7 @@ const FigmaAnalyticsChart = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="">
       <div className="inline-flex items-center gap-5 relative bg-white p-6 rounded-2xl shadow-xl">
         {/* Visitor Stats Section */}
         <section className="inline-flex flex-col h-[273px] items-start justify-center gap-[15px] relative flex-[0_0_auto]">
