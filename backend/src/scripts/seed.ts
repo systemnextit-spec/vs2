@@ -101,6 +101,12 @@ const DEFAULT_USERS = [
     email: 'demo@admin.com',
     password: 'demo123',
     role: 'admin' as const
+  },
+  {
+    name: 'Amit',
+    email: 'amit@yoopmain.com',
+    password: 'amit123',
+    role: 'super_admin' as const
   }
 ];
 
