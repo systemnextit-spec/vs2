@@ -1,76 +1,4 @@
 import React from 'react';
-import { Users, Activity, Globe } from 'lucide-react';
-
-/**
- * VisitorStatsSection Component
- */
-const VisitorStatsSection = () => {
-  const statsData = [
-    {
-      id: "online-now",
-      title: "Online Now",
-      subtitle: "Active visitors on site",
-      value: "35",
-      icon: <Activity className="w-4 h-4 text-[#008cff]" />,
-      titleColor: "text-[#008cff]",
-      bgColor: "bg-blue-50/50",
-      circleColor: "bg-[#008cff15]",
-    },
-    {
-      id: "today-visitors",
-      title: "Today visitors",
-      subtitle: "Last 7 days: 4",
-      value: "35",
-      icon: <Users className="w-4 h-4 text-[#ff5500]" />,
-      titleColor: "text-[#ff5500]",
-      bgColor: "bg-orange-50/50",
-      circleColor: "bg-[#ff550015]",
-    },
-    {
-      id: "total-visitors",
-      title: "Total visitors",
-      subtitle: "15 page view",
-      value: "35",
-      icon: <Globe className="w-4 h-4 text-[#3f34be]" />,
-      titleColor: "text-[#3f34be]",
-      bgColor: "bg-indigo-50/50",
-      circleColor: "bg-[#3f34be15]",
-    },
-  ];
-
-  return (
-    <div className="flex flex-col gap-3 h-full">
-      {statsData.map((stat) => (
-        <article
-          key={stat.id}
-          className={`relative group overflow-hidden rounded-xl border border-slate-100 shadow-sm px-4 py-2 ${stat.bgColor} transition-all hover:shadow-md flex-1 flex items-center`}
-        >
-          {/* Decorative Circle */}
-          <div className={`absolute -top-4 -right-4 w-24 h-24 rounded-full ${stat.circleColor} group-hover:scale-110 transition-transform duration-500`} />
-          
-          <div className="relative flex items-center justify-between w-full">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-white rounded-lg shadow-sm">
-                {stat.icon}
-              </div>
-              <div>
-                <h3 className={`font-semibold text-xs sm:text-sm ${stat.titleColor}`}>
-                  {stat.title}
-                </h3>
-                <p className="text-slate-500 text-[9px] font-medium uppercase tracking-wider">
-                  {stat.subtitle}
-                </p>
-              </div>
-            </div>
-            <div className="text-xl font-bold text-slate-800 ml-2">
-              {stat.value}
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
-};
 
 /**
  * TrafficChartSection Component
@@ -137,26 +65,12 @@ const TrafficChartSection = () => {
 
 /**
  * Main App Component
- * Constrained to 1347px x 360px
  */
 export default function App() {
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-2">
-      {/* Container fixed to requested dimensions */}
-      <div className="w-[1347px] h-[360px] max-w-full bg-[#f8fafc] rounded-2xl overflow-hidden shadow-xl p-4">
-        <div className="grid grid-cols-12 gap-4 h-full items-stretch">
-          
-          {/* Sidebar Stats (25% width) */}
-          <div className="col-span-3 h-full">
-            <VisitorStatsSection />
-          </div>
-          
-          {/* Main Chart (75% width) */}
-          <div className="col-span-9 h-full">
-            <TrafficChartSection />
-          </div>
-          
-        </div>
+      <div className="w-full max-w-7xl bg-[#f8fafc] rounded-2xl overflow-hidden shadow-xl p-4">
+        <TrafficChartSection />
       </div>
     </div>
   );
