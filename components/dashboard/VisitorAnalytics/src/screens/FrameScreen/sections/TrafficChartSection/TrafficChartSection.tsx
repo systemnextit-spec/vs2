@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * TrafficChartSection Component
  */
-const TrafficChartSection = () => {
+export const TrafficChartSection = () => {
   const chartData = [
     { date: "JAN 25", mobile: 30, tab: 35, desktop: 40, desktopHeight: 100 },
     { date: "JAN 26", mobile: 30, tab: 35, desktop: 55, desktopHeight: 120 },
@@ -63,15 +63,4 @@ const TrafficChartSection = () => {
   );
 };
 
-/**
- * Main App Component
- */
-export default function App() {
-  return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-2">
-      <div className="w-full max-w-7xl bg-[#f8fafc] rounded-2xl overflow-hidden shadow-xl p-4">
-        <TrafficChartSection />
-      </div>
-    </div>
-  );
-}
+export default TrafficChartSection;
