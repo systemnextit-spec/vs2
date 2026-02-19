@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 export const VisitorStatsSection = (): JSX.Element => {
   const statsData = [
     {

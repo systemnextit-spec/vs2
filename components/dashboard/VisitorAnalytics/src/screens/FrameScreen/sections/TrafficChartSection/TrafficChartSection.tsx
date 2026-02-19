@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 export const TrafficChartSection = (): JSX.Element => {
   const chartData = [
     { date: "Jan 25", mobile: 30, tab: 35, desktop: 40, desktopHeight: 125 },

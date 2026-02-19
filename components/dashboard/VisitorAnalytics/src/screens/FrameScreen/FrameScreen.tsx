@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { TrafficChartSection } from "./sections/TrafficChartSection";
 import { VisitorStatsSection } from "./sections/VisitorStatsSection";
 

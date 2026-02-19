@@ -15,6 +15,8 @@ import { useNotifications } from '../../hooks/useNotifications';
 import { useTenant } from '../../hooks/useTenant';
 import { useLanguage } from '../../context/LanguageContext';
 import { DataService } from '../../services/DataService';
+import { VisitorStatsSection } from './VisitorAnalytics/src/screens/FrameScreen/sections/VisitorStatsSection';
+import { TrafficChartSection } from './VisitorAnalytics/src/screens/FrameScreen/sections/TrafficChartSection';
 
 interface FigmaDashboardPageProps {
   user?: {
@@ -191,7 +193,12 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
             onDateRangeChange={(range) => setSelectedMonth(range.start)}
             tenantId={tenantId}
           />
+
+            <VisitorStatsSection />
+      <TrafficChartSection />
         </div>
+
+         
 
         {/* Order Status Row */}
         <FigmaOrderStatus
