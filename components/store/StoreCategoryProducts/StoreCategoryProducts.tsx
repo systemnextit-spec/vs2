@@ -44,17 +44,17 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
   const scrollPosRef = useRef(0);
   const prevCategoryRef = useRef(selectedCategory);
   
-  useEffect(() => {
-    // If category changed, restore scroll position
-    if (prevCategoryRef.current !== selectedCategory) {
-      const savedScroll = scrollPosRef.current;
-      // Restore scroll after React finishes rendering
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: savedScroll, behavior: 'auto' });
-      });
-    }
-    prevCategoryRef.current = selectedCategory;
-  }, [selectedCategory]);
+  // useEffect(() => {
+  //   // If category changed, restore scroll position
+  //   if (prevCategoryRef.current !== selectedCategory) {
+  //     const savedScroll = scrollPosRef.current;
+  //     // Restore scroll after React finishes rendering
+  //     requestAnimationFrame(() => {
+  //       window.scrollTo({ top: savedScroll, behavior: 'auto' });
+  //     });
+  //   }
+  //   prevCategoryRef.current = selectedCategory;
+  // }, [selectedCategory]);
   
   // Save scroll position before category changes
   const handleCategoryChangeWithScroll = (categoryName: string | null) => {
