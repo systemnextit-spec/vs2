@@ -74,7 +74,11 @@ const SVGBarChart = ({ data, maxValue }) => {
   const barGap = 3;
   const groupWidth = barWidth * 3 + barGap * 2; 
   const groupGap = 32; 
-  const svgWidth = data.length * groupWidth + (data.length - 1) * groupGap;
+  
+  // Increased buffer and added internal horizontal padding to prevent clipping
+  const horizontalPadding = 10;
+  const extraRightBuffer = 50; 
+  const svgWidth = data.length * groupWidth + (data.length - 1) * groupGap + horizontalPadding * 2 + extraRightBuffer; 
   const svgHeight = chartHeight + 40;
 
   const getBarHeight = (value) => {
@@ -84,10 +88,9 @@ const SVGBarChart = ({ data, maxValue }) => {
 
   return (
     <svg
-      width="100%"
-      height="100%"
+      width={svgWidth}
+      height={svgHeight}
       viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-      preserveAspectRatio="xMidYMax meet"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="overflow-visible"
@@ -98,7 +101,8 @@ const SVGBarChart = ({ data, maxValue }) => {
         <linearGradient id="barPurple" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#A08BFF" /><stop offset="1" stopColor="#5943FF" /></linearGradient>
       </defs>
       {data.map((day, i) => {
-        const gx = i * (groupWidth + groupGap);
+        // Added horizontalPadding offset
+        const gx = i * (groupWidth + groupGap) + horizontalPadding;
         const bars = [
           { h: getBarHeight(day.mobile), fill: 'url(#barBlue)', xOff: 0 },
           { h: getBarHeight(day.desktop), fill: 'url(#barPurple)', xOff: barWidth + barGap },
@@ -144,19 +148,8 @@ const FigmaAnalyticsChart = () => {
   const maxValue = Math.max(1, ...chartData.flatMap(d => [d.mobile, d.tab, d.desktop]));
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] p-4 sm:p-6 md:p-8 font-sans antialiased text-slate-900">
-      <div className="max-w-7xl mx-auto space-y-6">
-        
-        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-800">Analytics Overview</h1>
-            <p className="text-sm text-slate-500 font-medium">Monitoring site traffic and device distribution</p>
-          </div>
-          <button className="px-4 py-2 bg-white text-xs font-bold uppercase tracking-wider text-slate-600 rounded-lg shadow-sm border border-slate-200 hover:bg-slate-50 transition-colors">
-            Export Report
-          </button>
-        </header>
-
+    <div className="bg-[#F1F5F9] p-4 sm:p-6 md:p-8 font-sans antialiased text-slate-900">
+      <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6 lg:items-stretch">
           <section className="flex flex-col gap-4 lg:h-full">
             <div className="flex-1">
@@ -210,7 +203,8 @@ const FigmaAnalyticsChart = () => {
 
             <div className="flex-1 flex flex-col justify-center overflow-hidden">
               <div className="overflow-x-auto scrollbar-hide touch-pan-x">
-                <div className="min-w-max px-2 h-[200px]">
+                {/* Fixed the clipping issue by ensuring padding inside the scroll area */}
+                <div className="min-w-max px-4 h-[220px]">
                   {loading ? (
                     <div className="h-full w-full flex items-center justify-center">
                       <div className="w-8 h-8 border-4 border-slate-100 border-t-slate-400 rounded-full animate-spin" />
