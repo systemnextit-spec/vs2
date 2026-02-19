@@ -187,15 +187,21 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
 
         {/* Analytics Bar Chart */}
         <div className="px-2 xs:px-3 sm:px-4 lg:px-3 xl:px-4">
-          {/* <FigmaAnalyticsChart
-            timeFilter={timeFilter}
-            onTimeFilterChange={(filter) => setTimeFilter(filter as any)}
-            onDateRangeChange={(range) => setSelectedMonth(range.start)}
-            tenantId={tenantId}
-          /> */}
+          <VisitorStatsSection
+            // timeFilter={timeFilter}
+            // onTimeFilterChange={(filter) => setTimeFilter(filter as any)}
+            // onDateRangeChange={(range) => setSelectedMonth(range.start)}
+            // tenantId={tenantId}
+          />
 
-            <VisitorStatsSection />
-      <TrafficChartSection />
+            
+      <TrafficChartSection
+          // timeFilter={timeFilter}
+          //   onTimeFilterChange={(filter) => setTimeFilter(filter as any)}
+          //   onDateRangeChange={(range) => setSelectedMonth(range.start)}
+          //   tenantId={tenantId}
+          />
+       
         </div>
 
          

@@ -83,7 +83,7 @@ const FigmaDashboardContent: React.FC<FigmaDashboardContentProps> = ({
       />
 
       {/* Visitor Analytics */}
-      <VisitorAnalytics />
+      <VisitorAnalytics tenantId={tenantId} />
 
       {/* Order Status Row */}
       <FigmaOrderStatus
