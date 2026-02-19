@@ -7,19 +7,15 @@
     (function() {
       try {
         var darkMode = localStorage.getItem('admin-dark-mode');
-        console.log('[DarkMode HTML] localStorage value:', darkMode);
         if (darkMode === 'true') {
           document.documentElement.classList.add('dark');
           document.documentElement.style.background = '#111827';
           document.documentElement.style.colorScheme = 'dark';
-          console.log('[DarkMode HTML] Applied dark mode');
         } else {
           document.documentElement.style.background = '#f9fafb';
           document.documentElement.style.colorScheme = 'light';
-          console.log('[DarkMode HTML] Applied light mode');
         }
       } catch (e) {
-        console.log('[DarkMode HTML] Error:', e);
       }
     })();
   </script>
@@ -120,8 +116,6 @@
   <link rel="dns-prefetch" href="https://allinbangla.com">
   <link rel="dns-prefetch" href="https://images.allinbangla.com">
   <link rel="dns-prefetch" href="https://static.allinbangla.com">
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   
   <!-- Preconnect to domains we'll need -->
   <link rel="preconnect" href="https://allinbangla.com">
@@ -129,7 +123,11 @@
   <link rel="preconnect" href="https://static.allinbangla.com" crossorigin>
   
   <!-- Font loading with display=swap for fast text rendering -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <!-- Preload primary font, lazy-load secondary -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
   
   <!-- Favicon and Touch Icons -->
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png">
@@ -168,7 +166,7 @@
         
         if (!window.__CUSTOM_DOMAIN_TENANT__) {
           var xhr = new XMLHttpRequest();
-          xhr.open('GET', '/api/tenants/by-domain/' + h, false);
+          xhr.open('GET', '/api/tenants/by-domain/' + h, true);
           try {
             xhr.send();
             if (xhr.status === 200) {
@@ -286,7 +284,7 @@
   </style>
 </head>
 
-<body style="background: linear-gradient(to bottom, #ffcaff, #cbfff6);">
+<body>
   <div id="root">
     <div id="preload-skeleton">
       <div style="min-height: 100vh;">
@@ -308,12 +306,6 @@
         <!-- Categories skeleton -->
         <div style="max-width: 80rem; margin: auto; padding: 1rem; padding-top: 0;">
           <div style="display: flex; gap: 0.75rem; overflow: hidden; padding: 0.5rem 0;">
-            <!-- <div class="skeleton-bone" style="height: 2.5rem; width: 7rem; border-radius: 9999px; flex-shrink: 0;"></div>
-            <div class="skeleton-bone" style="height: 2.5rem; width: 7rem; border-radius: 9999px; flex-shrink: 0;"></div>
-            <div class="skeleton-bone" style="height: 2.5rem; width: 7rem; border-radius: 9999px; flex-shrink: 0;"></div>
-            <div class="skeleton-bone" style="height: 2.5rem; width: 7rem; border-radius: 9999px; flex-shrink: 0;"></div>
-            <div class="skeleton-bone" style="height: 2.5rem; width: 7rem; border-radius: 9999px; flex-shrink: 0;"></div>
-            <div class="skeleton-bone" style="height: 2.5rem; width: 7rem; border-radius: 9999px; flex-shrink: 0;"></div> -->
           </div>
         </div>
       </div>

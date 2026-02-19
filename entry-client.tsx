@@ -68,20 +68,20 @@ const getTenantScope = (): string => {
   return 'public';
 };
 
-// Start prefetching bootstrap data immediately (before React loads)
+// Reuse bootstrap data already prefetched by index.html inline script
+// Only fetch if index.html didn't already start the prefetch
 const tenantScope = getTenantScope();
-const prefetchPromise = tenantScope ? 
-  fetch(`${API_BASE}/api/tenant-data/${tenantScope}/bootstrap`, {
-    credentials: 'include',
-    headers: { 'Accept': 'application/json' }
-  }).then(r => r.ok ? r.json() : null).catch(() => null) : 
-  Promise.resolve(null);
-
-// Store for DataService to use
 if (typeof window !== 'undefined' && tenantScope) {
-  (window as any).__PREFETCHED_BOOTSTRAP__ = prefetchPromise;
-  // Also start secondary data prefetch if not already started by index.html
-  if (!(window as any).__SECONDARY_DATA__) {
+  // index.html sets __BOOTSTRAP_DATA__ / __BOOTSTRAP_READY__ synchronously from cache
+  // or fires an XHR that sets them async. Only fetch if neither exists.
+  if (!(window as any).__BOOTSTRAP_READY__ && !(window as any).__PREFETCHED_BOOTSTRAP__) {
+    (window as any).__PREFETCHED_BOOTSTRAP__ = fetch(`${API_BASE}/api/tenant-data/${tenantScope}/bootstrap`, {
+      credentials: 'include',
+      headers: { 'Accept': 'application/json' }
+    }).then(r => r.ok ? r.json() : null).catch(() => null);
+  }
+  // Only fetch secondary if not already started by index.html
+  if (!(window as any).__SECONDARY_DATA__ && !(window as any).__PREFETCHED_SECONDARY__) {
     (window as any).__PREFETCHED_SECONDARY__ = fetch(`${API_BASE}/api/tenant-data/${tenantScope}/secondary`, {
       credentials: 'include',
       headers: { 'Accept': 'application/json' }
@@ -93,7 +93,7 @@ const container = document.getElementById('root')!;
 
 // Load CSS and App in PARALLEL (not sequential) for faster startup
 // CSS is non-blocking, React can render while CSS loads
-const cssPromise = import('./styles/tailwind.css');
+const cssPromise = Promise.all([import('./styles/tailwind.css'), import('./styles/mobile-enhancements.css')]);
 const appPromise = import('./App');
 
 // Global function to hide preload skeleton - called by App.tsx when data is ready

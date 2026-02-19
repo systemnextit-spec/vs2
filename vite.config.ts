@@ -367,7 +367,25 @@ const manualChunkResolver = (id: string): string | undefined => {
         'adminlandingpage',      // Landing page editor
         'admintenantmanagement', // Tenant management
         'adminapp',              // Admin app wrapper
-        'adminappwithauth'       // Auth wrapper
+        'adminappwithauth',      // Auth wrapper
+        'adminmanageshop',       // Shop management
+        'adminactivitylog',      // Activity log
+        'adminpurchase',         // Purchase management
+        'adminbilling',          // Billing page
+        'adminshortcuts',        // Keyboard shortcuts
+        'admincustomers',        // Customer management
+        'adminreviews',          // Review management
+        'adminpaymentsetttings', // Payment settings
+        'adminpaymentsettingsnew', // New payment settings
+        'adminrewardpointsettings', // Reward points
+        'adminsmsmarketing',     // SMS marketing
+        'adminmarketingintegrations', // Marketing integrations
+        'adminprofile',          // Admin profile
+        'adminsettingsnew',      // New settings page
+        'adminwebsitecontent',   // Website content
+        'admintutorial',         // Tutorial page
+        'adminshopdomain',       // Shop domain settings
+        'admincontactlist'       // Contact list
       ];
       
       if (pageName.startsWith('admin')) {
@@ -524,6 +542,29 @@ const manualChunkResolver = (id: string): string | undefined => {
     if (componentSegment) {
       const componentName = componentSegment.split('/')[0].replace(/\W+/g, '-').toLowerCase();
       
+
+      // Dashboard components - split into smaller chunks to break 468KB monolith
+      if (componentSegment.startsWith('dashboard/')) {
+        const dashFile = componentSegment.split('/')[1]?.replace(/\.(tsx|ts|jsx|js)$/, '').toLowerCase();
+        if (dashFile) {
+          // Figma-prefixed components - split large ones individually
+          if (dashFile === 'figmabusinessreport') return 'cmp-dash-bizreport';
+          if (dashFile === 'figmaproductupload') return 'cmp-dash-produpload';
+          if (dashFile === 'figmaorderlist') return 'cmp-dash-orderlist';
+          if (dashFile === 'figmaproductlist') return 'cmp-dash-prodlist';
+          if (dashFile === 'figmacatalogmanager') return 'cmp-dash-catalog';
+          if (dashFile === 'figmainventory') return 'cmp-dash-inventory';
+          if (dashFile.startsWith('figma')) return 'cmp-dash-figma-misc';
+          // Order-related components
+          if (dashFile.includes('order')) return 'cmp-dashboard-orders';
+          // Chart/analytics components
+          if (dashFile.includes('chart') || dashFile.includes('revenue') || dashFile.includes('profit') || dashFile.includes('visitor') || dashFile.includes('analytics')) return 'cmp-dashboard-charts';
+          // Core layout components
+          if (dashFile.includes('layout') || dashFile.includes('header') || dashFile.includes('sidebar') || dashFile.includes('overview')) return 'cmp-dashboard-core';
+        }
+        return 'cmp-dashboard-misc';
+      }
+
       // Heavy components get individual chunks
       const heavyComponents = [
         'admincomponents-tsx',
@@ -635,7 +676,7 @@ export default defineConfig(({ mode, isSsrBuild }) => {
         logOverride: { 'this-is-undefined-in-esm': 'silent' },
         treeShaking: true,
         legalComments: 'none',
-        drop: mode === 'production' ? ['debugger'] : [] // Temporarily keep console.log for debugging
+        drop: mode === 'production' ? ['console', 'debugger'] : [] // Strip console + debugger in production for smaller bundles
       },
       plugins: [
         react(),

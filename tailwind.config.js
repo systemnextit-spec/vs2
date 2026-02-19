@@ -4,10 +4,12 @@ module.exports = {
   content: [
     './index.html',
     './App.tsx',
-    './index.tsx',
+    './entry-client.tsx',
+    './entry-server.tsx',
     './components/**/*.{ts,tsx,js,jsx}',
     './pages/**/*.{ts,tsx,js,jsx}',
     './services/**/*.{ts,tsx,js,jsx}',
+    './utils/**/*.{ts,tsx}',
     './constants.ts',
     './types.ts'
   ],
@@ -25,7 +27,7 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         'poppins': ['Poppins', 'sans-serif'],
-        'lato': ['Lato', 'sans-serif']
+        // Lato removed - load on-demand if needed
       },
       keyframes: {
         'slide-in-right': {

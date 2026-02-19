@@ -568,36 +568,40 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
             </Suspense>
           )}
           {themeConfig && (
-            <StoreChatModal
-              isOpen={isChatOpen}
-              onClose={onCloseChat}
-              websiteConfig={websiteConfig}
-              themeConfig={themeConfig}
-              user={user}
-              messages={chatMessages}
-              onSendMessage={onCustomerSendChat}
-              context="customer"
-              onEditMessage={onEditChatMessage}
-              onDeleteMessage={onDeleteChatMessage}
-            />
+            <Suspense fallback={null}>
+              <StoreChatModal
+                isOpen={isChatOpen}
+                onClose={onCloseChat}
+                websiteConfig={websiteConfig}
+                themeConfig={themeConfig}
+                user={user}
+                messages={chatMessages}
+                onSendMessage={onCustomerSendChat}
+                context="customer"
+                onEditMessage={onEditChatMessage}
+                onDeleteMessage={onDeleteChatMessage}
+              />
+            </Suspense>
           )}
         </>
       )}
 
       {canAccessAdminChat && (
-        <StoreChatModal
-          isOpen={Boolean(isAdminChatOpen && currentView.startsWith('admin'))}
-          onClose={onCloseAdminChat}
-          websiteConfig={websiteConfig}
-          themeConfig={themeConfig ?? undefined}
-          user={user}
-          messages={chatMessages}
-          onSendMessage={onAdminSendChat}
-          context="admin"
-          onEditMessage={onEditChatMessage}
-          onDeleteMessage={onDeleteChatMessage}
-          canDeleteAll
-        />
+        <Suspense fallback={null}>
+          <StoreChatModal
+            isOpen={Boolean(isAdminChatOpen && currentView.startsWith('admin'))}
+            onClose={onCloseAdminChat}
+            websiteConfig={websiteConfig}
+            themeConfig={themeConfig ?? undefined}
+            user={user}
+            messages={chatMessages}
+            onSendMessage={onAdminSendChat}
+            context="admin"
+            onEditMessage={onEditChatMessage}
+            onDeleteMessage={onDeleteChatMessage}
+            canDeleteAll
+          />
+        </Suspense>
       )}
     </>
   );

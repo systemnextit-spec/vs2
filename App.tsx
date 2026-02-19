@@ -62,10 +62,6 @@ const isSuperAdminSubdomain = typeof window !== 'undefined' &&
   (window.location.hostname === 'superadmin.allinbangla.com' ||
     window.location.hostname.startsWith('superadmin.'));
 
-// Preload functions - ONLY called on user interaction
-export const preloadCheckout = () => import('./pages/StoreCheckout');
-export const preloadProductDetail = () => import('./pages/StoreProductDetail');
-export const preloadStoreProfile = () => import('./pages/StoreProfile');
 
 const App = () => {
   // === CORE STATE ===
@@ -470,7 +466,6 @@ const App = () => {
                   onUpdateProfile={handleUpdateProfile}
                   onUpdateOrder={handlers.handleUpdateOrder}
                   onAddProduct={handlers.handleAddProduct}
-                  onBulkAddProducts={handlers.handleBulkAddProducts}
                   onUpdateProduct={handlers.handleUpdateProduct}
                   onDeleteProduct={handlers.handleDeleteProduct}
                   onBulkDeleteProducts={handlers.handleBulkDeleteProducts}

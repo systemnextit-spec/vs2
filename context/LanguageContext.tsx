@@ -185,7 +185,6 @@ const translationsEn: Record<string, string> = {
   'chat': 'Chat',
   'admin_control': 'Admin Control',
   'billing': 'Billing & Subscription',
-  'category': 'Category',
   'sub_category': 'Sub Category',
   'child_category': 'Child Category',
 };
@@ -320,7 +319,6 @@ const translationsBn: Record<string, string> = {
   'chat': 'চ্যাট',
   'admin_control': 'অ্যাডমিন কন্ট্রোল',
   'billing': 'বিলিং ও সাবস্ক্রিপশন',
-  'category': 'ক্যাটাগরি',
   'sub_category': 'সাব ক্যাটাগরি',
   'child_category': 'চাইল্ড ক্যাটাগরি',
 };
