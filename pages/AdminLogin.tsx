@@ -76,12 +76,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
       }
     } catch (err: any) {
       const errorMsg = err?.message || 'Login failed. Please check your credentials.';
-      // Add helpful hint for user not found error
-      if (errorMsg.includes('User not found')) {
-        setError(errorMsg + ' (Tip: Default admin is admin@admin.com / admin123)');
-      } else {
-        setError(errorMsg);
-      }
+      setError(errorMsg);
     } finally {
       setIsLoading(false);
     }
