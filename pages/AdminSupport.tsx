@@ -8,6 +8,7 @@ import { User, Tenant } from '../types';
 import { getAuthHeader } from '../services/authService';
 import { toast } from 'react-hot-toast';
 import RichTextEditor from '../components/RichTextEditor';
+import { useDarkMode } from '../context/DarkModeContext';
 
 // Types
 type TicketType = 'issue' | 'feedback' | 'feature';
@@ -64,6 +65,7 @@ const getApiUrl = (): string => {
 const API_URL = getApiUrl();
 
 const AdminSupport: React.FC<AdminSupportProps> = ({ user, activeTenant }) => {
+  const { isDarkMode } = useDarkMode();
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | TicketType>('all');
@@ -303,10 +305,10 @@ const AdminSupport: React.FC<AdminSupportProps> = ({ user, activeTenant }) => {
   };
 
   return (
-    <div className="p-4 sm:p-6 min-h-screen bg-[#F8FAFC]">
+    <div className="p-4 sm:p-6 min-h-screen bg-[#F8FAFC] dark:bg-gray-900">
       {/* Header */}
       <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Support</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Support</h1>
         <button
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition font-medium text-sm sm:text-base w-full xs:w-auto justify-center"
@@ -348,7 +350,7 @@ const AdminSupport: React.FC<AdminSupportProps> = ({ user, activeTenant }) => {
           {tickets.map((ticket) => (
             <div
               key={ticket.id}
-              className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer active:bg-gray-50"
+              className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition cursor-pointer active:bg-gray-50 dark:active:bg-gray-700"
               onClick={() => setSelectedTicket(ticket)}
             >
               <div className="flex items-start justify-between gap-2">
@@ -409,9 +411,9 @@ const AdminSupport: React.FC<AdminSupportProps> = ({ user, activeTenant }) => {
       {/* Create ticket modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b sticky top-0 bg-white z-10">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
               <h2 className="text-base sm:text-lg font-semibold text-gray-800">Create Support Ticket</h2>
               <div className="flex items-center gap-2">
                 <button
@@ -527,9 +529,9 @@ const AdminSupport: React.FC<AdminSupportProps> = ({ user, activeTenant }) => {
       {/* Ticket detail modal */}
       {selectedTicket && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b sticky top-0 bg-white z-10">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
               <h2 className="text-base sm:text-lg font-semibold text-gray-800">Ticket Details</h2>
               <button
                 onClick={() => setSelectedTicket(null)}
@@ -592,7 +594,7 @@ const AdminSupport: React.FC<AdminSupportProps> = ({ user, activeTenant }) => {
               <div className="mb-4 sm:mb-6">
                 <p className="text-xs sm:text-sm font-medium text-gray-700 mb-2">Description:</p>
                 <div 
-                  className="prose prose-sm max-w-none text-gray-600 bg-gray-50 rounded-lg p-3 sm:p-4 text-xs sm:text-sm"
+                  className="prose prose-sm max-w-none text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4 text-xs sm:text-sm"
                   dangerouslySetInnerHTML={{ __html: selectedTicket.description }}
                 />
               </div>
@@ -634,7 +636,7 @@ const AdminSupport: React.FC<AdminSupportProps> = ({ user, activeTenant }) => {
                   <p className="text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">Comments:</p>
                   <div className="space-y-2 sm:space-y-3">
                     {selectedTicket.comments.map((comment) => (
-                      <div key={comment.id} className="bg-gray-50 rounded-lg p-2.5 sm:p-3">
+                      <div key={comment.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3">
                         <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 mb-1">
                           <span className="font-medium text-gray-700">{comment.userName}</span>
                           <span>•</span>

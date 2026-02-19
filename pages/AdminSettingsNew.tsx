@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { convertFileToWebP, dataUrlToFile } from '../services/imageUtils';
 import { uploadPreparedImageToServer } from '../services/imageUploadService';
+import { useDarkMode } from '../context/DarkModeContext';
 
 interface SettingsCardProps {
   title: string;
@@ -18,7 +19,7 @@ interface SettingsCardProps {
 const SettingsCard: React.FC<SettingsCardProps> = ({ title, description, icon, onClick }) => (
   <button 
     onClick={onClick} 
-    className="bg-white rounded-lg w-full border-none cursor-pointer text-left transition-all duration-200 hover:shadow-md active:scale-[0.98] p-3 sm:p-4 min-h-[90px] sm:min-h-[120px] flex flex-col relative overflow-hidden dark:bg-gray-800"
+    className="bg-white rounded-lg w-full border-none cursor-pointer text-left transition-all duration-200 hover:shadow-md active:scale-[0.98] p-3 sm:p-4 min-h-[90px] sm:min-h-[120px] flex flex-col relative overflow-hidden dark:bg-gray-800 dark:text-gray-200"
   >
     {/* Icon container - positioned top right */}
     <div 
@@ -216,15 +217,15 @@ interface AdminSettingsNewProps {
 }
 
 // Figma Design Styles
-const figmaStyles = {
+const createFigmaStyles = (isDark: boolean) => ({
   container: {
-    background: '#f9f9f9',
+    background: isDark ? '#111827' : '#f9f9f9',
     minHeight: '100vh',
     padding: '0',
     fontFamily: "'Poppins', sans-serif",
   },
   headerCard: {
-    background: '#ffffff',
+    background: isDark ? '#1f2937' : '#ffffff',
     borderRadius: '8px',
     padding: '20px',
     marginBottom: '20px',
@@ -492,9 +493,11 @@ const figmaStyles = {
     fontSize: '16px',
     color: 'black',
   },
-};
+});
 
 const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, currentUser, onUpdateProfile, activeTenant }) => {
+  const { isDarkMode } = useDarkMode();
+  const figmaStyles = createFigmaStyles(isDarkMode);
   const authState = useAuth();
   const [activeTab, setActiveTab] = useState<'manage_shop' | 'profile_details'>('manage_shop');
   const { showComingSoon, ComingSoonPopup } = useComingSoon();
@@ -807,7 +810,7 @@ const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, current
       {/* Manage Shop Tab Content */}
       {activeTab === 'manage_shop' && (
         <div style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 20px' }}>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 dark:bg-gray-800 p-4 rounded-lg">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 dark:bg-gray-800 p-4 rounded-lg dark:text-gray-200">
             {settingsCards.map((card, index) => (
               <SettingsCard
                 key={index}

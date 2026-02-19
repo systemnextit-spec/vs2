@@ -21,6 +21,7 @@ import {
 import { Tenant } from '../types';
 import { toast } from 'react-hot-toast';
 import { getAuthHeader } from '../services/authService';
+import { useDarkMode } from '../context/DarkModeContext';
 
 // API URL helper
 const getApiUrl = (): string => {
@@ -37,9 +38,9 @@ const getApiUrl = (): string => {
 const API_URL = getApiUrl();
 
 // Figma-based inline styles
-const figmaStyles = {
+const createFigmaStyles = (isDark: boolean) => ({
   container: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: isDark ? '#111827' : '#f9f9f9',
     minHeight: '100vh',
     position: 'relative' as const,
     // padding handled by Tailwind
@@ -78,7 +79,7 @@ const figmaStyles = {
     gap: '8px',
   },
   tabActive: {
-    backgroundColor: '#1d2127',
+    backgroundColor: isDark ? '#374151' : '#1d2127',
     borderRadius: '100px',
     padding: '10px',
     minWidth: '100px',
@@ -96,7 +97,7 @@ const figmaStyles = {
     letterSpacing: '0.32px',
   },
   tabInactive: {
-    backgroundColor: 'transparent',
+    backgroundColor: isDark ? '#1f2937' : 'transparent',
     borderRadius: '100px',
     padding: '10px',
     minWidth: '100px',
@@ -353,7 +354,7 @@ const figmaStyles = {
     fontSize: '16px',
     color: '#ffffff',
   },
-};
+});
 
 // Plan data matching Figma design
 const PLANS = [
@@ -457,6 +458,8 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string }> =
 };
 
 const AdminBilling: React.FC<AdminBillingProps> = ({ tenant, onUpgrade }) => {
+  const { isDarkMode } = useDarkMode();
+  const figmaStyles = createFigmaStyles(isDarkMode);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [platforms, setPlatforms] = useState({ android: false, ios: false });
   const [priority, setPriority] = useState<string>('Low');

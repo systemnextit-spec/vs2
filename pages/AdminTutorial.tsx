@@ -16,6 +16,7 @@ import {
   Users,
   Palette
 } from 'lucide-react';
+import { useDarkMode } from '../context/DarkModeContext';
 
 interface Tutorial {
   id: string;
@@ -101,6 +102,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ReactNode; co
 };
 
 const AdminTutorial: React.FC<AdminTutorialProps> = ({ tutorials = DEFAULT_TUTORIALS }) => {
+  const { isDarkMode } = useDarkMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Tutorial | null>(null);
@@ -128,7 +130,7 @@ const AdminTutorial: React.FC<AdminTutorialProps> = ({ tutorials = DEFAULT_TUTOR
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-fade-in p-4 sm:p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 animate-fade-in p-4 sm:p-6 max-w-7xl mx-auto dark:bg-gray-900 min-h-screen">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
@@ -152,7 +154,7 @@ const AdminTutorial: React.FC<AdminTutorialProps> = ({ tutorials = DEFAULT_TUTOR
             placeholder="Search tutorials..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500 transition-all text-sm sm:text-base"
+            className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500 transition-all text-sm sm:text-base"
           />
         </div>
         <div className="flex gap-2 flex-wrap overflow-x-auto pb-2 scrollbar-hide">
@@ -189,7 +191,7 @@ const AdminTutorial: React.FC<AdminTutorialProps> = ({ tutorials = DEFAULT_TUTOR
       {/* Video Modal */}
       {selectedVideo && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4">
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-4xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-4xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
             <div className="relative aspect-video bg-black flex-shrink-0">
               {selectedVideo.youtubeUrl ? (
                 <iframe
@@ -245,7 +247,7 @@ const AdminTutorial: React.FC<AdminTutorialProps> = ({ tutorials = DEFAULT_TUTOR
           return (
             <div
               key={tutorial.id}
-              className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer active:scale-[0.98]"
+              className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer active:scale-[0.98]"
               onClick={() => setSelectedVideo(tutorial)}
             >
               {/* Thumbnail */}
@@ -315,7 +317,7 @@ const AdminTutorial: React.FC<AdminTutorialProps> = ({ tutorials = DEFAULT_TUTOR
       {/* Empty State */}
       {filteredTutorials.length === 0 && (
         <div className="text-center py-12 sm:py-16">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
             <Video size={32} className="text-gray-400 sm:hidden" />
             <Video size={40} className="text-gray-400 hidden sm:block" />
           </div>

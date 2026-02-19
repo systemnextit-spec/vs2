@@ -36,16 +36,17 @@ import {
   CheckSquare,
   Square,
 } from 'lucide-react';
+import { useDarkMode } from '../context/DarkModeContext';
 
-// Figma-based inline styles
-const figmaStyles = {
+// Figma-based inline styles (dark mode aware)
+const createFigmaStyles = (isDark: boolean) => ({
   container: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: isDark ? '#111827' : '#f9f9f9',
     minHeight: '100vh',
     position: 'relative' as const,
   },
   mainContent: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1f2937' : '#ffffff',
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '20px',
@@ -63,7 +64,7 @@ const figmaStyles = {
     fontFamily: "'Lato', sans-serif",
     fontWeight: 700,
     fontSize: '22px',
-    color: '#023337',
+    color: isDark ? '#f1f5f9' : '#023337',
     letterSpacing: '0.11px',
     margin: 0,
   },
@@ -79,7 +80,7 @@ const figmaStyles = {
     gap: '8px',
   },
   filterButton: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: isDark ? '#374151' : '#f9f9f9',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -93,16 +94,16 @@ const figmaStyles = {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 400,
     fontSize: '12px',
-    color: '#000000',
+    color: isDark ? '#e5e7eb' : '#000000',
   },
   filterToText: {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 400,
     fontSize: '12px',
-    color: '#000000',
+    color: isDark ? '#e5e7eb' : '#000000',
   },
   clearFilterButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1f2937' : '#ffffff',
     border: '1px solid #ff6a00',
     display: 'flex',
     alignItems: 'center',
@@ -125,7 +126,7 @@ const figmaStyles = {
   },
   tableHeader: {
     height: '48px',
-    background: 'linear-gradient(180deg, #e0f7fa 0%, #b2ebf2 100%)',
+    background: isDark ? 'linear-gradient(180deg, #1e293b 0%, #334155 100%)' : 'linear-gradient(180deg, #e0f7fa 0%, #b2ebf2 100%)',
     display: 'grid',
     gridTemplateColumns: '60px 150px 150px 1fr 120px 160px 40px',
     alignItems: 'center',
@@ -135,11 +136,11 @@ const figmaStyles = {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 500,
     fontSize: '16px',
-    color: '#000000',
+    color: isDark ? '#e5e7eb' : '#000000',
   },
   tableRow: {
     height: '68px',
-    borderBottom: '0.5px solid #b9b9b9',
+    borderBottom: isDark ? '0.5px solid #374151' : '0.5px solid #b9b9b9',
     display: 'grid',
     gridTemplateColumns: '60px 150px 150px 1fr 120px 160px 40px',
     alignItems: 'center',
@@ -149,19 +150,19 @@ const figmaStyles = {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 400,
     fontSize: '12px',
-    color: '#1d1a1a',
+    color: isDark ? '#e5e7eb' : '#1d1a1a',
   },
   entityTitle: {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 500,
     fontSize: '16px',
-    color: '#1d1a1a',
+    color: isDark ? '#f1f5f9' : '#1d1a1a',
   },
   entitySubtitle: {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 400,
     fontSize: '12px',
-    color: '#6a717f',
+    color: isDark ? '#9ca3af' : '#6a717f',
   },
   actionBadge: {
     display: 'flex',
@@ -201,15 +202,15 @@ const figmaStyles = {
     width: '32px',
     height: '32px',
     borderRadius: '8px',
-    border: '1px solid #e0e0e0',
+    border: isDark ? '1px solid #4b5563' : '1px solid #e0e0e0',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#374151' : '#ffffff',
     cursor: 'pointer',
     fontFamily: "'Poppins', sans-serif",
     fontSize: '14px',
-    color: '#1d1a1a',
+    color: isDark ? '#e5e7eb' : '#1d1a1a',
   },
   pageButtonActive: {
     backgroundColor: '#38bdf8',
@@ -226,15 +227,15 @@ const figmaStyles = {
     cursor: 'pointer',
     fontFamily: "'Poppins', sans-serif",
     fontSize: '14px',
-    color: '#1d1a1a',
+    color: isDark ? '#e5e7eb' : '#1d1a1a',
   },
   dropdown: {
     position: 'absolute' as const,
     top: '100%',
     left: 0,
     marginTop: '4px',
-    backgroundColor: '#ffffff',
-    border: '1px solid #e0e0e0',
+    backgroundColor: isDark ? '#1f2937' : '#ffffff',
+    border: isDark ? '1px solid #374151' : '1px solid #e0e0e0',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
     zIndex: 50,
@@ -245,7 +246,7 @@ const figmaStyles = {
     padding: '10px 16px',
     fontFamily: "'Poppins', sans-serif",
     fontSize: '12px',
-    color: '#1d1a1a',
+    color: isDark ? '#e5e7eb' : '#1d1a1a',
     cursor: 'pointer',
     border: 'none',
     width: '100%',
@@ -256,9 +257,9 @@ const figmaStyles = {
     width: '24px',
     height: '24px',
     cursor: 'pointer',
-    color: '#6a717f',
+    color: isDark ? '#9ca3af' : '#6a717f',
   },
-};
+});
 const API_BASE_URL = typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL
   ? String(import.meta.env.VITE_API_BASE_URL)
   : '';
@@ -299,6 +300,8 @@ interface AdminActivityLogProps {
 }
 
 const AdminActivityLog: React.FC<AdminActivityLogProps> = ({ tenantId }) => {
+  const { isDarkMode } = useDarkMode();
+  const figmaStyles = createFigmaStyles(isDarkMode);
   const [token, setToken] = useState<string | null>(null);
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -760,11 +763,11 @@ const AdminActivityLog: React.FC<AdminActivityLogProps> = ({ tenantId }) => {
         onClick={onClose}
       >
         <div 
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden "
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden "
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-3 sm:px-4 lg:px-6 py-4 border-b border-gray-100 dark:bg-gray-800">
+          <div className="flex items-center justify-between px-3 sm:px-4 lg:px-6 py-4 border-b border-gray-100 dark:border-gray-700 dark:bg-gray-800">
             <span className="text-sm text-gray-500 font-poppins">SI : {slNumber}</span>
             <span className="text-sm text-gray-500 font-poppins">{formatDateTime(log.createdAt)}</span>
           </div>
@@ -822,7 +825,7 @@ const AdminActivityLog: React.FC<AdminActivityLogProps> = ({ tenantId }) => {
             {/* Description */}
             <div className="space-y-2">
               <span className="text-sm text-gray-500 font-poppins">Description</span>
-              <div className="bg-gray-50 rounded-lg p-4 max-h-48 overflow-y-auto">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 max-h-48 overflow-y-auto">
                 {isBulk ? (
                   <div className="space-y-2">
                     <p className="text-sm text-gray-700 font-poppins font-medium">
@@ -1038,7 +1041,7 @@ const AdminActivityLog: React.FC<AdminActivityLogProps> = ({ tenantId }) => {
         </div>
 
         {/* Table */}
-        <div style={{ backgroundColor: '#ffffff', overflow: 'hidden' }}>
+        <div style={{ backgroundColor: isDarkMode ? '#1f2937' : '#ffffff', overflow: 'hidden' }}>
           {loading ? (
             <ActivityLogSkeleton />
           ) : logs.length === 0 ? (

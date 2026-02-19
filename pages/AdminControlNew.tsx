@@ -5,6 +5,7 @@ import {
   MessageCircle, Star, UserCheck, Filter, Flag, CheckCircle, Send, Edit3,
   MoreVertical, ChevronLeft, ChevronRight
 } from 'lucide-react';
+import { useDarkMode } from '../context/DarkModeContext';
 
 // ==================== TYPES ====================
 export type ResourceType = 
@@ -103,6 +104,7 @@ const AdminControl: React.FC<AdminControlProps> = ({
   onAddRole, onUpdateRole, onDeleteRole, onUpdateUserRole,
   currentUser, tenantId, userPermissions = {}
 }) => {
+  const { isDarkMode } = useDarkMode();
   const [tab, setTab] = useState<'users' | 'roles'>('users');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -442,12 +444,12 @@ const AdminControl: React.FC<AdminControlProps> = ({
   // Figma Design Styles
   const figmaStyles = {
     container: {
-      background: '#f9f9f9',
+      background: isDarkMode ? '#111827' : '#f9f9f9',
       minHeight: '100vh',
       padding: '20px',
     },
     mainCard: {
-      background: 'white',
+      background: isDarkMode ? '#1f2937' : 'white',
       borderRadius: '8px',
       padding: '20px',
       display: 'flex',
@@ -465,7 +467,7 @@ const AdminControl: React.FC<AdminControlProps> = ({
       fontFamily: "'Lato', sans-serif",
       fontWeight: 700,
       fontSize: '22px',
-      color: '#023337',
+      color: isDarkMode ? '#f1f5f9' : '#023337',
       letterSpacing: '0.11px',
       margin: 0,
     },
@@ -774,7 +776,7 @@ const AdminControl: React.FC<AdminControlProps> = ({
         </div>
 
         {/* Table */}
-        <div style={{ background: 'white' }}>
+        <div style={{ background: isDarkMode ? '#1f2937' : 'white' }}>
           {/* Desktop Table */}
           <div className="hidden md:block">
             {/* Table Header */}

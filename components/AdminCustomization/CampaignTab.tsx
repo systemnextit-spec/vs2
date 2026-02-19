@@ -21,6 +21,7 @@ import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 import { convertFileToWebP, dataUrlToFile } from '../../services/imageUtils';
 import { uploadPreparedImageToServer } from '../../services/imageUploadService';
 import { ActionButton } from './shared/TabButton';
+import { useDarkMode } from '../../context/DarkModeContext';
 
 interface CampaignTabProps {
   websiteConfiguration: WebsiteConfig;
@@ -43,6 +44,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
   prevWebsiteConfigRef,
   lastSaveTimestampRef
 }) => {
+  const { isDarkMode } = useDarkMode();
   const [campaignFilterStatus, setCampaignFilterStatus] = useState<CampaignFilterStatus>('All');
   const [campaignSearchQuery, setCampaignSearchQuery] = useState('');
   const [isCampaignModalOpen, setIsCampaignModalOpen] = useState(false);
@@ -223,7 +225,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
         {/* Filters and Search */}
         <div className="flex flex-col gap-2 sm:gap-3">
           {/* Status Filters */}
-          <div className="flex bg-gray-100 rounded-lg p-1 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-1">
+          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-1">
             {(['All', 'Publish', 'Draft'] as CampaignFilterStatus[]).map((status) => (
               <button
                 key={status}
@@ -278,7 +280,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
           {/* Desktop Table View */}
           <div className="hidden lg:block overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50 text-gray-700 font-semibold text-xs uppercase border-b">
+              <thead className="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold text-xs uppercase border-b dark:border-gray-600">
                 <tr>
                   <th className="px-3 py-2 w-10">
                     <input type="checkbox" className="rounded" />
@@ -300,7 +302,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
                     <tr 
                       key={campaign.id} 
                       onClick={() => setSelectedCampaign(campaign)}
-                      className={`hover:bg-gray-50 group cursor-pointer ${selectedCampaign?.id === campaign.id ? 'bg-green-50 border-l-4 border-l-green-500' : ''}`}
+                      className={`hover:bg-gray-50 dark:hover:bg-gray-700 group cursor-pointer ${selectedCampaign?.id === campaign.id ? 'bg-green-50 dark:bg-green-900/30 border-l-4 border-l-green-500' : ''}`}
                     >
                       <td className="px-3 py-2">
                         <input type="checkbox" className="rounded" onClick={(e) => e.stopPropagation()} />
@@ -308,7 +310,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
                       <td className="px-3 py-2 font-medium text-gray-800">{campaign.serial || rowNumber}</td>
                       <td className="px-3 py-2">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gray-100 rounded border overflow-hidden flex-shrink-0">
+                          <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded border dark:border-gray-600 overflow-hidden flex-shrink-0">
                             {product?.image?.[0] ? (
                               <img
                                 src={normalizeImageUrl(product.image[0])}
@@ -394,10 +396,10 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
                   <div 
                     key={campaign.id} 
                     onClick={() => setSelectedCampaign(campaign)}
-                    className={`p-3 hover:bg-gray-50 cursor-pointer ${selectedCampaign?.id === campaign.id ? 'bg-green-50 border-l-4 border-l-green-500' : ''}`}
+                    className={`p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${selectedCampaign?.id === campaign.id ? 'bg-green-50 dark:bg-green-900/30 border-l-4 border-l-green-500' : ''}`}
                   >
                     <div className="flex gap-2">
-                      <div className="w-14 h-14 bg-gray-100 rounded border overflow-hidden flex-shrink-0">
+                      <div className="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded border dark:border-gray-600 overflow-hidden flex-shrink-0">
                         {product?.image?.[0] ? (
                           <img
                             src={normalizeImageUrl(product.image[0])}
@@ -456,7 +458,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
 
         {/* Pagination */}
         {filteredCampaigns.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 px-2 sm:px-3 py-2 border rounded-lg bg-gray-50">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 px-2 sm:px-3 py-2 border dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
             <p className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
               Showing {((campaignCurrentPage - 1) * campaignItemsPerPage) + 1} to {Math.min(campaignCurrentPage * campaignItemsPerPage, filteredCampaigns.length)} of {filteredCampaigns.length}
             </p>
@@ -464,7 +466,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
               <button
                 onClick={() => setCampaignCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={campaignCurrentPage === 1}
-                className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-1"
+                className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-1"
               >
                 <ChevronLeft size={16} /> <span className="hidden sm:inline">Prev</span>
               </button>
@@ -495,7 +497,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
               <button
                 onClick={() => setCampaignCurrentPage(prev => Math.min(campaignTotalPages, prev + 1))}
                 disabled={campaignCurrentPage === campaignTotalPages}
-                className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-1"
+                className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-1"
               >
                 <span className="hidden sm:inline">Next</span> <ChevronRight size={16} />
               </button>
@@ -506,8 +508,8 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
 
         {/* Preview Panel */}
         <div className="hidden xl:block w-80 flex-shrink-0">
-          <div className="sticky to p-4 border rounded-lg shadow-sm bg-white overflow-hidden">
-            <div className="p-3 border-b bg-gray-50 flex items-center justify-between">
+          <div className="sticky to p-4 border dark:border-gray-700 rounded-lg shadow-sm bg-white dark:bg-gray-800 overflow-hidden">
+            <div className="p-3 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex items-center justify-between">
               <h3 className="font-semibold text-gray-700 flex items-center gap-2">
                 <Eye size={16} />
                 Preview

@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { Monitor, Smartphone, CheckCircle2, ExternalLink, Image, Globe, ChevronDown, ChevronUp, Eye, Sparkles, Palette, LayoutGrid } from 'lucide-react';
 import { WebsiteConfig } from './types';
 import { THEME_DEMO_IMAGES } from './constants';
+import { useDarkMode } from '../../context/DarkModeContext';
 
 // Web sections configuration
 const WEB_SECTIONS = [
@@ -83,7 +84,7 @@ const StyleCard: React.FC<{
       flexDirection: 'column',
       borderRadius: '12px',
       border: isSelected ? '2px solid #ff6a00' : '2px solid transparent',
-      backgroundColor: isSelected ? '#fff7ed' : '#f8fafc',
+      backgroundColor: isSelected ? (isDarkMode ? '#451a03' : '#fff7ed') : (isDarkMode ? '#374151' : '#f8fafc'),
       cursor: disabled ? 'not-allowed' : 'pointer',
       overflow: 'hidden',
       transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -165,7 +166,7 @@ const StyleCard: React.FC<{
         fontFamily: '"Inter", "Lato", sans-serif',
         fontWeight: isSelected ? 600 : 500,
         fontSize: '12.5px',
-        color: isSelected ? '#ff6a00' : '#475569',
+        color: isSelected ? '#ff6a00' : (isDarkMode ? '#d1d5db' : '#475569'),
         letterSpacing: '-0.2px',
       }}>
         {label}
@@ -205,7 +206,7 @@ const ThemeSection: React.FC<{
   <div style={{
     borderRadius: '14px',
     border: isExpanded ? '1px solid #fed7aa' : '1px solid #e2e8f0',
-    backgroundColor: 'white',
+    backgroundColor: isDarkMode ? '#1f2937' : 'white',
     overflow: 'hidden',
     transition: 'all 0.3s ease',
     boxShadow: isExpanded ? '0 4px 16px rgba(255,106,0,0.08)' : '0 1px 3px rgba(0,0,0,0.04)',
@@ -219,7 +220,7 @@ const ThemeSection: React.FC<{
         justifyContent: 'space-between',
         padding: '14px 16px',
         cursor: 'pointer',
-        background: isExpanded ? 'linear-gradient(135deg, #fff7ed, #fffbf5)' : 'white',
+        background: isExpanded ? (isDarkMode ? 'linear-gradient(135deg, #292524, #1c1917)' : 'linear-gradient(135deg, #fff7ed, #fffbf5)') : (isDarkMode ? '#1f2937' : 'white'),
         transition: 'background 0.3s ease',
       }}
     >
@@ -230,7 +231,7 @@ const ThemeSection: React.FC<{
             fontFamily: '"Inter", "Lato", sans-serif',
             fontWeight: 700,
             fontSize: '14.5px',
-            color: '#0f172a',
+            color: isDarkMode ? '#f1f5f9' : '#0f172a',
             margin: 0,
             letterSpacing: '-0.2px',
           }}>
@@ -295,6 +296,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
   tenantSubdomain,
   isSaved,
 }) => {
+  const { isDarkMode } = useDarkMode();
   const [deviceMode, setDeviceMode] = useState<'web' | 'mobile'>('web');
   const [previewSection, setPreviewSection] = useState<string>('headerStyle');
   const [previewTab, setPreviewTab] = useState<'style' | 'store'>('style');
@@ -403,7 +405,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
                   fontFamily: '"Inter", "Lato", sans-serif',
                   fontWeight: 700,
                   fontSize: '18px',
-                  color: '#0f172a',
+                  color: isDarkMode ? '#f1f5f9' : '#0f172a',
                   margin: 0,
                   letterSpacing: '-0.3px',
                 }}
@@ -427,7 +429,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: '#f1f5f9',
+              backgroundColor: isDarkMode ? '#374151' : '#f1f5f9',
               borderRadius: '10px',
               padding: '3px',
               gap: '2px',
@@ -536,7 +538,7 @@ export const CustomThemeSections: React.FC<CustomThemeSectionsProps> = ({
       >
         <div
           style={{
-            backgroundColor: 'white',
+            backgroundColor: isDarkMode ? '#1f2937' : 'white',
             borderRadius: '16px',
             overflow: 'hidden',
             boxShadow: '0 4px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)',

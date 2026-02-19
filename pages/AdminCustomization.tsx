@@ -22,6 +22,7 @@ import {
   ThemeColorsTab,
   CustomThemeSections
 } from '../components/AdminCustomization';
+import { useDarkMode } from '../context/DarkModeContext';
 
 // ============================================================================
 // Main Component
@@ -55,6 +56,7 @@ const AdminCustomization: React.FC<AdminCustomizationProps> = ({
   // Theme Colors State
   // ---------------------------------------------------------------------------
   const [themeColors, setThemeColors] = useState({ ...DEFAULT_COLORS });
+  const { isDarkMode: isDark } = useDarkMode();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // ---------------------------------------------------------------------------
@@ -329,7 +331,7 @@ const AdminCustomization: React.FC<AdminCustomizationProps> = ({
   // ---------------------------------------------------------------------------
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f9f9f9', padding: '20px' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: isDark ? '#111827' : '#f9f9f9', padding: '20px' }}>
       {/* Main Container */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {/* Header Card */}
