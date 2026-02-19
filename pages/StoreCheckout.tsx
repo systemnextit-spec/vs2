@@ -152,7 +152,7 @@ const StoreCheckout = ({
 
   const progressSteps = useMemo(() => [
     { key: 'cart', label: 'Cart' },
-    { key: 'shipping', label: 'Shipping' },
+    { key: 'address', label: 'Address' },
     { key: 'payment', label: 'Payment' },
     { key: 'review', label: 'Review' }
   ], []);

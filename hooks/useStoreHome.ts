@@ -335,9 +335,6 @@ export const useStoreHome = ({
     const categorySlug = slugify(categoryName);
     if (onCategoryFilterChange) onCategoryFilterChange(categorySlug);
     setSelectedCategoryView(categoryName);
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    });
   }, [onCategoryFilterChange]);
 
   const handleClearCategoryFilter = useCallback(() => {

@@ -588,7 +588,7 @@ export interface LandingPage {
   blocks: LandingPageBlock[];
   style: LandingPageStyle;
   customConfig?: Record<string, any>;
-  onePageCheckout: boolean;
+  onePaget: boolean;
   createdAt: string;
   updatedAt: string;
   publishedAt?: string;
