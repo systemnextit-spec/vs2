@@ -229,7 +229,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
                 <div className="inline-flex items-end gap-1 relative flex-[0_0_auto]">
                   <div className="relative w-6 bg-[linear-gradient(180deg,rgba(56,189,248,1)_0%,rgba(30,144,255,1)_100%)] rounded-t-sm" style={{ height: `${data.mobileHeight || 82}px` }}>
                     <div
-                      className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
+                      className="text-center absolute top-[5px] left-[calc(50.00%_-_10px)] -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
                       style={{ fontFamily: "Lato, Helvetica, sans-serif" }}
                     >
                       {data.mobile}
@@ -238,7 +238,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
 
                   <div className="relative w-6 bg-[linear-gradient(180deg,rgba(255,159,28,1)_0%,rgba(255,106,0,1)_100%)] rounded-t-sm" style={{ height: `${data.tabHeight || 60}px` }}>
                     <div
-                      className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
+                      className="text-right absolute top-[5px] left-[calc(50.00%_-_10px)] -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
                       style={{ fontFamily: "Lato, Helvetica, sans-serif" }}
                     >
                       {data.tab}
@@ -250,7 +250,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
                     style={{ height: `${data.desktopHeight}px` }}
                   >
                     <div
-                      className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
+                      className="text-right absolute top-[5px] left-[calc(50.00%_-_10px)] -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
                       style={{ fontFamily: "Lato, Helvetica, sans-serif" }}
                     >
                       {data.desktop}
