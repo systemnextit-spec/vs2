@@ -112,6 +112,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
+  <!-- DNS Prefetch for faster subsequent requests -->
+  <link rel="dns-prefetch" href="https://allinbangla.com">
+  <link rel="dns-prefetch" href="https://images.allinbangla.com">
+  <link rel="dns-prefetch" href="https://static.allinbangla.com">
+  
+  <!-- Preconnect to domains we'll need -->
+  <link rel="preconnect" href="https://allinbangla.com">
+  <link rel="preconnect" href="https://images.allinbangla.com" crossorigin>
+  <link rel="preconnect" href="https://static.allinbangla.com" crossorigin>
+  
+  <!-- Font loading with display=swap for fast text rendering -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+  
+  <!-- Favicon and Touch Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
+
   <!-- Early bootstrap prefetch with parallel secondary data -->
   <script>
     // Performance: Mark navigation start
