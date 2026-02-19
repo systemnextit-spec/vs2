@@ -18,7 +18,7 @@ interface SettingsCardProps {
 const SettingsCard: React.FC<SettingsCardProps> = ({ title, description, icon, onClick }) => (
   <button 
     onClick={onClick} 
-    className="bg-white rounded-lg w-full border-none cursor-pointer text-left transition-all duration-200 hover:shadow-md active:scale-[0.98] p-3 sm:p-4 min-h-[90px] sm:min-h-[120px] flex flex-col relative overflow-hidden"
+    className="bg-white rounded-lg w-full border-none cursor-pointer text-left transition-all duration-200 hover:shadow-md active:scale-[0.98] p-3 sm:p-4 min-h-[90px] sm:min-h-[120px] flex flex-col relative overflow-hidden dark:bg-gray-800"
   >
     {/* Icon container - positioned top right */}
     <div 
