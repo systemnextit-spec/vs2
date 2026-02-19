@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import FigmaOverview from './FigmaOverview';
 import FigmaOrderStatus from './FigmaOrderStatus';
-import FigmaVisitorStats from './FigmaVisitorStats';
+import { VisitorAnalytics } from './VisitorAnalytics';
 import FigmaBestSellingProducts from './FigmaBestSellingProducts';
 import FigmaTopProducts from './FigmaTopProducts';
 import FigmaSalesPerformance from './FigmaSalesPerformance';
 import FigmaSalesByCategory from './FigmaSalesByCategory';
-import FigmaAnalyticsChart from './FigmaAnalyticsChart';
 import { Order, Product } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -30,7 +29,6 @@ const FigmaDashboardContent: React.FC<FigmaDashboardContentProps> = ({
   onNavigate
 }) => {
   const { language, setLanguage } = useLanguage();
-  const [timeFilter, setTimeFilter] = useState<string>('Month');
 
   // Calculate stats from real data - default to 0 when no data
   const totalProducts = products.length;
@@ -84,21 +82,8 @@ const FigmaDashboardContent: React.FC<FigmaDashboardContentProps> = ({
         onLangChange={setLanguage}
       />
 
-      {/* Visitor Stats + Analytics Bar Chart Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 xs:gap-4 sm:gap-5 lg:gap-4 xl:gap-5">
-        {/* Visitor Stats - Left Side */}
-        <div className="lg:col-span-4 h-full">
-          <FigmaVisitorStats tenantId={tenantId} />
-        </div>
-
-        {/* Analytics Bar Chart - Right Side */}
-        <div className="lg:col-span-8">
-          <FigmaAnalyticsChart
-            timeFilter="December 2025"
-            onTimeFilterChange={setTimeFilter}
-          />
-        </div>
-      </div>
+      {/* Visitor Analytics */}
+      <VisitorAnalytics />
 
       {/* Order Status Row */}
       <FigmaOrderStatus
