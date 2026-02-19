@@ -610,7 +610,7 @@ export const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ tenantId, shop
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:shadow-[0_8px_40px_rgba(56,189,248,0.25)] transition-all flex items-center justify-center z-50 hover:scale-105 hover:bg-white/30"
+        className="fixed bottom-24 right-4 sm:bottom-28 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:shadow-[0_8px_40px_rgba(56,189,248,0.25)] transition-all flex items-center justify-center z-50 hover:scale-105 hover:bg-white/30"
       >
         <SNIntelligenceIcon className="w-8 h-8 sm:w-9 sm:h-9" />
         <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse ring-2 ring-white/50" />
