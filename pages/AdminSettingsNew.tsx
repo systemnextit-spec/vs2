@@ -807,7 +807,7 @@ const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, current
       {/* Manage Shop Tab Content */}
       {activeTab === 'manage_shop' && (
         <div style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 20px' }}>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 dark:bg-gray-800 p-4 rounded-lg">
             {settingsCards.map((card, index) => (
               <SettingsCard
                 key={index}
