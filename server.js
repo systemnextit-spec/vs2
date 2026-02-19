@@ -236,6 +236,15 @@ async function createServer() {
     next();
   });
 
+  // Serve APK builder page as static content at /apk-builder
+  const apkBuilderPath = path.resolve(__dirname, 'pages/apk-builder');
+  app.use('/apk-builder', express.static(apkBuilderPath, {
+    index: 'index.html',
+    setHeaders: (res) => {
+      res.setHeader('Cache-Control', `public, max-age=${ONE_DAY}, stale-while-revalidate=${ONE_WEEK}`);
+    }
+  }));
+
   // Serve landingpage folder as static content at /landingpage
   // In production, serve from dist/client/landingpage; in development, serve from source landingpage folder
   const landingpagePath = path.resolve(__dirname, 'landingpage');

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import HeaderStyle6 from '../store/header/HeaderStyle6'; 
 import {
   Globe,
   PlayCircle,
@@ -123,6 +124,9 @@ const SEARCHABLE_MENU_ITEMS: SearchMenuItem[] = [
   { id: 'admin_control', label: 'Admin Control', keywords: ['admin', 'control', 'staff', 'roles', 'permissions'], category: 'System' },
   { id: 'billing', label: 'Billing & Subscription', keywords: ['billing', 'subscription', 'payment', 'plan', 'upgrade'], category: 'System' },
 ];
+
+// Header Style 6 - Figma design implementation
+<HeaderStyle6 />
 
 // Dark Mode Toggle Button Component
 const DarkModeToggle: React.FC = () => {
