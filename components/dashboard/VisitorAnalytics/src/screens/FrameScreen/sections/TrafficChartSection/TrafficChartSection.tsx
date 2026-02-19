@@ -96,3 +96,5 @@ export const TrafficChartSection = (): JSX.Element => {
     </div>
   );
 };
+
+export default TrafficChartSection;
