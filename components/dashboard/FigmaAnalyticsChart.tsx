@@ -1,16 +1,122 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
+interface FigmaAnalyticsChartProps {
+  tenantId?: string;
+}
 
 /**
  * Main App Component
  * Displays a combined view of Visitor Statistics and Traffic Charts.
  */
-const FigmaAnalyticsChart = () => {
+const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) => {
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ 
+    onlineNow: 0, 
+    todayVisitors: 0, 
+    totalVisitors: 0, 
+    last7Days: 0, 
+    pageViews: 0 
+  });
+  const [chartData, setChartData] = useState<any[]>([]);
+
+  useEffect(() => {
+    const activeTenantId = tenantId || localStorage.getItem('activeTenantId');
+    if (!activeTenantId) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchVisitorData = async () => {
+      try {
+        setLoading(true);
+        const hostname = window.location.hostname;
+        const isLocal = hostname.includes('localhost');
+        const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
+
+        const [statsRes, onlineRes] = await Promise.all([
+          fetch(`${apiUrl}/api/visitors/${activeTenantId}/stats?period=7d`),
+          fetch(`${apiUrl}/api/visitors/${activeTenantId}/online`)
+        ]);
+
+        if (statsRes.ok && onlineRes.ok) {
+          const statsData = await statsRes.json();
+          const onlineData = await onlineRes.json();
+
+          setStats({
+            onlineNow: onlineData.count || 0,
+            todayVisitors: statsData.today || 0,
+            totalVisitors: statsData.total || 0,
+            last7Days: statsData.last7Days || 0,
+            pageViews: statsData.pageViews || 0
+          });
+
+          if (statsData.chartData && Array.isArray(statsData.chartData)) {
+            setChartData(statsData.chartData.map((item: any, index: number) => ({
+              date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+              mobile: item.mobile || 0,
+              tab: item.tablet || item.tab || 0,
+              desktop: item.desktop || 0,
+              desktopHeight: Math.max(82, Math.min(193, ((item.desktop || 0) / Math.max(...statsData.chartData.map((d: any) => d.desktop || 0), 1)) * 193))
+            })));
+          } else {
+            setChartData(Array.from({ length: 7 }, (_, i) => {
+              const d = new Date();
+              d.setDate(d.getDate() - (6 - i));
+              return { 
+                date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), 
+                mobile: 0, 
+                tab: 0, 
+                desktop: 0,
+                desktopHeight: 125
+              };
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching visitor data:', error);
+        setChartData(Array.from({ length: 7 }, (_, i) => {
+          const d = new Date();
+          d.setDate(d.getDate() - (6 - i));
+          return { 
+            date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), 
+            mobile: 0, 
+            tab: 0, 
+            desktop: 0,
+            desktopHeight: 125
+          };
+        }));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVisitorData();
+
+    // Refresh online count every 30 seconds
+    const interval = setInterval(async () => {
+      try {
+        const hostname = window.location.hostname;
+        const isLocal = hostname.includes('localhost');
+        const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
+        const onlineRes = await fetch(`${apiUrl}/api/visitors/${activeTenantId}/online`);
+        if (onlineRes.ok) {
+          const onlineData = await onlineRes.json();
+          setStats(prev => ({ ...prev, onlineNow: onlineData.count || 0 }));
+        }
+      } catch (error) {
+        console.error('Error refreshing online count:', error);
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [tenantId]);
+
   const statsData = [
     {
       id: "online-now",
       title: "Online Now",
       subtitle: "Active visitors on site",
-      value: "35",
+      value: stats.onlineNow.toString(),
       icon: "https://c.animaapp.com/9ijsMV30/img/fluent-live-24-regular.svg",
       iconAlt: "Fluent live",
       titleColor: "#008cff",
@@ -21,8 +127,8 @@ const FigmaAnalyticsChart = () => {
     {
       id: "today-visitors",
       title: "Today visitors",
-      subtitle: "Last 7 days: 4",
-      value: "35",
+      subtitle: `Last 7 days: ${Math.round(stats.last7Days / 7)}`,
+      value: stats.todayVisitors.toString(),
       icon: "https://c.animaapp.com/9ijsMV30/img/fluent-people-community-20-regular.svg",
       iconAlt: "Fluent people",
       titleColor: "#ff5500",
@@ -33,8 +139,8 @@ const FigmaAnalyticsChart = () => {
     {
       id: "total-visitors",
       title: "Total visitors",
-      subtitle: "15 page view",
-      value: "35",
+      subtitle: `${(stats.pageViews / 1000).toFixed(1)}k page view`,
+      value: stats.totalVisitors.toString(),
       icon: "https://c.animaapp.com/9ijsMV30/img/streamline-plump-web.svg",
       iconAlt: "Streamline plump web",
       titleColor: "#3f34be",
@@ -43,16 +149,6 @@ const FigmaAnalyticsChart = () => {
       decorativeCircleBg:
         "bg-[linear-gradient(180deg,rgba(55,0,251,0.21)_0%,rgba(33,0,149,0.21)_100%)]",
     },
-  ];
-
-  const chartData = [
-    { date: "Jan 25", mobile: 30, tab: 35, desktop: 40, desktopHeight: 125 },
-    { date: "Jan 26", mobile: 30, tab: 35, desktop: 55, desktopHeight: 146 },
-    { date: "Jan 27", mobile: 30, tab: 35, desktop: 70, desktopHeight: 193 },
-    { date: "Jan 28", mobile: 30, tab: 35, desktop: 55, desktopHeight: 148 },
-    { date: "Jan 29", mobile: 30, tab: 35, desktop: 40, desktopHeight: 125 },
-    { date: "Jan 30", mobile: 30, tab: 35, desktop: 60, desktopHeight: 163 },
-    { date: "Jan 31", mobile: 30, tab: 35, desktop: 40, desktopHeight: 125 },
   ];
 
   const legendItems = [
@@ -72,6 +168,18 @@ const FigmaAnalyticsChart = () => {
       label: "Desktop View",
     },
   ];
+
+  if (loading && chartData.length === 0) {
+    return (
+      <div className="">
+        <div className="inline-flex items-center gap-5 relative bg-white p-6 rounded-2xl shadow-xl">
+          <div className="w-full h-[273px] flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-slate-100 border-t-slate-400 rounded-full animate-spin" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="">
@@ -123,7 +231,7 @@ const FigmaAnalyticsChart = () => {
         </section>
 
         {/* Traffic Chart Section */}
-        <div className="relative w-[1200x] h-[273px] bg-white rounded-lg overflow-hidden border border-slate-100">
+        <div className="relative w-[999px] h-[273px] bg-white rounded-lg overflow-hidden border border-slate-100">
           <div className="inline-flex h-[196px] items-center gap-2 absolute top-[13px] left-2.5">
             <div
               className="relative w-fit ml-[-39.50px] mr-[-31.50px] rotate-[-90.00deg] font-normal text-slate-400 text-xs text-center tracking-[0] leading-[normal]"
