@@ -20,7 +20,7 @@
 }
 
 .hero-carousel-mobile {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 5 / 1;
 }
 
 /* Individual slide - MUST be positioned absolute to stack properly */
@@ -211,6 +211,11 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .hero-carousel {
+    margin: 0 auto !important;
+    max-width: 100%;
+  }
+  
   .hero-carousel {
     border-radius: 0.5rem;
   }

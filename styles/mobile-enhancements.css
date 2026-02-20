@@ -109,7 +109,7 @@ html {
 /* Hero Section Mobile Enhancements */
 @media (max-width: 768px) {
   .hero-carousel {
-    margin: 0 -1rem;
+    margin: 0 auto;
     border-radius: 0;
   }
   
