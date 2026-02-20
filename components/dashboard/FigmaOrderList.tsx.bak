@@ -119,8 +119,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
     productId: '',
     quantity: 1,
     deliveryCharge: 0,
-    discountType: 'none' as 'percentage' | 'taka' | 'none',
-    discountValue: 0,
+    discount: 0,
     notes: ''
   });
 
@@ -601,17 +600,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
     setIsCreatingOrder(true);
     const orderId = `#${Math.floor(1000 + Math.random() * 9000)}`;
     const orderAmount = (selectedProductForOrder.price || 0) * newOrderForm.quantity;
-    
-    // Calculate discount
-    let discountAmount = 0;
-    if (newOrderForm.discountType === 'percentage' && newOrderForm.discountValue > 0) {
-      discountAmount = (orderAmount * newOrderForm.discountValue) / 100;
-    } else if (newOrderForm.discountType === 'taka' && newOrderForm.discountValue > 0) {
-      discountAmount = newOrderForm.discountValue;
-    }
-    
-    const subtotalAfterDiscount = orderAmount - discountAmount;
-    const totalAmount = subtotalAfterDiscount + newOrderForm.deliveryCharge;
+    const totalAmount = orderAmount + newOrderForm.deliveryCharge;
     
     const newOrder: Order = {
       id: orderId,
@@ -631,9 +620,6 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
       productImage: selectedProductForOrder.image,
       quantity: newOrderForm.quantity,
       deliveryCharge: newOrderForm.deliveryCharge,
-      discountType: newOrderForm.discountType,
-      discountValue: newOrderForm.discountValue,
-      discountAmount: discountAmount,
       source: 'admin' as const,
       createdAt: new Date().toISOString(),
       items: [],
@@ -671,8 +657,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
           productId: '',
           quantity: 1,
           deliveryCharge: 0,
-          discountType: 'none',
-          discountValue: 0,
+          discount: 0,
           notes: ''
         });
       } else {
@@ -1816,101 +1801,55 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                     onChange={(e) => setNewOrderForm(prev => ({ ...prev, deliveryCharge: Math.max(0, parseInt(e.target.value) || 0) }))}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   />
-
-              {/* Discount Section */}
-              <div className="border-t pt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Discount (Optional)
-                </label>
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <button
-                    type="button"
-                    onClick={() => setNewOrderForm(prev => ({ ...prev, discountType: 'percentage', discountValue: prev.discountType === 'percentage' ? prev.discountValue : 0 }))}
-                    className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                      newOrderForm.discountType === 'percentage'
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    Percentage %
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setNewOrderForm(prev => ({ ...prev, discountType: 'taka', discountValue: prev.discountType === 'taka' ? prev.discountValue : 0 }))}
-                    className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                      newOrderForm.discountType === 'taka'
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    Fixed টাকা
-                  </button>
+                  <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Discount (Percentage)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={newOrderForm.discount}
+                    onChange={(e) => setNewOrderForm(prev => ({ ...prev, discount: Math.max(1, parseInt(e.target.value) || 1) }))}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+               
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Discount (In টাকা)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={newOrderForm.discount}
+                    onChange={(e) => setNewOrderForm(prev => ({ ...prev, discount: Math.max(1, parseInt(e.target.value) || 1) }))}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
                 </div>
-                {newOrderForm.discountType !== 'none' && (
-                  <div className="relative">
-                    <input
-                      type="number"
-                      min="0"
-                      max={newOrderForm.discountType === 'percentage' ? 100 : undefined}
-                      value={newOrderForm.discountValue}
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value) || 0;
-                        const maxValue = newOrderForm.discountType === 'percentage' ? 100 : Infinity;
-                        setNewOrderForm(prev => ({ ...prev, discountValue: Math.min(Math.max(0, value), maxValue) }));
-                      }}
-                      placeholder={newOrderForm.discountType === 'percentage' ? 'Enter percentage (0-100)' : 'Enter amount in টাকা'}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
-                      {newOrderForm.discountType === 'percentage' ? '%' : '৳'}
-                    </span>
-                  </div>
-                )}
-                {newOrderForm.discountType === 'none' && (
-                  <p className="text-xs text-gray-500 italic">Select a discount type above to apply discount</p>
-                )}
-              </div>
                 </div>
                 </div>
               </div>
 
               {/* Order Summary */}
-              {selectedProductForOrder && (() => {
-                const subtotal = (selectedProductForOrder.price || 0) * newOrderForm.quantity;
-                let discountAmount = 0;
-                if (newOrderForm.discountType === 'percentage' && newOrderForm.discountValue > 0) {
-                  discountAmount = (subtotal * newOrderForm.discountValue) / 100;
-                } else if (newOrderForm.discountType === 'taka' && newOrderForm.discountValue > 0) {
-                  discountAmount = newOrderForm.discountValue;
-                }
-                const subtotalAfterDiscount = subtotal - discountAmount;
-                const total = subtotalAfterDiscount + newOrderForm.deliveryCharge;
-                
-                return (
-                  <div className="bg-blue-50 rounded-lg p-4 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Subtotal:</span>
-                      <span className="font-medium">৳{subtotal.toLocaleString()}</span>
-                    </div>
-                    {newOrderForm.discountType !== 'none' && discountAmount > 0 && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">
-                          Discount ({newOrderForm.discountType === 'percentage' ? `${newOrderForm.discountValue}%` : `৳${newOrderForm.discountValue}`}):
-                        </span>
-                        <span className="font-medium text-green-600">-৳{discountAmount.toLocaleString()}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Delivery:</span>
-                      <span className="font-medium">৳{newOrderForm.deliveryCharge.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-base font-semibold border-t border-blue-100 pt-2">
-                      <span className="text-gray-900">Total:</span>
-                      <span className="text-blue-600">৳{total.toLocaleString()}</span>
-                    </div>
+              {selectedProductForOrder && (
+                <div className="bg-blue-50 rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Subtotal:</span>
+                    <span className="font-medium">
+                      ৳{((selectedProductForOrder.price || 0) * newOrderForm.quantity).toLocaleString()}
+                    </span>
                   </div>
-                );
-              })()}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Delivery:</span>
+                    <span className="font-medium">৳{newOrderForm.deliveryCharge.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-base font-semibold border-t border-blue-100 pt-2">
+                    <span className="text-gray-900">Total:</span>
+                    <span className="text-blue-600">
+                      ৳{(((selectedProductForOrder.price || 0) * newOrderForm.quantity) + newOrderForm.deliveryCharge).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Footer */}
@@ -1940,7 +1879,8 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
               </button>
             </div>
           </div>
-     )}
+        </div>
+      )}
     </div>
   );
 };

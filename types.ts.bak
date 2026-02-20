@@ -206,11 +206,6 @@ export interface Order {
   paymentMethodId?: string; // ID of the selected payment method
   transactionId?: string; // Customer's transaction ID for manual payments
   customerPaymentPhone?: string; // Customer's payment phone number
-  
-  // Discount fields
-  discountType?: 'percentage' | 'taka' | 'none';
-  discountValue?: number; // Percentage (0-100) or amount in taka
-  discountAmount?: number; // Calculated discount amount in taka
 }
 
 export interface User {
