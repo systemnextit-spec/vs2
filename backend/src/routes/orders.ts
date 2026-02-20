@@ -16,7 +16,7 @@ const orderSchema = z.object({
   amount: z.number(),
   date: z.string(),
   status: z.enum(['Pending', 'Confirmed', 'On Hold', 'Processing', 'Shipped', 'Sent to Courier', 'Delivered', 'Cancelled', 'Return', 'Refund', 'Returned Receive', 'Returned']).default('Pending'),
-  email: z.string().email().optional(),
+  email: z.preprocess((val) => (val === '' || val === undefined || val === null) ? undefined : val, z.string().email().optional()),
   phone: z.string().optional(),
   division: z.string().optional(),
   variant: z.object({
@@ -60,6 +60,7 @@ export interface Order {
   trackingId?: string;
   phone?: string;
   division?: string;
+  district?: string;
   variant?: { color: string; size: string };
   productId?: number;
   productName?: string;

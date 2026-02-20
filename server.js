@@ -314,16 +314,13 @@ async function createServer() {
         // Production: use pre-cached template (zero I/O)
         template = cachedTemplate;
         
-        // Send Link headers for critical resources (Cloudflare will use these)
-        // This enables parallel preloading at the CDN level
+        // Only preload CSS - JS modules are handled by <link rel="modulepreload"> in HTML
+        // Sending rel=preload for JS modules causes browser warnings
         if (criticalAssets.length > 0) {
           const linkHeaders = criticalAssets
-            .filter(a => a.priority === 'high')
-            .slice(0, 10) // Limit to top 10 critical assets
-            .map(({ path: assetPath, type }) => {
-              if (type === 'script') {
-                return `<${assetPath}>; rel=preload; as=script; crossorigin`;
-              }
+            .filter(a => a.type === 'style' && a.priority === 'high')
+            .slice(0, 5)
+            .map(({ path: assetPath }) => {
               return `<${assetPath}>; rel=preload; as=style; crossorigin`;
             });
           

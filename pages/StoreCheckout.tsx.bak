@@ -14,14 +14,12 @@ import {
   ArrowLeft,
   Banknote,
   CheckCircle2,
-  ChevronDown,
   CreditCard,
   Gift,
   Headphones,
   MapPin,
   Mail,
   Phone,
-  Search,
   ShieldCheck,
   User as UserIcon,
   X
@@ -57,7 +55,6 @@ type CheckoutFormState = {
   fullName: string;
   phone: string;
   division: string;
-  district: string;
   email: string;
   address: string;
   productDescription?: string;
@@ -65,17 +62,6 @@ type CheckoutFormState = {
   cardNumber?: string;
   expiry?: string;
   cvv?: string;
-};
-// Bangladesh Division -> District mapping (all 64 districts)
-const BD_DISTRICTS: Record<string, string[]> = {
-  Dhaka: ['Dhaka', 'Faridpur', 'Gazipur', 'Gopalganj', 'Kishoreganj', 'Madaripur', 'Manikganj', 'Munshiganj', 'Narayanganj', 'Narsingdi', 'Rajbari', 'Shariatpur', 'Tangail'],
-  Chittagong: ['Chittagong', 'Bandarban', 'Brahmanbaria', 'Chandpur', 'Comilla', "Cox's Bazar", 'Feni', 'Khagrachhari', 'Lakshmipur', 'Noakhali', 'Rangamati'],
-  Rajshahi: ['Rajshahi', 'Bogra', 'Chapainawabganj', 'Joypurhat', 'Naogaon', 'Natore', 'Nawabganj', 'Pabna', 'Sirajganj'],
-  Khulna: ['Khulna', 'Bagerhat', 'Chuadanga', 'Jessore', 'Jhenaidah', 'Kushtia', 'Magura', 'Meherpur', 'Narail', 'Satkhira'],
-  Barisal: ['Barisal', 'Barguna', 'Bhola', 'Jhalokathi', 'Patuakhali', 'Pirojpur'],
-  Sylhet: ['Sylhet', 'Habiganj', 'Moulvibazar', 'Sunamganj'],
-  Rangpur: ['Rangpur', 'Dinajpur', 'Gaibandha', 'Kurigram', 'Lalmonirhat', 'Nilphamari', 'Panchagarh', 'Thakurgaon'],
-  Mymensingh: ['Mymensingh', 'Jamalpur', 'Netrokona', 'Sherpur'],
 };
 
 const StoreCheckout = ({
@@ -106,14 +92,10 @@ const StoreCheckout = ({
     fullName: '',
     phone: '',
     division: '',
-    district: '',
     email: '',
     address: '',
     productDescription: ''
   });
-  const [districtSearch, setDistrictSearch] = useState('');
-  const [isDistrictOpen, setIsDistrictOpen] = useState(false);
-  const districtRef = React.useRef<HTMLDivElement>(null);
   const [selectedDeliveryType, setSelectedDeliveryType] = useState<'Regular' | 'Express' | 'Free'>('Regular');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('cod-default');
   const [paymentInfoSaved, setPaymentInfoSaved] = useState(false);
@@ -126,18 +108,6 @@ const StoreCheckout = ({
   const [alertState, setAlertState] = useState<{ type: 'error' | 'success' | null; message: string }>({ type: null, message: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
-
-  // Close district dropdown on outside click
-  useEffect(() => {
-    if (!isDistrictOpen) return;
-    const handleClickOutside = (event: MouseEvent) => {
-      if (districtRef.current && !districtRef.current.contains(event.target as Node)) {
-        setIsDistrictOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isDistrictOpen]);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 600);
@@ -203,8 +173,6 @@ const StoreCheckout = ({
         return '';
       case 'division':
         return value ? '' : 'Select a division';
-      case 'district':
-        return value ? '' : 'Select a district';
       case 'address':
         if (!value.trim()) return 'Address is required';
         if (value.trim().length < 10) return 'Provide a bit more detail';
@@ -237,8 +205,8 @@ const StoreCheckout = ({
 
   const validateForm = () => {
     const fieldsToValidate = websiteConfig?.showEmailFieldForOrder 
-      ? ['fullName', 'phone', 'email', 'division', 'district', 'address']
-      : ['fullName', 'phone', 'division', 'district', 'address'];
+      ? ['fullName', 'phone', 'email', 'division', 'address']
+      : ['fullName', 'phone', 'division', 'address'];
     const messages: Record<string, string> = {};
     fieldsToValidate.forEach(field => {
       const value = (formData as Record<string, string>)[field] || '';
@@ -287,7 +255,6 @@ const StoreCheckout = ({
       productName: product.name,
       quantity,
       variant,
-      district: formData.district,
       deliveryType: selectedDeliveryType,
       deliveryCharge: computedDeliveryCharge,
       // Payment method info
@@ -515,12 +482,7 @@ const StoreCheckout = ({
                               : 'border-gray-200 bg-white hover:border-gray-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50'
                             } text-gray-800`}
                           value={formData.division}
-                          onChange={e => {
-                            updateField('division', e.target.value);
-                            setFormData(prev => ({ ...prev, district: '' }));
-                            setDistrictSearch('');
-                            setFormErrors(prev => ({ ...prev, district: '' }));
-                          }}
+                          onChange={e => updateField('division', e.target.value)}
                           aria-invalid={!!(formErrors.division && touchedFields.division)}
                           aria-describedby={formErrors.division && touchedFields.division ? 'division-error' : undefined}
                         >
@@ -538,71 +500,6 @@ const StoreCheckout = ({
                       {formErrors.division && touchedFields.division && (
                         <p id="division-error" className="mt-1.5 text-xs text-rose-600 font-medium flex items-center gap-1">
                           <AlertCircle size={14} /> {formErrors.division}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2.5">District/Zila <span className="text-rose-500">*</span></label>
-                      <div className="relative group" ref={districtRef}>
-                        <MapPin className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-200 z-10 ${formErrors.district && touchedFields.district ? 'text-rose-400' : 'text-gray-400 group-focus-within:text-emerald-500'}`} size={18} />
-                        <div
-                          className={`w-full pl-12 pr-10 py-3.5 border-2 rounded-2xl transition-all duration-200 cursor-pointer flex items-center justify-between ${formErrors.district && touchedFields.district
-                              ? 'border-rose-300 bg-rose-50/50'
-                              : 'border-gray-200 bg-white hover:border-gray-300'
-                            } text-gray-800`}
-                          onClick={() => {
-                            if (!formData.division) {
-                              updateField('division', '');
-                              return;
-                            }
-                            setIsDistrictOpen(!isDistrictOpen);
-                          }}
-                        >
-                          <span className={formData.district ? 'text-gray-800' : 'text-gray-400'}>
-                            {formData.district || (formData.division ? 'Select District' : 'Select Division first')}
-                          </span>
-                          <ChevronDown size={16} className={`text-gray-400 transition-transform ${isDistrictOpen ? 'rotate-180' : ''}`} />
-                        </div>
-                        {isDistrictOpen && formData.division && (
-                          <div className="absolute z-50 mt-1 w-full bg-white border-2 border-gray-200 rounded-2xl shadow-xl max-h-60 overflow-hidden">
-                            <div className="sticky top-0 bg-white p-2 border-b border-gray-100">
-                              <div className="relative">
-                                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                                <input
-                                  type="text"
-                                  placeholder="Search district..."
-                                  className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500"
-                                  value={districtSearch}
-                                  onChange={e => setDistrictSearch(e.target.value)}
-                                  onClick={e => e.stopPropagation()}
-                                  autoFocus
-                                />
-                              </div>
-                            </div>
-                            <div className="overflow-y-auto max-h-48">
-                              {(BD_DISTRICTS[formData.division] || []).filter(d => d.toLowerCase().includes(districtSearch.toLowerCase())).map(d => (
-                                <div
-                                  key={d}
-                                  className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-emerald-50 transition-colors ${formData.district === d ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-gray-700'}`}
-                                  onClick={() => {
-                                    updateField('district', d);
-                                    setIsDistrictOpen(false);
-                                    setDistrictSearch('');
-                                  }}
-                                >
-                                  {d}
-                                </div>
-                              ))}
-                              {(BD_DISTRICTS[formData.division] || []).filter(d => d.toLowerCase().includes(districtSearch.toLowerCase())).length === 0 && (
-                                <div className="px-4 py-3 text-sm text-gray-400 text-center">No district found</div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      {formErrors.district && touchedFields.district && (
-                        <p id="district-error" className="mt-1.5 text-xs text-rose-600 font-medium flex items-center gap-1">
-                          <AlertCircle size={14} /> {formErrors.district}
                         </p>
                       )}
                     </div>
@@ -940,12 +837,10 @@ const StoreCheckout = ({
                   <ShieldCheck size={20} className="text-theme-primary" />
                   <span className="font-semibold text-gray-700">Money-back guarantee within 7 days.</span>
                 </div> */}
-                {(websiteConfig?.chatSupportPhone || websiteConfig?.chatSupportWhatsapp) && (
                 <div className="flex items-center gap-3">
                   <Headphones size={20} className="text-indigo-500" />
-                  <span className="text-gray-600">Need help? <a className="text-indigo-600 font-semibold" href={`tel:${websiteConfig?.chatSupportPhone || websiteConfig?.chatSupportWhatsapp}`}>{websiteConfig?.chatSupportPhone || websiteConfig?.chatSupportWhatsapp}</a></span>
+                  <span className="text-gray-600">Need help? <a className="text-indigo-600 font-semibold" href="tel:+8801615332701">Call support</a></span>
                 </div>
-                )}
               </div>
             </div>
           </div>

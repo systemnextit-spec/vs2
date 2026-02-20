@@ -365,7 +365,7 @@ export const AdminHeader: React.FC<{
 		autoConnect: !!activeTenantId,
 		limit: 20,
 		tenantId: activeTenantId,
-		pollingInterval: 0, // WebSocket handles real-time updates, no polling needed
+		pollingInterval: 30000, // Poll every 30s as fallback in case WebSocket disconnects
 	});
 
 	const notifications = activeTenantId ? notificationResult.notifications : [];
