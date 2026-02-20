@@ -20,7 +20,7 @@
 }
 
 .hero-carousel-mobile {
-  aspect-ratio: 400 / 120;
+  aspect-ratio: 16 / 9;
 }
 
 /* Individual slide - MUST be positioned absolute to stack properly */
@@ -216,17 +216,17 @@
   }
   
   .hero-nav-button {
-    width: 30px;
-    height: 30px;
-    opacity: 0.8;
+    width: 28px;
+    height: 28px;
+    opacity: 0.9;
   }
   
   .hero-nav-prev {
-    left: 0.5rem;
+    left: 0.375rem;
   }
   
   .hero-nav-next {
-    right: 0.5rem;
+    right: 0.375rem;
   }
   
   .hero-dot {
@@ -236,5 +236,10 @@
   
   .hero-dot-active {
     width: 16px;
+  }
+
+  .hero-gradient-left,
+  .hero-gradient-right {
+    width: 30px;
   }
 }

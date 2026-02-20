@@ -338,7 +338,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
 
       case 'hero':
         return (
-          <section key={key} className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 pt-3">
+          <section key={key} className="max-w-[1408px] mx-auto px-2 sm:px-6 lg:px-8 pt-2 sm:pt-3">
             <HeroSection 
               carouselItems={websiteConfig?.carouselItems} 
               websiteConfig={websiteConfig}
