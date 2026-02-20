@@ -2087,7 +2087,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                   </div>
                 );
               })()}
-            </div>
+           
 
             {/* Footer */}
             <div className="flex justify-end gap-3 p-3 sm:p-4 lg:p-4 xl:p-5 border-t bg-gray-50 rounded-b-2xl">
@@ -2115,6 +2115,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                 )}
               </button>
             </div>
+             </div>
           </div>
      )}
     </div>
