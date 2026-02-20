@@ -20,7 +20,7 @@
 }
 
 .hero-carousel-mobile {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 21 / 9;
 }
 
 /* Individual slide - MUST be positioned absolute to stack properly */
@@ -217,6 +217,7 @@
 
   .hero-slide-image {
     object-fit: contain;
+    object-position: center;
     background-color: #ffffff;
   }
   
