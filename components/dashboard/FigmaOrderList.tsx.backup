@@ -61,59 +61,6 @@ const getCourierId = (order: Order) => {
   return undefined;
 };
 
-// Bangladesh location data for cascading address selection
-const BD_LOCATIONS = {
-  Dhaka: {
-    Dhaka: ['Dhanmondi', 'Gulshan', 'Mirpur', 'Mohammadpur', 'Uttara', 'Tejgaon', 'Badda', 'Banani', 'Farmgate', 'Motijheel'],
-    Gazipur: ['Gazipur Sadar', 'Kaliakoir', 'Kapasia', 'Sreepur', 'Kaliganj', 'Tongi'],
-    Narayanganj: ['Narayanganj Sadar', 'Araihazar', 'Bandar', 'Rupganj', 'Sonargaon'],
-    Tangail: ['Tangail Sadar', 'Basail', 'Bhuapur', 'Delduar', 'Ghatail', 'Gopalpur', 'Kalihati', 'Madhupur', 'Mirzapur', 'Nagarpur', 'Sakhipur', 'Dhanbari']
-  },
-  Chattogram: {
-    Chattogram: ['Panchlaish', 'Kotwali', 'Chandgaon', 'Bayezid', 'Hathazari', 'Rangunia', 'Sitakunda', 'Mirsharai'],
-    "Cox's Bazar": ["Cox's Bazar Sadar", 'Chakaria', 'Ramu', 'Ukhia', 'Teknaf', 'Maheshkhali', 'Pekua', 'Kutubdia'],
-    Comilla: ['Comilla Sadar', 'Barura', 'Brahmanparia', 'Chandina', 'Chauddagram', 'Daudkandi', 'Debidwar', 'Homna', 'Laksham', 'Muradnagar', 'Nangalkot'],
-    Feni: ['Feni Sadar', 'Chhagalnaiya', 'Daganbhuiyan', 'Fulgazi', 'Parshuram', 'Sonagazi']
-  },
-  Rajshahi: {
-    Rajshahi: ['Rajshahi Sadar', 'Bagha', 'Bagmara', 'Charghat', 'Durgapur', 'Godagari', 'Mohanpur', 'Paba', 'Puthia', 'Tanore'],
-    Bogra: ['Bogra Sadar', 'Adamdighi', 'Dhunat', 'Dhupchanchia', 'Gabtali', 'Kahaloo', 'Nandigram', 'Sariakandi', 'Shajahanpur', 'Sherpur', 'Shibganj', 'Sonatola'],
-    Pabna: ['Pabna Sadar', 'Atgharia', 'Bera', 'Bhangura', 'Chatmohar', 'Faridpur', 'Ishwardi', 'Santhia', 'Sujanagar'],
-    Natore: ['Natore Sadar', 'Bagatipara', 'Baraigram', 'Gurudaspur', 'Lalpur', 'Naldanga', 'Singra']
-  },
-  Khulna: {
-    Khulna: ['Khulna Sadar', 'Batiaghata', 'Dacope', 'Dumuria', 'Dighalia', 'Koyra', 'Paikgachha', 'Phultala', 'Rupsa', 'Terokhada'],
-    Jessore: ['Jessore Sadar', 'Abhaynagar', 'Bagherpara', 'Chaugachha', 'Jhikargachha', 'Keshabpur', 'Manirampur', 'Sharsha'],
-    Satkhira: ['Satkhira Sadar', 'Assasuni', 'Debhata', 'Kalaroa', 'Kaliganj', 'Shyamnagar', 'Tala'],
-    Bagerhat: ['Barishal Sadar', 'Chitalmari', 'Fakirhat', 'Kachua', 'Mollahat', 'Mongla', 'Morrelganj', 'Rampal', 'Sarankhola']
-  },
-  Barishal: {
-    Barishal: ['Barishal Sadar', 'Agailjhara', 'Babuganj', 'Bakerganj', 'Banaripara', 'Gaurnadi', 'Hizla', 'Mehendiganj', 'Muladi', 'Wazirpur'],
-    Patuakhali: ['Patuakhali Sadar', 'Bauphal', 'Dashmina', 'Galachipa', 'Kalapara', 'Mirzaganj', 'Dumki', 'Rangabali'],
-    Bhola: ['Bhola Sadar', 'Burhanuddin', 'Char Fasson', 'Daulatkhan', 'Lalmohan', 'Manpura', 'Tazumuddin'],
-    Jhalokati: ['Jhalokati Sadar', 'Kathalia', 'Nalchity', 'Rajapur']
-  },
-  Sylhet: {
-    Sylhet: ['Sylhet Sadar', 'Beanibazar', 'Bishwanath', 'Companiganj', 'Fenchuganj', 'Golapganj', 'Gowainghat', 'Jaintiapur', 'Kanaighat', 'Zakiganj', 'Balaganj', 'Osmani Nagar'],
-    Moulvibazar: ['Moulvibazar Sadar', 'Barlekha', 'Juri', 'Kamalganj', 'Kulaura', 'Rajnagar', 'Sreemangal'],
-    Habiganj: ['Habiganj Sadar', 'Ajmiriganj', 'Bahubal', 'Baniyachong', 'Chunarughat', 'Lakhai', 'Madhabpur', 'Nabiganj', 'Shayestaganj'],
-    Sunamganj: ['Sunamganj Sadar', 'Bishwamvarpur', 'Chhatak', 'Derai', 'Dharamapasha', 'Dowarabazar', 'Jagannathpur', 'Jamalganj', 'Sulla', 'Tahirpur']
-  },
-  Rangpur: {
-    Rangpur: ['Rangpur Sadar', 'Badarganj', 'Gangachara', 'Kaunia', 'Mithapukur', 'Pirgachha', 'Pirganj', 'Taraganj'],
-    Dinajpur: ['Dinajpur Sadar', 'Biral', 'Birampur', 'Birganj', 'Bochaganj', 'Chirirbandar', 'Fulbari', 'Ghoraghat', 'Hakimpur', 'Kaharole', 'Khansama', 'Nawabganj', 'Parbatipur'],
-    Kurigram: ['Kurigram Sadar', 'Bhurungamari', 'Char Rajibpur', 'Chilmari', 'Phulbari', 'Nageshwari', 'Rajarhat', 'Raomari', 'Ulipur'],
-    Nilphamari: ['Nilphamari Sadar', 'Dimla', 'Domar', 'Jaldhaka', 'Kishoreganj', 'Saidpur']
-  },
-  Mymensingh: {
-    Mymensingh: ['Mymensingh Sadar', 'Bhaluka', 'Dhobaura', 'Fulbaria', 'Gaffargaon', 'Gauripur', 'Haluaghat', 'Ishwarganj', 'Muktagachha', 'Nandail', 'Phulpur', 'Trishal'],
-    Jamalpur: ['Jamalpur Sadar', 'Baksiganj', 'Dewanganj', 'Islampur', 'Madarganj', 'Melandaha', 'Sarishabari'],
-    Netrokona: ['Netrokona Sadar', 'Atpara', 'Barhatta', 'Durgapur', 'Khaliajuri', 'Kalmakanda', 'Kendua', 'Madan', 'Mohanganj', 'Purbadhala'],
-    Sherpur: ['Sherpur Sadar', 'Jhenaigati', 'Nakla', 'Nalitabari', 'Sreebardi']
-  }
-};
-
-
 interface FigmaOrderListProps {
   orders?: Order[];
   courierConfig?: CourierConfig;
@@ -169,8 +116,6 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
     phone: '',
     address: '',
     division: '',
-    district: '',
-    upazila: '',
     productId: '',
     quantity: 1,
     deliveryCharge: 0,
@@ -178,10 +123,6 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
     discountValue: 0,
     notes: ''
   });
-
-  // Product search state
-  const [productSearchTerm, setProductSearchTerm] = useState('');
-  const [showProductDropdown, setShowProductDropdown] = useState(false);
 
   // Get tenant ID from props or localStorage
   const tenantId = propTenantId || localStorage.getItem('activeTenantId') || '';
@@ -194,28 +135,6 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
     if (!newOrderForm.productId) return null;
     return safeProducts.find(p => String(p.id) === String(newOrderForm.productId)) || null;
   }, [newOrderForm.productId, safeProducts]);
-
-  // Filtered products based on search
-  const filteredProducts = useMemo(() => {
-    if (!productSearchTerm.trim()) return safeProducts;
-    const searchLower = productSearchTerm.toLowerCase();
-    return safeProducts.filter(p => 
-      (p.name || '').toLowerCase().includes(searchLower) ||
-      (p.sku || '').toLowerCase().includes(searchLower)
-    );
-  }, [safeProducts, productSearchTerm]);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('.product-search-container')) {
-        setShowProductDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   // Debug: Log products when modal opens
   useEffect(() => {
@@ -702,8 +621,6 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
       phone: newOrderForm.phone.trim(),
       customerPhone: newOrderForm.phone.trim(),
       division: newOrderForm.division,
-      district: newOrderForm.district,
-      upazila: newOrderForm.upazila,
       amount: totalAmount,
       total: totalAmount,
       grandTotal: totalAmount,
@@ -751,8 +668,6 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
           phone: '',
           address: '',
           division: '',
-          district: '',
-          upazila: '',
           productId: '',
           quantity: 1,
           deliveryCharge: 0,
@@ -760,8 +675,6 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
           discountValue: 0,
           notes: ''
         });
-        setProductSearchTerm('');
-        setShowProductDropdown(false);
       } else {
         const error = await response.json();
         toast.error(error.message || 'Failed to create order');

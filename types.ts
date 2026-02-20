@@ -191,6 +191,8 @@ export interface Order {
   trackingId?: string; // Added for Courier Integration
   phone?: string;
   division?: string;
+  district?: string;
+  upazila?: string;
   variant?: ProductVariantSelection;
   productId?: number;
   productName?: string;
