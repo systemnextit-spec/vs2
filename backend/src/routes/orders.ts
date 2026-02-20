@@ -19,6 +19,7 @@ const orderSchema = z.object({
   email: z.preprocess((val) => (val === '' || val === undefined || val === null) ? undefined : val, z.string().email().optional()),
   phone: z.string().optional(),
   division: z.string().optional(),
+  district: z.string().optional(),
   variant: z.object({
     color: z.string(),
     size: z.string()

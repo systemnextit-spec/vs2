@@ -393,7 +393,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
       ) : (
         <>
       {/* Hero Section */}
-      <section className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 pt-3">
+      <section className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 pt-3">
       <HeroSection carouselItems={websiteConfig?.carouselItems} websiteConfig={websiteConfig} />
       </section>
 

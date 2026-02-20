@@ -408,6 +408,19 @@ export interface WebsiteConfig {
   // Social Login Settings
   socialLogins?: { type: string; clientId: string }[];
   // Offer Settings
+  // Promo Code Settings
+  promoCodes?: {
+    code: string;
+    discountType: 'amount' | 'percentage';
+    discountAmount?: number;
+    discountPercentage?: number;
+    maxDiscount?: number;
+    minPurchase?: number;
+    maxDiscountEnabled?: boolean;
+    minPurchaseEnabled?: boolean;
+    expiryDate?: string;
+    isActive?: boolean;
+  }[];
   offers?: { type: string; discount: string }[];
   // About/Policy text
   aboutUs?: string;

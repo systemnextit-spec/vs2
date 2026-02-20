@@ -340,6 +340,7 @@ export function useAppHandlers(props: UseAppHandlersProps) {
       email: formData.email,
       phone: formData.phone,
       division: formData.division,
+      district: formData.district,
       variant: ensureVariantSelection(selectedProduct, formData.variant || selectedVariant),
       productId: selectedProduct?.id,
       productName: selectedProduct?.name,

@@ -603,6 +603,82 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
     }));
   };
 
+  // Promo Code state
+  const [showPromoModal, setShowPromoModal] = useState(false);
+  const [promoForm, setPromoForm] = useState({
+    code: '',
+    discountType: 'amount' as 'amount' | 'percentage',
+    discountAmount: '',
+    discountPercentage: '',
+    maxDiscountEnabled: true,
+    minPurchaseEnabled: true,
+    maxDiscount: '',
+    minPurchase: '',
+    expiryDate: ''
+  });
+
+  const promoCodes = websiteConfiguration.promoCodes || [];
+
+  const resetPromoForm = () => {
+    setPromoForm({
+      code: '',
+      discountType: 'amount',
+      discountAmount: '',
+      discountPercentage: '',
+      maxDiscountEnabled: true,
+      minPurchaseEnabled: true,
+      maxDiscount: '',
+      minPurchase: '',
+      expiryDate: ''
+    });
+  };
+
+  const addPromoCode = () => {
+    if (!promoForm.code.trim()) {
+      toast.error('Please enter a promo code name');
+      return;
+    }
+    const exists = promoCodes.some(p => p.code.toLowerCase() === promoForm.code.trim().toLowerCase());
+    if (exists) {
+      toast.error('This promo code already exists');
+      return;
+    }
+    const newPromo = {
+      code: promoForm.code.trim().toUpperCase(),
+      discountType: promoForm.discountType,
+      discountAmount: promoForm.discountType === 'amount' ? Number(promoForm.discountAmount) || 0 : undefined,
+      discountPercentage: promoForm.discountType === 'percentage' ? Number(promoForm.discountPercentage) || 0 : undefined,
+      maxDiscountEnabled: promoForm.maxDiscountEnabled,
+      minPurchaseEnabled: promoForm.minPurchaseEnabled,
+      maxDiscount: promoForm.maxDiscountEnabled ? Number(promoForm.maxDiscount) || undefined : undefined,
+      minPurchase: promoForm.minPurchaseEnabled ? Number(promoForm.minPurchase) || undefined : undefined,
+      expiryDate: promoForm.expiryDate || undefined,
+      isActive: true
+    };
+    setWebsiteConfiguration(prev => ({
+      ...prev,
+      promoCodes: [...(prev.promoCodes || []), newPromo]
+    }));
+    resetPromoForm();
+    setShowPromoModal(false);
+    toast.success('Promo code created!');
+  };
+
+  const removePromoCode = (index: number) => {
+    setWebsiteConfiguration(prev => ({
+      ...prev,
+      promoCodes: (prev.promoCodes || []).filter((_, i) => i !== index)
+    }));
+  };
+
+  const togglePromoCodeActive = (index: number) => {
+    setWebsiteConfiguration(prev => {
+      const updated = [...(prev.promoCodes || [])];
+      updated[index] = { ...updated[index], isActive: !updated[index].isActive };
+      return { ...prev, promoCodes: updated };
+    });
+  };
+
   // Handle save
   const handleSave = useCallback(async () => {
     if (!onSave) return;
@@ -1197,6 +1273,213 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
           </span>
         </button>
       </div>
+
+      {/* Coupon / Promo Code Section */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <SectionHeader title="Coupon" />
+        
+        {promoCodes.length === 0 ? (
+          <p style={{ fontFamily: '"Poppins", sans-serif', fontSize: '14px', color: '#999', margin: 0 }}>
+            No promo codes created yet. Click "+ Add New" to create one.
+          </p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {promoCodes.map((promo, index) => {
+              const isExpired = promo.expiryDate ? new Date(promo.expiryDate) < new Date() : false;
+              return (
+                <div
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    padding: '12px 16px',
+                    backgroundColor: promo.isActive === false || isExpired ? '#fafafa' : '#f0fdf4',
+                    borderRadius: '12px',
+                    border: `1px solid ${promo.isActive === false || isExpired ? '#e5e5e5' : '#bbf7d0'}`,
+                  }}
+                >
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 700, fontSize: '16px', color: '#111', letterSpacing: '1px' }}>
+                        {promo.code}
+                      </span>
+                      {isExpired && (
+                        <span style={{ fontSize: '11px', fontWeight: 600, color: '#dc2626', backgroundColor: '#fef2f2', padding: '2px 8px', borderRadius: '4px' }}>Expired</span>
+                      )}
+                      {promo.isActive === false && !isExpired && (
+                        <span style={{ fontSize: '11px', fontWeight: 600, color: '#f59e0b', backgroundColor: '#fffbeb', padding: '2px 8px', borderRadius: '4px' }}>Inactive</span>
+                      )}
+                    </div>
+                    <span style={{ fontFamily: '"Poppins", sans-serif', fontSize: '13px', color: '#666' }}>
+                      {promo.discountType === 'amount' ? `\u09F3${promo.discountAmount || 0} off` : `${promo.discountPercentage || 0}% off`}
+                      {promo.maxDiscount ? ` (max \u09F3${promo.maxDiscount})` : ''}
+                      {promo.minPurchase ? ` \u2022 Min purchase \u09F3${promo.minPurchase}` : ''}
+                      {promo.expiryDate ? ` \u2022 Expires: ${new Date(promo.expiryDate).toLocaleDateString()}` : ''}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <button
+                      onClick={() => togglePromoCodeActive(index)}
+                      style={{
+                        width: '48px',
+                        height: '28px',
+                        borderRadius: '14px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        backgroundColor: promo.isActive !== false ? '#6366f1' : '#d1d5db',
+                        position: 'relative',
+                        transition: 'background-color 0.2s',
+                      }}
+                      title={promo.isActive !== false ? 'Deactivate' : 'Activate'}
+                    >
+                      <div style={{
+                        width: '22px',
+                        height: '22px',
+                        borderRadius: '50%',
+                        backgroundColor: 'white',
+                        position: 'absolute',
+                        top: '3px',
+                        left: promo.isActive !== false ? '23px' : '3px',
+                        transition: 'left 0.2s',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                      }} />
+                    </button>
+                    <button
+                      onClick={() => removePromoCode(index)}
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        backgroundColor: 'rgba(218,0,0,0.1)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Trash2 size={18} color="#da0000" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        
+        <button
+          onClick={() => setShowPromoModal(true)}
+          style={{
+            width: '132px',
+            height: '48px',
+            background: 'linear-gradient(180deg, #6366f1 0%, #818cf8 100%)',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '4px',
+          }}
+        >
+          <Plus size={24} color="white" />
+          <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '16px', color: 'white' }}>
+            Add New
+          </span>
+        </button>
+      </div>
+
+      {/* Create Promo Code Modal */}
+      {showPromoModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) { setShowPromoModal(false); resetPromoForm(); } }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              padding: '32px',
+              width: '100%',
+              maxWidth: '520px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h3 style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 700, fontSize: '20px', margin: 0 }}>Create Promo Code</h3>
+              <button onClick={() => { setShowPromoModal(false); resetPromoForm(); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '14px', color: '#111', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '8px' }}>
+                Code Name <span style={{ color: '#dc2626' }}>*</span>
+              </label>
+              <input type="text" value={promoForm.code} onChange={(e) => setPromoForm(prev => ({ ...prev, code: e.target.value }))} placeholder="Promo Code" style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '2px solid #e5e7eb', fontFamily: '"Poppins", sans-serif', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }} onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#6366f1'} onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#e5e7eb'} />
+              <p style={{ fontFamily: '"Poppins", sans-serif', fontSize: '12px', color: '#6b7280', marginTop: '6px' }}>Enter a unique promo code. This will help you identify it later.</p>
+            </div>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '14px', color: '#111', marginBottom: '8px', display: 'block' }}>Discount Type (Amount/Percentage)</label>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <input type="number" value={promoForm.discountAmount} onChange={(e) => setPromoForm(prev => ({ ...prev, discountAmount: e.target.value, discountType: 'amount' }))} placeholder="Amount" style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: `2px solid ${promoForm.discountType === 'amount' ? '#6366f1' : '#e5e7eb'}`, fontFamily: '"Poppins", sans-serif', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const, backgroundColor: promoForm.discountType === 'amount' ? '#f5f3ff' : 'white' }} onFocus={() => setPromoForm(prev => ({ ...prev, discountType: 'amount' }))} />
+                <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '14px', color: '#9ca3af' }}>Or</span>
+                <input type="number" value={promoForm.discountPercentage} onChange={(e) => setPromoForm(prev => ({ ...prev, discountPercentage: e.target.value, discountType: 'percentage' }))} placeholder="Percentage" style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: `2px solid ${promoForm.discountType === 'percentage' ? '#6366f1' : '#e5e7eb'}`, fontFamily: '"Poppins", sans-serif', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const, backgroundColor: promoForm.discountType === 'percentage' ? '#f5f3ff' : 'white' }} onFocus={() => setPromoForm(prev => ({ ...prev, discountType: 'percentage' }))} />
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '24px', marginBottom: '20px' }}>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button onClick={() => setPromoForm(prev => ({ ...prev, maxDiscountEnabled: !prev.maxDiscountEnabled }))} style={{ width: '44px', height: '24px', borderRadius: '12px', border: 'none', cursor: 'pointer', backgroundColor: promoForm.maxDiscountEnabled ? '#6366f1' : '#d1d5db', position: 'relative', transition: 'background-color 0.2s', flexShrink: 0 }}>
+                  <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: 'white', position: 'absolute', top: '3px', left: promoForm.maxDiscountEnabled ? '23px' : '3px', transition: 'left 0.2s', boxShadow: '0 1px 2px rgba(0,0,0,0.2)' }} />
+                </button>
+                <div>
+                  <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '13px', color: '#111', display: 'flex', alignItems: 'center', gap: '4px' }}>Max Discount <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+                  <p style={{ fontFamily: '"Poppins", sans-serif', fontSize: '11px', color: '#9ca3af', margin: '2px 0 0' }}>Apply the highest available discount on eligible purchases.</p>
+                </div>
+              </div>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button onClick={() => setPromoForm(prev => ({ ...prev, minPurchaseEnabled: !prev.minPurchaseEnabled }))} style={{ width: '44px', height: '24px', borderRadius: '12px', border: 'none', cursor: 'pointer', backgroundColor: promoForm.minPurchaseEnabled ? '#6366f1' : '#d1d5db', position: 'relative', transition: 'background-color 0.2s', flexShrink: 0 }}>
+                  <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: 'white', position: 'absolute', top: '3px', left: promoForm.minPurchaseEnabled ? '23px' : '3px', transition: 'left 0.2s', boxShadow: '0 1px 2px rgba(0,0,0,0.2)' }} />
+                </button>
+                <div>
+                  <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '13px', color: '#111', display: 'flex', alignItems: 'center', gap: '4px' }}>Min Purchase <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+                  <p style={{ fontFamily: '"Poppins", sans-serif', fontSize: '11px', color: '#9ca3af', margin: '2px 0 0' }}>Set a minimum purchase requirement for discounts to apply.</p>
+                </div>
+              </div>
+            </div>
+            {promoForm.maxDiscountEnabled && (
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '14px', color: '#111', marginBottom: '8px', display: 'block' }}>Max Discount</label>
+                <input type="number" value={promoForm.maxDiscount} onChange={(e) => setPromoForm(prev => ({ ...prev, maxDiscount: e.target.value }))} placeholder="Type max discount amount (ex.\u09F32000)" style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '2px solid #e5e7eb', fontFamily: '"Poppins", sans-serif', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }} onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#6366f1'} onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#e5e7eb'} />
+              </div>
+            )}
+            {promoForm.minPurchaseEnabled && (
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '14px', color: '#111', marginBottom: '8px', display: 'block' }}>Min Purchase</label>
+                <input type="number" value={promoForm.minPurchase} onChange={(e) => setPromoForm(prev => ({ ...prev, minPurchase: e.target.value }))} placeholder="Type min purchase amount (ex.\u09F32000)" style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '2px solid #e5e7eb', fontFamily: '"Poppins", sans-serif', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }} onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#6366f1'} onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#e5e7eb'} />
+              </div>
+            )}
+            <div style={{ marginBottom: '28px' }}>
+              <label style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '14px', color: '#111', marginBottom: '8px', display: 'block' }}>Expiry Date:</label>
+              <input type="date" value={promoForm.expiryDate} onChange={(e) => setPromoForm(prev => ({ ...prev, expiryDate: e.target.value }))} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '2px solid #e5e7eb', fontFamily: '"Poppins", sans-serif', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }} onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#6366f1'} onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#e5e7eb'} />
+            </div>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button onClick={() => { setShowPromoModal(false); resetPromoForm(); }} style={{ padding: '12px 32px', borderRadius: '10px', border: '2px solid #e5e7eb', backgroundColor: 'white', fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '15px', color: '#374151', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={addPromoCode} style={{ padding: '12px 32px', borderRadius: '10px', border: 'none', background: 'linear-gradient(180deg, #6366f1 0%, #4f46e5 100%)', fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '15px', color: 'white', cursor: 'pointer', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)' }}>Create</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Rich Text Editors */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
