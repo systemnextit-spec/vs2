@@ -328,7 +328,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     if (item) {
       setFormData({ ...item });
     } else {
-      const defaults: any = { name: '', status: 'Active', Serial: 0, durationDays: 0 };
+      const defaults: any = { name: '', status: 'Active', serial: 0, durationDays: 0 };
       if (view === 'catalog_categories') defaults.icon = '';
       if (view === 'catalog_subcategories') defaults.categoryId = categories[0]?.id || '';
       if (view === 'catalog_childcategories') defaults.subCategoryId = subCategories[0]?.id || '';
@@ -586,7 +586,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                       />
                     </td>
                     <td className="px-4 py-3 text-[12px] text-[#1d1a1a] dark:text-gray-200 text-center">
-                      {(currentPage - 1) * itemsPerPage + index + 1}
+                      {item.serial || 0}
                     </td>
                     {showImageColumn && (
                       <td className="px-4 py-3">
@@ -957,8 +957,8 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Serial</label>
                   <input
                     type="number"
-                    value={formData.priority || 0}
-                    onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
+                    value={formData.serial || 0}
+                    onChange={(e) => setFormData({ ...formData, serial: parseInt(e.target.value) || 0 })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
