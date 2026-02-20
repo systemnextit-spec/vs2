@@ -64,6 +64,8 @@ export interface Order {
   phone?: string;
   division?: string;
   district?: string;
+  promoCode?: string;
+  promoDiscount?: number;
   variant?: { color: string; size: string };
   productId?: number;
   productName?: string;
