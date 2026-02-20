@@ -214,6 +214,11 @@
   .hero-carousel {
     border-radius: 0.5rem;
   }
+
+  .hero-slide-image {
+    object-fit: contain;
+    background-color: #ffffff;
+  }
   
   .hero-nav-button {
     width: 28px;

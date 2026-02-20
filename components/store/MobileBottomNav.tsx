@@ -49,7 +49,7 @@ const BottomNavStyle1: React.FC<MobileBottomNavProps> = ({
     const chatFallbackLink = !chatEnabled && websiteConfig?.chatWhatsAppFallback ? whatsappLink : null;
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-2xl border-t border-white/50 shadow-[0_-8px_32px_rgba(31,38,135,0.15)] py-2 px-1 flex justify-around items-center md:hidden z-50 pb-safe h-[60px]">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[560px] bg-white/90 backdrop-blur-2xl border-t border-white/50 shadow-[0_-8px_32px_rgba(31,38,135,0.15)] py-2 px-1 flex justify-around items-center md:hidden z-50 pb-safe h-[60px]">
             {chatEnabled && onChatClick ? (
                 <button onClick={onChatClick} className={`flex flex-col items-center gap-0.5 transition w-1/5 group ${activeTab === 'chat' ? 'scale-110' : 'hover:scale-110'}`}>
                     <GradientChatIcon size={48} />
@@ -112,7 +112,7 @@ const BottomNavStyle1: React.FC<MobileBottomNavProps> = ({
 const BottomNavStyle2: React.FC<MobileBottomNavProps> = ({ 
     onHomeClick, onCartClick, onAccountClick, onMenuClick, cartCount, activeTab = 'home'
 }) => (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-4 flex justify-around items-center md:hidden z-50 pb-safe h-[56px]">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[560px] bg-white border-t border-gray-200 py-2 px-4 flex justify-around items-center md:hidden z-50 pb-safe h-[56px]">
         <button onClick={onHomeClick} className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'home' ? 'text-theme-primary' : 'text-gray-400 hover:text-gray-600'}`}>
             <Home size={22} strokeWidth={activeTab === 'home' ? 2.5 : 1.8} />
             <span className="text-[10px] font-medium">Home</span>
@@ -174,7 +174,7 @@ const BottomNavStyle4: React.FC<MobileBottomNavProps> = ({
     const chatFallbackLink = !chatEnabled && websiteConfig?.chatWhatsAppFallback ? whatsappLink : null;
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-white/90 backdrop-blur-lg border-t border-gray-100 py-2 px-3 sm:px-4 lg:px-6 flex justify-between items-end md:hidden z-50 pb-safe h-[68px]">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[560px] bg-gradient-to-t from-white via-white to-white/90 backdrop-blur-lg border-t border-gray-100 py-2 px-3 sm:px-4 lg:px-6 flex justify-between items-end md:hidden z-50 pb-safe h-[68px]">
             <button onClick={onHomeClick} className="flex flex-col items-center gap-1 transition-all">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${activeTab === 'home' ? 'bg-theme-primary shadow-lg shadow-theme-primary/30' : 'bg-gray-100 hover:bg-gray-200'}`}>
                     <Home size={24} className={activeTab === 'home' ? 'text-white' : 'text-gray-500'} strokeWidth={2} />
@@ -224,7 +224,7 @@ const BottomNavStyle4: React.FC<MobileBottomNavProps> = ({
 const BottomNavStyle5: React.FC<MobileBottomNavProps> = ({ 
     onHomeClick, onCartClick, onAccountClick, onMenuClick, cartCount, activeTab = 'home'
 }) => (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-theme-primary/10 py-1.5 px-2 flex justify-around items-center md:hidden z-50 pb-safe h-[60px]">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[560px] bg-white border-t-2 border-theme-primary/10 py-1.5 px-2 flex justify-around items-center md:hidden z-50 pb-safe h-[60px]">
         <button onClick={onHomeClick} className={`flex-1 flex flex-col items-center gap-0.5 py-1 rounded-lg transition-all ${activeTab === 'home' ? 'bg-theme-primary/10' : ''}`}>
             <div className={`p-1.5 rounded-lg ${activeTab === 'home' ? 'bg-theme-primary' : ''}`}>
                 <Home size={20} className={activeTab === 'home' ? 'text-white' : 'text-gray-500'} strokeWidth={2} />
