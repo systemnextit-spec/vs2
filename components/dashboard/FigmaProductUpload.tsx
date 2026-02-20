@@ -1699,13 +1699,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                 placeholder="Select Category*"
                 required
               />
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('category'); setShowCatalogModal(true); }}
                 className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
               >
                 <Plus size={18} />
                 <span className="font-semibold text-[#070606]">Add Category</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Sub Category */}
@@ -1718,13 +1718,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   .map(sc => ({ value: sc.name, label: sc.name }))}
                 placeholder="Select Sub Category"
               />
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('subcategory'); setShowCatalogModal(true); }}
                 className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
               >
                 <Plus size={18} />
                 <span className="font-semibold text-[#070606]">Add Sub Category</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Child Category */}
@@ -1737,13 +1737,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   .map(cc => ({ value: cc.name, label: cc.name }))}
                 placeholder="Select Child Category"
               />
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('childcategory'); setShowCatalogModal(true); }}
                 className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
               >
                 <Plus size={18} />
                 <span className="font-semibold text-[#070606]">Add Child Category</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Brand */}
@@ -1754,13 +1754,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                 options={localBrands.map(b => ({ value: b.name, label: b.name }))}
                 placeholder="Select Brand"
               />
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('brand'); setShowCatalogModal(true); }}
                 className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
               >
                 <Plus size={18} />
                 <span className="font-semibold text-[#070606]">Add Brand</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Product Tags */}
@@ -1816,13 +1816,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   ))}
                 </div>
               )}
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('tag'); setShowCatalogModal(true); }}
                 className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
               >
                 <Plus size={18} />
                 <span className="font-semibold text-[#070606]">Add Tag</span>
-              </button>
+              </button> */}
             </div>
           </div>
 
@@ -1941,13 +1941,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                 placeholder="Select Category*"
                 required
               />
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('category'); setShowCatalogModal(true); }}
                 className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
               >
                 <Plus size={14} />
                 <span className="font-semibold text-[#070606]">Add Category</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Sub Category - Mobile */}
@@ -1960,13 +1960,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   .map(sc => ({ value: sc.name, label: sc.name }))}
                 placeholder="Select Sub Category"
               />
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('subcategory'); setShowCatalogModal(true); }}
                 className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
               >
                 <Plus size={14} />
                 <span className="font-semibold text-[#070606]">Add Sub Category</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Child Category - Mobile */}
@@ -1979,13 +1979,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   .map(cc => ({ value: cc.name, label: cc.name }))}
                 placeholder="Select Child Category"
               />
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('childcategory'); setShowCatalogModal(true); }}
                 className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
               >
                 <Plus size={14} />
                 <span className="font-semibold text-[#070606]">Add Child Category</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Brand - Mobile */}
@@ -1996,13 +1996,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                 options={localBrands.map(b => ({ value: b.name, label: b.name }))}
                 placeholder="Select Brand"
               />
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('brand'); setShowCatalogModal(true); }}
                 className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
               >
                 <Plus size={14} />
                 <span className="font-semibold text-[#070606]">Add Brand</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Product Tags - Mobile */}
@@ -2058,13 +2058,13 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                   ))}
                 </div>
               )}
-              <button 
+              {/* <button 
                 onClick={() => { setCatalogModalTab('tag'); setShowCatalogModal(true); }}
                 className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
               >
                 <Plus size={14} />
                 <span className="font-semibold text-[#070606]">Add Tag</span>
-              </button>
+              </button> */}
             </div>
           </div>
 
