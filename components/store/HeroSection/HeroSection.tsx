@@ -194,8 +194,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ carouselItems, website
                                             alt={item.name || 'Banner'}
                                             className="hero-slide-image"
                                             width={isMobile ? 400 : 1920}
-                                            height={isMobile ? 133 : 600}
-                                            style={{ aspectRatio: isMobile ? '3 / 1' : '16 / 5' }}
+                                            height={isMobile ? 225 : 600}
+                                            style={{}}
                                             priority={i === 0}
                                             eager={isNearActive && i !== 0}
                                             placeholder="blur"
