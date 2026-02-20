@@ -20,6 +20,8 @@ const orderSchema = z.object({
   phone: z.string().optional(),
   division: z.string().optional(),
   district: z.string().optional(),
+  promoCode: z.string().optional(),
+  promoDiscount: z.number().optional(),
   variant: z.object({
     color: z.string(),
     size: z.string()

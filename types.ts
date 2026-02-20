@@ -192,6 +192,8 @@ export interface Order {
   phone?: string;
   division?: string;
   district?: string;
+  promoCode?: string;
+  promoDiscount?: number;
   upazila?: string;
   variant?: ProductVariantSelection;
   productId?: number;
