@@ -121,6 +121,8 @@ const StoreCheckout = ({
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
   const [promoCode, setPromoCode] = useState('');
   const [promoStatus, setPromoStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [alertState, setAlertState] = useState<{ type: 'error' | 'success' | null; message: string }>({ type: null, message: '' });
@@ -176,7 +178,7 @@ const StoreCheckout = ({
     const isInside = division ? division === activeConfig.division : true;
     return isInside ? activeConfig.insideCharge : activeConfig.outsideCharge;
   }, [activeConfig, formData.division, subTotal]);
-  const grandTotal = subTotal + computedDeliveryCharge;
+  const grandTotal = Math.max(0, subTotal - promoDiscount) + computedDeliveryCharge;
   const formattedProductPrice = formatCurrency(product.price);
   const formattedProductOriginalPrice = formatCurrency(product.originalPrice, null);
 
@@ -258,11 +260,53 @@ const StoreCheckout = ({
       setPromoStatus({ type: 'error', message: 'Enter a promo code first.' });
       return;
     }
-    if (promoCode.trim().toLowerCase() === 'save10') {
-      setPromoStatus({ type: 'success', message: 'Promo code applied! Discount will reflect at payment.' });
-    } else {
+    
+    const promoCodes = websiteConfig?.promoCodes || [];
+    const matched = promoCodes.find(
+      p => p.code.toLowerCase() === promoCode.trim().toLowerCase() && p.isActive !== false
+    );
+    
+    if (!matched) {
       setPromoStatus({ type: 'error', message: 'Invalid promo code. Try another one.' });
+      setPromoDiscount(0);
+      setAppliedPromo(null);
+      return;
     }
+    
+    // Check expiry
+    if (matched.expiryDate && new Date(matched.expiryDate) < new Date()) {
+      setPromoStatus({ type: 'error', message: 'This promo code has expired.' });
+      setPromoDiscount(0);
+      setAppliedPromo(null);
+      return;
+    }
+    
+    // Check min purchase
+    if (matched.minPurchaseEnabled && matched.minPurchase && subTotal < matched.minPurchase) {
+      setPromoStatus({ type: 'error', message: `Minimum purchase of \u09F3${matched.minPurchase} required for this code.` });
+      setPromoDiscount(0);
+      setAppliedPromo(null);
+      return;
+    }
+    
+    // Calculate discount
+    let discountAmt = 0;
+    if (matched.discountType === 'amount') {
+      discountAmt = matched.discountAmount || 0;
+    } else if (matched.discountType === 'percentage') {
+      discountAmt = Math.round(subTotal * (matched.discountPercentage || 0) / 100);
+      // Apply max discount cap
+      if (matched.maxDiscountEnabled && matched.maxDiscount && discountAmt > matched.maxDiscount) {
+        discountAmt = matched.maxDiscount;
+      }
+    }
+    
+    // Don't let discount exceed subtotal
+    if (discountAmt > subTotal) discountAmt = subTotal;
+    
+    setPromoDiscount(discountAmt);
+    setAppliedPromo(matched.code);
+    setPromoStatus({ type: 'success', message: `Promo code applied! You save \u09F3${discountAmt.toLocaleString()}.` });
   };
 
   const handleSubmit = () => {
@@ -288,6 +332,8 @@ const StoreCheckout = ({
       quantity,
       variant,
       district: formData.district,
+      promoCode: appliedPromo || undefined,
+      promoDiscount: promoDiscount > 0 ? promoDiscount : undefined,
       deliveryType: selectedDeliveryType,
       deliveryCharge: computedDeliveryCharge,
       // Payment method info
@@ -879,6 +925,12 @@ const StoreCheckout = ({
                   <div className="flex justify-between text-gray-600">
                     <span>Discount:</span>
                     <span className="font-medium text-rose-500">-৳ {discount.toLocaleString()}</span>
+                  </div>
+                )}
+                {promoDiscount > 0 && (
+                  <div className="flex justify-between text-gray-600">
+                    <span>Promo ({appliedPromo}):</span>
+                    <span className="font-medium text-emerald-600">-৳ {promoDiscount.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-gray-600">
