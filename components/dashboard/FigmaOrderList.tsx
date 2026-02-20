@@ -1824,11 +1824,18 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
               {/* Division */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Division
+                  Division <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={newOrderForm.division}
-                  onChange={(e) => setNewOrderForm(prev => ({ ...prev, division: e.target.value }))}
+                  onChange={(e) => {
+                    setNewOrderForm(prev => ({ 
+                      ...prev, 
+                      division: e.target.value,
+                      district: '', // Reset district when division changes
+                      upazila: '' // Reset upazila when division changes
+                    }));
+                  }}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
                 >
                   <option value="">Select Division</option>
@@ -1843,23 +1850,105 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
                 </select>
               </div>
 
-              {/* Product Selection */}
+              {/* District - Only shows when division is selected */}
+              {newOrderForm.division && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    District <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={newOrderForm.district}
+                    onChange={(e) => {
+                      setNewOrderForm(prev => ({ 
+                        ...prev, 
+                        district: e.target.value,
+                        upazila: '' // Reset upazila when district changes
+                      }));
+                    }}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                  >
+                    <option value="">Select District</option>
+                    {Object.keys(BD_LOCATIONS[newOrderForm.division as keyof typeof BD_LOCATIONS] || {}).map(district => (
+                      <option key={district} value={district}>{district}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Upazila/PS - Only shows when district is selected */}
+              {newOrderForm.district && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Upazila/PS <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={newOrderForm.upazila}
+                    onChange={(e) => setNewOrderForm(prev => ({ ...prev, upazila: e.target.value }))}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                  >
+                    <option value="">Select Upazila/PS</option>
+                    {(BD_LOCATIONS[newOrderForm.division as keyof typeof BD_LOCATIONS]?.[newOrderForm.district as any] || []).map((upazila: string) => (
+                      <option key={upazila} value={upazila}>{upazila}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Product Selection - Searchable */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Product <span className="text-red-500">*</span>
                 </label>
-                <select
-                  value={newOrderForm.productId}
-                  onChange={(e) => setNewOrderForm(prev => ({ ...prev, productId: e.target.value }))}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
-                >
-                  <option value="">Select a product</option>
-                  {safeProducts.map((product, idx) => (
-                    <option key={`${product.id}-${idx}`} value={String(product.id)}>
-                      {product.name || 'Unnamed'} - ৳{(product.price || 0).toLocaleString()}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative product-search-container">
+                  <input
+                    type="text"
+                    value={selectedProductForOrder ? `${selectedProductForOrder.name} - ৳${(selectedProductForOrder.price || 0).toLocaleString()}` : productSearchTerm}
+                    onChange={(e) => {
+                      if (selectedProductForOrder) {
+                        // Clear selection if user starts typing after selection
+                        setNewOrderForm(prev => ({ ...prev, productId: '' }));
+                      }
+                      setProductSearchTerm(e.target.value);
+                      setShowProductDropdown(true);
+                    }}
+                    onFocus={() => setShowProductDropdown(true)}
+                    placeholder="Search product by name..."
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                  
+                  {/* Dropdown List */}
+                  {showProductDropdown && (
+                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {filteredProducts.length > 0 ? (
+                        filteredProducts.map((product, idx) => (
+                          <button
+                            key={`${product.id}-${idx}`}
+                            type="button"
+                            onClick={() => {
+                              setNewOrderForm(prev => ({ ...prev, productId: String(product.id) }));
+                              setProductSearchTerm('');
+                              setShowProductDropdown(false);
+                            }}
+                            className="w-full text-left px-4 py-3 hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-gray-900">{product.name || 'Unnamed'}</span>
+                              <span className="text-blue-600 font-semibold">৳{(product.price || 0).toLocaleString()}</span>
+                            </div>
+                            {product.sku && (
+                              <div className="text-xs text-gray-500 mt-1">SKU: {product.sku}</div>
+                            )}
+                          </button>
+                        ))
+                      ) : (
+                        <div className="px-4 py-6 text-center text-gray-500 text-sm">
+                          No products found
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Selected Product Preview */}
