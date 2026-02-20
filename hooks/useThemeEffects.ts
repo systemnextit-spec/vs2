@@ -124,15 +124,23 @@ export function useThemeEffects({
         lastSavedWebsiteConfigRef.current = JSON.stringify(websiteConfig);
       }
       
-      // Apply favicon
+      // Apply favicon per tenant
       if (websiteConfig.favicon) {
-        let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-        if (!link) {
-          link = document.createElement('link');
-          link.rel = 'icon';
-          document.getElementsByTagName('head')[0].appendChild(link);
-        }
+        // Remove all existing favicons first
+        document.querySelectorAll("link[rel*='icon']").forEach(el => el.remove());
+        
+        // Create new favicon link
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = websiteConfig.favicon.startsWith('data:image/png') || websiteConfig.favicon.includes('.png') ? 'image/png' : 'image/x-icon';
         link.href = websiteConfig.favicon;
+        document.head.appendChild(link);
+        
+        // Also add apple-touch-icon for mobile
+        const appleLink = document.createElement('link');
+        appleLink.rel = 'apple-touch-icon';
+        appleLink.href = websiteConfig.favicon;
+        document.head.appendChild(appleLink);
       }
     }
   }, [websiteConfig, isLoading, isTenantSwitching, activeTenantId]);

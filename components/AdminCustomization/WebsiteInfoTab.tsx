@@ -655,27 +655,48 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
       expiryDate: promoForm.expiryDate || undefined,
       isActive: true
     };
-    setWebsiteConfiguration(prev => ({
-      ...prev,
-      promoCodes: [...(prev.promoCodes || []), newPromo]
-    }));
+    setWebsiteConfiguration(prev => {
+      const newConfig = { ...prev, promoCodes: [...(prev.promoCodes || []), newPromo] };
+      // Auto-save immediately
+      if (onSave) {
+        onSave(newConfig).then(() => {
+          initialConfigRef.current = JSON.stringify(newConfig);
+          setHasChanges(false);
+        }).catch(() => toast.error('Failed to save promo code'));
+      }
+      return newConfig;
+    });
     resetPromoForm();
     setShowPromoModal(false);
-    toast.success('Promo code created!');
+    toast.success('Promo code created & saved!');
   };
 
   const removePromoCode = (index: number) => {
-    setWebsiteConfiguration(prev => ({
-      ...prev,
-      promoCodes: (prev.promoCodes || []).filter((_, i) => i !== index)
-    }));
+    setWebsiteConfiguration(prev => {
+      const newConfig = { ...prev, promoCodes: (prev.promoCodes || []).filter((_, i) => i !== index) };
+      if (onSave) {
+        onSave(newConfig).then(() => {
+          initialConfigRef.current = JSON.stringify(newConfig);
+          setHasChanges(false);
+        }).catch(() => toast.error('Failed to save'));
+      }
+      return newConfig;
+    });
+    toast.success('Promo code removed');
   };
 
   const togglePromoCodeActive = (index: number) => {
     setWebsiteConfiguration(prev => {
       const updated = [...(prev.promoCodes || [])];
       updated[index] = { ...updated[index], isActive: !updated[index].isActive };
-      return { ...prev, promoCodes: updated };
+      const newConfig = { ...prev, promoCodes: updated };
+      if (onSave) {
+        onSave(newConfig).then(() => {
+          initialConfigRef.current = JSON.stringify(newConfig);
+          setHasChanges(false);
+        }).catch(() => toast.error('Failed to save'));
+      }
+      return newConfig;
     });
   };
 
@@ -771,32 +792,49 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
       toast.error('Please enter a URL for the social link');
       return;
     }
-    setWebsiteConfiguration((prev) => ({
-      ...prev,
-      socialLinks: [
-        ...prev.socialLinks,
-        { id: Date.now().toString(), platform: newSocialPlatform, url: newSocialUrl }
-      ]
-    }));
+    setWebsiteConfiguration((prev) => {
+      const newConfig = {
+        ...prev,
+        socialLinks: [
+          ...prev.socialLinks,
+          { id: Date.now().toString(), platform: newSocialPlatform, url: newSocialUrl }
+        ]
+      };
+      if (onSave) {
+        onSave(newConfig).then(() => {
+          initialConfigRef.current = JSON.stringify(newConfig);
+          setHasChanges(false);
+        }).catch(() => toast.error('Failed to save social link'));
+      }
+      return newConfig;
+    });
     // Reset inputs after adding
     setNewSocialUrl('');
     setNewSocialPlatform('Facebook');
-    toast.success('Social link added');
+    toast.success('Social link added & saved!');
   };
 
   const updateSocialLink = (index: number, key: keyof SocialLink, value: string): void => {
     setWebsiteConfiguration((prev) => {
       const updated = [...prev.socialLinks];
       updated[index] = { ...updated[index], [key]: value };
-      return { ...prev, socialLinks: updated };
+      const newConfig = { ...prev, socialLinks: updated };
+      return newConfig;
     });
   };
 
   const removeSocialLink = (index: number): void => {
-    setWebsiteConfiguration((prev) => ({
-      ...prev,
-      socialLinks: prev.socialLinks.filter((_, i) => i !== index)
-    }));
+    setWebsiteConfiguration((prev) => {
+      const newConfig = { ...prev, socialLinks: prev.socialLinks.filter((_, i) => i !== index) };
+      if (onSave) {
+        onSave(newConfig).then(() => {
+          initialConfigRef.current = JSON.stringify(newConfig);
+          setHasChanges(false);
+        }).catch(() => toast.error('Failed to save'));
+      }
+      return newConfig;
+    });
+    toast.success('Social link removed');
   };
 
   const addFooterLink = (field: FooterLinkField): void => {

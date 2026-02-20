@@ -1,6 +1,7 @@
 import React, { useState, memo } from 'react';
 import { ShoppingCart, Star, Eye, Heart } from 'lucide-react';
 import { Product } from '../../types';
+import { getCurrencySymbol } from '../../utils/currencyHelper';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 import { OptimizedImage } from '../OptimizedImage';
 

@@ -24,9 +24,11 @@ import {
   Search,
   ShieldCheck,
   User as UserIcon,
-  X
+  X,
+  Plus
 } from 'lucide-react';
 import { formatCurrency } from '../utils/format';
+import { getCurrencySymbol } from '../utils/currencyHelper';
 
 interface CheckoutProps {
   product: Product;
@@ -118,12 +120,21 @@ const StoreCheckout = ({
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('cod-default');
   const [paymentInfoSaved, setPaymentInfoSaved] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Dynamic currency symbol from tenant config
+  const cs = getCurrencySymbol(websiteConfig?.shopCurrency);
+
+  // Dynamic currency symbol from tenant config
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
   const [promoCode, setPromoCode] = useState('');
   const [promoStatus, setPromoStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
+  const [registrationDiscount, setRegistrationDiscount] = useState(0);
   const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showAddMoreModal, setShowAddMoreModal] = useState(false);
+  const [additionalItems, setAdditionalItems] = useState<{product: Product; quantity: number; variant: ProductVariantSelection}[]>([]);
+  const [addMoreSearch, setAddMoreSearch] = useState('');
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [alertState, setAlertState] = useState<{ type: 'error' | 'success' | null; message: string }>({ type: null, message: '' });
   const [isLoading, setIsLoading] = useState(true);
@@ -168,7 +179,43 @@ const StoreCheckout = ({
     }
   }, [user]);
 
-  const subTotal = product.price * quantity;
+  const subTotal = product.price * quantity + additionalItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+
+  // Apply first-registration / first-purchase discount from tenant offers
+  useEffect(() => {
+    if (!websiteConfig?.offers || websiteConfig.offers.length === 0) {
+      setRegistrationDiscount(0);
+      return;
+    }
+    // Check if user qualifies for registration discount (logged in, no previous orders)
+    const regOffer = websiteConfig.offers.find(o => o.type === 'Registration' && o.discount);
+    const firstPurchaseOffer = websiteConfig.offers.find(o => o.type === 'First Purchase' && o.discount);
+    
+    let applicableOffer = null;
+    // First Purchase: user has no orders
+    if (firstPurchaseOffer && orders && orders.length === 0) {
+      applicableOffer = firstPurchaseOffer;
+    }
+    // Registration: user is logged in and has no orders (just registered)
+    if (regOffer && user && orders && orders.length === 0) {
+      applicableOffer = regOffer;
+    }
+    
+    if (applicableOffer) {
+      const discStr = applicableOffer.discount.trim();
+      let discAmt = 0;
+      if (discStr.endsWith('%')) {
+        const pct = parseFloat(discStr.replace('%', ''));
+        discAmt = Math.round(subTotal * (pct / 100));
+      } else {
+        discAmt = parseFloat(discStr) || 0;
+      }
+      if (discAmt > subTotal) discAmt = subTotal;
+      setRegistrationDiscount(discAmt);
+    } else {
+      setRegistrationDiscount(0);
+    }
+  }, [websiteConfig?.offers, user, orders, subTotal]);
   const discount = product.originalPrice ? (product.originalPrice - product.price) * quantity : 0;
   const activeConfig = deliveryConfigs?.find(c => c.type === selectedDeliveryType) || (deliveryConfigs && deliveryConfigs[0]);
   const computedDeliveryCharge = useMemo(() => {
@@ -178,7 +225,7 @@ const StoreCheckout = ({
     const isInside = division ? division === activeConfig.division : true;
     return isInside ? activeConfig.insideCharge : activeConfig.outsideCharge;
   }, [activeConfig, formData.division, subTotal]);
-  const grandTotal = Math.max(0, subTotal - promoDiscount) + computedDeliveryCharge;
+  const grandTotal = Math.max(0, subTotal - promoDiscount - registrationDiscount) + computedDeliveryCharge;
   const formattedProductPrice = formatCurrency(product.price);
   const formattedProductOriginalPrice = formatCurrency(product.originalPrice, null);
 
@@ -283,7 +330,7 @@ const StoreCheckout = ({
     
     // Check min purchase
     if (matched.minPurchaseEnabled && matched.minPurchase && subTotal < matched.minPurchase) {
-      setPromoStatus({ type: 'error', message: `Minimum purchase of \u09F3${matched.minPurchase} required for this code.` });
+      setPromoStatus({ type: 'error', message: `Minimum purchase of ${cs}${matched.minPurchase} required for this code.` });
       setPromoDiscount(0);
       setAppliedPromo(null);
       return;
@@ -306,7 +353,7 @@ const StoreCheckout = ({
     
     setPromoDiscount(discountAmt);
     setAppliedPromo(matched.code);
-    setPromoStatus({ type: 'success', message: `Promo code applied! You save \u09F3${discountAmt.toLocaleString()}.` });
+    setPromoStatus({ type: 'success', message: `Promo code applied! You save ${cs}${discountAmt.toLocaleString()}.` });
   };
 
   const handleSubmit = () => {
@@ -333,7 +380,16 @@ const StoreCheckout = ({
       variant,
       district: formData.district,
       promoCode: appliedPromo || undefined,
+      additionalItems: additionalItems.length > 0 ? additionalItems.map(item => ({
+        productId: item.product.id,
+        productName: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity,
+        variant: item.variant,
+        image: item.product.galleryImages?.[0] || item.product.image || '',
+      })) : undefined,
       promoDiscount: promoDiscount > 0 ? promoDiscount : undefined,
+      registrationDiscount: registrationDiscount > 0 ? registrationDiscount : undefined,
       deliveryType: selectedDeliveryType,
       deliveryCharge: computedDeliveryCharge,
       // Payment method info
@@ -451,10 +507,10 @@ const StoreCheckout = ({
                               {config.type} Delivery
                               {isActive && <CheckCircle2 size={16} className="text-emerald-500" />}
                             </p>
-                            <p className="text-xs text-gray-500">Inside city: ৳ {config.insideCharge}</p>
-                            <p className="text-xs text-gray-500">Outside city: ৳ {config.outsideCharge}</p>
+                            <p className="text-xs text-gray-500">Inside city: {cs} {config.insideCharge}</p>
+                            <p className="text-xs text-gray-500">Outside city: {cs} {config.outsideCharge}</p>
                             {config.freeThreshold > 0 && (
-                              <p className="text-xs text-emerald-600 mt-1">Free over ৳ {config.freeThreshold}</p>
+                              <p className="text-xs text-emerald-600 mt-1">Free over {cs} {config.freeThreshold}</p>
                             )}
                           </button>
                         );
@@ -878,7 +934,7 @@ const StoreCheckout = ({
 
           <div className="w-full lg:w-96">
             <div className="glass-card rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 to p-24 animate-scale-in w-full">
-              <h2 className="text-lg font-bold text-gray-800 mb-6">Order Items ({quantity} Items)</h2>
+              <h2 className="text-lg font-bold text-gray-800 mb-6">Order Items ({quantity + additionalItems.reduce((s, i) => s + i.quantity, 0)} Items)</h2>
 
               <div className="flex gap-3 mb-6">
                 <div className="w-16 h-16 bg-gray-50 rounded border border-gray-200 p-1 flex-shrink-0">
@@ -903,14 +959,48 @@ const StoreCheckout = ({
                       <span className="px-2">{quantity} {product.unitName || "pcs"}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-gray-800">৳ {formattedProductPrice}</span>
+                      <span className="font-bold text-gray-800">{cs} {formattedProductPrice}</span>
                       {formattedProductOriginalPrice && (
-                        <span className="text-xs text-gray-400 line-through">৳ {formattedProductOriginalPrice}</span>
+                        <span className="text-xs text-gray-400 line-through">{cs} {formattedProductOriginalPrice}</span>
                       )}
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* Additional Items */}
+              {additionalItems.map((item, idx) => (
+                <div key={idx} className="flex gap-3 mb-4 pb-4 border-b border-gray-100">
+                  <div className="w-12 h-12 bg-gray-50 rounded border border-gray-200 p-1 flex-shrink-0">
+                    <img src={normalizeImageUrl(item.product.galleryImages?.[0] || item.product.image)} alt={item.product.name} className="w-full h-full object-contain" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start">
+                      <h4 className="text-xs font-bold text-gray-800 line-clamp-1">{item.product.name}</h4>
+                      <button type="button" className="text-gray-400 hover:text-red-500" onClick={() => setAdditionalItems(prev => prev.filter((_, i) => i !== idx))}>
+                        <X size={14} />
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center border border-gray-200 rounded">
+                        <button type="button" className="px-2 py-0.5 text-xs hover:bg-gray-100" onClick={() => { setAdditionalItems(prev => { const u = [...prev]; if (u[idx].quantity > 1) u[idx] = {...u[idx], quantity: u[idx].quantity - 1}; return u; }); }}>-</button>
+                        <span className="px-2 text-xs">{item.quantity}</span>
+                        <button type="button" className="px-2 py-0.5 text-xs hover:bg-gray-100" onClick={() => { setAdditionalItems(prev => { const u = [...prev]; u[idx] = {...u[idx], quantity: u[idx].quantity + 1}; return u; }); }}>+</button>
+                      </div>
+                      <span className="text-xs font-bold">{cs} {(item.product.price * item.quantity).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Add more items button */}
+              <button
+                type="button"
+                onClick={() => setShowAddMoreModal(true)}
+                className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-orange-300 rounded-xl text-orange-500 hover:bg-orange-50 transition-colors text-sm font-semibold mb-4"
+              >
+                <Plus size={16} /> Add more items
+              </button>
 
               <div className="space-y-3 border-t border-gray-100 pt-4 text-sm">
                 <div className="flex justify-between text-gray-600">
@@ -919,65 +1009,70 @@ const StoreCheckout = ({
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Sub Total:</span>
-                  <span className="font-medium">৳ {subTotal.toLocaleString()}</span>
+                  <span className="font-medium">{cs} {subTotal.toLocaleString()}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-gray-600">
                     <span>Discount:</span>
-                    <span className="font-medium text-rose-500">-৳ {discount.toLocaleString()}</span>
+                    <span className="font-medium text-rose-500">-{cs} {discount.toLocaleString()}</span>
                   </div>
                 )}
                 {promoDiscount > 0 && (
                   <div className="flex justify-between text-gray-600">
                     <span>Promo ({appliedPromo}):</span>
-                    <span className="font-medium text-emerald-600">-৳ {promoDiscount.toLocaleString()}</span>
+                    <span className="font-medium text-emerald-600">-{cs} {promoDiscount.toLocaleString()}</span>
+                  </div>
+                )}
+                {registrationDiscount > 0 && (
+                  <div className="flex justify-between text-purple-600">
+                    <span>Registration Offer:</span>
+                    <span className="font-medium text-purple-600">-{cs} {registrationDiscount.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-gray-600">
                   <span>Delivery Charge ({selectedDeliveryType}):</span>
-                  <span className="font-medium">৳ {computedDeliveryCharge}</span>
+                  <span className="font-medium">{cs} {computedDeliveryCharge}</span>
                 </div>
                 <div className="flex justify-between text-gray-800 text-lg font-bold border-t border-dashed border-gray-200 pt-3 mt-2">
                   <span>Total:</span>
-                  <span>৳ {grandTotal.toLocaleString()}</span>
+                  <span>{cs} {grandTotal.toLocaleString()}</span>
                 </div>
               </div>
 
-              <div className="mt-6 space-y-4">
-                {websiteConfig?.enablePromoCode && (
-                <div className="flex flex-col gap-2.5">
-                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Have a promo code?</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Enter code"
-                      value={promoCode}
-                      onChange={(e) => setPromoCode(e.target.value)}
-                      className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 transition-all duration-200 text-gray-800 placeholder:text-gray-400 hover:border-gray-300"
-                    />
-                    <button
-                      type="button"
-                      onClick={applyPromoCode}
-                      className="px-5 py-3 rounded-xl bg-gray-900 text-white text-sm font-bold hover:bg-gray-800 transition-colors duration-200 shadow-md hover:shadow-lg"
-                    >
-                      Apply
-                    </button>
-                  </div>
-                  {promoStatus.message && (
-                    <p className={`text-xs font-semibold ${promoStatus.type === 'success' ? 'text-emerald-600' : 'text-rose-500'}`}>
-                      {promoStatus.message}
-                    </p>
-                  )}
+              {/* Promo Code Input */}
+              {(websiteConfig?.promoCodes || []).filter(p => p.isActive !== false && (!p.expiryDate || new Date(p.expiryDate) >= new Date())).length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2 block">Have a coupon code?</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Enter coupon code"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 transition-all duration-200 text-gray-800 placeholder:text-gray-400 hover:border-gray-300 font-semibold tracking-wider"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyPromoCode}
+                    className="px-5 py-3 rounded-xl bg-gray-900 text-white text-sm font-bold hover:bg-gray-800 transition-colors duration-200 shadow-md hover:shadow-lg"
+                  >
+                    Apply
+                  </button>
                 </div>
+                {promoStatus.message && (
+                  <p className={`text-xs font-semibold mt-2 ${promoStatus.type === 'success' ? 'text-emerald-600' : 'text-rose-500'}`}>
+                    {promoStatus.message}
+                  </p>
                 )}
               </div>
+              )}
 
               <div className="mt-6 flex flex-col gap-3">
                 <button
                   onClick={handleSubmit}
                   className="mobile-place-order-btn w-full mobile-touch-feedback"
                 >
-                  Confirm Order • ৳{grandTotal.toLocaleString()}
+                  Confirm Order • {cs}{grandTotal.toLocaleString()}
                 </button>
                 <button
                   onClick={onBack}
@@ -1004,12 +1099,74 @@ const StoreCheckout = ({
         </div>
       </main>
 
+      {/* Add More Items Modal */}
+      {showAddMoreModal && productCatalog && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-4 sm:p-6 shadow-2xl relative max-h-[80vh] flex flex-col">
+            <button type="button" className="absolute top-4 right-4 text-gray-400 hover:text-gray-800" onClick={() => { setShowAddMoreModal(false); setAddMoreSearch(''); }}>
+              <X size={20} />
+            </button>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Add More Products</h3>
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={addMoreSearch}
+              onChange={(e) => setAddMoreSearch(e.target.value)}
+              className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl mb-4 focus:outline-none focus:border-emerald-500"
+            />
+            <div className="overflow-y-auto flex-1 space-y-2">
+              {productCatalog
+                .filter(p => p.id !== product.id && (!addMoreSearch || p.name.toLowerCase().includes(addMoreSearch.toLowerCase())))
+                .slice(0, 20)
+                .map(p => {
+                  const alreadyAdded = additionalItems.find(a => a.product.id === p.id);
+                  return (
+                    <div key={p.id} className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all">
+                      <div className="w-12 h-12 bg-gray-50 rounded border p-1 flex-shrink-0">
+                        <img src={normalizeImageUrl(p.galleryImages?.[0] || p.image)} alt={p.name} className="w-full h-full object-contain" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-800 truncate">{p.name}</p>
+                        <p className="text-xs font-bold text-emerald-600">{cs} {p.price?.toLocaleString()}</p>
+                      </div>
+                      {alreadyAdded ? (
+                        <span className="text-xs text-emerald-600 font-semibold px-3 py-1.5 bg-emerald-50 rounded-full">Added</span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const defaultVariant: ProductVariantSelection = {
+                              color: p.variants?.[0]?.color || 'Default',
+                              size: p.variants?.[0]?.sizes?.[0]?.size || 'Standard'
+                            };
+                            setAdditionalItems(prev => [...prev, { product: p, quantity: 1, variant: defaultVariant }]);
+                          }}
+                          className="px-3 py-1.5 bg-gray-900 text-white text-xs font-bold rounded-full hover:bg-gray-800 transition-colors"
+                        >
+                          + Add
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+            <button
+              type="button"
+              onClick={() => { setShowAddMoreModal(false); setAddMoreSearch(''); }}
+              className="mt-4 w-full rounded-full bg-gray-900 text-white font-semibold py-3 text-sm"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
       {showOfferModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-4 sm:p-6 shadow-2xl relative">
             <button
               type="button"
-              className="absolute to p-4 right-4 text-gray-400 hover:text-gray-800"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-800"
               onClick={() => setShowOfferModal(false)}
             >
               <X size={20} />
@@ -1022,9 +1179,19 @@ const StoreCheckout = ({
               </div>
             </div>
             <ul className="mt-4 space-y-3 text-sm text-gray-600">
-              <li>✅ Use code <span className="font-semibold">SAVE10</span> for 10% off accessories.</li>
-              <li>✅ Free express delivery on orders above ৳5,000.</li>
-              <li>✅ Members earn double loyalty points today.</li>
+              {(websiteConfig?.promoCodes || []).filter(p => p.isActive !== false && (!p.expiryDate || new Date(p.expiryDate) >= new Date())).map((promo, i) => (
+                <li key={i} className="flex items-center gap-2">
+                  <span className="text-emerald-500">✅</span>
+                  <span>Use code <span className="font-semibold bg-gray-100 px-2 py-0.5 rounded text-gray-900">{promo.code}</span> for {promo.discountType === 'amount' ? `${cs}${promo.discountAmount} off` : `${promo.discountPercentage}% off`}
+                  {promo.minPurchase ? ` on orders above ${cs}${promo.minPurchase.toLocaleString()}` : ''}.
+                  </span>
+                </li>
+              ))}
+              {(!websiteConfig?.promoCodes || websiteConfig.promoCodes.filter(p => p.isActive !== false).length === 0) && (
+                <>
+                  <li className="flex items-center gap-2"><span className="text-emerald-500">✅</span> Check back soon for exclusive offers!</li>
+                </>
+              )}
             </ul>
             <button
               type="button"

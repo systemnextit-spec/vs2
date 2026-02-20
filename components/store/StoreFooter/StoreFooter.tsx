@@ -200,7 +200,7 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
             <div className="lg:col-span-1">
               {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-12 w-auto object-contain mb-4" /> : <h3 className="text-2xl font-bold text-white mb-4">{websiteConfig?.websiteName || 'Our Store'}</h3>}
-              <p className="text-sm text-gray-400 mb-5 leading-relaxed">{websiteConfig?.shortDescription || 'Your trusted online shopping destination.'}</p>
+              <p className="text-sm text-gray-400 mb-5 leading-relaxed">{websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Your trusted online shopping destination.'}</p>
               <div className="flex gap-2">
                 {websiteConfig?.socialLinks?.slice(0, 5).map((social, idx) => (
                   <a key={idx} href={social.url || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gradient-to-r hover:from-pink-500 hover:to-rose-500 flex items-center justify-center text-gray-400 hover:text-white transition-all" aria-label={social.platform}>{resolveSocialIcon(social.platform)}</a>
@@ -323,7 +323,7 @@ const FooterStyle3: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             <div>
               {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-12 object-contain mb-4 brightness-0 invert" /> : <h3 className="text-2xl font-bold mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
-              <p className="text-white/80 text-sm mb-6">{websiteConfig?.shortDescription || 'Your favorite online store.'}</p>
+              <p className="text-white/80 text-sm mb-6">{websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Your favorite online store.'}</p>
               <div className="flex gap-2">
                 {websiteConfig?.socialLinks?.slice(0, 5).map((social, idx) => (
                   <a key={idx} href={social.url || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 hover:bg-white hover:text-theme-primary flex items-center justify-center transition-all" aria-label={social.platform}>{resolveSocialIcon(social.platform)}</a>
@@ -395,7 +395,7 @@ const FooterStyle4: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
           <div className="mb-8">
             {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-14 object-contain mx-auto mb-4" /> : <h3 className="text-3xl font-bold text-gray-900 mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
-            <p className="text-gray-600 max-w-md mx-auto">{websiteConfig?.shortDescription || 'Discover quality products curated just for you.'}</p>
+            <p className="text-gray-600 max-w-md mx-auto">{websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Discover quality products curated just for you.'}</p>
           </div>
           <div className="flex justify-center gap-3 mb-8">
             {websiteConfig?.socialLinks?.slice(0, 5).map((social, idx) => (
@@ -462,7 +462,7 @@ const FooterStyle5: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
             <div className="col-span-2 md:col-span-1 lg:col-span-2">
               {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-10 object-contain mb-4" /> : <h3 className="text-xl font-bold text-gray-900 mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
-              <p className="text-gray-600 text-sm mb-4">{websiteConfig?.shortDescription || 'Your trusted shopping destination.'}</p>
+              <p className="text-gray-600 text-sm mb-4">{websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Your trusted shopping destination.'}</p>
               <div className="flex gap-2 mb-4">
                 {websiteConfig?.socialLinks?.slice(0, 4).map((social, idx) => (
                   <a key={idx} href={social.url || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-gray-200 hover:border-theme-primary hover:text-theme-primary flex items-center justify-center text-gray-500 transition-all" aria-label={social.platform}>{resolveSocialIcon(social.platform)}</a>
