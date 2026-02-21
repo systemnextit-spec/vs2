@@ -2,11 +2,11 @@
 import { useState } from "react";
 
 const dummyImages = [
-    "/images/img1.jpg",
-    "/images/img2.png",
-    "/images/img3.jpeg",
-    "/images/img4.jpg",
-    "/images/img5.jpg",
+    "https://details-snit.vercel.app/images/img1.jpg",
+    "https://details-snit.vercel.app/images/img2.png",
+    "https://details-snit.vercel.app/images/img3.jpeg",
+    "https://details-snit.vercel.app/images/img4.jpg",
+    "https://details-snit.vercel.app/images/img5.jpg",
 ];
 
 export default function Color() {
