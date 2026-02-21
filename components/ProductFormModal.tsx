@@ -1316,7 +1316,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     <label className="flex items-center justify-between p-3 bg-white rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.20)] cursor-pointer hover:bg-gray-50 transition-colors">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">⭐</span>
-                        <span className="text-teal-950 text-sm font-medium font-['Lato']">Our Products</span>
+                        <span className="text-teal-950 text-sm font-medium font-['Lato']">All Products</span>
                       </div>
                       <button 
                         type="button" 
