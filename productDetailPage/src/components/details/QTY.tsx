@@ -17,7 +17,7 @@ export default function QTY({ quantity, setQuantity }: { quantity: number, setQu
                     </span>
                     <button
                         onClick={() => setQuantity(quantity + 1)}
-                        className="w-9 h-9 flex items-center justify-center cursor-pointer bg-[#F9F9F9] rounded-full p-2"
+                        className="w-9 h-9 flex items-center justify-center cursor-pointer bg-[#F9F9F9] rounded-full p-2 text-gray-900"
                     >
                         <Plus />
                     </button>
