@@ -11,7 +11,7 @@ export default function Footer() {
                 <div className="hidden md:flex flex-row items-start justify-between gap-8">
 
                     <div className="flex flex-col gap-4 max-w-[220px]">
-                        <img src="/images/footerlogo.png" alt="Logo" width={169} height={10031} />
+                        <img src="/images/footerlogo.png" alt="Logo" width={169} height={0} />
                         <p className="text-[13px] font-inter text-black text-sm leading-[1.7] mt-1">
                             we create possibilities
                             <br />
