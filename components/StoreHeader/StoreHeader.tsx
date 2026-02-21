@@ -466,6 +466,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {
           onCategoryMenuOpen={setIsCategoryMenuOpen}
           onProductsClick={onProductsClick}
           websiteConfig={websiteConfig}
+          ImageSearchClick={ImageSearchClick}
         />
       </header>
 
