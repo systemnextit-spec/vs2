@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { Plus, Search, MoreVertical, ChevronLeft, ChevronRight, ChevronDown, Download, Upload, Filter, Printer, Edit, Trash2, Copy, Eye, X, Loader2, LayoutGrid, List, GripVertical, Save } from 'lucide-react';
+import { Plus, Search, MoreVertical, ChevronLeft, ChevronRight, ChevronDown, Download, Upload, Filter, Printer, Edit, Trash2, Copy, Eye, X, Loader2, LayoutGrid, List, GripVertical, Save, Tag, Truck, ShoppingCart, Clock, FolderOpen, ToggleLeft, ToggleRight, Percent, Gift, Pencil, Check } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { DndContext, closestCenter, DragEndEvent, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Product, Category, Brand } from '../../types';
+import { Product, Category, Brand, Tag as TagType } from '../../types';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 
 // Icons as SVG components
@@ -70,6 +70,8 @@ interface FigmaProductListProps {
   onImport?: () => void;
   onExport?: () => void;
   onBulkImport?: (products: Product[]) => void;
+  onQuickUpdate?: (productId: number, updates: Partial<Product>) => void;
+  tags?: TagType[];
   tenantId?: string;
   tenantSubdomain?: string;
   productDisplayOrder?: number[];
@@ -92,6 +94,7 @@ interface SortableTableRowProps {
   onCloneProduct?: (product: Product) => void;
   onDeleteProduct?: (id: number) => void;
   storeBaseUrl?: string;
+  onContextMenu?: (e: React.MouseEvent, product: Product) => void;
 }
 
 function SortableTableRow({
@@ -108,6 +111,7 @@ function SortableTableRow({
   onCloneProduct,
   onDeleteProduct,
   storeBaseUrl = '',
+  onContextMenu: onCtxMenu,
 }: SortableTableRowProps) {
   const {
     attributes,
@@ -138,6 +142,7 @@ function SortableTableRow({
         if (target.closest('input[type="checkbox"]') || target.closest('[data-dropdown]') || target.closest('button')) return;
         onEditProduct?.(product);
       }}
+      onContextMenu={(e) => { e.preventDefault(); onCtxMenu?.(e, product); }}
     >
       <td className="px-4 py-3">
         <input
@@ -268,6 +273,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   onImport,
   onExport,
   onBulkImport,
+  onQuickUpdate,
+  tags: availableTags = [],
   tenantId,
   tenantSubdomain,
   productDisplayOrder = [],
@@ -312,6 +319,15 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   const [showBrandDropdown, setShowBrandDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showPerPageDropdown, setShowPerPageDropdown] = useState(false);
+
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; product: Product } | null>(null);
+  const [contextSubMenu, setContextSubMenu] = useState<string | null>(null);
+  const [tagSearchInContext, setTagSearchInContext] = useState('');
+  const [deliveryChargeInput, setDeliveryChargeInput] = useState('');
+  const [couponInput, setCouponInput] = useState('');
+  const [tagDurationInput, setTagDurationInput] = useState('');
+  const contextMenuRef = useRef<HTMLDivElement>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
@@ -781,6 +797,26 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Close context menu on outside click or scroll
+  useEffect(() => {
+    const handleCloseCtx = (e: MouseEvent) => {
+      if (contextMenu && contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+        setContextMenu(null);
+        setContextSubMenu(null);
+      }
+    };
+    const handleScroll = () => { setContextMenu(null); setContextSubMenu(null); };
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') { setContextMenu(null); setContextSubMenu(null); } };
+    document.addEventListener('mousedown', handleCloseCtx);
+    document.addEventListener('scroll', handleScroll, true);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleCloseCtx);
+      document.removeEventListener('scroll', handleScroll, true);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [contextMenu]);
 
   // Filter products
   const filteredProducts = useMemo(() => {
@@ -1536,6 +1572,11 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                   onCloneProduct={onCloneProduct}
                   onDeleteProduct={onDeleteProduct}
                   storeBaseUrl={getStoreUrl(tenantSubdomain)}
+                  onContextMenu={(e, p) => {
+                    setContextMenu({ x: e.clientX, y: e.clientY, product: p });
+                    setContextSubMenu(null);
+                    setOpenDropdownId(null);
+                  }}
                 />
               );}) : (
               <tr>
@@ -1675,6 +1716,296 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
               <ChevronRight size={16} />
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Right-click Context Menu */}
+      {contextMenu && contextMenu.product && (
+        <div
+          ref={contextMenuRef}
+          className="fixed z-[9999] bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-600 py-1 min-w-[220px] text-sm"
+          style={{
+            left: Math.min(contextMenu.x, window.innerWidth - 240),
+            top: Math.min(contextMenu.y, window.innerHeight - 400),
+          }}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          {/* Edit */}
+          <button
+            className="flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
+            onClick={() => { onEditProduct?.(contextMenu.product); setContextMenu(null); }}
+          >
+            <Pencil size={15} className="text-blue-500" />
+            <span>Edit Product</span>
+          </button>
+
+          {/* View in Store */}
+          <button
+            className="flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
+            onClick={() => {
+              window.open(`${getStoreUrl(tenantSubdomain)}/product-details/${contextMenu.product.slug || contextMenu.product.id}`, '_blank');
+              setContextMenu(null);
+            }}
+          >
+            <Eye size={15} className="text-green-500" />
+            <span>View in Store</span>
+          </button>
+
+          <div className="border-t border-gray-100 dark:border-gray-700 my-1" />
+
+          {/* Publish */}
+          <button
+            className="flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors"
+            onClick={() => { onQuickUpdate?.(contextMenu.product.id, { status: 'Active' }); setContextMenu(null); }}
+          >
+            <ToggleRight size={15} className="text-green-500" />
+            <span>Publish</span>
+            {contextMenu.product.status === 'Active' && <span className="ml-auto text-xs text-green-500 font-medium">● Active</span>}
+          </button>
+
+          {/* Draft */}
+          <button
+            className="flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-yellow-50 dark:hover:bg-gray-700 transition-colors"
+            onClick={() => { onQuickUpdate?.(contextMenu.product.id, { status: 'Draft' }); setContextMenu(null); }}
+          >
+            <ToggleLeft size={15} className="text-yellow-600" />
+            <span>Draft</span>
+            {contextMenu.product.status === 'Draft' && <span className="ml-auto text-xs text-yellow-500 font-medium">● Draft</span>}
+          </button>
+
+          <div className="border-t border-gray-100 dark:border-gray-700 my-1" />
+
+          {/* Change Tags - expandable sub-panel */}
+          <div className="relative">
+            <button
+              className={`flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-gray-700 transition-colors ${contextSubMenu === 'tags' ? 'bg-purple-50 dark:bg-gray-700' : ''}`}
+              onClick={() => setContextSubMenu(contextSubMenu === 'tags' ? null : 'tags')}
+            >
+              <Tag size={15} className="text-purple-500" />
+              <span>Change Tags</span>
+              <ChevronRight size={14} className={`ml-auto transition-transform ${contextSubMenu === 'tags' ? 'rotate-90' : ''}`} />
+            </button>
+            {contextSubMenu === 'tags' && (
+              <div className="px-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                <input
+                  type="text"
+                  placeholder="Search tags..."
+                  value={tagSearchInContext}
+                  onChange={(e) => setTagSearchInContext(e.target.value)}
+                  className="w-full px-2 py-1.5 text-xs border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 mb-2"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <div className="max-h-[150px] overflow-y-auto space-y-1">
+                  {availableTags
+                    .filter(t => t.name.toLowerCase().includes(tagSearchInContext.toLowerCase()))
+                    .map(tag => {
+                      const isSelected = contextMenu.product.tags?.includes(tag.name) || contextMenu.product.tag === tag.name;
+                      return (
+                        <label
+                          key={tag.name}
+                          className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer text-xs"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {
+                              const currentTags = contextMenu.product.tags || [];
+                              const newTags = isSelected
+                                ? currentTags.filter((t: string) => t !== tag.name)
+                                : [...currentTags, tag.name];
+                              onQuickUpdate?.(contextMenu.product.id, { tags: newTags, tag: newTags[0] || '' });
+                              setContextMenu(prev => prev ? { ...prev, product: { ...prev.product, tags: newTags, tag: newTags[0] || '' } } : null);
+                            }}
+                            className="rounded text-purple-500"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                          <span className="dark:text-gray-200">{tag.name}</span>
+                        </label>
+                      );
+                    })}
+                  {availableTags.filter(t => t.name.toLowerCase().includes(tagSearchInContext.toLowerCase())).length === 0 && (
+                    <p className="text-xs text-gray-400 px-2 py-1">No tags found</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Give Coupons / Discount */}
+          <div className="relative">
+            <button
+              className={`flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700 transition-colors ${contextSubMenu === 'coupon' ? 'bg-orange-50 dark:bg-gray-700' : ''}`}
+              onClick={() => setContextSubMenu(contextSubMenu === 'coupon' ? null : 'coupon')}
+            >
+              <Gift size={15} className="text-orange-500" />
+              <span>Give Coupons / Discount</span>
+              <ChevronRight size={14} className={`ml-auto transition-transform ${contextSubMenu === 'coupon' ? 'rotate-90' : ''}`} />
+            </button>
+            {contextSubMenu === 'coupon' && (
+              <div className="px-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                <div className="flex gap-2 mt-1">
+                  <input
+                    type="number"
+                    placeholder="Discount %"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value)}
+                    className="flex-1 px-2 py-1.5 text-xs border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                    onClick={(e) => e.stopPropagation()}
+                    min="0"
+                    max="100"
+                  />
+                  <button
+                    className="px-3 py-1.5 bg-orange-500 text-white rounded text-xs hover:bg-orange-600 disabled:opacity-50"
+                    disabled={!couponInput}
+                    onClick={() => {
+                      onQuickUpdate?.(contextMenu.product.id, { discount: couponInput });
+                      setCouponInput('');
+                      setContextMenu(null);
+                    }}
+                  >
+                    Apply
+                  </button>
+                </div>
+                {contextMenu.product.discount && (
+                  <p className="text-xs text-gray-400 mt-1">Current: {contextMenu.product.discount}%</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Delivery Charge Set */}
+          <div className="relative">
+            <button
+              className={`flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-teal-50 dark:hover:bg-gray-700 transition-colors ${contextSubMenu === 'delivery' ? 'bg-teal-50 dark:bg-gray-700' : ''}`}
+              onClick={() => setContextSubMenu(contextSubMenu === 'delivery' ? null : 'delivery')}
+            >
+              <Truck size={15} className="text-teal-500" />
+              <span>Delivery Charge Set</span>
+              <ChevronRight size={14} className={`ml-auto transition-transform ${contextSubMenu === 'delivery' ? 'rotate-90' : ''}`} />
+            </button>
+            {contextSubMenu === 'delivery' && (
+              <div className="px-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                <div className="flex gap-2 mt-1">
+                  <input
+                    type="number"
+                    placeholder="Delivery charge (৳)"
+                    value={deliveryChargeInput}
+                    onChange={(e) => setDeliveryChargeInput(e.target.value)}
+                    className="flex-1 px-2 py-1.5 text-xs border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                    onClick={(e) => e.stopPropagation()}
+                    min="0"
+                  />
+                  <button
+                    className="px-3 py-1.5 bg-teal-500 text-white rounded text-xs hover:bg-teal-600 disabled:opacity-50"
+                    disabled={!deliveryChargeInput}
+                    onClick={() => {
+                      onQuickUpdate?.(contextMenu.product.id, { deliveryCharge: Number(deliveryChargeInput) } as any);
+                      setDeliveryChargeInput('');
+                      setContextMenu(null);
+                    }}
+                  >
+                    Set
+                  </button>
+                </div>
+                {(contextMenu.product as any).deliveryCharge && (
+                  <p className="text-xs text-gray-400 mt-1">Current: ৳{(contextMenu.product as any).deliveryCharge}</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Set Catalog (Category) */}
+          <div className="relative">
+            <button
+              className={`flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 transition-colors ${contextSubMenu === 'catalog' ? 'bg-indigo-50 dark:bg-gray-700' : ''}`}
+              onClick={() => setContextSubMenu(contextSubMenu === 'catalog' ? null : 'catalog')}
+            >
+              <FolderOpen size={15} className="text-indigo-500" />
+              <span>Set Catalog</span>
+              <ChevronRight size={14} className={`ml-auto transition-transform ${contextSubMenu === 'catalog' ? 'rotate-90' : ''}`} />
+            </button>
+            {contextSubMenu === 'catalog' && (
+              <div className="px-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                <div className="max-h-[150px] overflow-y-auto space-y-1 mt-1">
+                  {categories.map(cat => {
+                    const catName = typeof cat === 'string' ? cat : cat.name;
+                    const isSelected = contextMenu.product.category === catName;
+                    return (
+                      <button
+                        key={catName}
+                        className={`flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs transition-colors ${isSelected ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-medium' : 'hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'}`}
+                        onClick={() => {
+                          onQuickUpdate?.(contextMenu.product.id, { category: catName });
+                          setContextMenu(null);
+                        }}
+                      >
+                        {isSelected && <Check size={12} />}
+                        <span>{catName}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Set Tag Duration */}
+          <div className="relative">
+            <button
+              className={`flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-pink-50 dark:hover:bg-gray-700 transition-colors ${contextSubMenu === 'duration' ? 'bg-pink-50 dark:bg-gray-700' : ''}`}
+              onClick={() => setContextSubMenu(contextSubMenu === 'duration' ? null : 'duration')}
+            >
+              <Clock size={15} className="text-pink-500" />
+              <span>Set Tag Duration</span>
+              <ChevronRight size={14} className={`ml-auto transition-transform ${contextSubMenu === 'duration' ? 'rotate-90' : ''}`} />
+            </button>
+            {contextSubMenu === 'duration' && (
+              <div className="px-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                <div className="flex gap-2 mt-1">
+                  <input
+                    type="number"
+                    placeholder="Duration (days)"
+                    value={tagDurationInput}
+                    onChange={(e) => setTagDurationInput(e.target.value)}
+                    className="flex-1 px-2 py-1.5 text-xs border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                    onClick={(e) => e.stopPropagation()}
+                    min="1"
+                  />
+                  <button
+                    className="px-3 py-1.5 bg-pink-500 text-white rounded text-xs hover:bg-pink-600 disabled:opacity-50"
+                    disabled={!tagDurationInput}
+                    onClick={() => {
+                      onQuickUpdate?.(contextMenu.product.id, { tagDuration: Number(tagDurationInput) } as any);
+                      setTagDurationInput('');
+                      setContextMenu(null);
+                    }}
+                  >
+                    Set
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-gray-100 dark:border-gray-700 my-1" />
+
+          {/* Duplicate */}
+          <button
+            className="flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
+            onClick={() => { onCloneProduct?.(contextMenu.product); setContextMenu(null); }}
+          >
+            <Copy size={15} className="text-blue-400" />
+            <span>Duplicate</span>
+          </button>
+
+          {/* Delete */}
+          <button
+            className="flex items-center gap-3 w-full px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700 transition-colors"
+            onClick={() => { onDeleteProduct?.(contextMenu.product.id); setContextMenu(null); }}
+          >
+            <Trash2 size={15} />
+            <span>Delete</span>
+          </button>
         </div>
       )}
     </div>
