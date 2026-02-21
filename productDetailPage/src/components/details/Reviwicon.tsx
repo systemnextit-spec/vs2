@@ -4,31 +4,31 @@ export default function Reviwicon() {
         <>
             <div className="flex items-center">
                 <img
-                    src={'/images/star.svg'}
+                    src={'https://details-snit.vercel.app/images/star.svg'}
                     alt="star"
                     width={16}
                     height={16}
                 />
                 <img
-                    src={'/images/star.svg'}
+                    src={'https://details-snit.vercel.app/images/star.svg'}
                     alt="star"
                     width={16}
                     height={16}
                 />
                 <img
-                    src={'/images/star.svg'}
+                    src={'https://details-snit.vercel.app/images/star.svg'}
                     alt="star"
                     width={16}
                     height={16}
                 />
                 <img
-                    src={'/images/star.svg'}
+                    src={'https://details-snit.vercel.app/images/star.svg'}
                     alt="star"
                     width={16}
                     height={16}
                 />
                 <img
-                    src={'/images/halfstar.svg'}
+                    src={'https://details-snit.vercel.app/images/halfstar.svg'}
                     alt="star"
                     width={16}
                     height={16}
