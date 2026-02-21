@@ -11,7 +11,7 @@ export default function Description() {
             </div>
             <div className="mt-6 block lg:hidden">
                 <img
-                    src="/images/videoBanner.png"
+                    src="https://details-snit.vercel.app/images/videoBanner.png"
                     alt="play"
                     className="w-full h-auto rounded-xl"
                 />
@@ -39,7 +39,7 @@ export default function Description() {
 
                 <div className="hidden lg:block w-[50%]">
                     <img
-                        src="/images/videoBanner.png"
+                        src="https://details-snit.vercel.app/images/videoBanner.png"
                         alt="play"
                         className="m-auto"
                     />

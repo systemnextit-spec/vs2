@@ -7,7 +7,7 @@ const CallOrderBar = () => {
                 <div className="text-[#1E90FF]">
                     {/* Phone Icon */}
                     <img
-                        src={'/images/call.svg'}
+                        src={'https://details-snit.vercel.app/images/call.svg'}
                         alt='call'
                         width={18}
                         height={18}
@@ -30,7 +30,7 @@ const CallOrderBar = () => {
             {/* Right Share */}
             <button className="p-3.5 bg-[#F9F9F9] rounded-md cursor-pointer">
                 <img
-                    src='images/share-01.svg'
+                    src='https://details-snit.vercel.app/images/share-01.svg'
                     alt="share"
                     width={24}
                     height={24}
