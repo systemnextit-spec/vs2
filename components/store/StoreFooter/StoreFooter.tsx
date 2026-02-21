@@ -394,7 +394,7 @@ const FooterStyle4: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
       <footer className="bg-gray-50 mt-auto">
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
           <div className="mb-8">
-            {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-14 object-contain mx-auto mb-4" /> : <h3 className="text-3xl font-bold text-gray-900 mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
+            {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-44 object-contain mx-auto mb-4" /> : <h3 className="text-3xl font-bold text-gray-900 mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
             <p className="text-gray-600 max-w-md mx-auto">{websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Discover quality products curated just for you.'}</p>
           </div>
           <div className="flex justify-center gap-3 mb-8">
