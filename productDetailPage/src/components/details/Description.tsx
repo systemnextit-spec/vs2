@@ -27,6 +27,7 @@ interface DescriptionProps {
 
 export default function Description({ product, tenantId, user, onLoginClick }: DescriptionProps) {
     const [activeTab, setActiveTab] = useState<'description' | 'specification' | 'reviews'>('description');
+    const [videoPlaying, setVideoPlaying] = useState(false);
 
     // Extract YouTube video ID if available
     const getYouTubeVideoId = (url: string): string | null => {
@@ -96,9 +97,29 @@ export default function Description({ product, tenantId, user, onLoginClick }: D
                                 <p className="font-lato text-[16px] leading-[150%] text-gray-400">No description available</p>
                             )}
                         </div>
-                        {videoThumbnail && (
+                        {videoId && (
                             <div className="w-full lg:w-[50%]">
-                                <img src={videoThumbnail} alt="Video" className="w-full lg:m-auto rounded-xl" />
+                                {videoPlaying ? (
+                                    <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                                        <iframe
+                                            className="absolute top-0 left-0 w-full h-full rounded-xl"
+                                            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+                                            title="Product Video"
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="relative cursor-pointer group" onClick={() => setVideoPlaying(true)}>
+                                        <img src={videoThumbnail} alt="Video" className="w-full lg:m-auto rounded-xl" />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg group-hover:bg-red-700 transition-colors group-hover:scale-110 transform duration-200">
+                                                <svg className="w-7 h-7 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
