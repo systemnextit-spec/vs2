@@ -144,6 +144,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     pharmacy2: 'https://hdnfltv.com/image/nitimages/pasted_1770568460126.webp',
     pharmacy3: 'https://hdnfltv.com/image/nitimages/pasted_1770568460126.webp',
     pharmacy4: 'https://hdnfltv.com/image/nitimages/pasted_1770568460126.webp',
+    storefront1: 'https://hdnfltv.com/image/nitimages/pasted_1770568225100.webp',
   },
   // Product Detail Page Theme preview images
   productDetailThemes: {

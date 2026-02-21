@@ -41,6 +41,7 @@ const SearchResultsSection = lazy(() => import('../components/store/SearchResult
 const TagCountdownTimer = lazy(() => import('../components/store/TagCountdownTimer').then(m => ({ default: m.TagCountdownTimer })));
 // Dynamic storefront renderer for Page Builder layouts
 const StoreFrontRenderer = lazy(() => import('../components/store/StoreFrontRenderer').then(m => ({ default: m.StoreFrontRenderer })));
+const StoreFrontThemePage = lazy(() => import('../components/store/StoreFrontThemePage').then(m => ({ default: m.StoreFrontThemePage })));
 
 interface StoreHomeProps {
   products?: Product[];
@@ -388,6 +389,21 @@ const StoreHome: React.FC<StoreHomeProps> = ({
             onAddToCart={handleAddProductToCartFromCard}
             onCategoryClick={handleCategoryClick}
             onBrandClick={(slug) => handleCategoryClick(slug)}
+            onOpenChat={onOpenChat}
+          />
+        </Suspense>
+      ) : websiteConfig?.readyTheme?.startsWith('storefront') ? (
+        <Suspense fallback={<StoreHomeSkeleton />}>
+          <StoreFrontThemePage
+            products={products}
+            categories={categories}
+            brands={brands}
+            websiteConfig={websiteConfig}
+            logo={logo}
+            onProductClick={onProductClick}
+            onBuyNow={handleBuyNow}
+            onAddToCart={handleAddProductToCartFromCard}
+            onCategoryClick={handleCategoryClick}
             onOpenChat={onOpenChat}
           />
         </Suspense>

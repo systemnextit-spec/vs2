@@ -10,6 +10,7 @@ const THEME_CATEGORIES = [
   { id: 'grocery', title: 'Grocery Theme', themes: ['grocery1', 'grocery2', 'grocery3', 'grocery4'] },
   { id: 'cosmetics', title: 'Cosmetics Theme', themes: ['cosmetics1', 'cosmetics2', 'cosmetics3', 'cosmetics4'] },
   { id: 'pharmacy', title: 'Pharmacy Theme', themes: ['pharmacy1', 'pharmacy2', 'pharmacy3', 'pharmacy4'] },
+  { id: 'storefront', title: 'StoreFront Theme', themes: ['storefront1'] },
 ];
 
 // Product Detail Page Theme options
