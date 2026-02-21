@@ -412,11 +412,15 @@ const deduplicateRequest = async <T>(
 };
 
 class DataServiceImpl {
-  setupCustomDomain(tenantId: string, domain: string) {
-    throw new Error('Method not implemented.');
+  async setupCustomDomain(tenantId: string, domain: string) {
+    return this.requestTenantApi(`/api/tenants/${tenantId}/setup-domain`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customDomain: domain })
+    });
   }
-  verifyDomainDNS(tenantId: string, domain: string) {
-    throw new Error('Method not implemented.');
+  async verifyDomainDNS(tenantId: string, domain: string) {
+    return this.requestTenantApi(`/api/tenants/${tenantId}/verify-domain?domain=${encodeURIComponent(domain)}`);
   }
   private saveQueue = new Map<string, SaveQueueEntry>();
   private hasLoggedSaveBlock = false;

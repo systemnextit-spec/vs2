@@ -349,7 +349,7 @@ tenantsRouter.post('/:id/setup-domain',
       
       // Execute the domain setup script
       const { exec } = require('child_process');
-      const scriptPath = '/var/www/html/main-admin/backend/scripts/setup-custom-domain.sh';
+      const scriptPath = '/var/www/admin-main/backend/scripts/setup-custom-domain.sh';
       
       exec(`${scriptPath} "${customDomain}" "${tenantId}" setup`, { timeout: 120000 }, async (error: any, stdout: string, stderr: string) => {
         if (error) {
@@ -407,7 +407,7 @@ tenantsRouter.get('/:id/verify-domain',
       }).parse(req.query);
       
       const { exec } = require('child_process');
-      const scriptPath = '/var/www/html/main-admin/backend/scripts/setup-custom-domain.sh';
+      const scriptPath = '/var/www/admin-main/backend/scripts/setup-custom-domain.sh';
       
       exec(`${scriptPath} "${domain}" "" verify`, { timeout: 30000 }, (error: any, stdout: string, stderr: string) => {
         if (error) {
@@ -462,7 +462,7 @@ tenantsRouter.delete('/:id/custom-domain',
       
       // Execute the domain removal script
       const { exec } = require('child_process');
-      const scriptPath = '/var/www/html/main-admin/backend/scripts/setup-custom-domain.sh';
+      const scriptPath = '/var/www/admin-main/backend/scripts/setup-custom-domain.sh';
       
       exec(`${scriptPath} "${customDomain}" "${tenantId}" remove`, { timeout: 30000 }, async (error: any, stdout: string, stderr: string) => {
         // Even if script fails, we should clear the domain from DB

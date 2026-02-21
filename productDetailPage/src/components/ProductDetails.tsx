@@ -61,6 +61,7 @@ export interface ModernProductDetailProps {
     websiteConfig?: {
         websiteName?: string;
         headerSliderText?: string;
+        adminNoticeText?: string;
         whatsappNumber?: string;
         phones?: string[];
         addresses?: string[];
@@ -146,7 +147,11 @@ export default function ProductDetailsPage({
     };
 
     const logoUrl = logo || websiteConfig?.headerLogo || websiteConfig?.footerLogo || "";
-    const announcementText = websiteConfig?.headerSliderText || "";
+    const announcementText = websiteConfig?.adminNoticeText || websiteConfig?.headerSliderText || "";
+    console.log('[AnnouncedBar] websiteConfig keys:', Object.keys(websiteConfig || {}));
+    console.log('[AnnouncedBar] adminNoticeText:', websiteConfig?.adminNoticeText);
+    console.log('[AnnouncedBar] headerSliderText:', websiteConfig?.headerSliderText);
+    console.log('[AnnouncedBar] final announcementText:', announcementText);
     const phoneNumber = websiteConfig?.whatsappNumber || websiteConfig?.phones?.[0] || "";
 
     // Map related products for display

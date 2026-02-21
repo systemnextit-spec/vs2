@@ -131,7 +131,13 @@ function SortableTableRow({
     <tr
       ref={setNodeRef}
       style={style}
-      className={`h-[68px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${isDragging ? 'shadow-lg' : ''}`}
+      className={`h-[68px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${isDragging ? 'shadow-lg' : ''}`}
+      onClick={(e) => {
+        // Skip if clicking checkbox, drag handle, or action dropdown
+        const target = e.target as HTMLElement;
+        if (target.closest('input[type="checkbox"]') || target.closest('[data-dropdown]') || target.closest('button')) return;
+        onEditProduct?.(product);
+      }}
     >
       <td className="px-4 py-3">
         <input
