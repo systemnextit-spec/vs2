@@ -397,7 +397,7 @@ const FooterStyle4: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
             {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-44 object-contain mx-auto mb-1" /> : <h3 className="text-3xl font-bold text-gray-900 mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
             <p className="text-gray-600 max-w-md mx-auto">{websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Discover quality products curated just for you.'}</p>
           </div>
-          <div className="flex justify-center gap-3 mb-8">
+          <div className="flex justify-center gap-3 mb-3">
             {websiteConfig?.socialLinks?.slice(0, 5).map((social, idx) => (
               <a key={idx} href={social.url || '#'} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-white shadow-md hover:shadow-lg hover:bg-theme-primary hover:text-white flex items-center justify-center text-gray-600 transition-all" aria-label={social.platform}>{resolveSocialIcon(social.platform)}</a>
             ))}
