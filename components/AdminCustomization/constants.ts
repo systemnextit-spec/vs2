@@ -62,7 +62,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style4: 'https://hdnfltv.com/image/nitimages/header-4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/header_-_5.webp',
     style6: 'https://hdnfltv.com/image/nitimages/pasted_1771520591605.webp',
-    style7: 'https://hdnfltv.com/image/nitimages/pasted_1771447828354.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/pasted_1771697764963.webp',
   },
   mobileHeaderStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/mobile_header_-_1_1768841563.webp',
