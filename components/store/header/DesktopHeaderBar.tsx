@@ -5,7 +5,6 @@ import type { HeaderSearchProps } from './headerTypes';
 import { DesktopSearchBar } from './HeaderSearchBar';
 import type { User as UserType, WebsiteConfig } from '../../../types';
 import HeaderStyle6Desktop from './HeaderStyle6';
-import HeaderStyle7Desktop from './HeaderStyle7';
 
 
 interface DesktopHeaderBarProps {
@@ -396,8 +395,6 @@ export const DesktopHeaderBar = memo<DesktopHeaderBarProps>((props) => {
       return <HeaderStyle5 {...props} />;
     case 'style6':
       return <HeaderStyle6Desktop {...props} />;
-    case 'style7':
-      return <HeaderStyle7Desktop {...props} />;
     case 'style1':
     default:
       return <HeaderStyle1 {...props} />;

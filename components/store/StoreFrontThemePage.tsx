@@ -36,7 +36,7 @@ const SFProductCard = memo(({ product, onClick, onAddToCart }: {
   onClick: () => void;
   onAddToCart?: () => void;
 }) => {
-  const img = product.image?.[0] || product.image;
+  const img = product.galleryImages?.[0] || product.image;
   const price = product.salePrice || product.price || 0;
   const originalPrice = product.price && product.salePrice && product.price > product.salePrice ? product.price : null;
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
@@ -120,25 +120,6 @@ const HeroBanner = memo(({ websiteConfig, categories, onCategoryClick }: {
 
   return (
     <div className="relative">
-      {/* Category Nav Bar */}
-      <div className="bg-white border-t border-gray-100 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-        <div className="max-w-[1400px] mx-auto flex items-center px-4 md:px-8 gap-1">
-          <button className="flex items-center gap-2 px-4 py-2.5 whitespace-nowrap text-sm font-medium" style={{ color: DARK }}>
-            <Menu size={18} /> All
-          </button>
-          {categories.filter(c => c.status === 'Active' || !c.status).slice(0, 10).map((cat: any) => (
-            <button
-              key={cat.id || cat.name}
-              onClick={() => onCategoryClick?.(cat.slug || cat.name)}
-              className="px-4 py-2.5 whitespace-nowrap text-sm hover:bg-gray-50 transition-colors rounded"
-              style={{ color: DARK, fontFamily: "'Lato', sans-serif" }}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Hero Banner */}
       <div className="relative overflow-hidden" style={{ backgroundColor: DARK }}>
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center min-h-[300px] md:min-h-[420px]">
@@ -192,7 +173,7 @@ const PromoGrid = memo(({ products, onProductClick }: { products: Product[]; onP
     <section className="max-w-[1400px] mx-auto px-4 md:px-8 py-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {promoProducts.map((p) => {
-          const img = p.image?.[0] || p.image;
+          const img = p.galleryImages?.[0] || p.image;
           return (
             <div key={p.id} className="relative rounded-xl overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow cursor-pointer group h-[180px] md:h-[200px]"
               onClick={() => onProductClick(p)}>
@@ -265,7 +246,7 @@ const BestSellingSection = memo(({ products, onProductClick }: { products: Produ
       <SectionHeader title="Best selling product" />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[200px]">
         {best.map((p, i) => {
-          const img = p.image?.[0] || p.image;
+          const img = p.galleryImages?.[0] || p.image;
           const isLarge = i === best.length - 1;
           return (
             <div key={p.id} onClick={() => onProductClick(p)}
