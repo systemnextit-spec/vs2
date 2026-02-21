@@ -524,6 +524,7 @@ export interface SubCategory {
   name: string;
   status: 'Active' | 'Inactive';
   serial?: number;
+  subCategoryName?: string;
 }
 
 export interface ChildCategory {
