@@ -549,6 +549,7 @@ export interface Tag {
   icon?: string;
   durationDays?: number;
   expiresAt?: string;
+  showCountdown?: boolean;
 }
 
 export interface GalleryItem {

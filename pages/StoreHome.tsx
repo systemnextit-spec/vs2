@@ -38,6 +38,7 @@ const ProductQuickViewModal = lazy(() => import('../components/store/ProductQuic
 const TrackOrderModal = lazy(() => import('../components/store/TrackOrderModal').then(m => ({ default: m.TrackOrderModal })));
 const StoreCategoryProducts = lazy(() => import('../components/StoreCategoryProducts'));
 const SearchResultsSection = lazy(() => import('../components/store/SearchResultsSection').then(m => ({ default: m.SearchResultsSection })));
+const TagCountdownTimer = lazy(() => import('../components/store/TagCountdownTimer').then(m => ({ default: m.TagCountdownTimer })));
 // Dynamic storefront renderer for Page Builder layouts
 const StoreFrontRenderer = lazy(() => import('../components/store/StoreFrontRenderer').then(m => ({ default: m.StoreFrontRenderer })));
 
@@ -532,20 +533,32 @@ const StoreHome: React.FC<StoreHomeProps> = ({
               return (
                 <Suspense key={tag.id || tag.name} fallback={<ProductGridSkeleton count={10} />}>
                   <LazySection fallback={<ProductGridSkeleton count={10} />} rootMargin="0px 0px 300px" minHeight="400px">
-                    <ProductGridSection
-                      title={`#${tag.name}`}
-                      products={tagProducts}
-                      accentColor={colors[idx % colors.length] as 'purple' | 'orange' | 'blue' | 'green'}
-                      keyPrefix={`tag-${tag.name}`}
-                      maxProducts={10}
-                      reverseOrder={false}
-                      onProductClick={onProductClick}
-                      onBuyNow={handleBuyNow}
-                      onQuickView={setQuickViewProduct}
-                      onAddToCart={handleAddProductToCartFromCard}
-                      productCardStyle={websiteConfig?.productCardStyle}
-                      productSectionStyle={websiteConfig?.productSectionStyle}
-                    />
+                    <div>
+                      {tag.showCountdown && tag.expiresAt && new Date(tag.expiresAt).getTime() > Date.now() && (
+                        <div className="flex items-center justify-between mb-2 px-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs sm:text-sm font-semibold text-rose-500">Ends in</span>
+                            <Suspense fallback={<span className="text-xs text-gray-400">Loading...</span>}>
+                              <TagCountdownTimer expiresAt={tag.expiresAt} tagName={tag.name} />
+                            </Suspense>
+                          </div>
+                        </div>
+                      )}
+                      <ProductGridSection
+                        title={`#${tag.name}`}
+                        products={tagProducts}
+                        accentColor={colors[idx % colors.length] as 'purple' | 'orange' | 'blue' | 'green'}
+                        keyPrefix={`tag-${tag.name}`}
+                        maxProducts={10}
+                        reverseOrder={false}
+                        onProductClick={onProductClick}
+                        onBuyNow={handleBuyNow}
+                        onQuickView={setQuickViewProduct}
+                        onAddToCart={handleAddProductToCartFromCard}
+                        productCardStyle={websiteConfig?.productCardStyle}
+                        productSectionStyle={websiteConfig?.productSectionStyle}
+                      />
+                    </div>
                   </LazySection>
                 </Suspense>
               );

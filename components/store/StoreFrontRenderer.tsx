@@ -26,6 +26,7 @@ const ProductGridSection = lazy(() => import('./ProductGridSection').then(m => (
 const ShowcaseSection = lazy(() => import('./ShowcaseSection').then(m => ({ default: m.ShowcaseSection })));
 const BrandSection = lazy(() => import('./BrandSection').then(m => ({ default: m.BrandSection })));
 const TagsSection = lazy(() => import('./TagsSection').then(m => ({ default: m.TagsSection })));
+const TagCountdownTimer = lazy(() => import('./TagCountdownTimer').then(m => ({ default: m.TagCountdownTimer })));
 const LazySection = lazy(() => import('./LazySection').then(m => ({ default: m.LazySection })));
 const StoreFooter = lazy(() => import('./StoreFooter').then(m => ({ default: m.StoreFooter })));
 
@@ -511,25 +512,39 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
       case 'tags-products':
         const tagProducts = settings?.tagName ? getTagProducts(settings.tagName) : [];
         if (tagProducts.length === 0) return null;
+        const matchedTag = tags.find((t: any) => t.name?.toLowerCase() === settings?.tagName?.toLowerCase());
+        const tagHasCountdown = matchedTag?.showCountdown && matchedTag?.expiresAt && new Date(matchedTag.expiresAt).getTime() > Date.now();
         return (
           <section key={key} className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8">
             <Suspense fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />}>
               <LazySection fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />} rootMargin="0px 0px 300px" minHeight="400px">
-                <ProductGridSection
-                  title={settings?.title || `#${settings?.tagName}`}
-                  products={tagProducts}
-                  accentColor="purple"
-                  keyPrefix={`tag-${settings?.tagName}`}
-                  maxProducts={settings?.productsToShow || 8}
-                  reverseOrder={false}
-                  onProductClick={onProductClick}
-                  onBuyNow={handleBuyNowFallback}
-                  onQuickView={handleQuickViewFallback}
-                  onAddToCart={handleAddToCartFallback}
-                  productCardStyle={websiteConfig?.productCardStyle}
-                  productSectionStyle={websiteConfig?.productSectionStyle}
-                  showSoldCount={websiteConfig?.showProductSoldCount}
-                />
+                <div>
+                  {tagHasCountdown && (
+                    <div className="flex items-center justify-between mb-2 px-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs sm:text-sm font-semibold text-rose-500">Ends in</span>
+                        <Suspense fallback={<span className="text-xs text-gray-400">Loading...</span>}>
+                          <TagCountdownTimer expiresAt={matchedTag.expiresAt} tagName={matchedTag.name} />
+                        </Suspense>
+                      </div>
+                    </div>
+                  )}
+                  <ProductGridSection
+                    title={settings?.title || `#${settings?.tagName}`}
+                    products={tagProducts}
+                    accentColor="purple"
+                    keyPrefix={`tag-${settings?.tagName}`}
+                    maxProducts={settings?.productsToShow || 8}
+                    reverseOrder={false}
+                    onProductClick={onProductClick}
+                    onBuyNow={handleBuyNowFallback}
+                    onQuickView={handleQuickViewFallback}
+                    onAddToCart={handleAddToCartFallback}
+                    productCardStyle={websiteConfig?.productCardStyle}
+                    productSectionStyle={websiteConfig?.productSectionStyle}
+                    showSoldCount={websiteConfig?.showProductSoldCount}
+                  />
+                </div>
               </LazySection>
             </Suspense>
           </section>

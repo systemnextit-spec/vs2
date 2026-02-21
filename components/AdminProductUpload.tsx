@@ -55,9 +55,49 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
     status: 'Active'
   });
 
+  // Multi-select arrays for catalog (stored internally as arrays, joined on submit)
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>([]);
+  const [selectedChildCategories, setSelectedChildCategories] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
   const [autoSlug, setAutoSlug] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Filtered subcategories based on selected categories
+  const filteredSubCategories = subCategories.filter(sub => {
+    return selectedCategories.some(catName => {
+      const cat = categories.find(c => c.name === catName);
+      return cat && sub.categoryId === cat.id;
+    });
+  });
+
+  // Filtered child categories based on selected subcategories
+  const filteredChildCategories = childCategories.filter(child => {
+    return selectedSubCategories.some(subName => {
+      const sub = subCategories.find(s => s.name === subName);
+      return sub && child.subCategoryId === sub.id;
+    });
+  });
+
+  // Remove category chip (cascade sub/child)
+  const removeCategory = (catName: string) => {
+    setSelectedCategories(prev => prev.filter(c => c !== catName));
+    const cat = categories.find(c => c.name === catName);
+    if (cat) {
+      const orphanedSubs = subCategories.filter(s => s.categoryId === cat.id).map(s => s.name);
+      setSelectedSubCategories(prev => prev.filter(s => !orphanedSubs.includes(s)));
+      setSelectedChildCategories([]);
+    }
+  };
+
+  // Remove sub-category chip (cascade child)
+  const removeSubCategory = (subName: string) => {
+    setSelectedSubCategories(prev => prev.filter(s => s !== subName));
+    setSelectedChildCategories([]);
+  };
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [videoLink, setVideoLink] = useState('');
   const [shortDescription, setShortDescription] = useState('');
@@ -149,6 +189,12 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
   useEffect(() => {
     if (editingProduct) {
       setFormData(editingProduct);
+      // Sync multi-select arrays from editingProduct strings
+      setSelectedCategories(editingProduct.category ? editingProduct.category.split(', ').filter(Boolean) : []);
+      setSelectedSubCategories(editingProduct.subCategory ? editingProduct.subCategory.split(', ').filter(Boolean) : []);
+      setSelectedChildCategories(editingProduct.childCategory ? editingProduct.childCategory.split(', ').filter(Boolean) : []);
+      setSelectedBrands(editingProduct.brand ? editingProduct.brand.split(', ').filter(Boolean) : []);
+      setSelectedTags(editingProduct.tags || []);
       setAutoSlug(false);
     }
   }, [editingProduct]);
@@ -222,7 +268,16 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
       toast.error('Item name is required');
       return;
     }
-    onSubmit(formData as Product);
+    // Join multi-select arrays into comma-separated strings
+    const submitData = {
+      ...formData,
+      category: selectedCategories.join(', '),
+      subCategory: selectedSubCategories.join(', '),
+      childCategory: selectedChildCategories.join(', '),
+      brand: selectedBrands.join(', '),
+      tags: selectedTags,
+    };
+    onSubmit(submitData as Product);
   };
 
   return (
@@ -236,7 +291,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
         {/* Mobile Action Buttons - Fixed at Bottom */}
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 flex gap-2 z-50">
           <button
-            onClick={() => onSaveDraft(formData)}
+            onClick={() => onSaveDraft({...formData, category: selectedCategories.join(', '), subCategory: selectedSubCategories.join(', '), childCategory: selectedChildCategories.join(', '), brand: selectedBrands.join(', '), tags: selectedTags})}
             className="flex-1 bg-white border border-black rounded-lg h-10 flex items-center justify-center gap-1 text-zinc-950 text-sm font-semibold hover:bg-zinc-50 transition"
           >
             <FileText size={16} /> Draft
@@ -674,49 +729,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
               </button>
             </section>
 
-            {/* Brand */}
-            <section className="bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-hidden">
-              <div className="flex justify-between items-center gap-3">
-                <div className="space-y-1 min-w-0 flex-1">
-                  <h2 className="text-black text-lg sm:text-xl font-medium">Brand</h2>
-                  <p className="text-neutral-400 text-[10px] sm:text-xs font-normal">Add brand details here.</p>
-                </div>
-                <div className="w-8 h-8 flex items-center justify-center bg-stone-50 rounded-lg flex-shrink-0">
-                  <Minus size={16} />
-                </div>
-              </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 sm:gap-3">
-                 <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-2">
-                        <label className="text-black text-sm sm:text-base font-normal block">Brand Name</label>
-                        <select
-                          value={formData.brand}
-                          onChange={(e) => setFormData({...formData, brand: e.target.value})}
-                          className="w-full h-10 px-3 sm:px-4 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-sm appearance-none"
-                        >
-                          <option value="">Select Brand</option>
-                          {brands.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
-                        </select>
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-black text-sm sm:text-base font-normal block">Model Name</label>
-                        <input
-                          type="text"
-                          placeholder="S25 Ultra"
-                          className="w-full h-10 px-3 sm:px-4 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-sm"
-                        />
-                    </div>
-                 </div>
-                 <button className="w-full sm:w-10 h-10 bg-red-50 text-red-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Trash2 size={18} />
-                 </button>
-              </div>
-
-              <button className="bg-zinc-100 rounded-lg h-10 px-4 flex items-center gap-2 text-black text-xs sm:text-sm font-semibold w-full sm:w-auto justify-center sm:justify-start">
-                <Plus size={16} /> Create a new Brand
-              </button>
-            </section>
 
             {/* Product Details */}
             <section className="bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-hidden">
@@ -939,7 +952,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
             {/* Action Buttons - Desktop Only */}
             <div className="flex gap-2 h-10">
               <button
-                onClick={() => onSaveDraft(formData)}
+                onClick={() => onSaveDraft({...formData, category: selectedCategories.join(', '), subCategory: selectedSubCategories.join(', '), childCategory: selectedChildCategories.join(', '), brand: selectedBrands.join(', '), tags: selectedTags})}
                 className="flex-1 bg-white border border-black rounded-lg flex items-center justify-center gap-1 text-zinc-950 text-sm font-semibold hover:bg-zinc-50 transition"
               >
                 <FileText size={18} /> Draft
@@ -988,53 +1001,159 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
                </div>
             </div>
 
-            {/* Catalog */}
-            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-6 overflow-hidden">
+            {/* Catalog - Multi-Select with Chips */}
+            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-5 overflow-hidden">
                <h2 className="text-black text-xl font-medium">Catalog</h2>
+
+               {/* Selected Chips Display */}
+               {(selectedCategories.length > 0 || selectedSubCategories.length > 0 || selectedChildCategories.length > 0 || selectedBrands.length > 0) && (
+                 <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                   <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2">Selected</p>
+                   <div className="flex flex-wrap gap-1.5">
+                     {selectedCategories.map(c => (
+                       <span key={`cat-${c}`} className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                         <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>{c}
+                         <button type="button" onClick={() => removeCategory(c)} className="hover:text-blue-900 ml-0.5"><X size={12} /></button>
+                       </span>
+                     ))}
+                     {selectedSubCategories.map(s => (
+                       <span key={`sub-${s}`} className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+                         <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>{s}
+                         <button type="button" onClick={() => removeSubCategory(s)} className="hover:text-emerald-900 ml-0.5"><X size={12} /></button>
+                       </span>
+                     ))}
+                     {selectedChildCategories.map(c => (
+                       <span key={`child-${c}`} className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                         <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>{c}
+                         <button type="button" onClick={() => setSelectedChildCategories(prev => prev.filter(x => x !== c))} className="hover:text-purple-900 ml-0.5"><X size={12} /></button>
+                       </span>
+                     ))}
+                     {selectedBrands.map(b => (
+                       <span key={`brand-${b}`} className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
+                         <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>{b}
+                         <button type="button" onClick={() => setSelectedBrands(prev => prev.filter(x => x !== b))} className="hover:text-amber-900 ml-0.5"><X size={12} /></button>
+                       </span>
+                     ))}
+                   </div>
+                 </div>
+               )}
+
                <div className="space-y-4">
+                  {/* Category Multi-Select */}
                   <div className="space-y-2">
                     <label className="text-black text-xs font-normal">Select Category<span className="text-red-700">*</span></label>
                     <div className="relative">
                       <select
-                        value={formData.category}
-                        onChange={(e) => setFormData({...formData, category: e.target.value})}
+                        value=""
+                        onChange={(e) => { const v = e.target.value; if (v && !selectedCategories.includes(v)) setSelectedCategories(prev => [...prev, v]); }}
                         className="w-full h-10 px-4 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
                       >
                         <option value="">Select Category</option>
-                        {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                        {categories.filter(c => !selectedCategories.includes(c.name)).map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
                     </div>
                   </div>
-                  <button className="bg-zinc-100 rounded-lg h-10 px-4 flex items-center gap-2 text-zinc-950 text-sm font-semibold hover:bg-zinc-200 transition">
-                    <Plus size={16} /> Add New Category
-                  </button>
+
+                  {/* Sub Category Multi-Select */}
+                  {selectedCategories.length > 0 && (
+                    <div className="space-y-2">
+                      <label className="text-black text-xs font-normal">Select Sub Category</label>
+                      <div className="relative">
+                        <select
+                          value=""
+                          onChange={(e) => { const v = e.target.value; if (v && !selectedSubCategories.includes(v)) setSelectedSubCategories(prev => [...prev, v]); }}
+                          className="w-full h-10 px-4 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
+                        >
+                          <option value="">Select Sub Category</option>
+                          {filteredSubCategories.filter(s => !selectedSubCategories.includes(s.name)).map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Child Category Multi-Select */}
+                  {selectedSubCategories.length > 0 && (
+                    <div className="space-y-2">
+                      <label className="text-black text-xs font-normal">Select Child Category</label>
+                      <div className="relative">
+                        <select
+                          value=""
+                          onChange={(e) => { const v = e.target.value; if (v && !selectedChildCategories.includes(v)) setSelectedChildCategories(prev => [...prev, v]); }}
+                          className="w-full h-10 px-4 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
+                        >
+                          <option value="">Select Child Category</option>
+                          {filteredChildCategories.filter(c => !selectedChildCategories.includes(c.name)).map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Brand Multi-Select */}
+                  <div className="space-y-2">
+                    <label className="text-black text-xs font-normal">Select Brand</label>
+                    <div className="relative">
+                      <select
+                        value=""
+                        onChange={(e) => { const v = e.target.value; if (v && !selectedBrands.includes(v)) setSelectedBrands(prev => [...prev, v]); }}
+                        className="w-full h-10 px-4 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
+                      >
+                        <option value="">Select Brand</option>
+                        {brands.filter(b => !selectedBrands.includes(b.name)).map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
+                    </div>
+                  </div>
                </div>
             </div>
 
-            {/* Tag & Deep Search */}
-            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-6 overflow-hidden">
-               <h2 className="text-black text-xl font-medium">Tag & Deep Search</h2>
+            {/* Product Tags - Only show as chips when selected */}
+            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-5 overflow-hidden">
+               <h2 className="text-black text-xl font-medium">Product Tags</h2>
+
+               {/* Selected tag chips */}
+               {selectedTags.length > 0 && (
+                 <div className="flex flex-wrap gap-1.5">
+                   {selectedTags.map(tag => (
+                     <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-full text-xs font-medium shadow-sm">
+                       {tag}
+                       <button type="button" onClick={() => setSelectedTags(prev => prev.filter(t => t !== tag))} className="hover:text-blue-100 ml-0.5"><X size={12} /></button>
+                     </span>
+                   ))}
+                 </div>
+               )}
+
                <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-black text-xs font-normal">Select Tag</label>
+                    <label className="text-black text-xs font-normal">Add custom tag...</label>
                     <div className="relative">
                       <select
+                        value=""
+                        onChange={(e) => { const v = e.target.value; if (v && !selectedTags.includes(v)) setSelectedTags(prev => [...prev, v]); }}
                         className="w-full h-10 px-4 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
                       >
-                        <option value="">Select Tag</option>
-                        {tags.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
+                        <option value="">Add custom tag...</option>
+                        {tags.filter(t => !selectedTags.includes(t.name)).map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <input
-                      type="text"
-                      placeholder="Deep Search. ex.New Mobile, Popular product"
-                      className="w-full h-10 px-4 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs"
-                    />
-                  </div>
+               </div>
+            </div>
+
+            {/* Deep Search */}
+            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-5 overflow-hidden">
+               <h2 className="text-black text-xl font-medium">Deep Search</h2>
+               <div className="space-y-2">
+                 <input
+                   type="text"
+                   placeholder="Keywords comma দিয়ে আলাদা করুন (ex: mobile, phone, smartphone)"
+                   value={formData.deepSearch || ''}
+                   onChange={(e) => setFormData({...formData, deepSearch: e.target.value})}
+                   className="w-full h-10 px-4 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs"
+                 />
                </div>
             </div>
 
@@ -1060,52 +1179,149 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
 
         {/* Mobile Sidebar Sections - Below main content */}
         <div className="lg:hidden space-y-4">
-          {/* Catalog */}
+          {/* Catalog - Multi-Select with Chips */}
           <div className="bg-white rounded-lg shadow-sm p-4 space-y-4 overflow-hidden">
              <h2 className="text-black text-lg font-medium">Catalog</h2>
+
+             {/* Selected Chips Display */}
+             {(selectedCategories.length > 0 || selectedSubCategories.length > 0 || selectedChildCategories.length > 0 || selectedBrands.length > 0) && (
+               <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                 <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2">Selected</p>
+                 <div className="flex flex-wrap gap-1.5">
+                   {selectedCategories.map(c => (
+                     <span key={`cat-${c}`} className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[11px] font-medium">
+                       <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>{c}
+                       <button type="button" onClick={() => removeCategory(c)} className="hover:text-blue-900 ml-0.5"><X size={10} /></button>
+                     </span>
+                   ))}
+                   {selectedSubCategories.map(s => (
+                     <span key={`sub-${s}`} className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[11px] font-medium">
+                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>{s}
+                       <button type="button" onClick={() => removeSubCategory(s)} className="hover:text-emerald-900 ml-0.5"><X size={10} /></button>
+                     </span>
+                   ))}
+                   {selectedChildCategories.map(c => (
+                     <span key={`child-${c}`} className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-[11px] font-medium">
+                       <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>{c}
+                       <button type="button" onClick={() => setSelectedChildCategories(prev => prev.filter(x => x !== c))} className="hover:text-purple-900 ml-0.5"><X size={10} /></button>
+                     </span>
+                   ))}
+                   {selectedBrands.map(b => (
+                     <span key={`brand-${b}`} className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[11px] font-medium">
+                       <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>{b}
+                       <button type="button" onClick={() => setSelectedBrands(prev => prev.filter(x => x !== b))} className="hover:text-amber-900 ml-0.5"><X size={10} /></button>
+                     </span>
+                   ))}
+                 </div>
+               </div>
+             )}
+
              <div className="space-y-3">
+                {/* Category */}
                 <div className="space-y-2">
                   <label className="text-black text-xs font-normal">Select Category<span className="text-red-700">*</span></label>
                   <div className="relative">
                     <select
-                      value={formData.category}
-                      onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      value=""
+                      onChange={(e) => { const v = e.target.value; if (v && !selectedCategories.includes(v)) setSelectedCategories(prev => [...prev, v]); }}
                       className="w-full h-10 px-3 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
                     >
                       <option value="">Select Category</option>
-                      {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                      {categories.filter(c => !selectedCategories.includes(c.name)).map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
                   </div>
                 </div>
-                <button className="bg-zinc-100 rounded-lg h-10 px-4 flex items-center gap-2 text-zinc-950 text-sm font-semibold hover:bg-zinc-200 transition w-full justify-center">
-                  <Plus size={16} /> Add New Category
-                </button>
+                {/* Sub Category */}
+                {selectedCategories.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-black text-xs font-normal">Select Sub Category</label>
+                    <div className="relative">
+                      <select
+                        value=""
+                        onChange={(e) => { const v = e.target.value; if (v && !selectedSubCategories.includes(v)) setSelectedSubCategories(prev => [...prev, v]); }}
+                        className="w-full h-10 px-3 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
+                      >
+                        <option value="">Select Sub Category</option>
+                        {filteredSubCategories.filter(s => !selectedSubCategories.includes(s.name)).map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
+                    </div>
+                  </div>
+                )}
+                {/* Child Category */}
+                {selectedSubCategories.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-black text-xs font-normal">Select Child Category</label>
+                    <div className="relative">
+                      <select
+                        value=""
+                        onChange={(e) => { const v = e.target.value; if (v && !selectedChildCategories.includes(v)) setSelectedChildCategories(prev => [...prev, v]); }}
+                        className="w-full h-10 px-3 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
+                      >
+                        <option value="">Select Child Category</option>
+                        {filteredChildCategories.filter(c => !selectedChildCategories.includes(c.name)).map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
+                    </div>
+                  </div>
+                )}
+                {/* Brand */}
+                <div className="space-y-2">
+                  <label className="text-black text-xs font-normal">Select Brand</label>
+                  <div className="relative">
+                    <select
+                      value=""
+                      onChange={(e) => { const v = e.target.value; if (v && !selectedBrands.includes(v)) setSelectedBrands(prev => [...prev, v]); }}
+                      className="w-full h-10 px-3 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
+                    >
+                      <option value="">Select Brand</option>
+                      {brands.filter(b => !selectedBrands.includes(b.name)).map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
+                  </div>
+                </div>
              </div>
           </div>
 
-          {/* Tag & Deep Search */}
+          {/* Product Tags */}
           <div className="bg-white rounded-lg shadow-sm p-4 space-y-4 overflow-hidden">
-             <h2 className="text-black text-lg font-medium">Tag & Deep Search</h2>
+             <h2 className="text-black text-lg font-medium">Product Tags</h2>
+             {selectedTags.length > 0 && (
+               <div className="flex flex-wrap gap-1.5">
+                 {selectedTags.map(tag => (
+                   <span key={tag} className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-full text-[11px] font-medium shadow-sm">
+                     {tag}
+                     <button type="button" onClick={() => setSelectedTags(prev => prev.filter(t => t !== tag))} className="hover:text-blue-100 ml-0.5"><X size={10} /></button>
+                   </span>
+                 ))}
+               </div>
+             )}
              <div className="space-y-3">
-                <div className="space-y-2">
-                  <label className="text-black text-xs font-normal">Select Tag</label>
-                  <div className="relative">
-                    <select
-                      className="w-full h-10 px-3 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
-                    >
-                      <option value="">Select Tag</option>
-                      {tags.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
-                  </div>
+                <div className="relative">
+                  <select
+                    value=""
+                    onChange={(e) => { const v = e.target.value; if (v && !selectedTags.includes(v)) setSelectedTags(prev => [...prev, v]); }}
+                    className="w-full h-10 px-3 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs appearance-none"
+                  >
+                    <option value="">Add custom tag...</option>
+                    {tags.filter(t => !selectedTags.includes(t.name)).map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={14} />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Deep Search. ex.New Mobile"
-                  className="w-full h-10 px-3 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs"
-                />
              </div>
+          </div>
+
+          {/* Deep Search */}
+          <div className="bg-white rounded-lg shadow-sm p-4 space-y-3 overflow-hidden">
+             <h2 className="text-black text-lg font-medium">Deep Search</h2>
+             <input
+               type="text"
+               placeholder="Keywords comma দিয়ে আলাদা করুন (ex: mobile, phone)"
+               value={formData.deepSearch || ''}
+               onChange={(e) => setFormData({...formData, deepSearch: e.target.value})}
+               className="w-full h-10 px-3 bg-stone-50 rounded-lg border-none focus:ring-1 focus:ring-sky-400 outline-none text-xs"
+             />
           </div>
 
           {/* Condition */}

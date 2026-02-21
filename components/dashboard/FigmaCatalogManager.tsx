@@ -328,7 +328,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
     if (item) {
       setFormData({ ...item });
     } else {
-      const defaults: any = { name: '', status: 'Active', serial: 0, durationDays: 0 };
+      const defaults: any = { name: '', status: 'Active', serial: 0, durationDays: 0, showCountdown: false };
       if (view === 'catalog_categories') defaults.icon = '';
       if (view === 'catalog_subcategories') defaults.categoryId = categories[0]?.id || '';
       if (view === 'catalog_childcategories') defaults.subCategoryId = subCategories[0]?.id || '';
@@ -951,6 +951,20 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                       Expires: {new Date(Date.now() + (formData.durationDays || 0) * 86400000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </p>
                   )}
+                  
+                  {/* Show Countdown Toggle */}
+                  <div className="flex items-center justify-between mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Show Countdown Timer</label>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Display a countdown timer on the store front for this tag</p>
+                    </div>
+                    <button
+                      type="button"
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.showCountdown ? 'bg-cyan-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+                    >
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${formData.showCountdown ? 'translate-x-6' : 'translate-x-1'}`} />
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div>
