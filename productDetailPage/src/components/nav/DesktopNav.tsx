@@ -6,7 +6,7 @@ export default function DesktopNav() {
 
                 {/* Logo */}
                 <a href="/" className="flex-shrink-0">
-                    <img src="/images/logo.png" alt="Logo" width={222} height={48} />
+                    <img src="https://details-snit.vercel.app/images/logo.png" alt="Logo" width={222} height={48} />
                 </a>
 
                 {/* Middle Section */}
@@ -14,13 +14,13 @@ export default function DesktopNav() {
 
                     {/* Camera Icon */}
                     <div className="bg-[#F1F5FF] p-2 rounded-lg flex-shrink-0">
-                        <img src="/images/cameraIcon.svg" alt="Camera" width={32} height={32} />
+                        <img src="https://details-snit.vercel.app/images/cameraIcon.svg" alt="Camera" width={32} height={32} />
                     </div>
 
                     {/* Search Box */}
                     <div className="flex items-center gap-2 bg-[#F1F5FF] rounded-xl pl-3 py-2 relative ml-6 w-full max-w-[671px] min-w-0">
 
-                        <img src="/images/mic-02.svg" alt="Mic" width={32} height={32} className="flex-shrink-0" />
+                        <img src="https://details-snit.vercel.app/images/mic-02.svg" alt="Mic" width={32} height={32} className="flex-shrink-0" />
 
                         <input
                             className="flex-1 bg-transparent outline-none text-[16px] font-normal placeholder-[#6A717F] min-w-0"
@@ -43,11 +43,11 @@ export default function DesktopNav() {
 
                 {/* Right Section */}
                 <div className="flex items-center gap-8 flex-shrink-0">
-                    <img src="/images/translate.svg" alt="Translate" width={32} height={32} className="cursor-pointer" />
-                    <img src="/images/shopping-cart-02.svg" alt="Cart" width={32} height={32} className="cursor-pointer" />
+                    <img src="https://details-snit.vercel.app/images/translate.svg" alt="Translate" width={32} height={32} className="cursor-pointer" />
+                    <img src="https://details-snit.vercel.app/images/shopping-cart-02.svg" alt="Cart" width={32} height={32} className="cursor-pointer" />
 
                     <button className="flex items-center gap-2">
-                        <img src="/images/user-circle.svg" alt="User" width={32} height={32} />
+                        <img src="https://details-snit.vercel.app/images/user-circle.svg" alt="User" width={32} height={32} />
                         <span className="text-[16px] font-medium text-black">
                             Sign in
                         </span>
