@@ -62,7 +62,7 @@ export default function ProductDetailsPage() {
             </main>
 
             {/* sidebar */}
-            <main className="max-w-[1720px] mx-auto px-4 lg:px-8 py-4 lg:py-8 pb-4 lg:pb-8">
+            <main className="max-w-[1720px] mx-auto px-4 lg:px-8 py-4 lg:py-8 pb-4 lg:pb-8 text-gray-900">
                 <div className="lg:flex lg:gap-6">
                     <div className="w-full lg:flex-1 min-w-0">
                         <Description />
