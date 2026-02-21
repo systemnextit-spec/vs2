@@ -20,6 +20,8 @@ import type { Product, WebsiteConfig } from '../../types';
 import { noCacheFetchOptions } from '../../utils/fetchHelpers';
 import { onDataRefresh } from '../../services/DataService';
 
+
+
 // Lazy loaded sections
 const FlashSalesSection = lazy(() => import('./FlashSalesSection').then(m => ({ default: m.FlashSalesSection })));
 const ProductGridSection = lazy(() => import('./ProductGridSection').then(m => ({ default: m.ProductGridSection })));
@@ -518,19 +520,16 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
           <section key={key} className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8">
             <Suspense fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />}>
               <LazySection fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />} rootMargin="0px 0px 300px" minHeight="400px">
-                <div>
-                  {tagHasCountdown && (
-                    <div className="flex items-center justify-between mb-2 px-1">
+                <ProductGridSection
+                    title={settings?.title || `#${settings?.tagName}`}
+                    titleExtra={tagHasCountdown ? (
                       <div className="flex items-center gap-2">
                         <span className="text-xs sm:text-sm font-semibold text-rose-500">Ends in</span>
-                        <Suspense fallback={<span className="text-xs text-gray-400">Loading...</span>}>
+                        <Suspense fallback={<span className="text-xs text-gray-400">...</span>}>
                           <TagCountdownTimer expiresAt={matchedTag.expiresAt} tagName={matchedTag.name} />
                         </Suspense>
                       </div>
-                    </div>
-                  )}
-                  <ProductGridSection
-                    title={settings?.title || `#${settings?.tagName}`}
+                    ) : undefined}
                     products={tagProducts}
                     accentColor="purple"
                     keyPrefix={`tag-${settings?.tagName}`}
@@ -544,7 +543,6 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
                     productSectionStyle={websiteConfig?.productSectionStyle}
                     showSoldCount={websiteConfig?.showProductSoldCount}
                   />
-                </div>
               </LazySection>
             </Suspense>
           </section>

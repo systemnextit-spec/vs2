@@ -312,7 +312,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
 
   // === MAIN RENDER ===
   return (
-    <div className="min-h-screen font-sans text-slate-900" style={{ background: 'linear-gradient(to bottom, #f0f4f8, #e8ecf1)' }}>
+    <div className="min-h-screen font-sans text-slate-900" style={{ background: '#ffffff' }}>
       <StoreHeader 
         onTrackOrder={() => setIsTrackOrderOpen(true)} 
         productCatalog={activeProducts}
@@ -533,19 +533,16 @@ const StoreHome: React.FC<StoreHomeProps> = ({
               return (
                 <Suspense key={tag.id || tag.name} fallback={<ProductGridSkeleton count={10} />}>
                   <LazySection fallback={<ProductGridSkeleton count={10} />} rootMargin="0px 0px 300px" minHeight="400px">
-                    <div>
-                      {tag.showCountdown && tag.expiresAt && new Date(tag.expiresAt).getTime() > Date.now() && (
-                        <div className="flex items-center justify-between mb-2 px-1">
+                    <ProductGridSection
+                        title={`#${tag.name}`}
+                        titleExtra={tag.showCountdown && tag.expiresAt && new Date(tag.expiresAt).getTime() > Date.now() ? (
                           <div className="flex items-center gap-2">
                             <span className="text-xs sm:text-sm font-semibold text-rose-500">Ends in</span>
-                            <Suspense fallback={<span className="text-xs text-gray-400">Loading...</span>}>
+                            <Suspense fallback={<span className="text-xs text-gray-400">...</span>}>
                               <TagCountdownTimer expiresAt={tag.expiresAt} tagName={tag.name} />
                             </Suspense>
                           </div>
-                        </div>
-                      )}
-                      <ProductGridSection
-                        title={`#${tag.name}`}
+                        ) : undefined}
                         products={tagProducts}
                         accentColor={colors[idx % colors.length] as 'purple' | 'orange' | 'blue' | 'green'}
                         keyPrefix={`tag-${tag.name}`}
@@ -558,7 +555,6 @@ const StoreHome: React.FC<StoreHomeProps> = ({
                         productCardStyle={websiteConfig?.productCardStyle}
                         productSectionStyle={websiteConfig?.productSectionStyle}
                       />
-                    </div>
                   </LazySection>
                 </Suspense>
               );

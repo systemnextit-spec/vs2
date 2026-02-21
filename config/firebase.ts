@@ -3,7 +3,7 @@ import { getAuth, GoogleAuthProvider, Auth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || process.env.VITE_FIREBASE_API_KEY || "AIzaSyAKHP3mQVTS4bC89758sRxYGCZcnx7jdPY",
-  authDomain: "hello-94480.firebaseapp.com",
+  authDomain: "allinbangla.com",
   projectId: "hello-94480",
   storageBucket: "hello-94480.firebasestorage.app",
   messagingSenderId: "127107907906",
