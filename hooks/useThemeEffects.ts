@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import type { ThemeConfig, WebsiteConfig } from '../types';
 import { DataService, isKeyFromSocket, clearSocketFlag } from '../services/DataService';
 import { hexToRgb } from '../utils/appHelpers';
+import { normalizeImageUrl } from '../utils/imageUrlHelper';
 
 interface UseThemeEffectsOptions {
   themeConfig: ThemeConfig | null;
@@ -133,13 +134,13 @@ export function useThemeEffects({
         const link = document.createElement('link');
         link.rel = 'icon';
         link.type = websiteConfig.favicon.startsWith('data:image/png') || websiteConfig.favicon.includes('.png') ? 'image/png' : 'image/x-icon';
-        link.href = websiteConfig.favicon;
+        link.href = normalizeImageUrl(websiteConfig.favicon);
         document.head.appendChild(link);
         
         // Also add apple-touch-icon for mobile
         const appleLink = document.createElement('link');
         appleLink.rel = 'apple-touch-icon';
-        appleLink.href = websiteConfig.favicon;
+        appleLink.href = normalizeImageUrl(websiteConfig.favicon);
         document.head.appendChild(appleLink);
       }
     }

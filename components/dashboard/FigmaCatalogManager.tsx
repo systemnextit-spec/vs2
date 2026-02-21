@@ -964,6 +964,8 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                     >
                       <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${formData.showCountdown ? 'translate-x-6' : 'translate-x-1'}`} />
                     </button>
+                    
+
                   </div>
                 </div>
               ) : (

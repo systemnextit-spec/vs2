@@ -9,6 +9,7 @@ import Description from "./details/Description";
 import Footer from "./Footer";
 import MobileCategories from "./details/Mobilecategories";
 import React, { useState } from "react";
+import { normalizeImageUrl } from "@/utils/imageUrlHelper";
 
 export interface ModernProductDetailProps {
     product: {
@@ -111,12 +112,12 @@ export default function ProductDetailsPage({
 }: ModernProductDetailProps) {
     const [quantity, setQuantity] = useState(1);
 
-    // Build images array from product
-    const images = product?.galleryImages?.length
+    // Build images array from product (normalize for correct domain)
+    const images = (product?.galleryImages?.length
         ? product.galleryImages
         : product?.image
         ? [product.image]
-        : [];
+        : []).map(img => normalizeImageUrl(img));
 
     // Map product data for child components
     const mappedProduct = {
@@ -146,7 +147,7 @@ export default function ProductDetailsPage({
         shortDescription: product?.shortDescription || "",
     };
 
-    const logoUrl = logo || websiteConfig?.headerLogo || websiteConfig?.footerLogo || "";
+    const logoUrl = normalizeImageUrl(logo || websiteConfig?.headerLogo || websiteConfig?.footerLogo || "");
     const announcementText = websiteConfig?.adminNoticeText || websiteConfig?.headerSliderText || "";
     console.log('[AnnouncedBar] websiteConfig keys:', Object.keys(websiteConfig || {}));
     console.log('[AnnouncedBar] adminNoticeText:', websiteConfig?.adminNoticeText);
@@ -163,7 +164,7 @@ export default function ProductDetailsPage({
         oldPrice: p.originalPrice,
         rating: p.rating,
         sold: p.totalSold,
-        image: p.image,
+        image: normalizeImageUrl(p.image),
         isSale: !!(p.discount || (p.originalPrice && p.originalPrice > p.price)),
     }));
 
@@ -173,13 +174,13 @@ export default function ProductDetailsPage({
         description: p.description || "",
         price: p.price,
         oldPrice: p.originalPrice,
-        image: p.image,
+        image: normalizeImageUrl(p.image),
     }));
 
     const mappedCategories = categories.map((c) => ({
         id: String(c.id || ""),
         name: c.name,
-        image: c.image || "",
+        image: normalizeImageUrl(c.image || ""),
     }));
 
     return (
@@ -249,7 +250,7 @@ export default function ProductDetailsPage({
 
             {/* Footer */}
             <Footer
-                logo={websiteConfig?.footerLogo || logoUrl}
+                logo={normalizeImageUrl(websiteConfig?.footerLogo || logoUrl)}
                 websiteName={websiteConfig?.websiteName}
                 addresses={websiteConfig?.addresses}
                 footerQuickLinks={websiteConfig?.footerQuickLinks}

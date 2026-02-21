@@ -578,24 +578,27 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
       .substring(0, 100);
 
     return {
-      id: newId,
-      name: productName || 'Unnamed Product',
-      price: parseFloat(row['Price'] || row['*Price'] || row['Sale Price'] || row['*Sale Price'] || row['Special Price'] || row['*Special Price'] || '0') || 0,
-      originalPrice: parseFloat(row['Original Price'] || row['Regular Price'] || row['Price'] || row['*Price'] || '0') || 0,
-      costPrice: 0,
-      image: galleryImages[0] || '',
-      galleryImages: galleryImages,
-      description: fullDescription,
-      category: row['Category'] || row['*Category'] || '',
-      subCategory: row['Sub Category'] || '',
-      childCategory: row['Child Category'] || '',
-      brand: row['Brand'] || row['*Brand'] || row['Brand Name'] || '',
-      sku: row['SellerSKU'] || row['*SellerSKU'] || row['Seller SKU'] || row['*Seller SKU'] || row['SKU'] || row['Product ID'] || `SKU-${newId}`,
-      stock: parseInt(row['Stock'] || row['Quantity'] || row['*Quantity'] || row['Available Stock'] || '0') || 0,
-      status: 'Active' as const,
-      tags: [],
-      slug: slug || `product-${newId}`,
-    };
+  id: newId,
+  name: productName || 'Unnamed Product',
+  price: parseFloat(row['Price'] || row['*Price'] || row['Sale Price'] || row['*Sale Price'] || row['Special Price'] || row['*Special Price'] || '0') || 0,
+  originalPrice: parseFloat(row['Original Price'] || row['Regular Price'] || row['Price'] || row['*Price'] || '0') || 0,
+  costPrice: 0,
+  image: galleryImages[0] || '',
+  galleryImages: galleryImages,
+  description: fullDescription,
+  category: row['Category'] || row['*Category'] || '',
+  subCategory: row['Sub Category'] || '',
+  childCategory: row['Child Category'] || '',
+  brand: row['Brand'] || row['*Brand'] || row['Brand Name'] || '',
+  sku: row['SellerSKU'] || row['*SellerSKU'] || row['Seller SKU'] || row['*Seller SKU'] || row['SKU'] || row['Product ID'] || `SKU-${newId}`,
+  stock: parseInt(row['Stock'] || row['Quantity'] || row['*Quantity'] || row['Available Stock'] || '0') || 0,
+  status: 'Active' as const,
+  tags: [],
+  slug: slug || `product-${newId}`,
+  title: '',
+  salePrice: undefined,
+
+};
   };
 
   // Parse standard CSV format product
@@ -608,24 +611,27 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     existingIds.add(newId);
     
     return {
-      id: newId,
-      name: row.name || row.Name || row.product_name || row['Product Name'] || row['*Product Name'] || 'Unnamed Product',
-      price: parseFloat(row.price || row.Price || row.salesPrice || row.sales_price || '0') || 0,
-      originalPrice: parseFloat(row.originalPrice || row.original_price || row.regularPrice || row.regular_price || '0') || 0,
-      costPrice: parseFloat(row.costPrice || row.cost_price || '0') || 0,
-      image: row.image || row.Image || row.mainImage || row.main_image || '',
-      galleryImages: (row.galleryImages || row.gallery_images || '').split(',').filter(Boolean).map((s: string) => s.trim()),
-      description: row.description || row.Description || '',
-      category: row.category || row.Category || '',
-      subCategory: row.subCategory || row.sub_category || '',
-      childCategory: row.childCategory || row.child_category || '',
-      brand: row.brand || row.Brand || '',
-      sku: row.sku || row.SKU || `SKU-${newId}`,
-      stock: parseInt(row.stock || row.Stock || row.quantity || row.Quantity || '0') || 0,
-      status: (row.status || row.Status || 'Active') as 'Active' | 'Draft',
-      tags: (row.tags || row.Tags || '').split(',').filter(Boolean).map((s: string) => s.trim()),
-      slug: row.slug || row.Slug || (row.name || row.Name || '').toLowerCase().replace(/\s+/g, '-'),
-    };
+  id: newId,
+  name: row.name || row.Name || row.product_name || row['Product Name'] || row['*Product Name'] || 'Unnamed Product',
+  price: parseFloat(row.price || row.Price || row.salesPrice || row.sales_price || '0') || 0,
+  originalPrice: parseFloat(row.originalPrice || row.original_price || row.regularPrice || row.regular_price || '0') || 0,
+  costPrice: parseFloat(row.costPrice || row.cost_price || '0') || 0,
+  image: row.image || row.Image || row.mainImage || row.main_image || '',
+  galleryImages: (row.galleryImages || row.gallery_images || '').split(',').filter(Boolean).map((s: string) => s.trim()),
+  description: row.description || row.Description || '',
+  category: row.category || row.Category || '',
+  subCategory: row.subCategory || row.sub_category || '',
+  childCategory: row.childCategory || row.child_category || '',
+  brand: row.brand || row.Brand || '',
+  sku: row.sku || row.SKU || `SKU-${newId}`,
+  stock: parseInt(row.stock || row.Stock || row.quantity || row.Quantity || '0') || 0,
+  status: (row.status || row.Status || 'Active') as 'Active' | 'Draft',
+  tags: (row.tags || row.Tags || '').split(',').filter(Boolean).map((s: string) => s.trim()),
+  slug: row.slug || row.Slug || (row.name || row.Name || '').toLowerCase().replace(/\s+/g, '-'),
+  title: '',
+  salePrice: undefined,
+
+};
   };
 
   // Process parsed data (common logic for CSV/TSV/XLSX)

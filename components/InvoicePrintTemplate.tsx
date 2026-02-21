@@ -1,4 +1,5 @@
 import React from 'react';
+import { normalizeImageUrl } from '../utils/imageUrlHelper';
 import { Order, Product, WebsiteConfig, ThemeConfig } from '../types';
 
 export interface InvoicePrintData {
@@ -299,7 +300,7 @@ export const generateInvoiceHTML = (data: InvoicePrintData): string => {
     <!-- Header -->
     <div class="header">
       <div class="shop-info">
-        ${shopLogo ? `<img src="${shopLogo}" alt="Logo" class="shop-logo" />` : ''}
+        ${shopLogo ? `<img src="${normalizeImageUrl(shopLogo)}" alt="Logo" class="shop-logo" />` : ''}
         <div class="shop-details">
           <div class="shop-name">${shopName}</div>
           ${shopWebsite ? `<div class="shop-contact">${shopWebsite}</div>` : ''}
