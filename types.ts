@@ -117,6 +117,7 @@ interface Variant {
 }
 
 export interface Product {
+  salePrice: any;
   totalSold?: number;
   sales?: number;
   id: number;
