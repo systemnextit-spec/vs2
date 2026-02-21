@@ -11,7 +11,7 @@ export default function Footer() {
                 <div className="hidden md:flex flex-row items-start justify-between gap-8">
 
                     <div className="flex flex-col gap-4 max-w-[220px]">
-                        <img src="/images/footerlogo.png" alt="Logo" width={169} height={0} />
+                        <img src="https://details-snit.vercel.app/images/footerlogo.png" alt="Logo" width={169} height={0} />
                         <p className="text-[13px] font-inter text-black text-sm leading-[1.7] mt-1">
                             we create possibilities
                             <br />
@@ -87,7 +87,7 @@ export default function Footer() {
                 {/* ── MOBILE layout (below md) ── */}
                 <div className="flex md:hidden flex-col items-center gap-4 pb-28">
                     {/* Logo */}
-                    <img src="/images/footerlogo.png" alt="Logo" width={140} height={40} />
+                    <img src="https://details-snit.vercel.app/images/footerlogo.png" alt="Logo" width={140} height={40} />
 
                     {/* Copyright */}
                     <p className="text-sm font-inter font-medium text-[#635C5C] text-center">
@@ -116,7 +116,7 @@ export default function Footer() {
                         </a>
                         {/* Globe / Website */}
                         <a href="#" aria-label="Website">
-                            <img src="/images/global.svg" alt="Globe" width={24} height={24} />
+                            <img src="https://details-snit.vercel.app/images/global.svg" alt="Globe" width={24} height={24} />
                         </a>
                     </div>
 
