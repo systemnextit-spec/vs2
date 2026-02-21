@@ -57,7 +57,8 @@ app.options('*', (req, res) => {
   res.setHeader('Access-Control-Max-Age', '86400');
   res.setHeader('Cache-Control', 'no-store'); // Prevent Cloudflare caching
   res.status(204).end();
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups'); // Allow Firebase popups
+  // COOP removed - was blocking Firebase popup auth window.closed detection
+  // res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
 });
 
 // Socket.IO setup

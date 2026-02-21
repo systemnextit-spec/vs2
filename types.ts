@@ -108,6 +108,14 @@ export interface ProductVariantGroup {
   options: ProductVariantOption[];
 }
 
+interface Variant {
+  color: string;
+  sizes: {
+    size: string;
+    stock?: number; // Optional, but good for inventory
+  }[];
+}
+
 export interface Product {
   totalSold?: number;
   sales?: number;
@@ -154,6 +162,7 @@ export interface Product {
   initialSoldCount?: number;
   productionStart?: string;
   expirationEnd?: string;
+  variants?: Variant[];
 }
 
 export interface Popup {

@@ -6,7 +6,7 @@ import { useCallback, Dispatch, SetStateAction } from 'react';
 import type { User, Tenant } from '../types';
 import { isAdminRole, getAuthErrorMessage } from '../utils/appHelpers';
 
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth, provider } from '../config/firebase';
 
 // Default tenant ID
@@ -246,8 +246,10 @@ export function useAuth({
         throw new Error('No user data received from Google');
       }
 
-      // Get the ID token from Firebase
-      const idToken = await user.getIdToken();
+      // Get the Google OAuth ID token (NOT the Firebase ID token)
+      // GoogleAuthProvider.credentialFromResult returns the Google OAuth credential
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const idToken = credential?.idToken || (await user.getIdToken());
       
       // Get tenant info
       const tenantIdToUse = activeTenantId || DEFAULT_TENANT_ID;

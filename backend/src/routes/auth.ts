@@ -341,12 +341,85 @@ authRouter.post('/google', async (req: Request, res: Response, next: NextFunctio
     const verifyResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
     
     if (!verifyResponse.ok) {
-      return res.status(401).json({ error: 'Invalid Google token', code: 'INVALID_TOKEN' });
-    }
-    if (!verifyResponse.ok) {
       const errorText = await verifyResponse.text();
       console.error('[Google Auth] Token verification failed:', verifyResponse.status, errorText);
-      return res.status(401).json({ error: 'Invalid Google token', code: 'INVALID_TOKEN', details: errorText });
+      
+      // If Google tokeninfo fails, try verifying as a Firebase ID token
+      // by calling Google's secure token verification endpoint
+      const firebaseVerify = await fetch(`https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key=AIzaSyAKHP3mQVTS4bC89758sRxYGCZcnx7jdPY`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken })
+      });
+      
+      if (!firebaseVerify.ok) {
+        return res.status(401).json({ error: 'Invalid Google token', code: 'INVALID_TOKEN', details: errorText });
+      }
+      
+      // Firebase token verified, extract user info
+      const firebaseData = await firebaseVerify.json();
+      const firebaseUser = firebaseData.users?.[0];
+      if (!firebaseUser || firebaseUser.email !== email) {
+        return res.status(401).json({ error: 'Email mismatch or invalid token', code: 'EMAIL_MISMATCH' });
+      }
+      
+      // Continue with registration/login using Firebase-verified data
+      let finalTenantId = tenantId;
+      if (!finalTenantId && tenantSubdomain) {
+        const tenant = await getTenantBySubdomain(tenantSubdomain);
+        if (tenant) {
+          finalTenantId = tenant._id?.toString() || tenant.id;
+        }
+      }
+      
+      let user = await User.findOne({ email: email.toLowerCase() });
+      if (user) {
+        user.lastLogin = new Date();
+        if (photoURL && !user.image) user.image = photoURL;
+        await user.save();
+      } else {
+        const userData: Partial<IUser> = {
+          name: name || email.split('@')[0],
+          email: email.toLowerCase(),
+          password: await bcrypt.hash(Math.random().toString(36).substring(7), 10),
+          role: role || 'customer',
+          provider: 'google',
+          providerId: firebaseUser.localId,
+          image: photoURL,
+          isActive: true,
+          lastLogin: new Date()
+        };
+        if (finalTenantId) userData.tenantId = finalTenantId;
+        user = new User(userData);
+        await user.save();
+      }
+      
+      const payload: JWTPayload = {
+        userId: user._id.toString(),
+        email: user.email,
+        role: user.role,
+        tenantId: user.tenantId,
+        roleId: user.roleId?.toString()
+      };
+      const token = jwt.sign(payload, env.jwtSecret, { expiresIn: env.jwtExpiresIn as any });
+      const permissions = user.roleId ? await getUserPermissions(user._id.toString(), user.roleId.toString()) : [];
+      
+      return res.json({
+        user: {
+          id: user._id.toString(),
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          tenantId: user.tenantId,
+          profilePicture: user.image,
+          phone: user.phone,
+          address: user.address,
+          isActive: user.isActive
+        },
+        token,
+        permissions
+      });
     }
     // Verify the email matches
 

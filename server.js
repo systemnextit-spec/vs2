@@ -85,7 +85,8 @@ async function createServer() {
   // Security headers middleware
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    // COOP removed to allow Firebase Google Auth popup to work across origins
+    // res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
     res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
