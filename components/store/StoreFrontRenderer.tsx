@@ -517,7 +517,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
         const matchedTag = tags.find((t: any) => t.name?.toLowerCase() === settings?.tagName?.toLowerCase());
         const tagHasCountdown = matchedTag?.showCountdown && matchedTag?.expiresAt && new Date(matchedTag.expiresAt).getTime() > Date.now();
         return (
-          <section key={key} className="max-w-[1408px] mx-0 px-4 sm:px-6 lg:px-8">
+          <section key={key} className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8">
             <Suspense fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />}>
               <LazySection fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />} rootMargin="0px 0px 300px" minHeight="400px">
                 <ProductGridSection
