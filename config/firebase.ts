@@ -9,7 +9,7 @@ const firebaseConfig = {
   messagingSenderId: "127107907906",
   appId: import.meta.env.VITE_FIREBASE_APP_ID || process.env.VITE_FIREBASE_APP_ID || "1:127107907906:web:09e78330b89c7dd669c8db"
 };
-
+  
 // Initialize Firebase - singleton pattern
 let app: FirebaseApp;
 let auth: Auth;

@@ -10,7 +10,7 @@ export interface ProductCardProps {
     onClick: (product: Product) => void;
     onBuyNow?: (product: Product) => void;
     onAddToCart?: (product: Product) => void;
-    showSoldCount?: boolean;
+    showSoldCount?: boolean;    
 }
 
 const ProductCardComponent: React.FC<ProductCardProps> = ({ 
@@ -148,8 +148,12 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({
 
 // Memoize ProductCard to prevent unnecessary re-renders
 // Only re-render if product.id changes
+// Memoize ProductCard to prevent unnecessary re-renders
 export const ProductCard = memo(ProductCardComponent, (prevProps, nextProps) => {
-    return prevProps.product.id === nextProps.product.id &&
-           prevProps.product.price === nextProps.product.price &&
-           prevProps.product.stock === nextProps.product.stock;
+    return (
+        prevProps.product.id === nextProps.product.id &&
+        prevProps.product.price === nextProps.product.price &&
+        prevProps.product.stock === nextProps.product.stock &&
+        prevProps.showSoldCount === nextProps.showSoldCount
+    ); // Ensure this semicolon is inside the closing brace
 });
