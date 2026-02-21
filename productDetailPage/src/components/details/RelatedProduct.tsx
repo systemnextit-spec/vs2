@@ -5,6 +5,13 @@ const stripHtml = (html: string): string => {
     if (!html) return '';
     return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
 };
+// Truncate to N words
+const truncateWords = (text: string, maxWords: number = 4): string => {
+    const words = text.split(/\s+/).filter(Boolean);
+    if (words.length <= maxWords) return text;
+    return words.slice(0, maxWords).join(' ') + '..';
+};
+
 
 
 interface RelatedProductItem {
@@ -82,7 +89,7 @@ export default function RelatedProduct({ products = [], onProductClick, currency
                                     </>
                                 )}
                             </div>
-                            <h3 className="text-[12px] font-roboto font-medium leading-tight line-clamp-2 mb-1">{product.title}</h3>
+                            <h3 className="text-[12px] font-roboto font-medium leading-tight line-clamp-2 mb-1">{truncateWords(product.title)}</h3>
                             {product.description && <p className="text-[10px] text-[#727272] line-clamp-2 mb-1.5">{stripHtml(product.description)}</p>}
                             <div className="flex items-center gap-1 mb-1">
                                 {product.oldPrice && (
@@ -115,7 +122,7 @@ export default function RelatedProduct({ products = [], onProductClick, currency
                         </div>
                         <div className="flex-1">
                             <div className="flex justify-between items-start">
-                                <h3 className="text-[16px] font-roboto font-medium">{product.title}</h3>
+                                <h3 className="text-[16px] text-gray-900 font-roboto font-medium">{truncateWords(product.title)}</h3>
                                 {product.isSale && (
                                     <span className="bg-[#FF3C3C] font-roboto font-bold text-white text-xs px-2 py-0.5 rounded-full">SALE</span>
                                 )}

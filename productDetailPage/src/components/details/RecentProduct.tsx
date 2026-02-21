@@ -44,7 +44,7 @@ export default function RecentProduct({ products = [], onProductClick, currency 
                             />
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-[14px] lg:text-[16px] font-roboto font-medium line-clamp-1">
+                            <h3 className="text-[14px] lg:text-[16px] text-gray-900 font-roboto font-medium line-clamp-1">
                                 {product.title}
                             </h3>
                             {product.description && (
