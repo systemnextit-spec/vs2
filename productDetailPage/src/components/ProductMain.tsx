@@ -18,11 +18,11 @@ export default function ProductMain({ product }: { product: Product }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [thumbsSwiper, setThumbsSwiper] = React.useState<any>(null);
     const dummyImages = [
-        "/images/img1.jpg",
-        "/images/img2.png",
-        "/images/img3.jpeg",
-        "/images/img4.jpg",
-        "/images/img5.jpg",
+        "https://details-snit.vercel.app/images/img1.jpg",
+        "https://details-snit.vercel.app/images/img2.png",
+        "https://details-snit.vercel.app/images/img3.jpeg",
+        "https://details-snit.vercel.app/images/img4.jpg",
+        "https://details-snit.vercel.app/images/img5.jpg",
     ];
     const imagesToShow = dummyImages;
 
@@ -134,11 +134,11 @@ export default function ProductMain({ product }: { product: Product }) {
                     {/* BUTTONS */}
                     <div className="flex gap-2 mb-3 flex-wrap">
                         <button className="flex-1 font-lato text-white py-3 rounded-[8px] font-bold flex items-center justify-center gap-2 bg-[linear-gradient(0deg,#38BDF8_0%,#1E90FF_100%)] cursor-pointer">
-                            <img src="/images/shopping.svg" width={24} height={24} alt="shopping" />
+                            <img src="https://details-snit.vercel.app/images/shopping.svg" width={24} height={24} alt="shopping" />
                             কার্ট
                         </button>
                         <button className="flex-1 font-lato text-white py-3 rounded-[8px] font-bold flex items-center justify-center gap-2 bg-[linear-gradient(180deg,#FF6A00_0%,#FF9F1C_100%)] cursor-pointer">
-                            <img src="/images/atc.svg" width={24} height={24} alt="shopping" />
+                            <img src="https://details-snit.vercel.app/images/atc.svg" width={24} height={24} alt="shopping" />
                             অর্ডার করুন
                         </button>
                     </div>
