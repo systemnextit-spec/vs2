@@ -171,7 +171,7 @@ export const FlashSalesSection = ({ products, showCounter, countdown, onProductC
   return (
     <section 
       ref={sectionRef} 
-      className="py-2 sm:py-4 md:py-6"
+      className="pt-1 pb-2"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >

@@ -43,7 +43,7 @@ const ShowcaseStyle1 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
   if (!display.length) return null;
 
   return (
-    <section className="py-6 px-2 sm:px-4">
+    <section className="pt-1 pb-2 px-2 sm:px-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-gradient-theme-br">
@@ -79,10 +79,10 @@ const ShowcaseStyle2 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
 
   if (!hero) return null;
 
-  const heroImg = hero.images?.[0] || hero.image || '';
+  const heroImg = hero.image?.[0] || hero.image || '';
 
   return (
-    <section className="py-6 px-2 sm:px-4">
+    <section className="pt-1 pb-2 px-2 sm:px-4">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-xl bg-amber-500">
           <Star className="w-5 h-5 text-white" fill="white" />
@@ -122,7 +122,7 @@ const ShowcaseStyle3 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
   if (!display.length) return null;
 
   return (
-    <section className="py-6 px-2 sm:px-4">
+    <section className="pt-1 pb-2 px-2 sm:px-4">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500">
           <Zap className="w-5 h-5 text-white" />
@@ -155,7 +155,7 @@ const ShowcaseStyle4 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
   if (!display.length) return null;
 
   return (
-    <section className="py-6 px-2 sm:px-4">
+    <section className="pt-1 pb-2 px-2 sm:px-4">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500">
           <Gift className="w-5 h-5 text-white" />
@@ -164,7 +164,7 @@ const ShowcaseStyle4 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
       </div>
       <div className="space-y-3">
         {display.map((p) => {
-          const img = p.images?.[0] || p.image || '';
+          const img = p.image?.[0] || p.image || '';
           const discount = p.salePrice && p.price ? Math.round((1 - p.salePrice / p.price) * 100) : 0;
           return (
             <div key={p.id} onClick={() => onProductClick(p)} className="group flex items-center gap-4 bg-white rounded-2xl border border-gray-200 p-3 sm:p-4 hover:shadow-lg hover:border-theme-primary/30 transition-all cursor-pointer">
@@ -212,10 +212,10 @@ const ShowcaseStyle5 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
 
   if (!activeProduct) return null;
 
-  const img = activeProduct.images?.[0] || activeProduct.image || '';
+  const img = activeProduct.image?.[0] || activeProduct.image || '';
 
   return (
-    <section className="py-6 px-2 sm:px-4">
+    <section className="pt-1 pb-2 px-2 sm:px-4">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600">
           <Sparkles className="w-5 h-5 text-white" />
@@ -255,7 +255,7 @@ const ShowcaseStyle5 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
         <div className="space-y-3">
           {display.slice(0, 3).map((p, i) => (
             <div key={p.id} onClick={() => { setActiveIdx(i); onProductClick(p); }} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${i === activeIdx ? 'bg-theme-primary/10 border-2 border-theme-primary' : 'bg-white border border-gray-200 hover:border-gray-300'}`}>
-              <img src={normalizeImageUrl(p.images?.[0] || p.image || '')} alt={p.name} className="w-16 h-16 object-contain rounded-lg bg-gray-50" />
+              <img src={normalizeImageUrl(p.image?.[0] || p.image || '')} alt={p.name} className="w-16 h-16 object-contain rounded-lg bg-gray-50" />
               <div className="flex-1 min-w-0">
                 <h4 className="font-medium text-gray-900 line-clamp-1 text-sm">{p.name}</h4>
                 <p className="font-bold text-theme-primary">৳{p.salePrice || p.price}</p>

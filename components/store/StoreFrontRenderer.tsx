@@ -785,7 +785,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
 
   // Render the custom layout
   return (
-    <div className="space-y-3">
+    <div className="space-y-1">
       {layout.sections.map((section, idx) => renderSection(section, idx))}
     </div>
   );

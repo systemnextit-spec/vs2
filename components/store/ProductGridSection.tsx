@@ -40,7 +40,7 @@ const icons = {
 // Style 1: Classic Clean Grid
 const ProductSectionStyle1 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="py-4">
+    <section className="pt-1 pb-2">
       <div className="bg-white/80 backdrop-blur-lg border border-gray-100 rounded-lg p-2 md:p-2.5 mb-2 shadow-sm flex items-center gap-2">
         <div className={`h-5 w-1 rounded-full ${colors[accentColor]}`}/>
         <SectionHeader title={title} className="text-base md:text-lg font-bold text-gray-900"/>
@@ -57,7 +57,7 @@ ProductSectionStyle1.displayName = 'ProductSectionStyle1';
 // Style 2: Bordered Cards with Icon Header
 const ProductSectionStyle2 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="py-4">
+    <section className="pt-1 pb-2">
       <div className="flex items-center gap-3 mb-4 px-1">
         <div className={`p-2.5 rounded-xl ${colors[accentColor]}`}>
           {icons[accentColor]}
@@ -81,7 +81,7 @@ ProductSectionStyle2.displayName = 'ProductSectionStyle2';
 // Style 3: Gradient Header with Shadow Cards
 const ProductSectionStyle3 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="py-4">
+    <section className="pt-1 pb-2">
       <div className="bg-gradient-theme-br rounded-t-2xl p-4 sm:p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -105,7 +105,7 @@ ProductSectionStyle3.displayName = 'ProductSectionStyle3';
 // Style 4: Minimal with Underline
 const ProductSectionStyle4 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="py-4">
+    <section className="pt-1 pb-2">
       <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-gray-100">
         <div className="relative flex items-center gap-3">
           <h2 className="text-lg md:text-xl font-bold text-gray-900">{title}</h2>
@@ -125,7 +125,7 @@ ProductSectionStyle4.displayName = 'ProductSectionStyle4';
 // Style 5: Card Container with Badge
 const ProductSectionStyle5 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="py-4">
+    <section className="pt-1 pb-2">
       <div className="relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="absolute to p-0 left-0 right-0 h-1 bg-gradient-theme-r" />
         <div className="p-4 sm:p-5 pb-3 border-b border-gray-100 flex items-center justify-between">
