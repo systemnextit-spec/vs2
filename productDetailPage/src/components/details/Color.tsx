@@ -36,7 +36,7 @@ export default function Color() {
                         {selectedIndex === index && (
                             <div className="absolute left-1 top-1 ">
                                 <img
-                                    src='/images/check.svg'
+                                    src='https://details-snit.vercel.app/images/check.svg'
                                     alt="check"
                                     width={12}
                                     height={12}
