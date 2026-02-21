@@ -18,7 +18,6 @@ import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 import { convertFileToWebP } from '../../services/imageUtils';
 import { ActionButton } from './shared/TabButton';
 import { GalleryPicker } from '../GalleryPicker';
-import ProductDetailsPage from '@/productDetailPage/src/components/ProductDetails';
 
 // ========== Figma Design Styles ==========
 const styles = {
@@ -1228,8 +1227,6 @@ export const PopupTab: React.FC<PopupTabProps> = ({
         </div>
       )}
 
-    <ProductDetailsPage />
-    
       {/* Gallery Picker Modal */}
       <GalleryPicker
         isOpen={isGalleryPickerOpen}
