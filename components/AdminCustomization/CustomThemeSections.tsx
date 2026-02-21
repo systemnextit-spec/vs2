@@ -8,7 +8,7 @@ import { useDarkMode } from '../../context/DarkModeContext';
 const WEB_SECTIONS = [
   { title: 'Header Section', key: 'headerStyle', label: 'Header', count: 6, icon: '\u{1F3AF}' },
   { title: 'Showcase Section', key: 'showcaseSectionStyle', label: 'Showcase', count: 5, icon: '\u2728' },
-  { title: 'Category Section', key: 'categorySectionStyle', label: 'Category', count: 5, icon: '\u{1F4C2}' },
+  { title: 'Category Section', key: 'categorySectionStyle', label: 'Category', count: 6, icon: '\u{1F4C2}' },
   { title: 'Product Card V2', key: 'productSectionStyle', label: 'Product', count: 5, icon: '\u{1F6CD}\uFE0F' },
   { title: 'Product Card', key: 'productCardStyle', label: 'Card', count: 5, icon: '\u{1F0CF}' },
   { title: 'Brand Section', key: 'brandSectionStyle', label: 'Brand', count: 5, icon: '\u{1F3F7}\uFE0F' },

@@ -1,5 +1,5 @@
 import { memo, useMemo, RefObject, useState, useCallback, useEffect, useRef } from 'react';
-import { Grid, ChevronRight, ChevronLeft, Sparkles, ShoppingBag, Star, Layers } from 'lucide-react';
+import { Grid, ChevronRight, ChevronLeft, Sparkles, ShoppingBag, Star, Layers, ArrowRight } from 'lucide-react';
 import { Category } from '../../types';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 
@@ -360,6 +360,111 @@ const CategoryStyle5 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
 });
 CategoryStyle5.displayName = 'CategoryStyle5';
 
+
+// ========================================================================
+// Style 6: Colorful Cards - Large colorful cards with positioned images
+// ========================================================================
+const STYLE6_COLOR_SCHEMES = [
+  { bgColor: '#EDEDED', textColor: '#717171', titleColor: '#808080', buttonColor: '#4B4B4B' },
+  { bgColor: '#D9EFF9', textColor: '#3297C5', titleColor: '#809FB0', buttonColor: '#3297C5' },
+  { bgColor: '#FEF9C4', textColor: '#DDC14C', titleColor: '#9A9573', buttonColor: '#DDC14C' },
+  { bgColor: '#F2E7E3', textColor: '#BCA299', titleColor: '#8F817D', buttonColor: '#BCA299' },
+  { bgColor: '#E3F2E6', textColor: '#27B342', titleColor: '#7AA283', buttonColor: '#27B342' },
+  { bgColor: '#FAE8E8', textColor: '#C53D41', titleColor: '#918181', buttonColor: '#C53D41' },
+];
+
+const CategoryStyle6 = memo(({ categories, onCategoryClick, sectionRef }: Omit<Props, 'style'>) => {
+  const processed = useMemo(() =>
+    categories?.filter(c => !c.status || c.status === 'Active' || c.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))
+      .slice(0, 6)
+      .map((c, i) => ({
+        name: c.name,
+        icon: c.icon || '',
+        image: c.image,
+        slug: c.slug,
+        colorScheme: STYLE6_COLOR_SCHEMES[i % STYLE6_COLOR_SCHEMES.length],
+        width: (i === 0 || i === 5) ? 'large' as const : 'small' as const,
+        hasButton: (i === 0 || i === 5),
+      })) || []
+  , [categories]);
+
+  if (!processed.length) return null;
+
+  const topRow = processed.slice(0, 3);
+  const bottomRow = processed.slice(3, 6);
+
+  const renderCard = (cat: typeof processed[0], index: number) => {
+    const iconSrc = cat.image || cat.icon;
+    const hasImage = iconSrc && isImageUrl(iconSrc);
+    const isLarge = cat.width === 'large';
+    const scheme = cat.colorScheme;
+
+    return (
+      <button
+        key={`${cat.name}-${index}`}
+        onClick={() => onCategoryClick(cat.slug || cat.name)}
+        className={`relative overflow-hidden rounded-[25px] h-[280px] sm:h-[350px] flex-shrink-0 transition-transform duration-300 hover:scale-[1.01] text-left
+          ${isLarge ? 'w-full lg:flex-[2]' : 'w-full lg:flex-1'}`}
+        style={{ backgroundColor: scheme.bgColor, fontFamily: "'Montserrat', sans-serif" }}
+      >
+        {hasImage && (
+          <div className="absolute z-10 pointer-events-none bottom-0 right-2 sm:right-5 w-[55%] sm:w-[60%] max-w-[380px]">
+            <img
+              src={normalizeImageUrl(iconSrc)}
+              alt={cat.name}
+              className="w-full h-auto object-contain drop-shadow-2xl"
+              loading="lazy"
+            />
+          </div>
+        )}
+        <div className="relative z-20 p-5 sm:p-8 h-full flex flex-col">
+          <h3 className="font-medium text-sm sm:text-lg mb-1" style={{ color: scheme.textColor }}>
+            {cat.name}
+          </h3>
+          <p className="font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight leading-[1.1] mb-4 sm:mb-6 uppercase"
+            style={{ color: scheme.titleColor }}>
+            {cat.name}
+          </p>
+          {cat.hasButton && (
+            <span
+              className="mt-auto w-fit flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-md text-white font-semibold text-xs transition-opacity hover:opacity-90 shadow-lg"
+              style={{ backgroundColor: scheme.buttonColor }}
+            >
+              SHOP NOW
+              <ArrowRight size={14} />
+            </span>
+          )}
+        </div>
+      </button>
+    );
+  };
+
+  return (
+    <div ref={sectionRef} className="py-8 sm:py-16 px-4 md:px-8 flex flex-col items-center">
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+      <header className="mb-8 sm:mb-14 text-center">
+        <h2 className="text-3xl sm:text-5xl md:text-[64px] font-bold text-[#4B4B4B] tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          Product Categories
+        </h2>
+      </header>
+      <div className="max-w-[1360px] w-full flex flex-col gap-4 sm:gap-6 items-center">
+        {topRow.length > 0 && (
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full">
+            {topRow.map((card, i) => renderCard(card, i))}
+          </div>
+        )}
+        {bottomRow.length > 0 && (
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full">
+            {bottomRow.map((card, i) => renderCard(card, i + 3))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+CategoryStyle6.displayName = 'CategoryStyle6';
+
 // ============================================================================
 // Main Component with Style Switch
 // ============================================================================
@@ -376,6 +481,10 @@ export const CategoriesSection = memo(({ categories, onCategoryClick, sectionRef
       return <CategoryStyle4 categories={categories} onCategoryClick={onCategoryClick} sectionRef={ref} />;
     case 'style5':
       return <CategoryStyle5 categories={categories} onCategoryClick={onCategoryClick} sectionRef={ref} />;
+    case 'style6':
+      return <CategoryStyle6 categories={categories} onCategoryClick={onCategoryClick} sectionRef={ref} />;
+    case 'none':
+      return null;
     case 'style1':
     default:
       return <CategoryStyle1 categories={categories} onCategoryClick={onCategoryClick} sectionRef={ref} />;

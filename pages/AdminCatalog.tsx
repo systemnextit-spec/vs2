@@ -51,6 +51,7 @@ const AdminCatalog: React.FC<AdminCatalogProps> = ({
   const [openActionMenu, setOpenActionMenu] = useState<string | null>(null);
   const [actionMenuPosition, setActionMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   // Tab navigation
   const catalogTabs = [
@@ -147,6 +148,19 @@ const AdminCatalog: React.FC<AdminCatalogProps> = ({
       const converted = await convertFileToWebP(file, { quality: 0.8, maxDimension: 600 });
       const fieldName = view === 'catalog_brands' ? 'logo' : 'icon';
       setFormData({ ...formData, [fieldName]: converted });
+    } catch (error) {
+      console.error('Failed to process image', error);
+      alert('Unable to process this image.');
+    }
+    e.target.value = '';
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const converted = await convertFileToWebP(file, { quality: 0.85, maxDimension: 1200 });
+      setFormData({ ...formData, image: converted });
     } catch (error) {
       console.error('Failed to process image', error);
       alert('Unable to process this image.');
@@ -646,6 +660,34 @@ const AdminCatalog: React.FC<AdminCatalogProps> = ({
                       <div className="text-gray-400 flex flex-col items-center gap-1">
                         <Upload size={24} className="text-gray-300 sm:w-7 sm:h-7" />
                         <span className="text-xs sm:text-sm">Click to upload</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Category Featured Image (for Style 6) */}
+              {view === 'catalog_categories' && (
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-1.5">
+                    Category Image <span className="text-gray-400 text-xs">(for Style 6)</span>
+                  </label>
+                  <input type="file" ref={imageInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
+                  <div
+                    onClick={() => imageInputRef.current?.click()}
+                    className="border-2 border-dashed border-gray-200 rounded-xl p-4 sm:p-5 text-center cursor-pointer hover:border-cyan-400 hover:bg-cyan-50/30 transition"
+                  >
+                    {formData.image ? (
+                      <div className="relative">
+                        <img src={formData.image} className="h-20 sm:h-24 mx-auto object-cover rounded-lg" alt="category preview" />
+                        <button type="button" onClick={(e) => { e.stopPropagation(); setFormData({ ...formData, image: '' }); }}
+                          className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600">×</button>
+                      </div>
+                    ) : (
+                      <div className="text-gray-400 flex flex-col items-center gap-1">
+                        <Upload size={24} className="text-gray-300 sm:w-7 sm:h-7" />
+                        <span className="text-xs sm:text-sm">Upload featured image</span>
+                        <span className="text-[10px] text-gray-300">Recommended: 600x400px</span>
                       </div>
                     )}
                   </div>

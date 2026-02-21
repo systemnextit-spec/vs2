@@ -92,6 +92,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/category_-_3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/category_-_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/category-5.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/category-5.webp',
   },
   productSectionStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/product_card_-_1.webp',
