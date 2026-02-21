@@ -444,7 +444,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     !!(formData.subCategoriesArr?.length || formData.subCategory?.trim()),
     !!(formData.childCategoriesArr?.length || formData.childCategory?.trim()),
     !!(formData.brandsArr?.length || formData.brandName?.trim()),
-    formData.tag.length > 0,
+    (Array.isArray(formData.tag) ? formData.tag : []).length > 0,
     formData.galleryImages.length > 0,
     !!formData.videoUrl?.trim(),
     !!formData.shortDescription?.trim(),
@@ -902,7 +902,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       sku: formData.sku,
       stock: formData.quantity || 0,
       status: 'Draft',
-      tags: formData.tag.length > 0 ? formData.tag : [],
+      tags: (Array.isArray(formData.tag) ? formData.tag : []).length > 0 ? formData.tag : [],
       tenantId: tenantId,
       shopName: formData.shopName,
       flashSale: formData.flashSale,
@@ -972,7 +972,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       sku: formData.sku,
       stock: formData.quantity,
       status: 'Active',
-      tags: formData.tag.length > 0 ? formData.tag : [],
+      tags: (Array.isArray(formData.tag) ? formData.tag : []).length > 0 ? formData.tag : [],
       tenantId: tenantId,
       shopName: formData.shopName,
       flashSale: formData.flashSale,
@@ -1889,16 +1889,17 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
               <label className="block text-sm font-medium text-gray-700 mb-2">Product Tags</label>
               <div className="flex flex-wrap gap-2 mb-3">
                 {['Flash Sale', 'New Arrival', 'Most Popular'].map((tagName) => {
-                  const isSelected = formData.tag.includes(tagName);
+                  const tagArr = Array.isArray(formData.tag) ? formData.tag : [];
+                  const isSelected = tagArr.includes(tagName);
                   return (
                     <button
                       key={tagName}
                       type="button"
                       onClick={() => {
                         if (isSelected) {
-                          updateField('tag', formData.tag.filter((t: string) => t !== tagName));
+                          updateField('tag', tagArr.filter((t: string) => t !== tagName));
                         } else {
-                          updateField('tag', [...formData.tag, tagName]);
+                          updateField('tag', [...tagArr, tagName]);
                         }
                       }}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
@@ -1920,19 +1921,20 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
               <SelectField
                 value=""
                 onChange={(v) => {
-                  if (v && !formData.tag.includes(v)) {
-                    updateField('tag', [...formData.tag, v]);
+                  const tArr = Array.isArray(formData.tag) ? formData.tag : [];
+                  if (v && !tArr.includes(v)) {
+                    updateField('tag', [...tArr, v]);
                   }
                 }}
-                options={localTags.filter(t => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t.name)).map(t => ({ value: t.name, label: t.name }))}
+                options={(localTags || []).filter(t => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t.name)).map(t => ({ value: t.name, label: t.name }))}
                 placeholder="Add custom tag..."
               />
-              {formData.tag.filter((t: string) => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t)).length > 0 && (
+              {(Array.isArray(formData.tag) ? formData.tag : []).filter((t: string) => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t)).length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-2">
-                  {formData.tag.filter((t: string) => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t)).map((t: string) => (
+                  {(Array.isArray(formData.tag) ? formData.tag : []).filter((t: string) => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t)).map((t: string) => (
                     <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
                       {t}
-                      <button type="button" onClick={() => updateField('tag', formData.tag.filter((x: string) => x !== t))} className="text-gray-400 hover:text-red-500">\u00d7</button>
+                      <button type="button" onClick={() => updateField('tag', (Array.isArray(formData.tag) ? formData.tag : []).filter((x: string) => x !== t))} className="text-gray-400 hover:text-red-500">\u00d7</button>
                     </span>
                   ))}
                 </div>
@@ -1972,6 +1974,48 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
               ]}
               placeholder="Select Condition"
             />
+          </div>
+
+          {/* Flash Sale */}
+          <div className="bg-white rounded-lg p-4">
+            <h3 className="text-[20px] font-medium text-black mb-4">Flash Sale</h3>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm text-gray-600">Enable Flash Sale</span>
+              <button
+                type="button"
+                onClick={() => updateField('flashSale', !formData.flashSale)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.flashSale ? 'bg-orange-500' : 'bg-gray-200'}`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.flashSale ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
+            </div>
+            {formData.flashSale && (
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm text-gray-600 mb-1 block">Start Date</label>
+                  <input type="datetime-local" value={formData.flashSaleStartDate} onChange={(e) => updateField('flashSaleStartDate', e.target.value)} className="w-full h-10 bg-[#f9f9f9] rounded-lg px-3 text-[14px] outline-none" />
+                </div>
+                <div>
+                  <label className="text-sm text-gray-600 mb-1 block">End Date</label>
+                  <input type="datetime-local" value={formData.flashSaleEndDate} onChange={(e) => updateField('flashSaleEndDate', e.target.value)} className="w-full h-10 bg-[#f9f9f9] rounded-lg px-3 text-[14px] outline-none" />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Most Sales */}
+          <div className="bg-white rounded-lg p-4">
+            <h3 className="text-[20px] font-medium text-black mb-4">Most Sales</h3>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Mark as Most Sales</span>
+              <button
+                type="button"
+                onClick={() => updateField('isMostSales', !formData.isMostSales)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${(formData as any).isMostSales ? 'bg-amber-500' : 'bg-gray-200'}`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${(formData as any).isMostSales ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -2165,11 +2209,12 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
               <SelectField
                 value=""
                 onChange={(v) => {
-                  if (v && !formData.tag.includes(v)) {
-                    updateField('tag', [...formData.tag, v]);
+                  const tArr = Array.isArray(formData.tag) ? formData.tag : [];
+                  if (v && !tArr.includes(v)) {
+                    updateField('tag', [...tArr, v]);
                   }
                 }}
-                options={localTags.filter(t => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t.name)).map(t => ({ value: t.name, label: t.name }))}
+                options={(localTags || []).filter(t => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t.name)).map(t => ({ value: t.name, label: t.name }))}
                 placeholder="Add custom tag..."
               />
               {formData.tag.filter((t: string) => !['Flash Sale', 'New Arrival', 'Most Popular'].includes(t)).length > 0 && (

@@ -16,9 +16,10 @@ export default function MetaData({ product }: MetaDataProps) {
 
     return (
         <div className="mb-6">
-            <p className="text-sm text-gray-600 font-lato leading-relaxed">
-                {shortDesc}
-            </p>
+            <div 
+                className="text-sm text-gray-600 font-lato leading-relaxed prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: shortDesc }}
+            />
         </div>
     );
 }
