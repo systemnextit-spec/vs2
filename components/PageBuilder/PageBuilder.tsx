@@ -112,7 +112,7 @@ const getDefaultLayout = (): PlacedSection[] => [
   { id: uuidv4(), type: 'flash-sale', name: 'Flash Sale', visible: true, settings: SECTION_DEFINITIONS['flash-sale'].defaultSettings, blocks: [] },
   { id: uuidv4(), type: 'product-grid', name: 'Featured Products', visible: true, settings: { ...SECTION_DEFINITIONS['product-grid'].defaultSettings, heading: 'Featured Products', filterType: 'featured' }, blocks: [] },
   { id: uuidv4(), type: 'brands', name: 'Brands', visible: true, settings: SECTION_DEFINITIONS['brands'].defaultSettings, blocks: [] },
-  { id: uuidv4(), type: 'product-grid', name: 'All Products', visible: true, settings: { ...SECTION_DEFINITIONS['product-grid'].defaultSettings, heading: 'Our Products', filterType: 'all', productsToShow: 20 }, blocks: [] },
+  { id: uuidv4(), type: 'product-grid', name: 'All Products', visible: true, settings: { ...SECTION_DEFINITIONS['product-grid'].defaultSettings, heading: 'All Products', filterType: 'all', productsToShow: 20 }, blocks: [] },
   { id: uuidv4(), type: 'newsletter', name: 'Newsletter', visible: true, settings: SECTION_DEFINITIONS['newsletter'].defaultSettings, blocks: [] },
   { id: uuidv4(), type: 'footer', name: 'Footer', visible: true, settings: SECTION_DEFINITIONS['footer'].defaultSettings, blocks: [] }
 ];

@@ -12,7 +12,7 @@ import { Product, Category, SubCategory, ChildCategory, Brand, Tag } from '../ty
 const SPECIAL_TAGS = {
   DEAL_OF_THE_DAY: 'Deal of the Day',
   MOST_SELLING: 'Most Selling',
-  OUR_PRODUCTS: 'Our Products',
+  OUR_PRODUCTS: 'All Products',
 } as const;
 
 // Helper to check if a tag matches a special tag (case-insensitive)
@@ -1312,7 +1312,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                       </button>
                     </label>
 
-                    {/* Our Products */}
+                    {/* All Products */}
                     <label className="flex items-center justify-between p-3 bg-white rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.20)] cursor-pointer hover:bg-gray-50 transition-colors">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">⭐</span>

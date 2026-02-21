@@ -556,7 +556,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
               <Suspense fallback={<ProductGridSkeleton count={10} />}>
                 <LazySection fallback={<ProductGridSkeleton count={10} />} rootMargin="0px 0px 300px" minHeight="500px">
                   <ProductGridSection
-                    title="Our Products"
+                    title="All Products"
                     products={activeProducts}
                     accentColor="blue"
                     keyPrefix="all"

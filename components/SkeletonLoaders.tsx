@@ -96,7 +96,7 @@ export const StorePageSkeleton = () => (
     <div className="max-w-7xl mx-auto px-4 space-y-6 pb-8">
       <StoreProductSectionSkeleton title="Flash Sale" count={5} />
       <StoreProductSectionSkeleton title="Best Products" count={5} />
-      <StoreProductSectionSkeleton title="Our Products" count={10} />
+      <StoreProductSectionSkeleton title="All Products" count={10} />
     </div>
   </div>
 );
