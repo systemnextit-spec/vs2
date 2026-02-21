@@ -1,12 +1,22 @@
+interface DesktopNavProps {
+    logo?: string;
+    onBack?: () => void;
+    cart?: number[];
+    onToggleCart?: (id: number) => void;
+}
 
-export default function DesktopNav() {
+export default function DesktopNav({ logo, onBack, cart }: DesktopNavProps) {
     return (
         <nav className="hidden lg:block bg-white sticky top-0 z-40 border-b border-[#F1F5FF] overflow-x-hidden">
             <div className="max-w-[1720px] mx-auto w-full flex items-center justify-between px-6 py-4">
 
                 {/* Logo */}
-                <a href="/" className="flex-shrink-0">
-                    <img src="https://details-snit.vercel.app/images/logo.png" alt="Logo" width={222} height={48} />
+                <a href="/" onClick={(e) => { if (onBack) { e.preventDefault(); onBack(); } }} className="flex-shrink-0">
+                    {logo ? (
+                        <img src={logo} alt="Logo" className="h-12 max-w-[222px] object-contain" />
+                    ) : (
+                        <span className="text-xl font-bold text-gray-800">Store</span>
+                    )}
                 </a>
 
                 {/* Middle Section */}
@@ -24,7 +34,7 @@ export default function DesktopNav() {
 
                         <input
                             className="flex-1 bg-transparent outline-none text-[16px] font-normal placeholder-[#6A717F] min-w-0"
-                            placeholder="Search in Cart and Get"
+                            placeholder="Search products..."
                         />
 
                         <button className="
@@ -43,8 +53,14 @@ export default function DesktopNav() {
 
                 {/* Right Section */}
                 <div className="flex items-center gap-8 flex-shrink-0">
-                    <img src="https://details-snit.vercel.app/images/translate.svg" alt="Translate" width={32} height={32} className="cursor-pointer" />
-                    <img src="https://details-snit.vercel.app/images/shopping-cart-02.svg" alt="Cart" width={32} height={32} className="cursor-pointer" />
+                    <div className="relative cursor-pointer">
+                        <img src="https://details-snit.vercel.app/images/shopping-cart-02.svg" alt="Cart" width={32} height={32} />
+                        {cart && cart.length > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                                {cart.length}
+                            </span>
+                        )}
+                    </div>
 
                     <button className="flex items-center gap-2">
                         <img src="https://details-snit.vercel.app/images/user-circle.svg" alt="User" width={32} height={32} />

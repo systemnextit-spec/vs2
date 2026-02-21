@@ -1,54 +1,36 @@
-import React from 'react'
+interface MetaDataProduct {
+    material?: string;
+    brand?: string;
+    features?: string[];
+    modelNumber?: string;
+    origin?: string;
+    colors?: string[];
+}
 
-export default function MetaData() {
+interface MetaDataProps {
+    product: MetaDataProduct;
+}
+
+export default function MetaData({ product }: MetaDataProps) {
+    const entries: Array<{ label: string; value: string }> = [];
+    if (product.material) entries.push({ label: "Material", value: product.material });
+    if (product.brand) entries.push({ label: "Brand", value: product.brand });
+    if (product.features?.length) entries.push({ label: "Features", value: product.features.join(", ") });
+    if (product.modelNumber) entries.push({ label: "Model Number", value: product.modelNumber });
+    if (product.origin) entries.push({ label: "Origin", value: product.origin });
+    if (product.colors?.length) entries.push({ label: "Colors", value: product.colors.join(", ") });
+
+    if (entries.length === 0) return null;
+
     return (
         <div>
             <div className="text-sm text-black space-y-1 mb-9">
-                <div>
-                    <span className="text-black font-urbanist">উপাদান:</span> ABS
-                </div>
-
-                <div>
-                    <span className="text-black font-urbanist">সামঞ্জস্যপূর্ণ ব্র্যান্ড:</span>{" "}
-                    সর্বজনীন
-                </div>
-
-                <div>
-                    <span className="text-black font-urbanist">ফিচার:</span>{" "}
-                    পোর্টেবল, নমনীয়, চৌম্বকীয়
-                </div>
-
-                <div>
-                    <span className="text-black font-urbanist">ব্যবহার:</span>{" "}
-                    থাকার জন্য, বিছানা, ডেস্ক, গাড়ির ড্যাশবোর্ডের জন্য
-                </div>
-
-                <div>
-                    <span className="text-black font-urbanist">ডিজাইন ফিনিশ:</span> চৌম্বকীয়
-                </div>
-
-                <div>
-                    <span className="text-black font-urbanist">চার্জার:</span> না
-                </div>
-
-                <div>
-                    <span className="text-black font-urbanist">মডেল নম্বর:</span> A2
-                </div>
-
-                <div>
-                    <span className="text-black font-urbanist">উৎপত্তির স্থান:</span> গুয়াংডং, চীন
-                </div>
-
-                <div>
-                    <span className="text-black font-urbanist">ব্র্যান্ড নাম:</span>{" "}
-                    ভেক মোবাইল ফোন মাউন্ট হোল্ডার
-                </div>
-
-                <div>
-                    <span className="text-black font-urbanist">রং:</span> রুপালি, কালো
-                </div>
+                {entries.map((entry, i) => (
+                    <div key={i}>
+                        <span className="text-black font-urbanist">{entry.label}:</span> {entry.value}
+                    </div>
+                ))}
             </div>
-
         </div>
     )
 }

@@ -1,11 +1,15 @@
+interface CallOrderBarProps {
+    phoneNumber?: string;
+    onShare?: () => void;
+}
 
-const CallOrderBar = () => {
+const CallOrderBar = ({ phoneNumber, onShare }: CallOrderBarProps) => {
+    if (!phoneNumber) return null;
+
     return (
         <div className="w-full flex gap-2 items-center justify-between pt-1">
-            {/* Left Icon */}
-            <div className="flex items-center gap-3 bg-[#F9F9F9] rounded-md py-3 w-full justify-center">
+            <a href={`tel:${phoneNumber}`} className="flex items-center gap-3 bg-[#F9F9F9] rounded-md py-3 w-full justify-center">
                 <div className="text-[#1E90FF]">
-                    {/* Phone Icon */}
                     <img
                         src={'https://details-snit.vercel.app/images/call.svg'}
                         alt='call'
@@ -13,8 +17,6 @@ const CallOrderBar = () => {
                         height={18}
                     />
                 </div>
-
-                {/* Gradient Text */}
                 <p
                     className="text-[18px] font-semibold"
                     style={{
@@ -24,18 +26,16 @@ const CallOrderBar = () => {
                         WebkitTextFillColor: "transparent",
                     }}
                 >
-                    কল অর্ডার : 01410-050041
+                    Call Order : {phoneNumber}
                 </p>
-            </div>
-            {/* Right Share */}
-            <button className="p-3.5 bg-[#F9F9F9] rounded-md cursor-pointer">
+            </a>
+            <button onClick={onShare} className="p-3.5 bg-[#F9F9F9] rounded-md cursor-pointer">
                 <img
                     src='https://details-snit.vercel.app/images/share-01.svg'
                     alt="share"
                     width={24}
                     height={24}
                 />
-
             </button>
         </div>
     );

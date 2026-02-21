@@ -1,7 +1,6 @@
-
 import { ChevronRight } from "lucide-react";
 
-interface Product {
+interface RelatedProductItem {
     id: string;
     title: string;
     description: string;
@@ -13,52 +12,11 @@ interface Product {
     isSale?: boolean;
 }
 
-const dummyProducts: Product[] = [
-    {
-        id: "1",
-        title: "A Kids Book About Yoga",
-        description: "Yoga is a way to discover more about ourselves and our connection...",
-        price: 4.53,
-        oldPrice: 5.60,
-        rating: 4.5,
-        sold: 104,
-        image: "/images/book.png",
-        isSale: true,
-    },
-    {
-        id: "2",
-        title: "A Kids Book About Yoga",
-        description: "Yoga is a way to discover more about ourselves and our connection...",
-        price: 4.53,
-        oldPrice: 5.60,
-        rating: 4.5,
-        sold: 104,
-        image: "/images/book.png",
-        isSale: true,
-    },
-    {
-        id: "3",
-        title: "A Kids Book About Yoga",
-        description: "Yoga is a way to discover more about ourselves and our connection...",
-        price: 4.53,
-        oldPrice: 5.60,
-        rating: 4.5,
-        sold: 104,
-        image: "/images/book.png",
-        isSale: true,
-    },
-    {
-        id: "4",
-        title: "A Kids Book About Yoga",
-        description: "Yoga is a way to discover more about ourselves and our connection...",
-        price: 4.53,
-        oldPrice: 5.60,
-        rating: 4.5,
-        sold: 104,
-        image: "/images/book.png",
-        isSale: true,
-    },
-];
+interface RelatedProductProps {
+    products?: RelatedProductItem[];
+    onProductClick?: (productId: number) => void;
+    currency?: string;
+}
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-0.5">
@@ -75,29 +33,30 @@ const StarRating = ({ rating }: { rating: number }) => (
     </div>
 );
 
-export default function RelatedProduct() {
+export default function RelatedProduct({ products = [], onProductClick, currency = "\u09F3" }: RelatedProductProps) {
+    if (products.length === 0) return null;
+
+    const handleClick = (id: string) => {
+        if (onProductClick) {
+            onProductClick(parseInt(id));
+        }
+    };
+
     return (
         <div>
-            {/* Header */}
             <div className="flex justify-between items-center mb-4 lg:mb-6">
                 <h2 className="text-xl lg:text-2xl font-lato font-bold">Related Product</h2>
-                <a
-                    href="#"
-                    className="flex gap-0.5 text-[14px] lg:text-[16px] items-center text-black font-lato font-medium"
-                >
+                <a href="#" className="flex gap-0.5 text-[14px] lg:text-[16px] items-center text-black font-lato font-medium">
                     View More
                     <ChevronRight width={12} height={16} color="#1E90FF" />
                 </a>
             </div>
             <div className="grid grid-cols-2 gap-3 lg:hidden">
-                {dummyProducts.map((product) => (
-                    <div key={product.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-
+                {products.slice(0, 4).map((product) => (
+                    <div key={product.id} onClick={() => handleClick(product.id)} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden cursor-pointer">
                         <div className="relative w-full aspect-square">
                             {product.isSale && (
-                                <span className="absolute top-2 left-2 z-10 bg-[#FF3C3C] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                    SALE
-                                </span>
+                                <span className="absolute top-2 left-2 z-10 bg-[#FF3C3C] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">SALE</span>
                             )}
                             <button className="absolute top-2 right-2 z-10 bg-white rounded-full p-1 shadow">
                                 <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,42 +65,24 @@ export default function RelatedProduct() {
                             </button>
                             <img src={product.image} alt={product.title} className="object-cover w-full h-full absolute inset-0" />
                         </div>
-
-
                         <div className="p-2">
-
                             <div className="flex items-center gap-1 mb-1">
                                 {product.rating && <StarRating rating={product.rating} />}
-                                <span className="text-[10px] text-gray-500">({product.sold})</span>
-                                <span className="text-[10px] text-gray-400 ml-1">| {product.sold} Sold</span>
+                                {product.sold !== undefined && (
+                                    <>
+                                        <span className="text-[10px] text-gray-500">({product.sold})</span>
+                                        <span className="text-[10px] text-gray-400 ml-1">| {product.sold} Sold</span>
+                                    </>
+                                )}
                             </div>
-
-
-                            <h3 className="text-[12px] font-roboto font-medium leading-tight line-clamp-2 mb-1">
-                                {product.title}
-                            </h3>
-
-
-                            <p className="text-[10px] text-[#727272] line-clamp-2 mb-1.5">
-                                {product.description}
-                            </p>
-
-                            {/* Price */}
+                            <h3 className="text-[12px] font-roboto font-medium leading-tight line-clamp-2 mb-1">{product.title}</h3>
+                            {product.description && <p className="text-[10px] text-[#727272] line-clamp-2 mb-1.5">{product.description}</p>}
                             <div className="flex items-center gap-1 mb-1">
-                                <span className="text-[#FF3C3C] font-bold text-[12px] font-roboto line-through">
-                                    ${product.oldPrice?.toFixed(2)}
-                                </span>
-                                <span className="text-[#2F3485] font-bold text-[12px] font-roboto">
-                                    ${product.price.toFixed(2)}
-                                </span>
+                                {product.oldPrice && (
+                                    <span className="text-[#FF3C3C] font-bold text-[12px] font-roboto line-through">{currency}{product.oldPrice}</span>
+                                )}
+                                <span className="text-[#2F3485] font-bold text-[12px] font-roboto">{currency}{product.price}</span>
                             </div>
-
-
-                            <a href="#" className="text-[10px] text-[#15A4EC] font-roboto font-medium block mb-2">
-                                Get 10 Coins
-                            </a>
-
-                            {/* Buttons */}
                             <div className="flex gap-1.5">
                                 <button className="flex-1 flex items-center justify-center gap-1 bg-[linear-gradient(0deg,#38BDF8_0%,#1E90FF_100%)] text-white text-[11px] font-bold py-1.5 rounded-[6px]">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,8 +101,8 @@ export default function RelatedProduct() {
 
             {/* desktop */}
             <div className="hidden lg:block space-y-5">
-                {dummyProducts.map((product) => (
-                    <div key={product.id} className="flex gap-6 items-start pb-3">
+                {products.slice(0, 4).map((product) => (
+                    <div key={product.id} onClick={() => handleClick(product.id)} className="flex gap-6 items-start pb-3 cursor-pointer">
                         <div className="relative w-20 h-24 flex-shrink-0">
                             <img src={product.image} alt={product.title} className="object-cover rounded-md w-full h-full absolute inset-0" />
                         </div>
@@ -169,28 +110,19 @@ export default function RelatedProduct() {
                             <div className="flex justify-between items-start">
                                 <h3 className="text-[16px] font-roboto font-medium">{product.title}</h3>
                                 {product.isSale && (
-                                    <span className="bg-[#FF3C3C] font-roboto font-bold text-white text-xs px-2 py-0.5 rounded-full">
-                                        SALE
-                                    </span>
+                                    <span className="bg-[#FF3C3C] font-roboto font-bold text-white text-xs px-2 py-0.5 rounded-full">SALE</span>
                                 )}
                             </div>
-                            <p className="text-xs text-[#727272] mt-2 font-roboto font-normal line-clamp-2">
-                                {product.description}
-                            </p>
+                            {product.description && (
+                                <p className="text-xs text-[#727272] mt-2 font-roboto font-normal line-clamp-2">{product.description}</p>
+                            )}
                             <div className="flex justify-between items-center mt-2">
                                 <div className="flex items-center gap-1">
-                                    <span className="text-[#2F3485] font-bold text-[16px] font-roboto">
-                                        ${product.price.toFixed(2)}
-                                    </span>
+                                    <span className="text-[#2F3485] font-bold text-[16px] font-roboto">{currency}{product.price}</span>
                                     {product.oldPrice && (
-                                        <span className="text-[#666] font-roboto font-normal line-through text-xs">
-                                            ${product.oldPrice.toFixed(2)}
-                                        </span>
+                                        <span className="text-[#666] font-roboto font-normal line-through text-xs">{currency}{product.oldPrice}</span>
                                     )}
                                 </div>
-                                <a href="#" className="text-xs text-[#15A4EC] font-roboto font-medium hover:underline">
-                                    Get 10 Coins
-                                </a>
                             </div>
                         </div>
                     </div>

@@ -535,7 +535,28 @@ const StoreProductDetail = ({
   if (websiteConfig?.productDetailTheme === 'modern') {
     return (
       <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full" /></div>}>
-        <ModernProductDetailsPage />
+        <ModernProductDetailsPage
+          product={{
+            ...product,
+            galleryImages: galleryImages,
+          }}
+          relatedProducts={relatedProducts.map(r => r.product)}
+          recentProducts={catalogProducts.slice(0, 8)}
+          categories={categories}
+          websiteConfig={websiteConfig}
+          logo={logo}
+          onBack={onBack}
+          onProductClick={(id) => {
+            const p = catalogProducts.find(cp => cp.id === id);
+            if (p) onProductClick(p);
+          }}
+          onAddToCart={handleAddToCart}
+          onCheckout={handleBuyNow}
+          onShare={handleShareLink}
+          cart={cart}
+          onToggleCart={onToggleCart}
+          currency={websiteConfig?.shopCurrency === 'USD' ? '$' : '৳'}
+        />
       </Suspense>
     );
   }
