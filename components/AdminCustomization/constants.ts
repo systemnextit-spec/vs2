@@ -49,7 +49,8 @@ export const DEFAULT_WEBSITE_CONFIG: WebsiteConfig = {
   searchHints: '',
   orderLanguage: 'English',
   adminNoticeText: '',
-  categorySectionStyle: 'style5'
+  categorySectionStyle: 'style5',
+  storeName: ''
 };
 
 // Demo images for style previews - webp format URLs for each theme section and style
