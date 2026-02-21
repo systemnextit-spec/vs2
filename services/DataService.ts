@@ -684,7 +684,9 @@ class DataServiceImpl {
         prevCarouselLen !== freshCarouselLen ||
         JSON.stringify(prevWebsite?.carouselItems ?? []) !== JSON.stringify(freshData.websiteConfig?.carouselItems ?? []) ||
         JSON.stringify(prevWebsite?.campaigns ?? []) !== JSON.stringify(freshData.websiteConfig?.campaigns ?? []) ||
-        (prevWebsite?.websiteName ?? '') !== (freshData.websiteConfig?.websiteName ?? '');
+        (prevWebsite?.websiteName ?? '') !== (freshData.websiteConfig?.websiteName ?? '') ||
+        (prevWebsite?.productDetailTheme ?? '') !== (freshData.websiteConfig?.productDetailTheme ?? '') ||
+        (prevWebsite?.readyTheme ?? '') !== (freshData.websiteConfig?.readyTheme ?? '');
 
       if (websiteChanged) {
         console.log('[DataService] Background revalidation found updated website config, notifying UI');

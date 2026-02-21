@@ -132,7 +132,9 @@ export function useAppHandlers(props: UseAppHandlersProps) {
       }
       const productWithId = { ...newProduct, id: productId };
       const slug = ensureUniqueProductSlug(productWithId.slug || productWithId.name || `product-${productId}`, prev, tenantId, productId);
-      const updated = [...prev, { ...productWithId, slug, tenantId }];
+      const productToAdd = { ...productWithId, slug, tenantId };
+      console.log('[handleAddProduct] Adding product:', productToAdd.name, 'variantGroups:', productToAdd.variantGroups?.length || 0, 'details:', productToAdd.details?.length || 0);
+      const updated = [...prev, productToAdd];
       // Save to backend
       DataService.save('products', updated, tenantId);
       return updated;
@@ -169,7 +171,9 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     const tenantId = updatedProduct.tenantId || activeTenantId;
     const slug = ensureUniqueProductSlug(updatedProduct.slug || updatedProduct.name || `product-${updatedProduct.id}`, products, tenantId, updatedProduct.id);
     setProducts(prev => {
-      const updated = prev.map(p => p.id === updatedProduct.id ? { ...updatedProduct, slug, tenantId } : p);
+      const productToUpdate = { ...updatedProduct, slug, tenantId };
+      console.log('[handleUpdateProduct] Updating product:', productToUpdate.name, 'variantGroups:', productToUpdate.variantGroups?.length || 0, 'details:', productToUpdate.details?.length || 0);
+      const updated = prev.map(p => p.id === updatedProduct.id ? productToUpdate : p);
       // Save to backend
       DataService.save('products', updated, tenantId);
       return updated;
@@ -462,9 +466,11 @@ export function useAppHandlers(props: UseAppHandlersProps) {
   }, [activeTenantId, setThemeConfig]);
 
   const handleUpdateWebsiteConfig = useCallback(async (newConfig: WebsiteConfig) => {
+    console.log('[handleUpdateWebsiteConfig] Saving website_config for tenant:', activeTenantId, 'productDetailTheme:', newConfig.productDetailTheme, 'readyTheme:', newConfig.readyTheme);
     setWebsiteConfig(newConfig);
     if (activeTenantId) {
       await DataService.saveImmediate('website_config', newConfig, activeTenantId);
+      console.log('[handleUpdateWebsiteConfig] Save completed successfully');
     }
   }, [activeTenantId, setWebsiteConfig]);
 

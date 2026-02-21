@@ -262,6 +262,7 @@ const AdminCustomization: React.FC<AdminCustomizationProps> = ({
 
     try {
       if (onUpdateWebsiteConfig) {
+        console.log('[AdminCustomization] Saving config with productDetailTheme:', websiteConfiguration.productDetailTheme, 'readyTheme:', websiteConfiguration.readyTheme);
         await onUpdateWebsiteConfig(websiteConfiguration);
       }
 
@@ -283,20 +284,24 @@ const AdminCustomization: React.FC<AdminCustomizationProps> = ({
       }
 
 
+      // Update protection refs immediately after save completes (before any delay)
+      hasUnsavedChangesRef.current = false;
+      prevWebsiteConfigRef.current = websiteConfiguration;
+      lastSaveTimestampRef.current = Date.now();
+
       // Clear all server-side cache for the tenant so style changes are reflected in real-time
       if (tenantId) {
         await DataService.clearServerCache(tenantId);
       }
+
+      // Brief delay for visual feedback
       const elapsed = Date.now() - startTime;
-      if (elapsed < 10000) {
-        await new Promise(resolve => setTimeout(resolve, 10000 - elapsed));
+      if (elapsed < 2000) {
+        await new Promise(resolve => setTimeout(resolve, 2000 - elapsed));
       }
 
       toast.dismiss(loadingToast);
       setIsSaved(true);
-      hasUnsavedChangesRef.current = false;
-      prevWebsiteConfigRef.current = websiteConfiguration;
-      lastSaveTimestampRef.current = Date.now();
       toast.success('Saved successfully!');
       setTimeout(() => setIsSaved(false), 2000);
     } catch (error) {
