@@ -915,7 +915,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       initialSoldCount: formData.initialSoldCount || 0,
       productionStart: formData.productionStart || "",
       expirationEnd: formData.expirationEnd || "",
-      details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined
+      details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined,
+      salePrice: undefined
     };
 
     // Save to backend via onAddProduct
@@ -982,7 +983,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       initialSoldCount: formData.initialSoldCount || 0,
       productionStart: formData.productionStart || "",
       expirationEnd: formData.expirationEnd || "",
-      details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined
+      details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined,
+      salePrice: undefined
     };
 
     onAddProduct(newProduct);
@@ -1799,7 +1801,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
             {/* Child Categories - Multi-select chips */}
             {localChildCategories.filter(cc => {
               const selSubs = formData.subCategoriesArr || [];
-              return selSubs.length === 0 ? false : selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryName === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId);
+              return selSubs.length === 0 ? false : selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryId === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId);
             }).length > 0 && (
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
@@ -1815,7 +1817,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
                 <div className="flex flex-wrap gap-2">
                   {localChildCategories.filter(cc => {
                     const selSubs = formData.subCategoriesArr || [];
-                    return selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryName === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId);
+                    return selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryId === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId);
                   }).map(cc => {
                     const isSelected = (formData.childCategoriesArr || []).includes(cc.name);
                     return (
@@ -2084,14 +2086,14 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
             )}
 
             {/* Child Categories - Mobile chips */}
-            {localChildCategories.filter(cc => { const selSubs = formData.subCategoriesArr || []; return selSubs.length === 0 ? false : selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryName === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId); }).length > 0 && (
+            {localChildCategories.filter(cc => { const selSubs = formData.subCategoriesArr || []; return selSubs.length === 0 ? false : selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryId === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId); }).length > 0 && (
               <div className="mb-3">
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-xs font-medium text-gray-700">Assign child categories</label>
                   <button type="button" onClick={() => { setCatalogModalTab('childcategory'); setShowCatalogModal(true); }} className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center"><Plus size={12} /></button>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {localChildCategories.filter(cc => { const selSubs = formData.subCategoriesArr || []; return selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryName === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId); }).map(cc => {
+                  {localChildCategories.filter(cc => { const selSubs = formData.subCategoriesArr || []; return selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryId === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId); }).map(cc => {
                     const isSelected = (formData.childCategoriesArr || []).includes(cc.name);
                     return (
                       <button key={cc.id} type="button" onClick={() => { const arr = formData.childCategoriesArr || []; const newArr = isSelected ? arr.filter((c: string) => c !== cc.name) : [...arr, cc.name]; updateField('childCategoriesArr', newArr); updateField('childCategory', newArr[0] || ''); }}
