@@ -61,10 +61,10 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
   const [isCarouselModalOpen, setIsCarouselModalOpen] = useState(false);
   const [editingCarousel, setEditingCarousel] = useState<CarouselItem | null>(null);
   const [carouselFormData, setCarouselFormData] = useState<Partial<CarouselItem>>({
-    name: '',
-    image: '',
-    mobileImage: '',
-    url: '',
+    name: 'string',
+    image: 'string',
+    mobileImage: 'string',
+    url: 'string',
     urlType: 'Internal',
     serial: 1,
     status: 'Publish'
@@ -125,12 +125,12 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
       let convertedImage: string;
 
       if (imageType === 'carousel') {
-        convertedImage = await convertCarouselImage(file, { quality: 0.85 });
+        convertedImage = await convertCarouselImage(file, { quality: 1 });
       } else {
         convertedImage = await convertCarouselImage(file, {
           width: CAROUSEL_MOBILE_WIDTH,
           height: CAROUSEL_MOBILE_HEIGHT,
-          quality: 0.85
+          quality: 1
         });
       }
 
@@ -206,10 +206,13 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
         name: carouselFormData.name || 'Untitled',
         image: desktopImage,
         mobileImage: mobileImage,
-        url: carouselFormData.url || '#',
+        url: carouselFormData.url || '',
         urlType: (carouselFormData.urlType as 'Internal' | 'External') || 'Internal',
         serial: Number(carouselFormData.serial),
-        status: (carouselFormData.status as 'Publish' | 'Draft') || 'Publish'
+        status: (carouselFormData.status as 'Publish' | 'Draft') || 'Publish',
+        subtitle: 'string',
+        title: 'string',
+        imageUrl: 'string'
       };
 
       const updatedItems = editingCarousel

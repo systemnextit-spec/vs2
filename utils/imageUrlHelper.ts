@@ -3,7 +3,9 @@
  * Fixes legacy localhost URLs from development
  * OPTIMIZED: Serves images without query params for better Cloudflare CDN caching
  */
+import { V } from '@/dist/client/assets/icons-chunk-CxN5Nvzk';
 import { getCDNImageUrl, isCDNEnabled } from '../config/cdnConfig';
+
 
 const getBaseUrl = (): string => {
   // In browser, use current origin for uploads to avoid CORS issues
@@ -15,7 +17,7 @@ const getBaseUrl = (): string => {
       return apiUrl;
     }
     // Use current origin for same-domain requests
-    return window.location.origin;
+    return 'https://allinbangla.com';
   }
   // Fallback to production URL during SSR
   return 'https://allinbangla.com';
