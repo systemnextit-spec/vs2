@@ -556,6 +556,9 @@ const StoreProductDetail = ({
           cart={cart}
           onToggleCart={onToggleCart}
           currency={websiteConfig?.shopCurrency === 'USD' ? '$' : '৳'}
+          tenantId={tenantId}
+          user={user ? { name: user.name || user.email, email: user.email } : null}
+          onLoginClick={onLoginClick}
         />
       </Suspense>
     );

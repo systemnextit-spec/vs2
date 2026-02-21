@@ -1,10 +1,5 @@
 interface MetaDataProduct {
-    material?: string;
-    brand?: string;
-    features?: string[];
-    modelNumber?: string;
-    origin?: string;
-    colors?: string[];
+    description?: string;
     details?: Array<{ type: string; description: string }>;
 }
 
@@ -12,40 +7,29 @@ interface MetaDataProps {
     product: MetaDataProduct;
 }
 
-export default function MetaData({ product }: MetaDataProps) {
-    const entries: Array<{ label: string; value: string }> = [];
-    
-    // Key features from details (from product upload form)
-    if (product.details?.length) {
-        for (const detail of product.details) {
-            if (detail.type?.trim() && detail.description?.trim()) {
-                entries.push({ label: detail.type, value: detail.description });
-            }
-        }
-    }
-    
-    // Fallback to individual fields if no details
-    if (entries.length === 0) {
-        if (product.brand) entries.push({ label: "Brand", value: product.brand });
-        if (product.material) entries.push({ label: "Material", value: product.material });
-        if (product.features?.length) entries.push({ label: "Features", value: product.features.join(", ") });
-        if (product.modelNumber) entries.push({ label: "Model Number", value: product.modelNumber });
-        if (product.origin) entries.push({ label: "Origin", value: product.origin });
-        if (product.colors?.length) entries.push({ label: "Colors", value: product.colors.join(", ") });
-    }
+// Strip HTML tags for plain text display
+const stripHtml = (html: string): string => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\s+/g, ' ').trim();
+};
 
-    if (entries.length === 0) return null;
+export default function MetaData({ product }: MetaDataProps) {
+    // Show short description: stripped HTML, limited to ~200 chars
+    const rawDescription = product.description || '';
+    const plainText = stripHtml(rawDescription);
+    
+    if (!plainText) return null;
+    
+    // Truncate to ~200 chars at word boundary
+    const shortDesc = plainText.length > 200
+        ? plainText.substring(0, 200).replace(/\s+\S*$/, '') + '...'
+        : plainText;
 
     return (
-        <div>
-            <div className="text-sm text-black space-y-1 mb-9">
-                {entries.map((entry, i) => (
-                    <div key={i}>
-                        <span className="text-black font-urbanist font-semibold">{entry.label}:</span>{" "}
-                        <span className="font-urbanist">{entry.value}</span>
-                    </div>
-                ))}
-            </div>
+        <div className="mb-6">
+            <p className="text-sm text-gray-600 font-lato leading-relaxed line-clamp-4">
+                {shortDesc}
+            </p>
         </div>
-    )
+    );
 }

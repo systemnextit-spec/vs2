@@ -83,6 +83,9 @@ export interface ModernProductDetailProps {
     cart?: number[];
     onToggleCart?: (id: number) => void;
     currency?: string;
+    tenantId?: string;
+    user?: { name: string; email: string } | null;
+    onLoginClick?: () => void;
 }
 
 export default function ProductDetailsPage({
@@ -100,6 +103,9 @@ export default function ProductDetailsPage({
     cart,
     onToggleCart,
     currency = "\u09F3",
+    tenantId,
+    user,
+    onLoginClick,
 }: ModernProductDetailProps) {
     const [quantity, setQuantity] = useState(1);
 
@@ -203,7 +209,7 @@ export default function ProductDetailsPage({
             <main className="max-w-[1720px] mx-auto px-4 lg:px-8 py-4 lg:py-8 pb-4 lg:pb-8 text-gray-900">
                 <div className="lg:flex lg:gap-6">
                     <div className="w-full lg:flex-1 min-w-0">
-                        <Description product={mappedProduct} />
+                        <Description product={mappedProduct} tenantId={tenantId} user={user} onLoginClick={onLoginClick} />
                     </div>
                     {/* Recent product */}
                     <div className="hidden lg:block h-fit w-72 xl:w-80 bg-white px-4 py-6 rounded-2xl flex-shrink-0">

@@ -1,4 +1,9 @@
+import React, { useState, lazy, Suspense } from "react";
+
+const ProductReviews = lazy(() => import('../../../../components/store/ProductReviews').then(m => ({ default: m.ProductReviews })));
+
 interface DescriptionProduct {
+    id?: number;
     title?: string;
     description?: string;
     material?: string;
@@ -15,9 +20,14 @@ interface DescriptionProduct {
 
 interface DescriptionProps {
     product: DescriptionProduct;
+    tenantId?: string;
+    user?: { name: string; email: string } | null;
+    onLoginClick?: () => void;
 }
 
-export default function Description({ product }: DescriptionProps) {
+export default function Description({ product, tenantId, user, onLoginClick }: DescriptionProps) {
+    const [activeTab, setActiveTab] = useState<'description' | 'specification' | 'reviews'>('description');
+
     // Extract YouTube video ID if available
     const getYouTubeVideoId = (url: string): string | null => {
         if (!url) return null;
@@ -29,7 +39,7 @@ export default function Description({ product }: DescriptionProps) {
     const videoId = product.videoUrl ? getYouTubeVideoId(product.videoUrl) : null;
     const videoThumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
 
-    // Build specs from details (key features) first, then fallback to individual fields
+    // Build specs from details (key features)
     const specs: Array<{ label: string; value: string }> = [];
     if (product.details?.length) {
         for (const detail of product.details) {
@@ -40,62 +50,109 @@ export default function Description({ product }: DescriptionProps) {
     }
     if (specs.length === 0) {
         if (product.material) specs.push({ label: "Material", value: product.material });
-        if (product.brand) specs.push({ label: "Compatible brand", value: product.brand });
-        if (product.features?.length) specs.push({ label: "Feature", value: product.features.join(", ") });
-        if (product.modelNumber) specs.push({ label: "Model number", value: product.modelNumber });
-        if (product.origin) specs.push({ label: "Place of origin", value: product.origin });
-        if (product.colors?.length) specs.push({ label: "Color", value: product.colors.join(", ") });
+        if (product.brand) specs.push({ label: "Brand", value: product.brand });
+        if (product.features?.length) specs.push({ label: "Features", value: product.features.join(", ") });
+        if (product.modelNumber) specs.push({ label: "Model Number", value: product.modelNumber });
+        if (product.origin) specs.push({ label: "Place of Origin", value: product.origin });
+        if (product.dimensions) specs.push({ label: "Dimensions", value: product.dimensions });
+        if (product.weight) specs.push({ label: "Weight", value: product.weight });
+        if (product.colors?.length) specs.push({ label: "Colors", value: product.colors.join(", ") });
     }
 
+    const tabs = [
+        { key: 'description' as const, label: 'Description' },
+        { key: 'specification' as const, label: 'Specification' },
+        { key: 'reviews' as const, label: 'Reviews' },
+    ];
+
     return (
-        <div className="flex-1 min-w-0 px-0 mdpx-4 py-6 rounded-2xl">
+        <div className="flex-1 min-w-0 px-0 py-6 rounded-2xl">
             {/* Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-                <button className="border border-[#FF6A00] px-5 py-2 text-base lg:text-2xl font-medium leading-[150%] font-lato rounded-[32px] whitespace-nowrap">Description</button>
-                <button className="px-5 py-2 text-base lg:text-2xl font-medium leading-[150%] font-lato rounded-[32px] whitespace-nowrap">Specification</button>
-                <button className="px-5 py-2 text-base lg:text-2xl font-medium leading-[150%] font-lato rounded-[32px] whitespace-nowrap">Reviews</button>
+                {tabs.map((tab) => (
+                    <button
+                        key={tab.key}
+                        onClick={() => setActiveTab(tab.key)}
+                        className={`px-5 py-2 text-base lg:text-2xl font-medium leading-[150%] font-lato rounded-[32px] whitespace-nowrap transition-colors ${
+                            activeTab === tab.key
+                                ? 'border border-[#FF6A00] text-[#FF6A00]'
+                                : 'border border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
             </div>
-            
-            {videoThumbnail && (
-                <div className="mt-6 block lg:hidden">
-                    <img
-                        src={videoThumbnail}
-                        alt="Video"
-                        className="w-full h-auto rounded-xl"
-                    />
-                </div>
-            )}
 
-            {/* Content */}
-            <div className="flex flex-col lg:flex-row items-start gap-4 mt-6 lg:mt-10">
-                <div className="w-full lg:w-[50%]">
-                    {specs.length > 0 ? (
-                        specs.map((spec, i) => (
-                            <p key={i} className="font-lato text-[16px] leading-[150%]">{spec.label}: {spec.value}</p>
-                        ))
-                    ) : product.description ? (
-                        <div className="font-lato text-[16px] leading-[150%] prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
-                    ) : (
-                        <p className="font-lato text-[16px] leading-[150%] text-gray-400">No description available</p>
-                    )}
-                </div>
-                {videoThumbnail && (
-                    <div className="hidden lg:block w-[50%]">
-                        <img
-                            src={videoThumbnail}
-                            alt="Video"
-                            className="m-auto rounded-xl"
-                        />
+            {/* Tab Content */}
+            <div className="mt-6 lg:mt-10">
+                {/* Description Tab */}
+                {activeTab === 'description' && (
+                    <div className="flex flex-col lg:flex-row items-start gap-4">
+                        <div className="w-full lg:w-[50%]">
+                            {product.description ? (
+                                <div className="font-lato text-[16px] leading-[150%] prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
+                            ) : (
+                                <p className="font-lato text-[16px] leading-[150%] text-gray-400">No description available</p>
+                            )}
+                        </div>
+                        {videoThumbnail && (
+                            <div className="w-full lg:w-[50%]">
+                                <img src={videoThumbnail} alt="Video" className="w-full lg:m-auto rounded-xl" />
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Specification Tab */}
+                {activeTab === 'specification' && (
+                    <div>
+                        {specs.length > 0 ? (
+                            <div className="overflow-hidden rounded-lg border border-gray-200">
+                                <table className="w-full">
+                                    <tbody>
+                                        {specs.map((spec, i) => (
+                                            <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                                                <td className="px-4 py-3 font-lato font-semibold text-[14px] lg:text-[16px] text-gray-700 w-[35%] border-r border-gray-200">
+                                                    {spec.label}
+                                                </td>
+                                                <td className="px-4 py-3 font-lato text-[14px] lg:text-[16px] text-gray-600">
+                                                    {spec.value}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <p className="font-lato text-[16px] text-gray-400">No specifications available</p>
+                        )}
+                    </div>
+                )}
+
+                {/* Reviews Tab */}
+                {activeTab === 'reviews' && (
+                    <div>
+                        {tenantId && product.id ? (
+                            <Suspense fallback={
+                                <div className="flex items-center justify-center py-12">
+                                    <div className="w-10 h-10 border-4 border-[#FF6A00] border-t-transparent rounded-full animate-spin" />
+                                </div>
+                            }>
+                                <ProductReviews
+                                    productId={product.id}
+                                    productName={product.title || ''}
+                                    tenantId={tenantId}
+                                    user={user || null}
+                                    onLoginClick={onLoginClick || (() => {})}
+                                />
+                            </Suspense>
+                        ) : (
+                            <p className="font-lato text-[16px] text-gray-400">Reviews are not available</p>
+                        )}
                     </div>
                 )}
             </div>
-            {product.description && specs.length > 0 && (
-                <div className="font-lato text-[16px] leading-[150%] mt-8">
-                    {product.dimensions && <span>Single package size: {product.dimensions} </span>}
-                    {product.weight && <span>Single gross weight: {product.weight} </span>}
-                    <div className="prose prose-sm max-w-none mt-2" dangerouslySetInnerHTML={{ __html: product.description }} />
-                </div>
-            )}
         </div>
-    )
+    );
 }
