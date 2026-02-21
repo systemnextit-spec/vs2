@@ -1,0 +1,43 @@
+
+export default function AnnouncedBar() {
+    return (
+        <div className="max-w-[1720px] mx-auto w-full">
+            <div className="flex items-center w-full">
+
+                {/* Mobile Notice */}
+                <div className="flex lg:hidden bg-sky-500 text-white text-center py-2 text-xs font-medium px-4 w-full">
+                    সহজ রিটার্ন পলিসি এবং সম্পূর্ণ ক্যাশ অন ডেলিভারি, কেনাকাটার সহজতা!
+                </div>
+
+                {/* Desktop content*/}
+                <div className="hidden lg:flex w-full">
+                    <div className="flex items-center gap-5 px-8 py-3.5 bg-white border-b border-gray-100 text-sm basis-[40%]">
+
+                        <button className="flex items-center gap-1 font-poppins font-medium cursor-pointer">
+                            <img src="/images/home-09.svg" alt="Home" width={24} height={24} />
+                            Home
+                        </button>
+
+                        <button className="flex items-center gap-1 font-poppins font-medium cursor-pointer">
+                            <img src="/images/category-management.svg" alt="Categories" width={24} height={24} />
+                            Categories
+                        </button>
+
+                        <button className="flex items-center gap-1 font-poppins font-medium cursor-pointer">
+                            <img src="/images/fire.svg" alt="Flash Sale" width={24} height={24} />
+                            <span className="bg-gradient-to-b from-[#FF6A00] to-[#FF9F1C] bg-clip-text text-transparent">
+                                Flash Sale
+                            </span>
+                        </button>
+
+                    </div>
+                    <div className="flex items-center justify-center text-black text-[16px] basis-[50%]">
+                        সহজ রিটার্ন পলিসি এবং সম্পূর্ণ ক্যাশ অন ডেলিভারি, কেনাকাটার সহজতা!
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    )
+}
