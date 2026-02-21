@@ -44,7 +44,7 @@ const ProductSectionStyle1 = memo(({ title, titleExtra, products, accentColor = 
       <div className="bg-white/80 backdrop-blur-lg border border-gray-100 rounded-xl p-3 md:p-4 mb-3 shadow-sm flex items-center gap-2.5">
         <div className={`h-6 w-1 rounded-full ${colors[accentColor]}`}/>
         <SectionHeader title={title} className="text-lg md:text-xl font-bold text-gray-900"/>
-        {titleExtra && <div className="ml-auto">{titleExtra}</div>}
+        {titleExtra && <div className="ml-3">{titleExtra}</div>}
       </div>
       <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
@@ -66,7 +66,7 @@ const ProductSectionStyle2 = memo(({ title, titleExtra, products, accentColor = 
           <h2 className="text-lg md:text-xl font-bold text-gray-900">{title}</h2>
           <p className="text-xs text-gray-500">{products.length} products available</p>
         </div>
-        {titleExtra && <div className="ml-auto">{titleExtra}</div>}
+        {titleExtra && <div className="ml-3">{titleExtra}</div>}
       </div>
       <div className="bg-white rounded-2xl border border-gray-200 p-3 sm:p-4">
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

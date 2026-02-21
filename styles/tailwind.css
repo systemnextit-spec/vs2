@@ -523,6 +523,15 @@
 }
 
 /* Theme gradient backgrounds - for use with CSS variables */
+
+/* Heartbeat animation for countdown timers */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.08); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.05); }
+  56% { transform: scale(1); }
+}
 .bg-gradient-theme {
   background: linear-gradient(135deg, 
     rgb(var(--color-primary-rgb, 16 185 129)) 0%, 

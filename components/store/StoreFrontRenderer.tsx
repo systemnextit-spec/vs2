@@ -521,10 +521,10 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
             <Suspense fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />}>
               <LazySection fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />} rootMargin="0px 0px 300px" minHeight="400px">
                 <ProductGridSection
-                    title={settings?.title || `#${settings?.tagName}`}
+                    title={settings?.title || settings?.tagName || ''}
                     titleExtra={tagHasCountdown ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs sm:text-sm font-semibold text-rose-500">Ends in</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs sm:text-sm font-semibold" style={{ color: 'rgb(var(--color-secondary-rgb, 236 72 153))' }}>Ends in</span>
                         <Suspense fallback={<span className="text-xs text-gray-400">...</span>}>
                           <TagCountdownTimer expiresAt={matchedTag.expiresAt} tagName={matchedTag.name} />
                         </Suspense>

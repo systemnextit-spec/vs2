@@ -39,20 +39,24 @@ export const TagCountdownTimer = ({ expiresAt, tagName, compact = false }: TagCo
 
   const totalHours = timeLeft.days * 24 + timeLeft.hours;
 
+  // Dynamic colors from tenant CSS variables
+  const primaryBg = 'rgb(var(--color-primary-rgb, 34 197 94))';
+  const secondaryBg = 'rgb(var(--color-secondary-rgb, 236 72 153))';
+
   if (compact) {
     return (
       <div className="flex items-center gap-1 text-xs" role="timer" aria-label={`${tagName || 'Tag'} countdown`}>
-        <Timer size={12} className="text-rose-500 flex-shrink-0" />
+        <Timer size={12} className="flex-shrink-0 animate-[heartbeat_1.5s_ease-in-out_infinite]" style={{ color: primaryBg }} />
         <div className="flex items-center gap-0.5">
-          <span className="bg-rose-500/10 text-rose-600 font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center">
+          <span className="font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center text-white" style={{ backgroundColor: primaryBg }}>
             {padZero(totalHours)}
           </span>
-          <span className="text-gray-400 font-bold text-[10px]">:</span>
-          <span className="bg-rose-500/10 text-rose-600 font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center">
+          <span className="font-bold text-[10px]" style={{ color: secondaryBg }}>:</span>
+          <span className="font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center text-white" style={{ backgroundColor: primaryBg }}>
             {padZero(timeLeft.minutes)}
           </span>
-          <span className="text-gray-400 font-bold text-[10px]">:</span>
-          <span className="bg-rose-500/10 text-rose-600 font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center">
+          <span className="font-bold text-[10px]" style={{ color: secondaryBg }}>:</span>
+          <span className="font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center text-white" style={{ backgroundColor: primaryBg }}>
             {padZero(timeLeft.seconds)}
           </span>
         </div>
@@ -62,28 +66,37 @@ export const TagCountdownTimer = ({ expiresAt, tagName, compact = false }: TagCo
 
   return (
     <div className="flex items-center gap-1.5 sm:gap-2" role="timer" aria-label={`${tagName || 'Tag'} countdown`}>
-      <Clock size={16} className="text-rose-500 flex-shrink-0 hidden sm:block" />
+      <Clock size={16} className="flex-shrink-0 hidden sm:block animate-[heartbeat_1.5s_ease-in-out_infinite]" style={{ color: primaryBg }} />
       
       <div className="flex flex-col items-center">
-        <div className="bg-gradient-to-b from-rose-500 to-pink-600 text-white font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg min-w-[36px] sm:min-w-[48px] text-center shadow-sm">
+        <div 
+          className="text-white font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg min-w-[36px] sm:min-w-[48px] text-center shadow-sm animate-[heartbeat_1.5s_ease-in-out_infinite]"
+          style={{ background: `linear-gradient(to bottom, ${primaryBg}, ${secondaryBg})` }}
+        >
           {padZero(totalHours)}
         </div>
         <span className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 font-medium uppercase">Hours</span>
       </div>
       
-      <span className="text-rose-400 font-bold text-sm sm:text-lg self-start mt-1 sm:mt-1.5">:</span>
+      <span className="font-bold text-sm sm:text-lg self-start mt-1 sm:mt-1.5" style={{ color: secondaryBg }}>:</span>
       
       <div className="flex flex-col items-center">
-        <div className="bg-gradient-to-b from-rose-500 to-pink-600 text-white font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg min-w-[36px] sm:min-w-[48px] text-center shadow-sm">
+        <div 
+          className="text-white font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg min-w-[36px] sm:min-w-[48px] text-center shadow-sm animate-[heartbeat_1.5s_ease-in-out_infinite]"
+          style={{ background: `linear-gradient(to bottom, ${primaryBg}, ${secondaryBg})` }}
+        >
           {padZero(timeLeft.minutes)}
         </div>
         <span className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 font-medium uppercase">Mins</span>
       </div>
       
-      <span className="text-rose-400 font-bold text-sm sm:text-lg self-start mt-1 sm:mt-1.5">:</span>
+      <span className="font-bold text-sm sm:text-lg self-start mt-1 sm:mt-1.5" style={{ color: secondaryBg }}>:</span>
       
       <div className="flex flex-col items-center">
-        <div className="bg-gradient-to-b from-rose-500 to-pink-600 text-white font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg min-w-[36px] sm:min-w-[48px] text-center shadow-sm">
+        <div 
+          className="text-white font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg min-w-[36px] sm:min-w-[48px] text-center shadow-sm animate-[heartbeat_1.5s_ease-in-out_infinite]"
+          style={{ background: `linear-gradient(to bottom, ${primaryBg}, ${secondaryBg})` }}
+        >
           {padZero(timeLeft.seconds)}
         </div>
         <span className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 font-medium uppercase">Sec</span>

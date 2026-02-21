@@ -7,8 +7,7 @@ interface LandingPageTabProps {
   setWebsiteConfiguration: React.Dispatch<React.SetStateAction<WebsiteConfig>>;
   tenantId: string;
   tenantSubdomain?: string;
-  onSave?: () => Promise<void>;
-}
+onSave?: (config: WebsiteConfig) => Promise<void>;}
 
 export const LandingPageTab: React.FC<LandingPageTabProps> = ({
   websiteConfiguration,
