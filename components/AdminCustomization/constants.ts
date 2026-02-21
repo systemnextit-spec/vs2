@@ -144,6 +144,11 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     pharmacy3: 'https://hdnfltv.com/image/nitimages/pasted_1770568460126.webp',
     pharmacy4: 'https://hdnfltv.com/image/nitimages/pasted_1770568460126.webp',
   },
+  // Product Detail Page Theme preview images
+  productDetailThemes: {
+    default: 'https://hdnfltv.com/image/nitimages/pasted_1770568460126.webp',
+    modern: 'https://hdnfltv.com/image/nitimages/pasted_1770568493317.webp',
+  },
 };
 
 export const SOCIAL_PLATFORM_OPTIONS = [

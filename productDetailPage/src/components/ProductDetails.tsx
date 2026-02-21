@@ -1,6 +1,6 @@
 import MobileNav from "./nav/MobileNav";
 import DesktopNav from "./nav/DesktopNav";
-import { Product } from "@/@types/IProduct.type";
+import { Product } from "../@types/IProduct.type";
 import MobileTabBar from "./topbar/MobileTabBar";
 import AnnouncedBar from "./AnnouncedBar";
 import ProductMain from "./ProductMain";

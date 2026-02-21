@@ -11,7 +11,8 @@ module.exports = {
     './services/**/*.{ts,tsx,js,jsx}',
     './utils/**/*.{ts,tsx}',
     './constants.ts',
-    './types.ts'
+    './types.ts',
+    './productDetailPage/src/**/*.{ts,tsx,js,jsx}',
   ],
   theme: {
     screens: {

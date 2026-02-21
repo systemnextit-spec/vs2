@@ -6,7 +6,7 @@ import { Thumbs } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/thumbs";
-import { Product } from "@/@types/IProduct.type";
+import { Product } from "../../@types/IProduct.type";
 
 export default function ImageMain({ product }: { product: Product }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

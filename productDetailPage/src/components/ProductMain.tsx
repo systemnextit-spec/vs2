@@ -1,5 +1,5 @@
 import React from "react";
-import { Product } from "@/@types/IProduct.type";
+import { Product } from "../@types/IProduct.type";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs } from "swiper/modules";
 // @ts-ignore

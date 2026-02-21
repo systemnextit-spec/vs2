@@ -25,6 +25,9 @@ const TrackOrderModal = lazy(() => import('../components/store/TrackOrderModal')
 // Lightweight skeleton loader
 const ProductDetailSkeleton = lazy(() => import('../components/SkeletonLoaders').then(m => ({ default: m.ProductDetailSkeleton })));
 
+// Modern product detail page theme (ready-made theme)
+const ModernProductDetailsPage = lazy(() => import('@/productDetailPage/src/components/ProductDetails'));
+
 // Modal loading fallback
 const ModalLoadingFallback = () => (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -525,6 +528,15 @@ const StoreProductDetail = ({
           <ProductDetailSkeleton />
         </Suspense>
       </div>
+    );
+  }
+
+  // Render modern product detail theme if selected
+  if (websiteConfig?.productDetailTheme === 'modern') {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full" /></div>}>
+        <ModernProductDetailsPage />
+      </Suspense>
     );
   }
 

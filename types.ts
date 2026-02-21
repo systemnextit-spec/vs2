@@ -457,6 +457,7 @@ export interface WebsiteConfig {
     font: string;
   };
   readyTheme?: string;
+  productDetailTheme?: string;
 }
 
 export interface DeliveryConfig {
