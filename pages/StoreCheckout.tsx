@@ -1179,18 +1179,30 @@ const StoreCheckout = ({
               </div>
             </div>
             <ul className="mt-4 space-y-3 text-sm text-gray-600">
+              {/* Tenant Offers: Registration, First Purchase, Referral */}
+              {(websiteConfig?.offers || []).filter(o => o.discount).map((offer, i) => {
+                const discStr = offer.discount.trim();
+                const isPercent = discStr.endsWith('%');
+                const discLabel = isPercent ? discStr : `${cs}${discStr}`;
+                const typeLabel = offer.type === 'Registration' ? '🎁 Registration Discount' : offer.type === 'First Purchase' ? '🛍️ First Purchase Discount' : `🎉 ${offer.type} Discount`;
+                return (
+                  <li key={`offer-${i}`} className="flex items-start gap-2 p-2.5 bg-purple-50 rounded-xl border border-purple-100">
+                    <span className="text-purple-500 mt-0.5">✨</span>
+                    <span className="text-purple-800"><span className="font-semibold">{typeLabel}</span> — Get <span className="font-bold text-purple-900">{discLabel} off</span> on your {offer.type === 'Registration' ? 'first order after registration' : offer.type === 'First Purchase' ? 'very first purchase' : 'referral order'}!</span>
+                  </li>
+                );
+              })}
+              {/* Promo Codes / Coupons */}
               {(websiteConfig?.promoCodes || []).filter(p => p.isActive !== false && (!p.expiryDate || new Date(p.expiryDate) >= new Date())).map((promo, i) => (
-                <li key={i} className="flex items-center gap-2">
+                <li key={`promo-${i}`} className="flex items-center gap-2">
                   <span className="text-emerald-500">✅</span>
                   <span>Use code <span className="font-semibold bg-gray-100 px-2 py-0.5 rounded text-gray-900">{promo.code}</span> for {promo.discountType === 'amount' ? `${cs}${promo.discountAmount} off` : `${promo.discountPercentage}% off`}
                   {promo.minPurchase ? ` on orders above ${cs}${promo.minPurchase.toLocaleString()}` : ''}.
                   </span>
                 </li>
               ))}
-              {(!websiteConfig?.promoCodes || websiteConfig.promoCodes.filter(p => p.isActive !== false).length === 0) && (
-                <>
-                  <li className="flex items-center gap-2"><span className="text-emerald-500">✅</span> Check back soon for exclusive offers!</li>
-                </>
+              {((!websiteConfig?.promoCodes || websiteConfig.promoCodes.filter(p => p.isActive !== false).length === 0) && (!websiteConfig?.offers || websiteConfig.offers.filter(o => o.discount).length === 0)) && (
+                <li className="flex items-center gap-2"><span className="text-emerald-500">✅</span> Check back soon for exclusive offers!</li>
               )}
             </ul>
             <button

@@ -66,11 +66,11 @@ interface ProductFormData {
   barcode: string;
   moq: number;
   quantity: number;
-  category: string;
-  subCategory: string;
-  childCategory: string;
+  categories: string[];
+  subCategories: string[];
+  childCategories: string[];
   tags: string[];
-  brand: string;
+  brands: string[];
   deliveryInsideDhaka: number;
   deliveryOutsideDhaka: number;
   expirationStart: string;
@@ -154,11 +154,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     barcode: '',
     moq: 0,
     quantity: 0,
-    category: '',
-    subCategory: '',
-    childCategory: '',
+    categories: [],
+    subCategories: [],
+    childCategories: [],
     tags: [],
-    brand: '',
+    brands: [],
     deliveryInsideDhaka: 80,
     deliveryOutsideDhaka: 120,
     expirationStart: '',
@@ -190,16 +190,20 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     isOurProduct: false,
   });
 
-  // Get filtered subcategories based on selected category
+  // Get filtered subcategories based on selected categories (multi-select)
   const filteredSubCategories = subCategories.filter(sub => {
-    const selectedCat = categories.find(c => c.name === formData.category);
-    return selectedCat && sub.categoryId === selectedCat.id;
+    return formData.categories.some(catName => {
+      const cat = categories.find(c => c.name === catName);
+      return cat && sub.categoryId === cat.id;
+    });
   });
 
-  // Get filtered child categories based on selected subcategory
+  // Get filtered child categories based on selected subcategories (multi-select)
   const filteredChildCategories = childCategories.filter(child => {
-    const selectedSub = subCategories.find(s => s.name === formData.subCategory);
-    return selectedSub && child.subCategoryId === selectedSub.id;
+    return formData.subCategories.some(subName => {
+      const sub = subCategories.find(s => s.name === subName);
+      return sub && child.subCategoryId === sub.id;
+    });
   });
 
   // Handler to create a new category
@@ -212,15 +216,15 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
       status: 'Active',
     };
     onAddCategory?.(newCategory);
-    setFormData(prev => ({ ...prev, category: newCategory.name }));
+    setFormData(prev => ({ ...prev, categories: [...prev.categories, newCategory.name] }));
     setNewCategoryName('');
     setShowNewCategoryInput(false);
   };
 
   // Handler to create a new subcategory
   const handleCreateSubCategory = () => {
-    if (!newSubCategoryName.trim() || !formData.category) return;
-    const parentCat = categories.find(c => c.name === formData.category);
+    if (!newSubCategoryName.trim() || formData.categories.length === 0) return;
+    const parentCat = categories.find(c => formData.categories.includes(c.name));
     if (!parentCat) return;
     const newSubCategory: SubCategory = {
       id: Date.now().toString(),
@@ -229,15 +233,15 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
       status: 'Active',
     };
     onAddSubCategory?.(newSubCategory);
-    setFormData(prev => ({ ...prev, subCategory: newSubCategory.name }));
+    setFormData(prev => ({ ...prev, subCategories: [...prev.subCategories, newSubCategory.name] }));
     setNewSubCategoryName('');
     setShowNewSubCategoryInput(false);
   };
 
   // Handler to create a new child category
   const handleCreateChildCategory = () => {
-    if (!newChildCategoryName.trim() || !formData.subCategory) return;
-    const parentSub = subCategories.find(s => s.name === formData.subCategory);
+    if (!newChildCategoryName.trim() || formData.subCategories.length === 0) return;
+    const parentSub = subCategories.find(s => formData.subCategories.includes(s.name));
     if (!parentSub) return;
     const newChildCategory: ChildCategory = {
       id: Date.now().toString(),
@@ -246,7 +250,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
       status: 'Active',
     };
     onAddChildCategory?.(newChildCategory);
-    setFormData(prev => ({ ...prev, childCategory: newChildCategory.name }));
+    setFormData(prev => ({ ...prev, childCategories: [...prev.childCategories, newChildCategory.name] }));
     setNewChildCategoryName('');
     setShowNewChildCategoryInput(false);
   };
@@ -296,11 +300,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
         regularPrice: editingProduct.price || 0,
         salePrice: editingProduct.originalPrice || 0,
         sku: editingProduct.sku || '',
-        category: editingProduct.category || '',
-        subCategory: editingProduct.subCategory || '',
-        childCategory: editingProduct.childCategory || '',
+        categories: editingProduct.category ? [editingProduct.category] : [],
+        subCategories: editingProduct.subCategory ? [editingProduct.subCategory] : [],
+        childCategories: editingProduct.childCategory ? [editingProduct.childCategory] : [],
         tags: productTags,
-        brand: editingProduct.brand || '',
+        brands: editingProduct.brand ? [editingProduct.brand] : [],
         mainImage: editingProduct.image || '',
         galleryImages: editingProduct.galleryImages || [],
         isDealOfTheDay,
@@ -444,10 +448,10 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
       originalPrice: formData.salePrice,
       image: formData.mainImage,
       galleryImages: formData.galleryImages,
-      category: formData.category,
-      subCategory: formData.subCategory,
-      childCategory: formData.childCategory,
-      brand: formData.brand,
+      category: formData.categories.join(', '),
+      subCategory: formData.subCategories.join(', '),
+      childCategory: formData.childCategories.join(', '),
+      brand: formData.brands.join(', '),
       tags: finalTags,
       searchTags: [],
       colors: [],
@@ -468,7 +472,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
       originalPrice: formData.salePrice,
       image: formData.mainImage,
       galleryImages: formData.galleryImages,
-      category: formData.category,
+      category: formData.categories.join(', '),
       tags: formData.tags,
     });
   };
@@ -1007,123 +1011,118 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 </div>
               </div>
 
-              {/* Categories Section - Responsive */}
+              {/* Categories Section - Multi-Select with Chips */}
               <div>
-                <h2 className="text-zinc-800 text-lg sm:text-xl font-bold font-['Lato'] leading-6 mb-3 sm:mb-4">Categories</h2>
+                <h2 className="text-zinc-800 text-lg sm:text-xl font-bold font-['Lato'] leading-6 mb-3 sm:mb-4">Catalog</h2>
                 
-                {/* Product Categories */}
+                {/* Selected Chips Display */}
+                {(formData.categories.length > 0 || formData.subCategories.length > 0 || formData.childCategories.length > 0 || formData.brands.length > 0) && (
+                  <div className="mb-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Selected</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {formData.categories.map(c => (
+                        <span key={`cat-${c}`} className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                          <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                          {c}
+                          <button type="button" onClick={() => setFormData(prev => ({ ...prev, categories: prev.categories.filter(x => x !== c), subCategories: prev.subCategories.filter(sc => { const cat = categories.find(ct => ct.name === c); return !cat || !subCategories.find(s => s.name === sc && s.categoryId === cat.id); }), childCategories: [] }))} className="hover:text-blue-900 ml-0.5"><X size={12} /></button>
+                        </span>
+                      ))}
+                      {formData.subCategories.map(s => (
+                        <span key={`sub-${s}`} className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                          {s}
+                          <button type="button" onClick={() => setFormData(prev => ({ ...prev, subCategories: prev.subCategories.filter(x => x !== s), childCategories: [] }))} className="hover:text-emerald-900 ml-0.5"><X size={12} /></button>
+                        </span>
+                      ))}
+                      {formData.childCategories.map(c => (
+                        <span key={`child-${c}`} className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                          <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                          {c}
+                          <button type="button" onClick={() => setFormData(prev => ({ ...prev, childCategories: prev.childCategories.filter(x => x !== c) }))} className="hover:text-purple-900 ml-0.5"><X size={12} /></button>
+                        </span>
+                      ))}
+                      {formData.brands.map(b => (
+                        <span key={`brand-${b}`} className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
+                          <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                          {b}
+                          <button type="button" onClick={() => setFormData(prev => ({ ...prev, brands: prev.brands.filter(x => x !== b) }))} className="hover:text-amber-900 ml-0.5"><X size={12} /></button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Category Multi-Select Dropdown */}
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
                     <label className="text-teal-950 text-sm sm:text-base font-bold font-['Lato']">Product Categories</label>
-                    <button 
-                      type="button" 
-                      onClick={() => setShowNewCategoryInput(!showNewCategoryInput)}
-                      className="flex items-center gap-1 p-2 hover:opacity-80"
-                    >
+                    <button type="button" onClick={() => setShowNewCategoryInput(!showNewCategoryInput)} className="flex items-center gap-1 p-2 hover:opacity-80">
                       <Plus size={18} className="text-black sm:hidden" />
                       <Plus size={20} className="text-black hidden sm:block" />
                       <span className="text-teal-950 text-xs font-bold font-['Lato']">Add New</span>
                     </button>
                   </div>
-                  
-                  {/* Inline Add Category Form */}
                   {showNewCategoryInput && (
                     <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <input
-                        type="text"
-                        value={newCategoryName}
-                        onChange={(e) => setNewCategoryName(e.target.value)}
-                        placeholder="Enter category name"
-                        className="w-full p-2 mb-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleCreateCategory())}
-                      />
+                      <input type="text" value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} placeholder="Enter category name" className="w-full p-2 mb-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleCreateCategory())} />
                       <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={handleCreateCategory}
-                          className="flex-1 px-3 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-xs font-medium hover:from-sky-500 hover:to-blue-600"
-                        >
-                          Save Category
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setShowNewCategoryInput(false); setNewCategoryName(''); }}
-                          className="px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100"
-                        >
-                          Cancel
-                        </button>
+                        <button type="button" onClick={handleCreateCategory} className="flex-1 px-3 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-xs font-medium hover:from-sky-500 hover:to-blue-600">Save Category</button>
+                        <button type="button" onClick={() => { setShowNewCategoryInput(false); setNewCategoryName(''); }} className="px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
                       </div>
                     </div>
                   )}
-                  
                   <div className="relative">
-                    <select 
-                      value={formData.category} 
-                      onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value, subCategory: '', childCategory: '' }))} 
+                    <select
+                      value=""
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val && !formData.categories.includes(val)) {
+                          setFormData(prev => ({ ...prev, categories: [...prev.categories, val] }));
+                        }
+                      }}
                       className="w-full p-2.5 sm:p-3 bg-white rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.20)] text-teal-950 text-sm sm:text-base font-normal font-['Lato'] focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
                     >
-                      <option value="">Select your category</option>
-                      {categories.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
+                      <option value="">Select category</option>
+                      {categories.filter(c => !formData.categories.includes(c.name)).map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
                     </select>
                     <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none sm:hidden" />
                     <ChevronDown size={24} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none hidden sm:block" />
                   </div>
                 </div>
 
-                {/* Sub Category */}
-                {formData.category && (
+                {/* Sub Category Multi-Select */}
+                {formData.categories.length > 0 && (
                   <div className="mb-4">
                     <div className="flex items-center justify-between mb-2 sm:mb-3">
                       <label className="text-teal-950 text-sm sm:text-base font-bold font-['Lato']">Sub Category</label>
-                      <button 
-                        type="button" 
-                        onClick={() => setShowNewSubCategoryInput(!showNewSubCategoryInput)}
-                        className="flex items-center gap-1 p-2 hover:opacity-80"
-                      >
+                      <button type="button" onClick={() => setShowNewSubCategoryInput(!showNewSubCategoryInput)} className="flex items-center gap-1 p-2 hover:opacity-80">
                         <Plus size={18} className="text-black sm:hidden" />
                         <Plus size={20} className="text-black hidden sm:block" />
                         <span className="text-teal-950 text-xs font-bold font-['Lato']">Add New</span>
                       </button>
                     </div>
-                    
-                    {/* Inline Add SubCategory Form */}
                     {showNewSubCategoryInput && (
                       <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <input
-                          type="text"
-                          value={newSubCategoryName}
-                          onChange={(e) => setNewSubCategoryName(e.target.value)}
-                          placeholder="Enter sub category name"
-                          className="w-full p-2 mb-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                          onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleCreateSubCategory())}
-                        />
+                        <input type="text" value={newSubCategoryName} onChange={(e) => setNewSubCategoryName(e.target.value)} placeholder="Enter sub category name" className="w-full p-2 mb-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleCreateSubCategory())} />
                         <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={handleCreateSubCategory}
-                            className="flex-1 px-3 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-xs font-medium hover:from-sky-500 hover:to-blue-600"
-                          >
-                            Save Sub Category
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => { setShowNewSubCategoryInput(false); setNewSubCategoryName(''); }}
-                            className="px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100"
-                          >
-                            Cancel
-                          </button>
+                          <button type="button" onClick={handleCreateSubCategory} className="flex-1 px-3 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-xs font-medium hover:from-sky-500 hover:to-blue-600">Save Sub Category</button>
+                          <button type="button" onClick={() => { setShowNewSubCategoryInput(false); setNewSubCategoryName(''); }} className="px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
                         </div>
                       </div>
                     )}
-                    
                     <div className="relative">
-                      <select 
-                        value={formData.subCategory} 
-                        onChange={(e) => setFormData(prev => ({ ...prev, subCategory: e.target.value, childCategory: '' }))} 
+                      <select
+                        value=""
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val && !formData.subCategories.includes(val)) {
+                            setFormData(prev => ({ ...prev, subCategories: [...prev.subCategories, val] }));
+                          }
+                        }}
                         className="w-full p-2.5 sm:p-3 bg-white rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.20)] text-teal-950 text-sm sm:text-base font-normal font-['Lato'] focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
                       >
                         <option value="">Select sub category</option>
-                        {filteredSubCategories.map(sub => <option key={sub.id} value={sub.name}>{sub.name}</option>)}
+                        {filteredSubCategories.filter(s => !formData.subCategories.includes(s.name)).map(sub => <option key={sub.id} value={sub.name}>{sub.name}</option>)}
                       </select>
                       <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none sm:hidden" />
                       <ChevronDown size={24} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none hidden sm:block" />
@@ -1131,60 +1130,39 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   </div>
                 )}
 
-                {/* Child Category */}
-                {formData.subCategory && (
+                {/* Child Category Multi-Select */}
+                {formData.subCategories.length > 0 && (
                   <div className="mb-4">
                     <div className="flex items-center justify-between mb-2 sm:mb-3">
                       <label className="text-teal-950 text-sm sm:text-base font-bold font-['Lato']">Child Category</label>
-                      <button 
-                        type="button" 
-                        onClick={() => setShowNewChildCategoryInput(!showNewChildCategoryInput)}
-                        className="flex items-center gap-1 p-2 hover:opacity-80"
-                      >
+                      <button type="button" onClick={() => setShowNewChildCategoryInput(!showNewChildCategoryInput)} className="flex items-center gap-1 p-2 hover:opacity-80">
                         <Plus size={18} className="text-black sm:hidden" />
                         <Plus size={20} className="text-black hidden sm:block" />
                         <span className="text-teal-950 text-xs font-bold font-['Lato']">Add New</span>
                       </button>
                     </div>
-                    
-                    {/* Inline Add ChildCategory Form */}
                     {showNewChildCategoryInput && (
                       <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <input
-                          type="text"
-                          value={newChildCategoryName}
-                          onChange={(e) => setNewChildCategoryName(e.target.value)}
-                          placeholder="Enter child category name"
-                          className="w-full p-2 mb-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                          onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleCreateChildCategory())}
-                        />
+                        <input type="text" value={newChildCategoryName} onChange={(e) => setNewChildCategoryName(e.target.value)} placeholder="Enter child category name" className="w-full p-2 mb-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleCreateChildCategory())} />
                         <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={handleCreateChildCategory}
-                            className="flex-1 px-3 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-xs font-medium hover:from-sky-500 hover:to-blue-600"
-                          >
-                            Save Child Category
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => { setShowNewChildCategoryInput(false); setNewChildCategoryName(''); }}
-                            className="px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100"
-                          >
-                            Cancel
-                          </button>
+                          <button type="button" onClick={handleCreateChildCategory} className="flex-1 px-3 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-xs font-medium hover:from-sky-500 hover:to-blue-600">Save Child Category</button>
+                          <button type="button" onClick={() => { setShowNewChildCategoryInput(false); setNewChildCategoryName(''); }} className="px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
                         </div>
                       </div>
                     )}
-                    
                     <div className="relative">
-                      <select 
-                        value={formData.childCategory} 
-                        onChange={(e) => setFormData(prev => ({ ...prev, childCategory: e.target.value }))} 
+                      <select
+                        value=""
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val && !formData.childCategories.includes(val)) {
+                            setFormData(prev => ({ ...prev, childCategories: [...prev.childCategories, val] }));
+                          }
+                        }}
                         className="w-full p-2.5 sm:p-3 bg-white rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.20)] text-teal-950 text-sm sm:text-base font-normal font-['Lato'] focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
                       >
                         <option value="">Select child category</option>
-                        {filteredChildCategories.map(child => <option key={child.id} value={child.name}>{child.name}</option>)}
+                        {filteredChildCategories.filter(c => !formData.childCategories.includes(c.name)).map(child => <option key={child.id} value={child.name}>{child.name}</option>)}
                       </select>
                       <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none sm:hidden" />
                       <ChevronDown size={24} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none hidden sm:block" />
@@ -1192,89 +1170,78 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   </div>
                 )}
 
-                {/* Tags */}
+                {/* Brand Multi-Select */}
+                <div className="mb-4">
+                  <label className="text-teal-950 text-sm sm:text-base font-bold font-['Lato'] mb-2 sm:mb-3 block">Brand</label>
+                  <div className="relative">
+                    <select
+                      value=""
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val && !formData.brands.includes(val)) {
+                          setFormData(prev => ({ ...prev, brands: [...prev.brands, val] }));
+                        }
+                      }}
+                      className="w-full p-2.5 sm:p-3 bg-white rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.20)] text-teal-950 text-sm sm:text-base font-normal font-['Lato'] focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
+                    >
+                      <option value="">Select Brand</option>
+                      {brands.filter(b => !formData.brands.includes(b.name)).map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
+                    </select>
+                    <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none sm:hidden" />
+                    <ChevronDown size={24} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none hidden sm:block" />
+                  </div>
+                </div>
+
+                {/* Product Tags - Only show as chips when selected */}
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
-                    <label className="text-teal-950 text-sm sm:text-base font-bold font-['Lato']">Tags</label>
-                    <button 
-                      type="button" 
-                      onClick={() => setShowNewTagInput(!showNewTagInput)}
-                      className="flex items-center gap-1 p-2 hover:opacity-80"
-                    >
+                    <label className="text-teal-950 text-sm sm:text-base font-bold font-['Lato']">Product Tags</label>
+                    <button type="button" onClick={() => setShowNewTagInput(!showNewTagInput)} className="flex items-center gap-1 p-2 hover:opacity-80">
                       <Plus size={18} className="text-black sm:hidden" />
                       <Plus size={20} className="text-black hidden sm:block" />
                       <span className="text-teal-950 text-xs font-bold font-['Lato']">Add New</span>
                     </button>
                   </div>
-                  
-                  {/* Inline Add Tag Form */}
                   {showNewTagInput && (
                     <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <input
-                        type="text"
-                        value={newTagName}
-                        onChange={(e) => setNewTagName(e.target.value)}
-                        placeholder="Enter tag name"
-                        className="w-full p-2 mb-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleCreateTag())}
-                      />
+                      <input type="text" value={newTagName} onChange={(e) => setNewTagName(e.target.value)} placeholder="Enter tag name" className="w-full p-2 mb-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleCreateTag())} />
                       <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={handleCreateTag}
-                          className="flex-1 px-3 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-xs font-medium hover:from-sky-500 hover:to-blue-600"
-                        >
-                          Save Tag
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setShowNewTagInput(false); setNewTagName(''); }}
-                          className="px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100"
-                        >
-                          Cancel
-                        </button>
+                        <button type="button" onClick={handleCreateTag} className="flex-1 px-3 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg text-xs font-medium hover:from-sky-500 hover:to-blue-600">Save Tag</button>
+                        <button type="button" onClick={() => { setShowNewTagInput(false); setNewTagName(''); }} className="px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
                       </div>
                     </div>
                   )}
                   
-                  {/* Tag Selection */}
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {tags.map(tag => (
-                      <button
-                        key={tag.id}
-                        type="button"
-                        onClick={() => toggleTag(tag.name)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                          formData.tags.includes(tag.name)
-                            ? 'bg-gradient-to-r from-sky-400 to-blue-500 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        {tag.name}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  {/* Selected Tags Display */}
+                  {/* Selected tags as chips */}
                   {formData.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-1.5 mb-3">
                       {formData.tags.map(tagName => (
-                        <span
-                          key={tagName}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs"
-                        >
+                        <span key={tagName} className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-full text-xs font-medium shadow-sm">
                           {tagName}
-                          <button
-                            type="button"
-                            onClick={() => toggleTag(tagName)}
-                            className="hover:text-blue-900"
-                          >
-                            <X size={12} />
-                          </button>
+                          <button type="button" onClick={() => toggleTag(tagName)} className="hover:text-blue-100 ml-0.5"><X size={12} /></button>
                         </span>
                       ))}
                     </div>
                   )}
+                  
+                  {/* Tag dropdown to add */}
+                  <div className="relative">
+                    <select
+                      value=""
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val && !formData.tags.includes(val)) {
+                          toggleTag(val);
+                        }
+                      }}
+                      className="w-full p-2.5 sm:p-3 bg-white rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.20)] text-teal-950 text-sm sm:text-base font-normal font-['Lato'] focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
+                    >
+                      <option value="">Add custom tag...</option>
+                      {tags.filter(t => !formData.tags.includes(t.name)).map(tag => <option key={tag.id} value={tag.name}>{tag.name}</option>)}
+                    </select>
+                    <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none sm:hidden" />
+                    <ChevronDown size={24} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none hidden sm:block" />
+                  </div>
                 </div>
 
                 {/* Special Product Flags Section */}
@@ -1311,25 +1278,6 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         <div className="w-4 h-4 bg-white rounded-full" />
                       </button>
                     </label>
-
-                    {/* All Products */}
-                    <label className="flex items-center justify-between p-3 bg-white rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.20)] cursor-pointer hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">⭐</span>
-                        <span className="text-teal-950 text-sm font-medium font-['Lato']">All Products</span>
-                      </div>
-                      <button 
-                        type="button" 
-                        onClick={() => setFormData(prev => ({ ...prev, isOurProduct: !prev.isOurProduct }))} 
-                        className={`w-12 h-6 px-1 py-1.5 rounded-[200px] flex items-center overflow-hidden transition-colors ${formData.isOurProduct ? 'bg-gradient-to-r from-sky-400 to-blue-500 justify-end' : 'bg-gray-300 justify-start'}`}
-                      >
-                        <div className="w-4 h-4 bg-white rounded-full" />
-                      </button>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
               {/* Variation Section - Responsive */}
               <div>
                 <h2 className="text-zinc-800 text-lg sm:text-xl font-bold font-['Lato'] leading-6 mb-3 sm:mb-4">Variation</h2>

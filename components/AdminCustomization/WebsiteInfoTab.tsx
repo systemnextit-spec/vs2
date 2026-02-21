@@ -943,81 +943,7 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
           />
         </div>
 
-        {/* Row 3: Facebook & Massager */}
-        <div style={{ display: 'flex', gap: '16px' }}>
-          <FigmaInput
-            label="Facebook"
-            value={websiteConfiguration.socialLinks?.find((l) => l.platform === 'Facebook')?.url || ''}
-            onChange={(v) => {
-              const idx = websiteConfiguration.socialLinks?.findIndex((l) => l.platform === 'Facebook');
-              if (idx !== undefined && idx >= 0) {
-                updateSocialLink(idx, 'url', v);
-              } else {
-                setWebsiteConfiguration((p) => ({
-                  ...p,
-                  socialLinks: [...(p.socialLinks || []), { id: Date.now().toString(), platform: 'Facebook', url: v }]
-                }));
-              }
-            }}
-            placeholder="Facebook link"
-            flex
-          />
-          <FigmaInput
-            label="Massager"
-            value={websiteConfiguration.socialLinks?.find((l) => l.platform === 'Messenger')?.url || ''}
-            onChange={(v) => {
-              const idx = websiteConfiguration.socialLinks?.findIndex((l) => l.platform === 'Messenger');
-              if (idx !== undefined && idx >= 0) {
-                updateSocialLink(idx, 'url', v);
-              } else {
-                setWebsiteConfiguration((p) => ({
-                  ...p,
-                  socialLinks: [...(p.socialLinks || []), { id: Date.now().toString(), platform: 'Messenger', url: v }]
-                }));
-              }
-            }}
-            placeholder="Massager Link"
-            flex
-          />
-        </div>
 
-        {/* Row 4: Instagram & Daraz */}
-        <div style={{ display: 'flex', gap: '16px' }}>
-          <FigmaInput
-            label="Instagram"
-            value={websiteConfiguration.socialLinks?.find((l) => l.platform === 'Instagram')?.url || ''}
-            onChange={(v) => {
-              const idx = websiteConfiguration.socialLinks?.findIndex((l) => l.platform === 'Instagram');
-              if (idx !== undefined && idx >= 0) {
-                updateSocialLink(idx, 'url', v);
-              } else {
-                setWebsiteConfiguration((p) => ({
-                  ...p,
-                  socialLinks: [...(p.socialLinks || []), { id: Date.now().toString(), platform: 'Instagram', url: v }]
-                }));
-              }
-            }}
-            placeholder="Instagram Link"
-            flex
-          />
-          <FigmaInput
-            label="Daraz"
-            value={websiteConfiguration.socialLinks?.find((l) => l.platform === 'Daraz')?.url || ''}
-            onChange={(v) => {
-              const idx = websiteConfiguration.socialLinks?.findIndex((l) => l.platform === 'Daraz');
-              if (idx !== undefined && idx >= 0) {
-                updateSocialLink(idx, 'url', v);
-              } else {
-                setWebsiteConfiguration((p) => ({
-                  ...p,
-                  socialLinks: [...(p.socialLinks || []), { id: Date.now().toString(), platform: 'Daraz', url: v }]
-                }));
-              }
-            }}
-            placeholder="Daraz Text"
-            flex
-          />
-        </div>
 
 
         {/* Display Added Social Links */}
@@ -1027,7 +953,6 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
               Added Social Links
             </p>
             {websiteConfiguration.socialLinks
-              .filter(link => !['Facebook', 'Messenger', 'Instagram', 'Daraz'].includes(link.platform))
               .map((link, index) => {
                 const actualIndex = websiteConfiguration.socialLinks.findIndex(l => l.id === link.id);
                 return (
