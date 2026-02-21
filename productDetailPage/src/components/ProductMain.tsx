@@ -44,6 +44,7 @@ interface ProductMainProduct {
     origin?: string;
     variantGroups?: VariantGroup[];
     details?: Array<{ type: string; description: string }>;
+    shortDescription?: string;
 }
 
 interface ProductMainProps {

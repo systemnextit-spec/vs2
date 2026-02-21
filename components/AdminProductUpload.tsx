@@ -100,7 +100,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
   };
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [videoLink, setVideoLink] = useState('');
-  const [shortDescription, setShortDescription] = useState('');
+  const [shortDescription, setShortDescription] = useState(editingProduct?.shortDescription || '');
   const [unitName, setUnitName] = useState('');
   const [warranty, setWarranty] = useState('');
   const [barcode, setBarcode] = useState('');
@@ -276,6 +276,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
       childCategory: selectedChildCategories.join(', '),
       brand: selectedBrands.join(', '),
       tags: selectedTags,
+      shortDescription: shortDescription || '',
     };
     onSubmit(submitData as Product);
   };

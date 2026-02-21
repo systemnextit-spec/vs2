@@ -216,7 +216,8 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
       colors: initialProduct?.colors || [],
       sizes: initialProduct?.sizes || [],
       status: 'Draft',
-      tags: formData.tags
+      tags: formData.tags,
+      shortDescription: formData.shortDescription || '',
     };
 
     if (onSubmit) {
@@ -268,7 +269,8 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
       colors: initialProduct?.colors || [],
       sizes: initialProduct?.sizes || [],
       status: initialProduct?.status || 'Active',
-      tags: formData.tags
+      tags: formData.tags,
+      shortDescription: formData.shortDescription || '',
     };
 
     if (onSubmit) {

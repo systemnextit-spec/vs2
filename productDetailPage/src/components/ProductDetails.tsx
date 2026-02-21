@@ -36,6 +36,7 @@ export interface ModernProductDetailProps {
             options: Array<{ attribute: string; extraPrice: number; image?: string }>;
         }>;
         details?: Array<{ type: string; description: string }>;
+        shortDescription?: string;
     };
     relatedProducts?: Array<{
         id: number;
@@ -141,6 +142,7 @@ export default function ProductDetailsPage({
         weight: "",
         variantGroups: product?.variantGroups || [],
         details: product?.details || [],
+        shortDescription: product?.shortDescription || "",
     };
 
     const logoUrl = logo || websiteConfig?.headerLogo || websiteConfig?.footerLogo || "";
