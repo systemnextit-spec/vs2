@@ -1219,14 +1219,15 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
               </div>
 
               {/* Short Description */}
-              <InputField
-                label="Short Description"
-                value={formData.shortDescription}
-                onChange={(v) => updateField('shortDescription', v)}
-                placeholder="Ex: Short Description"
-                type="textarea"
-                rows={3}
-              />
+              <div className="flex flex-col gap-2">
+                <RichTextEditor
+                  label="Short Description"
+                  value={formData.shortDescription}
+                  onChange={(v) => updateField('shortDescription', v)}
+                  placeholder="Ex: Short Description"
+                  minHeight="min-h-[100px]"
+                />
+              </div>
             </div>
           </Section>
 

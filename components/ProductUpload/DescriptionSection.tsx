@@ -23,14 +23,12 @@ const DescriptionSection: React.FC<DescriptionSectionProps> = ({ data, onChange 
       {/* Short Description */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Short Description</h3>
-        <textarea
+        <RichTextEditor
           value={data.shortDescription}
-          onChange={(e) => onChange({ shortDescription: e.target.value })}
+          onChange={(value) => onChange({ shortDescription: value })}
           placeholder="Enter a brief description of your product"
-          rows={3}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+          minHeight="min-h-[100px]"
         />
-        <p className="text-xs text-gray-500 mt-1">Max 160 characters</p>
       </div>
     </div>
   );
