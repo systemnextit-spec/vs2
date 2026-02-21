@@ -410,7 +410,7 @@ export const StoreFrontThemePage: React.FC<StoreFrontThemeProps> = memo(({
   }, [onAddToCart]);
 
   return (
-    <div className="bg-white min-h-screen" style={{ fontFamily: "'Lato', sans-serif", zoom: 1.25 }}>
+    <div className="bg-white min-h-screen" style={{ fontFamily: "'Lato', sans-serif", zoom: 1 }}>
       {/* Google Font */}
       <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
 
