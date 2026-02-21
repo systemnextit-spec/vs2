@@ -117,6 +117,7 @@ interface Variant {
 }
 
 export interface Product {
+  title: string;
   salePrice: any;
   totalSold?: number;
   sales?: number;
@@ -335,6 +336,9 @@ export interface ChatMessage {
 }
 
 export interface CarouselItem {
+  subtitle: string;
+  title: string;
+  imageUrl: string;
   id: string;
   image: string;
   mobileImage?: string;
@@ -358,6 +362,7 @@ export interface Campaign {
 }
 
 export interface WebsiteConfig {
+  storeName: string;
   tenantId?: string;
   websiteName: string;
   shortDescription: string;

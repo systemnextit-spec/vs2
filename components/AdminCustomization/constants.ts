@@ -61,6 +61,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style4: 'https://hdnfltv.com/image/nitimages/header-4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/header_-_5.webp',
     style6: 'https://hdnfltv.com/image/nitimages/pasted_1771520591605.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/pasted_1771447828354.webp',
   },
   mobileHeaderStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/mobile_header_-_1_1768841563.webp',
@@ -207,7 +208,7 @@ export const FOOTER_LINK_SECTIONS: Array<{
 ];
 
 export const THEME_VIEW_SECTIONS = [
-  { title: 'Header Section', key: 'headerStyle', count: 6 },
+  { title: 'Header Section', key: 'headerStyle', count: 7 },
   { title: 'Mobile Header', key: 'mobileHeaderStyle', count: 6 },
   {
     title: 'Category Section',

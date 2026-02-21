@@ -69,7 +69,7 @@ export const DesktopSearchBar: React.FC<HeaderSearchProps> = ({
     {isSuggestionsOpen && suggestions.length > 0 && (
       <SearchSuggestions suggestions={suggestions} onSuggestionClick={onSuggestionClick} />
     )}
-    <VoiceStreamOverlay isListening={isListening} liveTranscript={liveTranscript} />
+    <VoiceStreamOverlay isListening={isListening} transcript={liveTranscript} />
   </div>
 );
 
@@ -118,6 +118,6 @@ export const MobileSearchBar: React.FC<HeaderSearchProps> = ({
         <SearchSuggestions suggestions={suggestions} onSuggestionClick={onSuggestionClick} />
       </div>
     )}
-    <VoiceStreamOverlay isListening={isListening} liveTranscript={liveTranscript} />
+    <VoiceStreamOverlay isListening={isListening} transcript={liveTranscript} />
   </div>
 );

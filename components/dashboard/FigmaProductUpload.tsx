@@ -916,7 +916,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       productionStart: formData.productionStart || "",
       expirationEnd: formData.expirationEnd || "",
       details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined,
-      salePrice: undefined
+      salePrice: undefined,
+      title: ''
     };
 
     // Save to backend via onAddProduct
@@ -984,7 +985,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       productionStart: formData.productionStart || "",
       expirationEnd: formData.expirationEnd || "",
       details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined,
-      salePrice: undefined
+      salePrice: undefined,
+      title: ''
     };
 
     onAddProduct(newProduct);

@@ -36,7 +36,7 @@ const SFProductCard = memo(({ product, onClick, onAddToCart }: {
   onClick: () => void;
   onAddToCart?: () => void;
 }) => {
-  const img = product.images?.[0] || product.image;
+  const img = product.image?.[0] || product.image;
   const price = product.salePrice || product.price || 0;
   const originalPrice = product.price && product.salePrice && product.price > product.salePrice ? product.price : null;
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
@@ -58,7 +58,7 @@ const SFProductCard = memo(({ product, onClick, onAddToCart }: {
       <div className="p-4 flex flex-col flex-1 gap-2">
         <h3 className="font-bold text-gray-900 text-base line-clamp-1" style={{ fontFamily: "'Lato', sans-serif" }}>{product.title}</h3>
         <p className="text-gray-500 text-sm line-clamp-2" style={{ fontFamily: "'Lato', sans-serif" }}>
-          {product.shortDescription || product.description?.replace(/<[^>]*>/g, '').slice(0, 80) || ''}
+          {product.description || product.description?.replace(/<[^>]*>/g, '').slice(0, 80) || ''}
         </p>
         <StarRating rating={product.rating || 4} />
         <div className="flex items-end gap-2 mt-auto">
@@ -192,7 +192,7 @@ const PromoGrid = memo(({ products, onProductClick }: { products: Product[]; onP
     <section className="max-w-[1400px] mx-auto px-4 md:px-8 py-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {promoProducts.map((p) => {
-          const img = p.images?.[0] || p.image;
+          const img = p.image?.[0] || p.image;
           return (
             <div key={p.id} className="relative rounded-xl overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow cursor-pointer group h-[180px] md:h-[200px]"
               onClick={() => onProductClick(p)}>
@@ -265,7 +265,7 @@ const BestSellingSection = memo(({ products, onProductClick }: { products: Produ
       <SectionHeader title="Best selling product" />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[200px]">
         {best.map((p, i) => {
-          const img = p.images?.[0] || p.image;
+          const img = p.image?.[0] || p.image;
           const isLarge = i === best.length - 1;
           return (
             <div key={p.id} onClick={() => onProductClick(p)}
@@ -429,7 +429,7 @@ export const StoreFrontThemePage: React.FC<StoreFrontThemeProps> = memo(({
   }, [onAddToCart]);
 
   return (
-    <div className="bg-white min-h-screen" style={{ fontFamily: "'Lato', sans-serif" }}>
+    <div className="bg-white min-h-screen" style={{ fontFamily: "'Lato', sans-serif", zoom: 1.25 }}>
       {/* Google Font */}
       <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
 
