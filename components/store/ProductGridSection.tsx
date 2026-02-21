@@ -41,9 +41,9 @@ const icons = {
 const ProductSectionStyle1 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="py-4">
-      <div className="bg-white/80 backdrop-blur-lg border border-gray-100 rounded-xl p-3 md:p-4 mb-3 shadow-sm flex items-center gap-2.5">
-        <div className={`h-6 w-1 rounded-full ${colors[accentColor]}`}/>
-        <SectionHeader title={title} className="text-lg md:text-xl font-bold text-gray-900"/>
+      <div className="bg-white/80 backdrop-blur-lg border border-gray-100 rounded-lg p-2 md:p-2.5 mb-2 shadow-sm flex items-center gap-2">
+        <div className={`h-5 w-1 rounded-full ${colors[accentColor]}`}/>
+        <SectionHeader title={title} className="text-base md:text-lg font-bold text-gray-900"/>
         {titleExtra && <div className="ml-3">{titleExtra}</div>}
       </div>
       <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

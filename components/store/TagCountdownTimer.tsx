@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Clock, Timer } from 'lucide-react';
 
 interface TagCountdownTimerProps {
   expiresAt: string;
@@ -31,75 +30,56 @@ export const TagCountdownTimer = ({ expiresAt, tagName, compact = false }: TagCo
       setTimeLeft(remaining);
       if (remaining.expired) clearInterval(timer);
     }, 1000);
-    
     return () => clearInterval(timer);
   }, [expiresAt]);
   
   if (timeLeft.expired) return null;
 
   const totalHours = timeLeft.days * 24 + timeLeft.hours;
-
-  // Dynamic colors from tenant CSS variables
-  const primaryBg = 'rgb(var(--color-primary-rgb, 34 197 94))';
-  const secondaryBg = 'rgb(var(--color-secondary-rgb, 236 72 153))';
+  const primaryColor = 'rgb(var(--color-primary-rgb, 0 113 173))';
+  const primaryRgbVal = 'var(--color-primary-rgb, 0 113 173)';
 
   if (compact) {
     return (
       <div className="flex items-center gap-1 text-xs" role="timer" aria-label={`${tagName || 'Tag'} countdown`}>
-        <Timer size={12} className="flex-shrink-0 animate-[heartbeat_1.5s_ease-in-out_infinite]" style={{ color: primaryBg }} />
         <div className="flex items-center gap-0.5">
-          <span className="font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center text-white" style={{ backgroundColor: primaryBg }}>
-            {padZero(totalHours)}
-          </span>
-          <span className="font-bold text-[10px]" style={{ color: secondaryBg }}>:</span>
-          <span className="font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center text-white" style={{ backgroundColor: primaryBg }}>
-            {padZero(timeLeft.minutes)}
-          </span>
-          <span className="font-bold text-[10px]" style={{ color: secondaryBg }}>:</span>
-          <span className="font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center text-white" style={{ backgroundColor: primaryBg }}>
-            {padZero(timeLeft.seconds)}
-          </span>
+          <span className="font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center border" style={{ color: primaryColor, borderColor: primaryColor }}>{padZero(totalHours)}</span>
+          <span className="font-bold text-[10px]" style={{ color: primaryColor }}>:</span>
+          <span className="font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center border" style={{ color: primaryColor, borderColor: primaryColor }}>{padZero(timeLeft.minutes)}</span>
+          <span className="font-bold text-[10px]" style={{ color: primaryColor }}>:</span>
+          <span className="font-bold px-1 py-0.5 rounded text-[10px] min-w-[22px] text-center border" style={{ color: primaryColor, borderColor: primaryColor }}>{padZero(timeLeft.seconds)}</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-1.5 sm:gap-2" role="timer" aria-label={`${tagName || 'Tag'} countdown`}>
-      <Clock size={16} className="flex-shrink-0 hidden sm:block animate-[heartbeat_1.5s_ease-in-out_infinite]" style={{ color: primaryBg }} />
-      
-      <div className="flex flex-col items-center">
-        <div 
-          className="text-white font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg min-w-[36px] sm:min-w-[48px] text-center shadow-sm animate-[heartbeat_1.5s_ease-in-out_infinite]"
-          style={{ background: `linear-gradient(to bottom, ${primaryBg}, ${secondaryBg})` }}
-        >
-          {padZero(totalHours)}
-        </div>
-        <span className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 font-medium uppercase">Hours</span>
+    <div className="flex items-center gap-1.5" role="timer" aria-label={`${tagName || 'Tag'} countdown`}>
+      {/* Hours */}
+      <div className="flex flex-col items-center justify-center w-9 h-9 border-[1.5px] rounded-md bg-white" style={{ borderColor: primaryColor }}>
+        <span className="font-bold text-[12px] leading-none mb-0.5" style={{ color: primaryColor }}>{padZero(totalHours)}</span>
+        <span className="text-[7px] font-medium leading-none uppercase" style={{ color: primaryColor }}>Hours</span>
       </div>
-      
-      <span className="font-bold text-sm sm:text-lg self-start mt-1 sm:mt-1.5" style={{ color: secondaryBg }}>:</span>
-      
-      <div className="flex flex-col items-center">
-        <div 
-          className="text-white font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg min-w-[36px] sm:min-w-[48px] text-center shadow-sm animate-[heartbeat_1.5s_ease-in-out_infinite]"
-          style={{ background: `linear-gradient(to bottom, ${primaryBg}, ${secondaryBg})` }}
-        >
-          {padZero(timeLeft.minutes)}
-        </div>
-        <span className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 font-medium uppercase">Mins</span>
+
+      {/* Minutes */}
+      <div className="flex flex-col items-center justify-center w-9 h-9 border-[1.5px] rounded-md bg-white" style={{ borderColor: primaryColor }}>
+        <span className="font-bold text-[12px] leading-none mb-0.5" style={{ color: primaryColor }}>{padZero(timeLeft.minutes)}</span>
+        <span className="text-[7px] font-medium leading-none uppercase" style={{ color: primaryColor }}>Mins</span>
       </div>
-      
-      <span className="font-bold text-sm sm:text-lg self-start mt-1 sm:mt-1.5" style={{ color: secondaryBg }}>:</span>
-      
-      <div className="flex flex-col items-center">
-        <div 
-          className="text-white font-bold text-sm sm:text-lg px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg min-w-[36px] sm:min-w-[48px] text-center shadow-sm animate-[heartbeat_1.5s_ease-in-out_infinite]"
-          style={{ background: `linear-gradient(to bottom, ${primaryBg}, ${secondaryBg})` }}
-        >
-          {padZero(timeLeft.seconds)}
+
+      {/* Seconds */}
+      <div className="flex flex-col items-center justify-center w-9 h-9 border-[1.5px] rounded-md bg-white" style={{ borderColor: primaryColor }}>
+        <span className="font-bold text-[12px] leading-none mb-0.5" style={{ color: primaryColor }}>{padZero(timeLeft.seconds)}</span>
+        <span className="text-[7px] font-medium leading-none uppercase" style={{ color: primaryColor }}>Sec</span>
+      </div>
+
+      {/* Heartbeat dot */}
+      <div className="ml-1 flex items-center justify-center">
+        <div className="relative flex items-center justify-center w-5 h-5">
+          <div className="absolute inset-0 rounded-full animate-ping opacity-20" style={{ backgroundColor: `rgb(${primaryRgbVal})` }} />
+          <div className="absolute w-3 h-3 rounded-full opacity-10" style={{ backgroundColor: `rgb(${primaryRgbVal})` }} />
+          <div className="relative w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: `rgb(${primaryRgbVal})`, boxShadow: `0 0 8px rgba(${primaryRgbVal} / 0.7)` }} />
         </div>
-        <span className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 font-medium uppercase">Sec</span>
       </div>
     </div>
   );
