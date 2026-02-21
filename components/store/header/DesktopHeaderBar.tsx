@@ -61,7 +61,7 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
     <header className="hidden md:block bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
       <div className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
         <button type="button" className="flex items-center flex-shrink-0 group" onClick={onHomeClick}>
-          {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} width={192} height={48} className="h-10 md:h-12 object-contain transition-all duration-300 group-hover:scale-105" /> : <h2 className="text-2xl font-black tracking-tight text-theme-primary">{websiteConfig?.websiteName || 'My Store'}</h2>}
+          {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[44px] w-auto max-w-[180px] object-contain transition-all duration-300 group-hover:scale-105" /> : <h2 className="text-2xl font-black tracking-tight text-theme-primary">{websiteConfig?.websiteName || 'My Store'}</h2>}
         </button>
         <DesktopSearchBar {...searchProps} />
         <div className="flex items-center gap-2 text-gray-600">
@@ -129,7 +129,7 @@ const HeaderStyle2 = memo<DesktopHeaderBarProps>(({
     <header className="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
         <button type="button" className="flex-shrink-0" onClick={onHomeClick}>
-          {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-9 object-contain" /> : <h2 className="text-xl font-bold text-gray-900">{websiteConfig?.websiteName || 'Store'}</h2>}
+          {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[44px] w-auto max-w-[180px] object-contain" /> : <h2 className="text-xl font-bold text-gray-900">{websiteConfig?.websiteName || 'Store'}</h2>}
         </button>
         <nav className="flex items-center gap-1">
           <button type="button" onClick={onHomeClick} className="px-3 py-2 text-sm text-gray-600 hover:text-theme-primary transition-colors">Home</button>
@@ -189,7 +189,7 @@ const HeaderStyle3 = memo<DesktopHeaderBarProps>(({
       <div className="bg-gradient-theme-via shadow-lg">
         <div className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
           <button type="button" className="flex items-center flex-shrink-0" onClick={onHomeClick}>
-            {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-10 object-contain brightness-0 invert" /> : <h2 className="text-2xl font-bold text-white">{websiteConfig?.websiteName || 'Store'}</h2>}
+            {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[44px] w-auto max-w-[180px] object-contain brightness-0 invert" /> : <h2 className="text-2xl font-bold text-white">{websiteConfig?.websiteName || 'Store'}</h2>}
           </button>
           <div className="flex-1 max-w-2xl"><DesktopSearchBar {...searchProps} /></div>
           <div className="flex items-center gap-2">
@@ -272,7 +272,7 @@ const HeaderStyle4 = memo<DesktopHeaderBarProps>(({
       <div className="bg-white shadow-sm">
         <div className="max-w-[1408px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
           <button type="button" className="flex-shrink-0" onClick={onHomeClick}>
-            {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-10 object-contain" /> : <h2 className="text-xl font-bold text-theme-primary">{websiteConfig?.websiteName || 'Store'}</h2>}
+            {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[44px] w-auto max-w-[180px] object-contain" /> : <h2 className="text-xl font-bold text-theme-primary">{websiteConfig?.websiteName || 'Store'}</h2>}
           </button>
           <div ref={categoryMenuRef} className="relative" onMouseEnter={() => onCategoryMenuOpen(true)} onMouseLeave={() => onCategoryMenuOpen(false)}>
             <button type="button" className="flex items-center gap-2 px-4 py-2.5 bg-theme-primary text-white rounded-lg font-medium text-sm hover:bg-theme-primary/90 transition-all">
@@ -335,7 +335,7 @@ const HeaderStyle5 = memo<DesktopHeaderBarProps>(({
     <header className="hidden md:block bg-gray-900 sticky top-0 z-50 shadow-xl">
       <div className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
         <button type="button" className="flex items-center flex-shrink-0" onClick={onHomeClick}>
-          {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-10 object-contain brightness-0 invert" /> : <h2 className="text-2xl font-bold text-white">{websiteConfig?.websiteName || 'Store'}</h2>}
+          {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[44px] w-auto max-w-[180px] object-contain brightness-0 invert" /> : <h2 className="text-2xl font-bold text-white">{websiteConfig?.websiteName || 'Store'}</h2>}
         </button>
         <nav className="flex items-center gap-1 text-sm font-medium">
           <button type="button" onClick={onHomeClick} className="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all">Home</button>

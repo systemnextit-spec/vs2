@@ -13,7 +13,7 @@ export default function DesktopNav({ logo, onBack, cart }: DesktopNavProps) {
                 {/* Logo */}
                 <a href="/" onClick={(e) => { if (onBack) { e.preventDefault(); onBack(); } }} className="flex-shrink-0">
                     {logo ? (
-                        <img src={logo} alt="Logo" className="h-12 max-w-[222px] object-contain" />
+                        <img src={logo} alt="Logo" className="h-[44px] w-auto max-w-[180px] object-contain" />
                     ) : (
                         <span className="text-xl font-bold text-gray-800">Store</span>
                     )}

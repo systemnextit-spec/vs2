@@ -13,7 +13,7 @@ export default function MobileNav({ logo, onBack, cart }: MobileNavProps) {
                 <div className="flex items-center gap-1.5">
                     <a href='/' onClick={(e) => { if (onBack) { e.preventDefault(); onBack(); } }}>
                         {logo ? (
-                            <img src={logo} alt="Logo" className="h-7 max-w-[155px] object-contain" />
+                            <img src={logo} alt="Logo" className="h-[36px] w-auto max-w-[140px] object-contain" />
                         ) : (
                             <span className="text-lg font-bold text-gray-800">Store</span>
                         )}

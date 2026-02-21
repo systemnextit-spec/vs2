@@ -66,9 +66,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                 key={logoKey} 
                 src={normalizeImageUrl(logo)} 
                 alt="Store Logo" 
-                width={130}
-                height={36}
-                className="h-9 object-contain" 
+                className="h-[36px] w-auto max-w-[140px] object-contain" 
               />
             ) : (
               <span className="text-xl font-black tracking-tight text-gray-900">
