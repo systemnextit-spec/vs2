@@ -399,6 +399,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         quantity: editProduct.stock || 0,
         variants: loadedVariants,
         variantsMandatory: editProduct.variantGroups?.[0]?.isMandatory || false,
+        details: editProduct.details && editProduct.details.length > 0 ? editProduct.details : [{ type: '', description: '' }],
         flashSale: editProduct.flashSale || false,
         flashSaleStartDate: editProduct.flashSaleStartDate || '',
         flashSaleEndDate: editProduct.flashSaleEndDate || '',
@@ -913,7 +914,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       barcode: formData.barcode || "",
       initialSoldCount: formData.initialSoldCount || 0,
       productionStart: formData.productionStart || "",
-      expirationEnd: formData.expirationEnd || ""
+      expirationEnd: formData.expirationEnd || "",
+      details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined
     };
 
     // Save to backend via onAddProduct
@@ -979,7 +981,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       barcode: formData.barcode || "",
       initialSoldCount: formData.initialSoldCount || 0,
       productionStart: formData.productionStart || "",
-      expirationEnd: formData.expirationEnd || ""
+      expirationEnd: formData.expirationEnd || "",
+      details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined
     };
 
     onAddProduct(newProduct);

@@ -10,6 +10,7 @@ interface DescriptionProduct {
     weight?: string;
     videoUrl?: string;
     colors?: string[];
+    details?: Array<{ type: string; description: string }>;
 }
 
 interface DescriptionProps {
@@ -28,14 +29,23 @@ export default function Description({ product }: DescriptionProps) {
     const videoId = product.videoUrl ? getYouTubeVideoId(product.videoUrl) : null;
     const videoThumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
 
-    // Build specs from product fields
+    // Build specs from details (key features) first, then fallback to individual fields
     const specs: Array<{ label: string; value: string }> = [];
-    if (product.material) specs.push({ label: "Material", value: product.material });
-    if (product.brand) specs.push({ label: "Compatible brand", value: product.brand });
-    if (product.features?.length) specs.push({ label: "Feature", value: product.features.join(", ") });
-    if (product.modelNumber) specs.push({ label: "Model number", value: product.modelNumber });
-    if (product.origin) specs.push({ label: "Place of origin", value: product.origin });
-    if (product.colors?.length) specs.push({ label: "Color", value: product.colors.join(", ") });
+    if (product.details?.length) {
+        for (const detail of product.details) {
+            if (detail.type?.trim() && detail.description?.trim()) {
+                specs.push({ label: detail.type, value: detail.description });
+            }
+        }
+    }
+    if (specs.length === 0) {
+        if (product.material) specs.push({ label: "Material", value: product.material });
+        if (product.brand) specs.push({ label: "Compatible brand", value: product.brand });
+        if (product.features?.length) specs.push({ label: "Feature", value: product.features.join(", ") });
+        if (product.modelNumber) specs.push({ label: "Model number", value: product.modelNumber });
+        if (product.origin) specs.push({ label: "Place of origin", value: product.origin });
+        if (product.colors?.length) specs.push({ label: "Color", value: product.colors.join(", ") });
+    }
 
     return (
         <div className="flex-1 min-w-0 px-0 mdpx-4 py-6 rounded-2xl">

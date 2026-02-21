@@ -168,6 +168,7 @@ export interface Product {
   productionStart?: string;
   expirationEnd?: string;
   variants?: Variant[];
+  details?: { type: string; description: string }[]; // Key features (e.g., Ram: 16 GB)
 }
 
 export interface Popup {

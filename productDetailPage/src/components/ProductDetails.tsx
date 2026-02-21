@@ -30,6 +30,12 @@ export interface ModernProductDetailProps {
         totalSold?: number;
         tags?: string[];
         stock?: number;
+        variantGroups?: Array<{
+            title: string;
+            isMandatory?: boolean;
+            options: Array<{ attribute: string; extraPrice: number; image?: string }>;
+        }>;
+        details?: Array<{ type: string; description: string }>;
     };
     relatedProducts?: Array<{
         id: number;
@@ -127,6 +133,8 @@ export default function ProductDetailsPage({
         origin: "",
         dimensions: "",
         weight: "",
+        variantGroups: product?.variantGroups || [],
+        details: product?.details || [],
     };
 
     const logoUrl = logo || websiteConfig?.headerLogo || websiteConfig?.footerLogo || "";
