@@ -33,6 +33,7 @@ interface DesktopHeaderBarProps {
   onCategoryMenuOpen: (open: boolean) => void;
   onProductsClick?: () => void;
   websiteConfig?: WebsiteConfig;
+  ImageSearchClick: () => void;
 }
 
 const Badge = memo<{ count: number }>(({ count }) => 

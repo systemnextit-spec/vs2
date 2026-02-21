@@ -309,6 +309,7 @@ export interface SocialLink {
   id: string;
   platform: string;
   url: string;
+  type: string; // Add this line
 }
 
 export interface FooterLink {

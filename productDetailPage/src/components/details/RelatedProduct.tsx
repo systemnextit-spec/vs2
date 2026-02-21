@@ -1,5 +1,12 @@
 import { ChevronRight } from "lucide-react";
 
+// Strip HTML tags for plain text display
+const stripHtml = (html: string): string => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+};
+
+
 interface RelatedProductItem {
     id: string;
     title: string;
@@ -76,7 +83,7 @@ export default function RelatedProduct({ products = [], onProductClick, currency
                                 )}
                             </div>
                             <h3 className="text-[12px] font-roboto font-medium leading-tight line-clamp-2 mb-1">{product.title}</h3>
-                            {product.description && <p className="text-[10px] text-[#727272] line-clamp-2 mb-1.5">{product.description}</p>}
+                            {product.description && <p className="text-[10px] text-[#727272] line-clamp-2 mb-1.5">{stripHtml(product.description)}</p>}
                             <div className="flex items-center gap-1 mb-1">
                                 {product.oldPrice && (
                                     <span className="text-[#FF3C3C] font-bold text-[12px] font-roboto line-through">{currency}{product.oldPrice}</span>
@@ -114,7 +121,7 @@ export default function RelatedProduct({ products = [], onProductClick, currency
                                 )}
                             </div>
                             {product.description && (
-                                <p className="text-xs text-[#727272] mt-2 font-roboto font-normal line-clamp-2">{product.description}</p>
+                                <p className="text-xs text-[#727272] mt-2 font-roboto font-normal line-clamp-2">{stripHtml(product.description)}</p>
                             )}
                             <div className="flex justify-between items-center mt-2">
                                 <div className="flex items-center gap-1">

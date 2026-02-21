@@ -80,7 +80,8 @@ export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {
     productCatalog,
     onProductClick,
     onMobileMenuOpenRef,
-    tenantId = ''
+    tenantId = '',
+    ImageSearchClick
   } = props;
 
   const [isImageSearchOpen, setIsImageSearchOpen] = useState(false);

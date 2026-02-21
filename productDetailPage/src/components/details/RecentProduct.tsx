@@ -1,3 +1,9 @@
+// Strip HTML tags for plain text display
+const stripHtml = (html: string): string => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+};
+
 interface RecentProductItem {
     id: string;
     title: string;
@@ -43,7 +49,7 @@ export default function RecentProduct({ products = [], onProductClick, currency 
                             </h3>
                             {product.description && (
                                 <p className="text-xs text-[#727272] mt-1 font-roboto font-normal line-clamp-2">
-                                    {product.description}
+                                    {stripHtml(product.description)}
                                 </p>
                             )}
                             <div className="flex justify-between items-center mt-2">

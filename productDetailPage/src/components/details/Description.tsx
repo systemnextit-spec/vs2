@@ -74,7 +74,7 @@ export default function Description({ product }: DescriptionProps) {
                             <p key={i} className="font-lato text-[16px] leading-[150%]">{spec.label}: {spec.value}</p>
                         ))
                     ) : product.description ? (
-                        <p className="font-lato text-[16px] leading-[150%]">{product.description}</p>
+                        <div className="font-lato text-[16px] leading-[150%] prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
                     ) : (
                         <p className="font-lato text-[16px] leading-[150%] text-gray-400">No description available</p>
                     )}
@@ -90,11 +90,11 @@ export default function Description({ product }: DescriptionProps) {
                 )}
             </div>
             {product.description && specs.length > 0 && (
-                <p className="font-lato text-[16px] leading-[150%] mt-8">
-                    {product.dimensions && `Single package size: ${product.dimensions} `}
-                    {product.weight && `Single gross weight: ${product.weight} `}
-                    {product.description}
-                </p>
+                <div className="font-lato text-[16px] leading-[150%] mt-8">
+                    {product.dimensions && <span>Single package size: {product.dimensions} </span>}
+                    {product.weight && <span>Single gross weight: {product.weight} </span>}
+                    <div className="prose prose-sm max-w-none mt-2" dangerouslySetInnerHTML={{ __html: product.description }} />
+                </div>
             )}
         </div>
     )
