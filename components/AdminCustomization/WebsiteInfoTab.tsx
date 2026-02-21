@@ -1290,7 +1290,7 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
                         borderRadius: '14px',
                         border: 'none',
                         cursor: 'pointer',
-                        backgroundColor: promo.isActive !== false ? '#6366f1' : '#d1d5db',
+                        backgroundColor: promo.isActive !== false ? '#f59e0b' : '#fffbeb',
                         position: 'relative',
                         transition: 'background-color 0.2s',
                       }}

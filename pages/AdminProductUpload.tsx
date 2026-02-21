@@ -69,6 +69,10 @@ interface FormData {
   category: string;
   subCategory: string;
   childCategory: string;
+  categories: string[];
+  subCategories: string[];
+  childCategories: string[];
+  brands: string[];
   condition: string;
   tags: string[];
 }
@@ -128,6 +132,10 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
     category: '',
     subCategory: '',
     childCategory: '',
+    categories: [],
+    subCategories: [],
+    childCategories: [],
+    brands: [],
     condition: 'New',
     tags: []
   });
@@ -154,6 +162,10 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
         category: initialProduct.category || '',
         subCategory: initialProduct.subCategory || '',
         childCategory: initialProduct.childCategory || '',
+        categories: initialProduct.categories || (initialProduct.category ? [initialProduct.category] : []),
+        subCategories: initialProduct.subCategories || (initialProduct.subCategory ? [initialProduct.subCategory] : []),
+        childCategories: initialProduct.childCategories || (initialProduct.childCategory ? [initialProduct.childCategory] : []),
+        brands: initialProduct.brands || (initialProduct.brand ? [initialProduct.brand] : []),
         condition: initialProduct.condition || 'New',
         tags: initialProduct.tags || []
       }));
@@ -163,7 +175,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
   // Calculate completion percentage
   useEffect(() => {
     const requiredFields = [
-      formData.category,
+      formData.categories?.length ? formData.categories[0] : formData.category,
       formData.mainImage,
       formData.name,
       formData.salesPrice,
@@ -191,10 +203,14 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
       price: formData.salesPrice || 0,
       originalPrice: formData.regularPrice || 0,
       costPrice: formData.costPrice || 0,
-      category: formData.category,
-      subCategory: formData.subCategory,
-      childCategory: formData.childCategory,
-      brand: formData.brand,
+      category: formData.categories?.[0] || formData.category,
+      subCategory: formData.subCategories?.[0] || formData.subCategory,
+      childCategory: formData.childCategories?.[0] || formData.childCategory,
+      brand: formData.brands?.[0] || formData.brand,
+      categories: formData.categories,
+      subCategories: formData.subCategories,
+      childCategories: formData.childCategories,
+      brands: formData.brands,
       sku: formData.sku,
       stock: formData.quantity || 0,
       colors: initialProduct?.colors || [],
@@ -224,7 +240,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
   };
 
   const handleAddProduct = async () => {
-    if (!formData.name || !formData.category || !formData.mainImage || !formData.salesPrice) {
+    if (!formData.name || (!formData.category && !formData.categories?.length) || !formData.mainImage || !formData.salesPrice) {
       toast.error('Please fill all required fields');
       return;
     }
@@ -239,10 +255,14 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
       price: formData.salesPrice,
       originalPrice: formData.regularPrice,
       costPrice: formData.costPrice,
-      category: formData.category,
-      subCategory: formData.subCategory,
-      childCategory: formData.childCategory,
-      brand: formData.brand,
+      category: formData.categories?.[0] || formData.category,
+      subCategory: formData.subCategories?.[0] || formData.subCategory,
+      childCategory: formData.childCategories?.[0] || formData.childCategory,
+      brand: formData.brands?.[0] || formData.brand,
+      categories: formData.categories,
+      subCategories: formData.subCategories,
+      childCategories: formData.childCategories,
+      brands: formData.brands,
       sku: formData.sku,
       stock: formData.quantity,
       colors: initialProduct?.colors || [],
@@ -266,7 +286,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
       locationSlot: '', variantsMandatory: false, variants: [], brand: '', details: [],
       affiliateSource: '', sourceProductUrl: '', sourceSku: '', deliveryCharge: 0,
       deliveryByCity: [], keywords: '', metaDescription: '', metaTitle: '',
-      category: '', subCategory: '', childCategory: '', condition: 'New', tags: []
+      category: '', subCategory: '', childCategory: '', categories: [], subCategories: [], childCategories: [], brands: [], condition: 'New', tags: []
     });
   };
 
@@ -380,6 +400,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
             categories={categories}
             subCategories={subCategories}
             childCategories={childCategories}
+            brands={brands}
             tags={tags}
             data={formData}
             onChange={(data) => handleFormChange('catalog', data)}
@@ -392,6 +413,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
             categories={categories}
             subCategories={subCategories}
             childCategories={childCategories}
+            brands={brands}
             tags={tags}
             data={formData}
             onChange={(data) => handleFormChange('catalog', data)}

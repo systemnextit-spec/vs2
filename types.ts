@@ -141,6 +141,10 @@ export interface Product {
   subCategory?: string; // Added
   childCategory?: string; // Added
   brand?: string; // Added
+  categories?: string[]; // Multi-select categories
+  subCategories?: string[]; // Multi-select subcategories
+  childCategories?: string[]; // Multi-select child categories
+  brands?: string[]; // Multi-select brands
   tags?: string[];
   searchTags?: string[]; // Deep search tags for advanced product search
   deepSearch?: string; // Deep search keywords for product discovery
