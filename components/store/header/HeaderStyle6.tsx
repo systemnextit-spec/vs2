@@ -57,7 +57,7 @@ const HeaderStyle6Desktop = memo<DesktopHeaderBarProps>(({
         {/* Logo */}
         <button type="button" onClick={onHomeClick} className="flex-shrink-0">
           {resolvedHeaderLogo ? (
-            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[44px] w-auto max-w-[180px] object-contain" />
+            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[56px] w-auto max-w-[240px] object-contain" />
           ) : (
             <span className="text-xl font-bold text-gray-800">{websiteConfig?.websiteName || 'Store'}</span>
           )}

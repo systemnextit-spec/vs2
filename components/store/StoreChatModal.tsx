@@ -1,6 +1,6 @@
 // Lazy-loaded StoreChatModal for better code splitting
 import React, { useState, useRef, useEffect, useMemo, useCallback, CSSProperties } from 'react';
-import { X, Phone, Video, Info, ImageIcon, Smile, Send, Edit2, Trash2, Check, MessageCircle, ShoppingBag, HelpCircle, Sparkles } from 'lucide-react';
+import { X, Phone, Video, Info, ImageIcon, Smile, Send, Edit2, Trash2, Check, MessageCircle, ShoppingBag, HelpCircle, Sparkles, LogIn } from 'lucide-react';
 import { User as UserType, WebsiteConfig, ChatMessage, ThemeConfig } from '../../types';
 import { toast } from 'react-hot-toast';
 
@@ -43,11 +43,13 @@ export interface StoreChatModalProps {
     onEditMessage?: (id: string, text: string) => void;
     onDeleteMessage?: (id: string) => void;
     canDeleteAll?: boolean;
+    onLoginClick?: () => void;
 }
 
 export const StoreChatModal: React.FC<StoreChatModalProps> = ({ 
     isOpen, onClose, websiteConfig, themeConfig, user, messages = [], 
-    onSendMessage, context = 'customer', onEditMessage, onDeleteMessage, canDeleteAll = false 
+    onSendMessage, context = 'customer', onEditMessage, onDeleteMessage, canDeleteAll = false,
+    onLoginClick 
 }) => {
     const [draft, setDraft] = useState('');
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
@@ -246,12 +248,24 @@ export const StoreChatModal: React.FC<StoreChatModalProps> = ({
                     {isCustomerView && !user ? (
                         /* Login Required Message */
                         <div className="flex items-center justify-center h-full">
-                            <div className="text-center space-y-3 max-w-sm">
+                            <div className="text-center space-y-4 max-w-sm px-4">
                                 <div className="text-6xl">🔒</div>
                                 <p className="text-lg font-semibold text-gray-900">লগইন প্রয়োজন</p>
                                 <p className="text-sm text-gray-600">
                                     আপনার নিরাপত্তা এবং গোপনীয়তা রক্ষার জন্য, লাইভ চ্যাট ব্যবহার করতে অনুগ্রহ করে প্রথমে লগইন করুন।
                                 </p>
+                                {onLoginClick && (
+                                    <div className="space-y-3 pt-2">
+                                        <button
+                                            onClick={() => { onLoginClick(); onClose(); }}
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold text-sm hover:from-emerald-600 hover:to-teal-600 transition-all shadow-md hover:shadow-lg active:scale-95"
+                                        >
+                                            <LogIn size={18} />
+                                            লগইন / রেজিস্টার করুন
+                                        </button>
+                                        <p className="text-xs text-gray-400">Google দিয়েও লগইন করতে পারবেন</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ) : displayMessages.length === 0 ? (
@@ -369,7 +383,16 @@ export const StoreChatModal: React.FC<StoreChatModalProps> = ({
                 <div className="px-4 pb-4 pt-3 bg-white border-t border-gray-100">
                     {(isCustomerView && !user) ? (
                         <div className="text-sm text-gray-600 text-center py-2">
-                            <p className="mb-3">চ্যাট শুরু করতে লগইন করুন</p>
+                            {onLoginClick ? (
+                                <button
+                                    onClick={() => { onLoginClick(); onClose(); }}
+                                    className="mb-3 inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-sm active:scale-95"
+                                >
+                                    <LogIn size={16} /> চ্যাট শুরু করতে লগইন করুন
+                                </button>
+                            ) : (
+                                <p className="mb-3">চ্যাট শুরু করতে লগইন করুন</p>
+                            )}
                             {whatsappFallbackLink && (
                                 <a href={whatsappFallbackLink} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-500 text-white px-4 py-2 font-semibold hover:bg-green-600 transition">
                                     <MessageCircle size={16} /> WhatsApp এ যোগাযোগ করুন

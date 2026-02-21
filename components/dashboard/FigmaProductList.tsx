@@ -214,7 +214,7 @@ function SortableTableRow({
           </button>
           {openDropdownId === productKey && (
             <div className="absolute right-0 top-full mt-1 z-[9999]">
-              <div className="w-[160px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden py-2">
+              <div className="flex items-center gap-3 w-full h-10 px-4 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300">
                 <button
                   onClick={() => { onEditProduct?.(product); setOpenDropdownId(null); }}
                   className=""

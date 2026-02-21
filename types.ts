@@ -565,6 +565,10 @@ export interface Tag {
   durationDays?: number;
   expiresAt?: string;
   showCountdown?: boolean;
+  desktopBanner?: string;
+  mobileBanner?: string;
+  desktopVideo?: string;
+  mobileVideo?: string;
 }
 
 export interface GalleryItem {

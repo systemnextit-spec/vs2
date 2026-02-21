@@ -583,6 +583,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
                 context="customer"
                 onEditMessage={onEditChatMessage}
                 onDeleteMessage={onDeleteChatMessage}
+                onLoginClick={() => setIsLoginOpen(true)}
               />
             </Suspense>
           )}

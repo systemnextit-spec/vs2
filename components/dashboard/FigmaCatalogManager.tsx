@@ -1,11 +1,20 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Plus, Search, Edit, Trash2, X, Image as ImageIcon, ChevronDown, ChevronLeft, ChevronRight, MoreVertical, GripVertical } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, X, Image as ImageIcon, ChevronDown, ChevronLeft, ChevronRight, MoreVertical, GripVertical, Upload, FolderOpen, Video, Smartphone, Monitor } from 'lucide-react';
 import { DndContext, closestCenter, DragEndEvent, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Category, SubCategory, ChildCategory, Brand, Tag } from '../../types';
 import { convertFileToWebP } from '../../services/imageUtils';
+import { uploadPreparedImageToServer, isBase64Image, convertBase64ToUploadedUrl } from '../../services/imageUploadService';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
+import { GalleryPicker } from '../GalleryPicker';
+
+// Helper: extract YouTube video ID from URL
+const getYouTubeId = (url: string): string | null => {
+  if (!url) return null;
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  return match ? match[1] : null;
+};
 
 // Icons matching Figma design
 const SearchIcon = () => (
@@ -159,6 +168,10 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showPerPageDropdown, setShowPerPageDropdown] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const tagDesktopBannerRef = useRef<HTMLInputElement>(null);
+  const tagMobileBannerRef = useRef<HTMLInputElement>(null);
+  const [tagGalleryPickerOpen, setTagGalleryPickerOpen] = useState(false);
+  const [tagGalleryTarget, setTagGalleryTarget] = useState<'desktopBanner' | 'mobileBanner' | null>(null);
   const [localOrder, setLocalOrder] = useState<any[]>([]);
   const [hasOrderChanges, setHasOrderChanges] = useState(false);
   const [isSavingOrder, setIsSavingOrder] = useState(false);
@@ -333,6 +346,12 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
       if (view === 'catalog_subcategories') defaults.categoryId = categories[0]?.id || '';
       if (view === 'catalog_childcategories') defaults.subCategoryId = subCategories[0]?.id || '';
       if (view === 'catalog_brands') defaults.logo = '';
+      if (view === 'catalog_tags') {
+        defaults.desktopBanner = '';
+        defaults.mobileBanner = '';
+        defaults.desktopVideo = '';
+        defaults.mobileVideo = '';
+      }
       setFormData(defaults);
     }
     setIsModalOpen(true);
@@ -378,6 +397,29 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
       alert('Unable to process this image.');
     }
     e.target.value = '';
+  };
+
+  // Tag banner upload handler
+  const handleTagBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'desktopBanner' | 'mobileBanner') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const converted = await convertFileToWebP(file, { quality: 0.85, maxDimension: field === 'desktopBanner' ? 1920 : 800 });
+      setFormData((prev: any) => ({ ...prev, [field]: converted }));
+    } catch (error) {
+      console.error('Failed to process banner image', error);
+      alert('Unable to process this image.');
+    }
+    e.target.value = '';
+  };
+
+  // Tag gallery select handler
+  const handleTagGallerySelect = (imageUrl: string) => {
+    if (tagGalleryTarget) {
+      setFormData((prev: any) => ({ ...prev, [tagGalleryTarget]: imageUrl }));
+    }
+    setTagGalleryPickerOpen(false);
+    setTagGalleryTarget(null);
   };
 
   // Generate pagination numbers
@@ -967,6 +1009,115 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                     
 
                   </div>
+
+                  {/* Desktop Banner / Video */}
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <Monitor size={14} className="inline mr-1" /> Desktop Banner / Video
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Desktop Banner Upload */}
+                      <div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Banner Image</p>
+                        <input type="file" ref={tagDesktopBannerRef} onChange={e => handleTagBannerUpload(e, 'desktopBanner')} className="hidden" accept="image/*" />
+                        <div className="flex gap-2">
+                          <div onClick={() => tagDesktopBannerRef.current?.click()} className="flex-1 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-2 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 h-24">
+                            {formData.desktopBanner ? (
+                              <div className="relative w-full h-full">
+                                <img src={normalizeImageUrl(formData.desktopBanner)} alt="Desktop Banner" className="w-full h-full object-cover rounded" />
+                                <button type="button" onClick={e => { e.stopPropagation(); setFormData((prev: any) => ({ ...prev, desktopBanner: '' })); }} className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5"><X size={12} /></button>
+                              </div>
+                            ) : (
+                              <div className="text-gray-400 dark:text-gray-500 flex flex-col items-center justify-center h-full">
+                                <Upload size={24} className="mb-1" />
+                                <p className="text-xs">Upload Banner</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <button type="button" onClick={() => { setTagGalleryTarget('desktopBanner'); setTagGalleryPickerOpen(true); }} className="w-full mt-1 py-1 border border-dashed border-indigo-300 dark:border-indigo-500 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-xs gap-1">
+                          <FolderOpen size={12} /> Select Gallery
+                        </button>
+                      </div>
+                      {/* Desktop Video URL */}
+                      <div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">YouTube Video URL</p>
+                        <input
+                          type="url"
+                          placeholder="https://youtube.com/watch?v=..."
+                          value={formData.desktopVideo || ''}
+                          onChange={(e) => setFormData((prev: any) => ({ ...prev, desktopVideo: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                        {getYouTubeId(formData.desktopVideo || '') && (
+                          <div className="mt-1 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${getYouTubeId(formData.desktopVideo || '')}`}
+                              className="w-full h-24"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              title="Desktop Video Preview"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mobile Banner / Video */}
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <Smartphone size={14} className="inline mr-1" /> Mobile Banner / Video
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Mobile Banner Upload */}
+                      <div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Banner Image</p>
+                        <input type="file" ref={tagMobileBannerRef} onChange={e => handleTagBannerUpload(e, 'mobileBanner')} className="hidden" accept="image/*" />
+                        <div className="flex gap-2">
+                          <div onClick={() => tagMobileBannerRef.current?.click()} className="flex-1 border-2 border-dashed border-blue-300 dark:border-blue-600 rounded-lg p-2 text-center cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 h-24">
+                            {formData.mobileBanner ? (
+                              <div className="relative w-full h-full">
+                                <img src={normalizeImageUrl(formData.mobileBanner)} alt="Mobile Banner" className="w-full h-full object-cover rounded" />
+                                <button type="button" onClick={e => { e.stopPropagation(); setFormData((prev: any) => ({ ...prev, mobileBanner: '' })); }} className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5"><X size={12} /></button>
+                              </div>
+                            ) : (
+                              <div className="text-blue-400 dark:text-blue-500 flex flex-col items-center justify-center h-full">
+                                <Smartphone size={24} className="mb-1" />
+                                <p className="text-xs">Upload Mobile</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <button type="button" onClick={() => { setTagGalleryTarget('mobileBanner'); setTagGalleryPickerOpen(true); }} className="w-full mt-1 py-1 border border-dashed border-indigo-300 dark:border-indigo-500 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-xs gap-1">
+                          <FolderOpen size={12} /> Select Gallery
+                        </button>
+                      </div>
+                      {/* Mobile Video URL */}
+                      <div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">YouTube Video URL</p>
+                        <input
+                          type="url"
+                          placeholder="https://youtube.com/watch?v=..."
+                          value={formData.mobileVideo || ''}
+                          onChange={(e) => setFormData((prev: any) => ({ ...prev, mobileVideo: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                        {getYouTubeId(formData.mobileVideo || '') && (
+                          <div className="mt-1 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${getYouTubeId(formData.mobileVideo || '')}`}
+                              className="w-full h-24"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              title="Mobile Video Preview"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               ) : (
                 <div>
@@ -1012,6 +1163,16 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
             </form>
           </div>
         </div>
+      )}
+
+      {/* Tag Gallery Picker Modal */}
+      {view === 'catalog_tags' && (
+        <GalleryPicker
+          isOpen={tagGalleryPickerOpen}
+          onClose={() => { setTagGalleryPickerOpen(false); setTagGalleryTarget(null); }}
+          onSelect={handleTagGallerySelect}
+          title={`Choose ${tagGalleryTarget === 'desktopBanner' ? 'Desktop Banner' : 'Mobile Banner'} from Gallery`}
+        />
       )}
     </div>
   );

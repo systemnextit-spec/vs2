@@ -30,7 +30,7 @@ const MobileHeaderStyle1: React.FC<MobileHeaderBarProps> = ({
         </button>
         <button type="button" className="flex items-center group" onClick={onHomeClick}>
           {resolvedHeaderLogo ? (
-            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Store logo'} className="h-[36px] w-auto max-w-[140px] object-contain transition-all duration-300 group-active:scale-95" />
+            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Store logo'} className="max-h-[44px] w-auto max-w-[160px] object-contain transition-all duration-300 group-active:scale-95" />
           ) : (
             <h1 className="text-lg font-black tracking-tight text-theme-primary">{websiteConfig?.websiteName || 'My Store'}</h1>
           )}
@@ -62,7 +62,7 @@ const MobileHeaderStyle2: React.FC<MobileHeaderBarProps> = ({
       <button type="button" className="w-9 h-9 flex items-center justify-center text-gray-700" onClick={onMenuOpen} aria-label="Menu"><Menu size={22} strokeWidth={2} /></button>
       <button type="button" className="flex items-center justify-center flex-1 mx-4" onClick={onHomeClick}>
         {resolvedHeaderLogo ? (
-          <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[36px] w-auto max-w-[140px] object-contain" />
+          <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[44px] w-auto max-w-[160px] object-contain" />
         ) : (
           <h1 className="text-lg font-bold text-gray-900">{websiteConfig?.websiteName || 'Store'}</h1>
         )}
@@ -89,7 +89,7 @@ const MobileHeaderStyle3: React.FC<MobileHeaderBarProps> = ({
         <button type="button" className="w-10 h-10 flex items-center justify-center rounded-xl text-white/90 hover:bg-white/10 active:scale-95 transition-all" onClick={onMenuOpen}><Menu size={22} strokeWidth={2} /></button>
         <button type="button" className="flex items-center group" onClick={onHomeClick}>
           {resolvedHeaderLogo ? (
-            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[36px] w-auto max-w-[140px] object-contain brightness-0 invert" />
+            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[44px] w-auto max-w-[160px] object-contain brightness-0 invert" />
           ) : (
             <h1 className="text-lg font-bold text-white">{websiteConfig?.websiteName || 'Store'}</h1>
           )}
@@ -120,7 +120,7 @@ const MobileHeaderStyle4: React.FC<MobileHeaderBarProps> = ({
     <div className="px-2 sm:px-3 py-2 flex items-center gap-3">
       <button type="button" className="flex items-center gap-1.5 group" onClick={onHomeClick}>
         {resolvedHeaderLogo ? (
-          <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[36px] w-auto max-w-[140px] object-contain" />
+          <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[44px] w-auto max-w-[160px] object-contain" />
         ) : (
           <h1 className="text-base font-bold text-theme-primary">{websiteConfig?.websiteName || 'Store'}</h1>
         )}
@@ -156,7 +156,7 @@ const MobileHeaderStyle5: React.FC<MobileHeaderBarProps> = ({
         <button type="button" className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-300 hover:bg-gray-800 active:scale-95 transition-all" onClick={onMenuOpen}><Menu size={21} strokeWidth={1.8} /></button>
         <button type="button" className="flex items-center group" onClick={onHomeClick}>
           {resolvedHeaderLogo ? (
-            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[36px] w-auto max-w-[140px] object-contain brightness-0 invert" />
+            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[44px] w-auto max-w-[160px] object-contain brightness-0 invert" />
           ) : (
             <h1 className="text-lg font-bold text-white">{websiteConfig?.websiteName || 'Store'}</h1>
           )}
@@ -189,7 +189,7 @@ const MobileHeaderStyle6: React.FC<MobileHeaderBarProps> = ({
         <button type="button" className="w-10 h-10 flex items-center justify-center rounded-xl text-white/90 hover:bg-white/10 active:scale-95 transition-all" onClick={onMenuOpen} aria-label="Open menu"><Menu size={22} strokeWidth={2} /></button>
         <button type="button" className="flex items-center group" onClick={onHomeClick}>
           {resolvedHeaderLogo ? (
-            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-[36px] w-auto max-w-[140px] object-contain brightness-0 invert transition-all duration-300 group-active:scale-95" />
+            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[44px] w-auto max-w-[160px] object-contain brightness-0 invert transition-all duration-300 group-active:scale-95" />
           ) : (
             <h1 className="text-lg font-bold text-white font-['Poppins']">{websiteConfig?.websiteName || 'My Store'}</h1>
           )}
