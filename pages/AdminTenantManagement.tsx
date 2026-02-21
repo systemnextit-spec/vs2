@@ -147,8 +147,8 @@ const AdminTenantManagement: React.FC<AdminTenantManagementProps> = ({
       newErrors.subdomain = 'This subdomain is reserved';
     } else if (tenants.some(t => t.subdomain?.toLowerCase() === form.subdomain.toLowerCase())) {
       newErrors.subdomain = 'Subdomain already exists';
-    } else if (form.subdomain.length < 3) {
-      newErrors.subdomain = 'Subdomain must be at least 3 characters';
+    } else if (form.subdomain.length < 2) {
+      newErrors.subdomain = 'Subdomain must be at least 2 characters';
     }
 
     if (!form.contactEmail.trim()) {

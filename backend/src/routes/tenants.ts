@@ -29,7 +29,7 @@ const createTenantSchema = z.object({
 // Public registration schema (same as create but for self-registration)
 const publicRegisterSchema = z.object({
   name: z.string().min(2, 'Shop name must be at least 2 characters'),
-  subdomain: z.string().min(3, 'Subdomain must be at least 3 characters').max(30),
+  subdomain: z.string().min(2, 'Subdomain must be at least 2 characters').max(30),
   contactEmail: z.string().email('Invalid email address'),
   contactName: z.string().min(2, 'Name must be at least 2 characters'),
   adminEmail: z.string().email('Invalid email address'),
@@ -71,7 +71,7 @@ tenantsRouter.get('/check-subdomain/:subdomain', async (req, res) => {
     
     // Validate subdomain format
     if (subdomain.length < 3) {
-      return res.json({ available: false, reason: 'Subdomain must be at least 3 characters' });
+      return res.json({ available: false, reason: 'Subdomain must be at least 2 characters' });
     }
     
     if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(subdomain) && subdomain.length > 2) {
