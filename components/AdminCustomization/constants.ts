@@ -147,7 +147,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
   // Product Detail Page Theme preview images
   productDetailThemes: {
     default: 'https://hdnfltv.com/image/nitimages/pasted_1770568460126.webp',
-    modern: 'https://hdnfltv.com/image/nitimages/pasted_1770568493317.webp',
+    modern: 'https://hdnfltv.com/image/nitimages/pasted_1771688008265.webp',
   },
 };
 
