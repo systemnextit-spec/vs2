@@ -82,6 +82,10 @@ interface FormData {
   category: string;
   subCategory: string;
   childCategory: string;
+  categories: string[];
+  subCategoriesArr: string[];
+  childCategoriesArr: string[];
+  brandsArr: string[];
   condition: string;
   flashSale: boolean;
   flashSaleStartDate: string;
@@ -351,6 +355,10 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     category: '',
     subCategory: '',
     childCategory: '',
+    categories: [],
+    subCategoriesArr: [],
+    childCategoriesArr: [],
+    brandsArr: [],
     condition: 'New',
     flashSale: false,
     flashSaleStartDate: '',
@@ -382,6 +390,10 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         regularPrice: editProduct.originalPrice || 0,
         costPrice: editProduct.costPrice || 0,
         category: editProduct.category || '',
+        categories: editProduct.categories || (editProduct.category ? [editProduct.category] : []),
+        subCategoriesArr: editProduct.subCategories || (editProduct.subCategory ? [editProduct.subCategory] : []),
+        childCategoriesArr: editProduct.childCategories || (editProduct.childCategory ? [editProduct.childCategory] : []),
+        brandsArr: editProduct.brands || (editProduct.brand ? [editProduct.brand] : []),
         brandName: editProduct.brand || '',
         sku: editProduct.sku || '',
         quantity: editProduct.stock || 0,
@@ -426,10 +438,10 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     formData.costPrice > 0,
     formData.quantity > 0,
     !!formData.sku?.trim(),
-    !!formData.category?.trim(),
-    !!formData.subCategory?.trim(),
-    !!formData.childCategory?.trim(),
-    !!formData.brandName?.trim(),
+    !!(formData.categories?.length || formData.category?.trim()),
+    !!(formData.subCategoriesArr?.length || formData.subCategory?.trim()),
+    !!(formData.childCategoriesArr?.length || formData.childCategory?.trim()),
+    !!(formData.brandsArr?.length || formData.brandName?.trim()),
     formData.tag.length > 0,
     formData.galleryImages.length > 0,
     !!formData.videoUrl?.trim(),
@@ -812,10 +824,12 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       // Update local state so dropdown shows the new item
       if (catalogModalTab === 'category') {
         setLocalCategories(prev => [...prev, newItem as Category]);
-        updateField('category', newCatalogItem.name.trim());
+        updateField('categories', [...(formData.categories || []), newCatalogItem.name.trim()]);
+        updateField('category', (formData.categories || [])[0] || newCatalogItem.name.trim());
       } else if (catalogModalTab === 'subcategory') {
         setLocalSubCategories(prev => [...prev, newItem as SubCategory]);
-        updateField('subCategory', newCatalogItem.name.trim());
+        updateField('subCategoriesArr', [...(formData.subCategoriesArr || []), newCatalogItem.name.trim()]);
+        updateField('subCategory', (formData.subCategoriesArr || [])[0] || newCatalogItem.name.trim());
       } else if (catalogModalTab === 'childcategory') {
         setLocalChildCategories(prev => [...prev, newItem as ChildCategory]);
         updateField('childCategory', newCatalogItem.name.trim());
@@ -824,7 +838,8 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         updateField('tag', [newCatalogItem.name.trim()]);
       } else if (catalogModalTab === 'brand') {
         setLocalBrands(prev => [...prev, newItem as Brand]);
-        updateField('brandName', newCatalogItem.name.trim());
+        updateField('brandsArr', [...(formData.brandsArr || []), newCatalogItem.name.trim()]);
+        updateField('brandName', (formData.brandsArr || [])[0] || newCatalogItem.name.trim());
       }
       
       // Reset form and close modal
@@ -873,10 +888,14 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       price: formData.salesPrice || 0,
       originalPrice: formData.regularPrice || 0,
       costPrice: formData.costPrice || 0,
-      category: formData.category,
-      subCategory: formData.subCategory,
-      childCategory: formData.childCategory,
-      brand: formData.brandName,
+      category: formData.categories?.[0] || formData.category,
+      subCategory: formData.subCategoriesArr?.[0] || formData.subCategory,
+      childCategory: formData.childCategoriesArr?.[0] || formData.childCategory,
+      brand: formData.brandsArr?.[0] || formData.brandName,
+      categories: formData.categories,
+      subCategories: formData.subCategoriesArr,
+      childCategories: formData.childCategoriesArr,
+      brands: formData.brandsArr,
       sku: formData.sku,
       stock: formData.quantity || 0,
       status: 'Draft',
@@ -904,7 +923,7 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
   };
 
   const handlePublish = () => {
-    if (!formData.name || !formData.category || !formData.salesPrice) {
+    if (!formData.name || (!formData.category && !formData.categories?.length) || !formData.salesPrice) {
       toast.error('Please fill required fields');
       return;
     }
@@ -935,10 +954,14 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       price: formData.salesPrice,
       originalPrice: formData.regularPrice,
       costPrice: formData.costPrice,
-      category: formData.category,
-      subCategory: formData.subCategory,
-      childCategory: formData.childCategory,
-      brand: formData.brandName,
+      category: formData.categories?.[0] || formData.category,
+      subCategory: formData.subCategoriesArr?.[0] || formData.subCategory,
+      childCategory: formData.childCategoriesArr?.[0] || formData.childCategory,
+      brand: formData.brandsArr?.[0] || formData.brandName,
+      categories: formData.categories,
+      subCategories: formData.subCategoriesArr,
+      childCategories: formData.childCategoriesArr,
+      brands: formData.brandsArr,
       sku: formData.sku,
       stock: formData.quantity,
       status: 'Active',
@@ -1690,77 +1713,164 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
           <div className="bg-white rounded-lg p-4">
             <h3 className="text-[20px] font-medium text-black mb-4">Catalog</h3>
             
-            {/* Category */}
-            <div className="mb-3">
-              <SelectField
-                value={formData.category}
-                onChange={(v) => updateField('category', v)}
-                options={localCategories.map(c => ({ value: c.name, label: c.name }))}
-                placeholder="Select Category*"
-                required
-              />
-              {/* <button 
-                onClick={() => { setCatalogModalTab('category'); setShowCatalogModal(true); }}
-                className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
-              >
-                <Plus size={18} />
-                <span className="font-semibold text-[#070606]">Add Category</span>
-              </button> */}
+            {/* Categories - Multi-select chips */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-gray-700">Assign categories <span className="text-red-500">*</span></label>
+                <button
+                  type="button"
+                  onClick={() => { setCatalogModalTab('category'); setShowCatalogModal(true); }}
+                  className="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center hover:bg-indigo-600 transition"
+                >
+                  <Plus size={14} />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {localCategories.map(cat => {
+                  const isSelected = (formData.categories || []).includes(cat.name);
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => {
+                        const arr = formData.categories || [];
+                        const newArr = isSelected ? arr.filter((c: string) => c !== cat.name) : [...arr, cat.name];
+                        updateField('categories', newArr);
+                        updateField('category', newArr[0] || '');
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                        isSelected ? 'bg-indigo-500 text-white border-indigo-500 shadow-sm' : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-400'
+                      }`}
+                    >
+                      {isSelected && <span className="mr-1">✓</span>}{cat.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Sub Category */}
-            <div className="mb-3">
-              <SelectField
-                value={formData.subCategory}
-                onChange={(v) => updateField('subCategory', v)}
-                options={localSubCategories
-                  .filter(sc => !formData.category || sc.categoryName === formData.category || sc.categoryId === formData.category)
-                  .map(sc => ({ value: sc.name, label: sc.name }))}
-                placeholder="Select Sub Category"
-              />
-              {/* <button 
-                onClick={() => { setCatalogModalTab('subcategory'); setShowCatalogModal(true); }}
-                className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
-              >
-                <Plus size={18} />
-                <span className="font-semibold text-[#070606]">Add Sub Category</span>
-              </button> */}
-            </div>
+            {/* Sub Categories - Multi-select chips */}
+            {localSubCategories.filter(sc => {
+              const selCats = formData.categories || [];
+              return selCats.length === 0 || selCats.some((cat: string) => sc.categoryName === cat || sc.categoryId === cat || localCategories.find(c => c.name === cat)?.id === sc.categoryId);
+            }).length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-gray-700">Assign sub categories</label>
+                  <button
+                    type="button"
+                    onClick={() => { setCatalogModalTab('subcategory'); setShowCatalogModal(true); }}
+                    className="w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center hover:bg-purple-600 transition"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {localSubCategories.filter(sc => {
+                    const selCats = formData.categories || [];
+                    return selCats.length === 0 || selCats.some((cat: string) => sc.categoryName === cat || sc.categoryId === cat || localCategories.find(c => c.name === cat)?.id === sc.categoryId);
+                  }).map(sc => {
+                    const isSelected = (formData.subCategoriesArr || []).includes(sc.name);
+                    return (
+                      <button
+                        key={sc.id}
+                        type="button"
+                        onClick={() => {
+                          const arr = formData.subCategoriesArr || [];
+                          const newArr = isSelected ? arr.filter((s: string) => s !== sc.name) : [...arr, sc.name];
+                          updateField('subCategoriesArr', newArr);
+                          updateField('subCategory', newArr[0] || '');
+                        }}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                          isSelected ? 'bg-purple-500 text-white border-purple-500 shadow-sm' : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
+                        }`}
+                      >
+                        {isSelected && <span className="mr-1">✓</span>}{sc.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-            {/* Child Category */}
-            <div className="mb-3">
-              <SelectField
-                value={formData.childCategory}
-                onChange={(v) => updateField('childCategory', v)}
-                options={localChildCategories
-                  .filter(cc => !formData.subCategory || cc.subCategoryId === formData.subCategory || cc.subCategoryId === formData.subCategory)
-                  .map(cc => ({ value: cc.name, label: cc.name }))}
-                placeholder="Select Child Category"
-              />
-              {/* <button 
-                onClick={() => { setCatalogModalTab('childcategory'); setShowCatalogModal(true); }}
-                className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
-              >
-                <Plus size={18} />
-                <span className="font-semibold text-[#070606]">Add Child Category</span>
-              </button> */}
-            </div>
+            {/* Child Categories - Multi-select chips */}
+            {localChildCategories.filter(cc => {
+              const selSubs = formData.subCategoriesArr || [];
+              return selSubs.length === 0 ? false : selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryName === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId);
+            }).length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-gray-700">Assign child categories</label>
+                  <button
+                    type="button"
+                    onClick={() => { setCatalogModalTab('childcategory'); setShowCatalogModal(true); }}
+                    className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {localChildCategories.filter(cc => {
+                    const selSubs = formData.subCategoriesArr || [];
+                    return selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryName === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId);
+                  }).map(cc => {
+                    const isSelected = (formData.childCategoriesArr || []).includes(cc.name);
+                    return (
+                      <button
+                        key={cc.id}
+                        type="button"
+                        onClick={() => {
+                          const arr = formData.childCategoriesArr || [];
+                          const newArr = isSelected ? arr.filter((c: string) => c !== cc.name) : [...arr, cc.name];
+                          updateField('childCategoriesArr', newArr);
+                          updateField('childCategory', newArr[0] || '');
+                        }}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                          isSelected ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm' : 'bg-white text-gray-700 border-gray-300 hover:border-emerald-400'
+                        }`}
+                      >
+                        {isSelected && <span className="mr-1">✓</span>}{cc.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-            {/* Brand */}
-            <div className="mb-3">
-              <SelectField
-                value={formData.brandName}
-                onChange={(v) => updateField('brandName', v)}
-                options={localBrands.map(b => ({ value: b.name, label: b.name }))}
-                placeholder="Select Brand"
-              />
-              {/* <button 
-                onClick={() => { setCatalogModalTab('brand'); setShowCatalogModal(true); }}
-                className="mt-2 h-9 bg-[#f4f4f4] rounded-lg px-3 flex items-center gap-2 ml-auto hover:bg-gray-200 transition-colors text-sm"
-              >
-                <Plus size={18} />
-                <span className="font-semibold text-[#070606]">Add Brand</span>
-              </button> */}
+            {/* Brands - Multi-select chips */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-gray-700">Assign brands</label>
+                <button
+                  type="button"
+                  onClick={() => { setCatalogModalTab('brand'); setShowCatalogModal(true); }}
+                  className="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center hover:bg-amber-600 transition"
+                >
+                  <Plus size={14} />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {localBrands.map(b => {
+                  const isSelected = (formData.brandsArr || []).includes(b.name);
+                  return (
+                    <button
+                      key={b.id}
+                      type="button"
+                      onClick={() => {
+                        const arr = formData.brandsArr || [];
+                        const newArr = isSelected ? arr.filter((x: string) => x !== b.name) : [...arr, b.name];
+                        updateField('brandsArr', newArr);
+                        updateField('brandName', newArr[0] || '');
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                        isSelected ? 'bg-amber-500 text-white border-amber-500 shadow-sm' : 'bg-white text-gray-700 border-gray-300 hover:border-amber-400'
+                      }`}
+                    >
+                      {isSelected && <span className="mr-1">✓</span>}{b.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Product Tags */}
@@ -1932,77 +2042,80 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
           <div className="bg-white rounded-lg p-2 xxs:p-3 sm:p-4">
             <h3 className="text-sm xxs:text-base sm:text-lg font-medium text-black mb-2 xxs:mb-3">Catalog</h3>
             
-            {/* Category - Mobile */}
-            <div className="mb-2 xxs:mb-3">
-              <SelectField
-                value={formData.category}
-                onChange={(v) => updateField('category', v)}
-                options={localCategories.map(c => ({ value: c.name, label: c.name }))}
-                placeholder="Select Category*"
-                required
-              />
-              {/* <button 
-                onClick={() => { setCatalogModalTab('category'); setShowCatalogModal(true); }}
-                className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
-              >
-                <Plus size={14} />
-                <span className="font-semibold text-[#070606]">Add Category</span>
-              </button> */}
+            {/* Categories - Mobile chips */}
+            <div className="mb-3">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-medium text-gray-700">Assign categories <span className="text-red-500">*</span></label>
+                <button type="button" onClick={() => { setCatalogModalTab('category'); setShowCatalogModal(true); }} className="w-5 h-5 rounded-full bg-indigo-500 text-white flex items-center justify-center"><Plus size={12} /></button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {localCategories.map(cat => {
+                  const isSelected = (formData.categories || []).includes(cat.name);
+                  return (
+                    <button key={cat.id} type="button" onClick={() => { const arr = formData.categories || []; const newArr = isSelected ? arr.filter((c: string) => c !== cat.name) : [...arr, cat.name]; updateField('categories', newArr); updateField('category', newArr[0] || ''); }}
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all border ${isSelected ? 'bg-indigo-500 text-white border-indigo-500' : 'bg-white text-gray-700 border-gray-300'}`}
+                    >{isSelected && '✓ '}{cat.name}</button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Sub Category - Mobile */}
-            <div className="mb-2 xxs:mb-3">
-              <SelectField
-                value={formData.subCategory}
-                onChange={(v) => updateField('subCategory', v)}
-                options={localSubCategories
-                  .filter(sc => !formData.category || sc.categoryName === formData.category || sc.categoryId === formData.category)
-                  .map(sc => ({ value: sc.name, label: sc.name }))}
-                placeholder="Select Sub Category"
-              />
-              {/* <button 
-                onClick={() => { setCatalogModalTab('subcategory'); setShowCatalogModal(true); }}
-                className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
-              >
-                <Plus size={14} />
-                <span className="font-semibold text-[#070606]">Add Sub Category</span>
-              </button> */}
-            </div>
+            {/* Sub Categories - Mobile chips */}
+            {localSubCategories.filter(sc => { const selCats = formData.categories || []; return selCats.length === 0 || selCats.some((cat: string) => sc.categoryName === cat || sc.categoryId === cat || localCategories.find(c => c.name === cat)?.id === sc.categoryId); }).length > 0 && (
+              <div className="mb-3">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-medium text-gray-700">Assign sub categories</label>
+                  <button type="button" onClick={() => { setCatalogModalTab('subcategory'); setShowCatalogModal(true); }} className="w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center"><Plus size={12} /></button>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {localSubCategories.filter(sc => { const selCats = formData.categories || []; return selCats.length === 0 || selCats.some((cat: string) => sc.categoryName === cat || sc.categoryId === cat || localCategories.find(c => c.name === cat)?.id === sc.categoryId); }).map(sc => {
+                    const isSelected = (formData.subCategoriesArr || []).includes(sc.name);
+                    return (
+                      <button key={sc.id} type="button" onClick={() => { const arr = formData.subCategoriesArr || []; const newArr = isSelected ? arr.filter((s: string) => s !== sc.name) : [...arr, sc.name]; updateField('subCategoriesArr', newArr); updateField('subCategory', newArr[0] || ''); }}
+                        className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all border ${isSelected ? 'bg-purple-500 text-white border-purple-500' : 'bg-white text-gray-700 border-gray-300'}`}
+                      >{isSelected && '✓ '}{sc.name}</button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-            {/* Child Category - Mobile */}
-            <div className="mb-2 xxs:mb-3">
-              <SelectField
-                value={formData.childCategory}
-                onChange={(v) => updateField('childCategory', v)}
-                options={localChildCategories
-                  .filter(cc => !formData.subCategory || cc.subCategoryId === formData.subCategory || cc.subCategoryId === formData.subCategory)
-                  .map(cc => ({ value: cc.name, label: cc.name }))}
-                placeholder="Select Child Category"
-              />
-              {/* <button 
-                onClick={() => { setCatalogModalTab('childcategory'); setShowCatalogModal(true); }}
-                className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
-              >
-                <Plus size={14} />
-                <span className="font-semibold text-[#070606]">Add Child Category</span>
-              </button> */}
-            </div>
+            {/* Child Categories - Mobile chips */}
+            {localChildCategories.filter(cc => { const selSubs = formData.subCategoriesArr || []; return selSubs.length === 0 ? false : selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryName === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId); }).length > 0 && (
+              <div className="mb-3">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-medium text-gray-700">Assign child categories</label>
+                  <button type="button" onClick={() => { setCatalogModalTab('childcategory'); setShowCatalogModal(true); }} className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center"><Plus size={12} /></button>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {localChildCategories.filter(cc => { const selSubs = formData.subCategoriesArr || []; return selSubs.some((sub: string) => cc.subCategoryId === sub || cc.subCategoryName === sub || localSubCategories.find(s => s.name === sub)?.id === cc.subCategoryId); }).map(cc => {
+                    const isSelected = (formData.childCategoriesArr || []).includes(cc.name);
+                    return (
+                      <button key={cc.id} type="button" onClick={() => { const arr = formData.childCategoriesArr || []; const newArr = isSelected ? arr.filter((c: string) => c !== cc.name) : [...arr, cc.name]; updateField('childCategoriesArr', newArr); updateField('childCategory', newArr[0] || ''); }}
+                        className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all border ${isSelected ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-700 border-gray-300'}`}
+                      >{isSelected && '✓ '}{cc.name}</button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-            {/* Brand - Mobile */}
-            <div className="mb-2 xxs:mb-3">
-              <SelectField
-                value={formData.brandName}
-                onChange={(v) => updateField('brandName', v)}
-                options={localBrands.map(b => ({ value: b.name, label: b.name }))}
-                placeholder="Select Brand"
-              />
-              {/* <button 
-                onClick={() => { setCatalogModalTab('brand'); setShowCatalogModal(true); }}
-                className="mt-1.5 h-7 xxs:h-8 bg-[#f4f4f4] rounded-lg px-2 flex items-center gap-1 ml-auto hover:bg-gray-200 transition-colors text-xs"
-              >
-                <Plus size={14} />
-                <span className="font-semibold text-[#070606]">Add Brand</span>
-              </button> */}
+            {/* Brands - Mobile chips */}
+            <div className="mb-3">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-medium text-gray-700">Assign brands</label>
+                <button type="button" onClick={() => { setCatalogModalTab('brand'); setShowCatalogModal(true); }} className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center"><Plus size={12} /></button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {localBrands.map(b => {
+                  const isSelected = (formData.brandsArr || []).includes(b.name);
+                  return (
+                    <button key={b.id} type="button" onClick={() => { const arr = formData.brandsArr || []; const newArr = isSelected ? arr.filter((x: string) => x !== b.name) : [...arr, b.name]; updateField('brandsArr', newArr); updateField('brandName', newArr[0] || ''); }}
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all border ${isSelected ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-gray-700 border-gray-300'}`}
+                    >{isSelected && '✓ '}{b.name}</button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Product Tags - Mobile */}

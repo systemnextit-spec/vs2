@@ -959,7 +959,7 @@ const FigmaCatalogManager: React.FC<FigmaCatalogManagerProps> = ({
                       <p className="text-xs text-gray-500 dark:text-gray-400">Display a countdown timer on the store front for this tag</p>
                     </div>
                     <button
-                      type="button"
+                      type="button" onClick={() => setFormData({ ...formData, showCountdown: !formData.showCountdown })}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.showCountdown ? 'bg-cyan-500' : 'bg-gray-300 dark:bg-gray-600'}`}
                     >
                       <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${formData.showCountdown ? 'translate-x-6' : 'translate-x-1'}`} />
