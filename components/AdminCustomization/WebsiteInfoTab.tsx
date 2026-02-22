@@ -756,6 +756,8 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
       
       if (imageType === 'logo') {
         onUpdateLogo(uploadedUrl);
+        // Also persist logo as headerLogo in websiteConfig so it survives page refreshes
+        setWebsiteConfiguration((prev) => ({ ...prev, headerLogo: prev.headerLogo || uploadedUrl }));
       } else if (imageType === 'favicon') {
         setWebsiteConfiguration((prev) => ({ ...prev, favicon: uploadedUrl }));
       } else if (imageType === 'headerLogo') {
