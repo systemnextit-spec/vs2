@@ -388,6 +388,18 @@ const App = () => {
     checkRedirect();
   }, [processGoogleRedirect]);
 
+  // Check for Google OAuth redirect result on mount
+  useEffect(() => {
+    const checkRedirect = async () => {
+      try {
+        await processGoogleRedirect();
+      } catch (error) {
+        console.error('Google redirect check failed:', error);
+      }
+    };
+    checkRedirect();
+  }, [processGoogleRedirect]);
+
   // Admin section access control
   useEffect(() => {
     if (adminSection === 'tenants' && !isPlatformOperator(user?.role)) setAdminSection('dashboard');

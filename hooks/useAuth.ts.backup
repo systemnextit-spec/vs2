@@ -6,7 +6,7 @@ import { useCallback, Dispatch, SetStateAction } from 'react';
 import type { User, Tenant } from '../types';
 import { isAdminRole, getAuthErrorMessage } from '../utils/appHelpers';
 
-import { signInWithRedirect, getRedirectResult, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth, provider } from '../config/firebase';
 
 // Default tenant ID
@@ -238,37 +238,8 @@ export function useAuth({
 
   const handleGoogleLogin = useCallback(async (): Promise<boolean> => {
     try {
-      // Store current tenant info before redirect
-      const tenantIdToUse = activeTenantId || DEFAULT_TENANT_ID;
-      const tenantSubdomain = getTenantSubdomain();
-      
-      localStorage.setItem('google_login_tenant', tenantIdToUse);
-      if (tenantSubdomain) {
-        localStorage.setItem('google_login_subdomain', tenantSubdomain);
-      }
-      
-      // Redirect to Google for authentication (opens in same tab, no popup/COOP issues)
-      await signInWithRedirect(auth, provider);
-      
-      // This function won't return - the page will redirect to Google
-      // After Google auth, user will be redirected back and processGoogleRedirect will handle it
-      return true;
-    } catch (error: any) {
-      console.error('Google redirect error:', error);
-      throw new Error(error.message || 'Failed to initiate Google sign-in');
-    }
-  }, [activeTenantId]);
-
-  const processGoogleRedirect = useCallback(async (): Promise<boolean> => {
-    try {
-      // Check for redirect result after returning from Google
-      const result = await getRedirectResult(auth);
-      
-      if (!result) {
-        // No redirect result - user didn't come from Google auth
-        return false;
-      }
-
+      // Sign in with Google Firebase
+      const result = await signInWithPopup(auth, provider);
       const user = result.user;
       
       if (!user) {
@@ -331,12 +302,16 @@ export function useAuth({
     } catch (error: any) {
       console.error('Google login error:', error);
       
-      // Clean up on error
-      localStorage.removeItem('google_login_tenant');
-      localStorage.removeItem('google_login_subdomain');
-      throw new Error(error.message || 'Failed to complete Google sign-in');
+      // Check if it's a Firebase error
+      if (error.code === 'auth/popup-closed-by-user') {
+        throw new Error('Sign-in popup was closed');
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        throw new Error('Sign-in cancelled');
+      }
+      
+      throw new Error(error.message || 'Failed to sign in with Google');
     }
-  }, [setUser, setActiveTenantId]);
+  }, [activeTenantId, setUser, setActiveTenantId]);
 
   const handleLogout = useCallback(async () => {
     // Clear JWT tokens
@@ -400,7 +375,6 @@ export function useAuth({
     handleLogin,
     handleRegister,
     handleGoogleLogin,
-    processGoogleRedirect,
     handleLogout,
     handleUpdateProfile,
   };

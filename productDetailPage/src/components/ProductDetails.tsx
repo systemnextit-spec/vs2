@@ -147,7 +147,20 @@ export default function ProductDetailsPage({
         shortDescription: product?.shortDescription || "",
     };
 
-    const logoUrl = normalizeImageUrl(logo || websiteConfig?.headerLogo || websiteConfig?.footerLogo || "");
+    // Construct tenant-specific logo URL
+    // Priority: 1) websiteConfig headerLogo (if includes tenantId path), 2) websiteConfig footerLogo, 3) generic logo prop
+    const logoUrl = (() => {
+        // Check if websiteConfig has headerLogo with tenant-specific path
+        if (websiteConfig?.headerLogo && websiteConfig.headerLogo.includes('/branding/')) {
+            return normalizeImageUrl(websiteConfig.headerLogo);
+        }
+        // Check if websiteConfig has footerLogo with tenant-specific path
+        if (websiteConfig?.footerLogo && websiteConfig.footerLogo.includes('/branding/')) {
+            return normalizeImageUrl(websiteConfig.footerLogo);
+        }
+        // Fallback to logo prop or other config options
+        return normalizeImageUrl(logo || websiteConfig?.headerLogo || websiteConfig?.footerLogo || "");
+    })();
     const announcementText = websiteConfig?.adminNoticeText || websiteConfig?.headerSliderText || "";
     console.log('[AnnouncedBar] websiteConfig keys:', Object.keys(websiteConfig || {}));
     console.log('[AnnouncedBar] adminNoticeText:', websiteConfig?.adminNoticeText);

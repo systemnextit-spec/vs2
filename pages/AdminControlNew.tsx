@@ -106,7 +106,7 @@ const AdminControl: React.FC<AdminControlProps> = ({
   currentUser, tenantId, userPermissions = {}
 }) => {
   const { isDarkMode } = useDarkMode();
-  const [tab, setTab] = useState<'users' | 'roles'>('users');
+  const [tab, setTab] = useState<'users' | 'roles' | 'reviews' | 'customers'>('users');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -683,7 +683,7 @@ const AdminControl: React.FC<AdminControlProps> = ({
           
           {/* Tabs */}
           <div style={{ display: 'flex', gap: '4px', background: '#f0f0f0', padding: '4px', borderRadius: '8px' }}>
-            {(['users', 'roles'] as const).map((t) => (
+            {(['users', 'roles', 'reviews', 'customers'] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -705,6 +705,8 @@ const AdminControl: React.FC<AdminControlProps> = ({
               >
                 {t === 'users' && <Users size={14} />}
                 {t === 'roles' && <Key size={14} />}
+                {t === 'reviews' && <Star size={14} />}
+                {t === 'customers' && <UserCheck size={14} />}
                 {t.charAt(0).toUpperCase() + t.slice(1)}
               </button>
             ))}

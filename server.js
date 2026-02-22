@@ -91,6 +91,9 @@ async function createServer() {
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     
+    // Don't set X-Frame-Options - let CSP frame-ancestors handle iframe security
+    // This allows Firebase auth popups/iframes to work properly
+    
     // Allow iframe embedding from same origin and subdomains (for preview feature)
     const host = req.headers.host || '';
     if (host.includes('localhost')) {
