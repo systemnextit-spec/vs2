@@ -13,7 +13,11 @@ import {
   Users,
   AlertCircle,
   Settings,
-  X
+  X,
+  ChevronDown,
+  Building2,
+  Check,
+  Loader2
 } from 'lucide-react';
 import { useDarkMode } from '../../context/DarkModeContext';
 import { DashboardHeaderProps } from './types';
@@ -162,14 +166,42 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
   onOrderNotificationClick,
   // Chat props
   unreadChatCount = 0,
-  onChatClick
+  onChatClick,
+  // Tenant switcher props
+  tenants = [],
+  activeTenantId,
+  onTenantChange,
+  isTenantSwitching,
+  userRole
 }) => {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [localSearchQuery, setLocalSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [showTenantDropdown, setShowTenantDropdown] = useState(false);
+  const [tenantSearch, setTenantSearch] = useState('');
   const notificationRef = useRef<HTMLDivElement>(null);
+  const tenantDropdownRef = useRef<HTMLDivElement>(null);
+
+  const isSuperAdmin = userRole === 'super_admin';
+  const selectedTenant = tenants.find(t => t.id === activeTenantId || t._id === activeTenantId);
+  const filteredTenants = tenantSearch.trim()
+    ? tenants.filter(t => t.name.toLowerCase().includes(tenantSearch.toLowerCase()) || t.subdomain.toLowerCase().includes(tenantSearch.toLowerCase()))
+    : tenants;
+
+  // Close tenant dropdown on outside click
+  useEffect(() => {
+    if (!showTenantDropdown) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tenantDropdownRef.current && !tenantDropdownRef.current.contains(event.target as Node)) {
+        setShowTenantDropdown(false);
+        setTenantSearch('');
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showTenantDropdown]);
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -275,6 +307,105 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
             Monitor your business.
           </p>
         </div>
+
+        {/* Super Admin Tenant Switcher */}
+        {isSuperAdmin && tenants.length > 0 && onTenantChange && (
+          <div className="relative flex-shrink-0 hidden sm:block" ref={tenantDropdownRef}>
+            <button
+              type="button"
+              onClick={() => { setShowTenantDropdown(prev => !prev); setTenantSearch(''); }}
+              disabled={isTenantSwitching}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all min-w-[180px] max-w-[280px]"
+              style={{ cursor: isTenantSwitching ? 'wait' : 'pointer' }}
+            >
+              <Building2 className="w-4 h-4 text-blue-500 flex-shrink-0" />
+              <div className="text-left flex-1 min-w-0">
+                <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400 dark:text-gray-500">Switch Tenant</p>
+                <p className="text-sm font-semibold truncate text-gray-900 dark:text-white">
+                  {selectedTenant?.name || 'Select Tenant'}
+                </p>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                {isTenantSwitching && <Loader2 size={14} className="animate-spin text-blue-500" />}
+                <ChevronDown size={14} className={`text-gray-400 transition-transform ${showTenantDropdown ? 'rotate-180' : ''}`} />
+              </div>
+            </button>
+
+            {showTenantDropdown && (
+              <div className="absolute left-0 top-full mt-1 w-[320px] rounded-xl z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 shadow-2xl">
+                {/* Search */}
+                <div className="p-2 border-b border-gray-100 dark:border-gray-700">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search tenants..."
+                      value={tenantSearch}
+                      onChange={(e) => setTenantSearch(e.target.value)}
+                      className="w-full pl-8 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 outline-none text-gray-900 dark:text-white placeholder-gray-400"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+                {/* Tenant List */}
+                <div className="max-h-[300px] overflow-y-auto p-1.5">
+                  {filteredTenants.length === 0 ? (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No tenants found</p>
+                  ) : (
+                    filteredTenants.map((tenant) => {
+                      const isActive = tenant.id === activeTenantId || tenant._id === activeTenantId;
+                      return (
+                        <button
+                          key={tenant.id || tenant._id}
+                          type="button"
+                          onClick={() => {
+                            if (!isActive) onTenantChange(tenant.id || tenant._id || '');
+                            setShowTenantDropdown(false);
+                            setTenantSearch('');
+                          }}
+                          disabled={isTenantSwitching}
+                          className={`w-full text-left rounded-lg px-3 py-2.5 transition flex items-center justify-between gap-2 ${
+                            isActive
+                              ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700'
+                              : 'hover:bg-gray-50 dark:hover:bg-gray-700 border border-transparent'
+                          }`}
+                        >
+                          <div className="min-w-0 flex-1">
+                            <p className={`text-sm font-semibold truncate ${isActive ? 'text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-white'}`}>
+                              {tenant.name}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{tenant.subdomain}.allinbangla.com</p>
+                            <div className="flex items-center gap-1.5 mt-1">
+                              {tenant.plan && (
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                                  tenant.plan === 'enterprise' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' :
+                                  tenant.plan === 'growth' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300' :
+                                  'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                                }`}>{tenant.plan}</span>
+                              )}
+                              {tenant.status && (
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                                  tenant.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' :
+                                  tenant.status === 'trialing' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300' :
+                                  'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                                }`}>{tenant.status}</span>
+                              )}
+                            </div>
+                          </div>
+                          {isActive && <Check size={16} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />}
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+                {/* Footer */}
+                <div className="p-2 border-t border-gray-100 dark:border-gray-700">
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 text-center">{tenants.length} tenant{tenants.length !== 1 ? 's' : ''} available</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex items-center gap-1 sm:gap-2 md:gap-3 flex-1 sm:flex-none justify-end">

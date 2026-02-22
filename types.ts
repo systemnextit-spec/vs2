@@ -171,6 +171,15 @@ export interface Product {
   variants?: Variant[];
   details?: { type: string; description: string }[]; // Key features (e.g., Ram: 16 GB)
   shortDescription?: string; // Brief product description
+  // Shipping
+  deliveryCharge?: number;
+  useDefaultDelivery?: boolean;
+  deliveryChargeDefault?: number;
+  deliveryByCity?: { city: string; charge: number }[];
+  // SEO
+  seoKeyword?: string;
+  seoDescription?: string;
+  seoTitle?: string;
 }
 
 export interface Popup {

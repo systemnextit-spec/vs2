@@ -241,6 +241,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
     pollingInterval: 30000 // Poll every 30 seconds
   });
 
+  function tenantSwitcher(tenantId: string): void {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <DashboardLayout
       sidebarProps={{
@@ -266,7 +270,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         onOrderNotificationClick: onOrderNotificationClick,
         // Chat props
         unreadChatCount: hasUnreadChat ? 1 : 0,
-        onChatClick: onOpenChatCenter
+        onChatClick: onOpenChatCenter,
+        // Tenant switcher for super_admin
+        tenants: headerTenants,
+        activeTenantId,
+        onTenantChange: tenantSwitcher,
+        isTenantSwitching,
+        userRole: user?.role
       }}
     >
       <div className="animate-fade-in">

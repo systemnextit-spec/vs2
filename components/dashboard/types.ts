@@ -39,6 +39,12 @@ export interface DashboardHeaderProps {
   // Chat props
   unreadChatCount?: number;
   onChatClick?: () => void;
+  // Tenant switcher props (super_admin only)
+  tenants?: Array<{ id: string; _id?: string; name: string; subdomain: string; plan?: string; status?: string }>;
+  activeTenantId?: string;
+  onTenantChange?: (tenantId: string) => void;
+  isTenantSwitching?: boolean;
+  userRole?: string;
 }
 
 export interface OrderAnalyticsProps {

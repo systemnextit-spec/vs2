@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronUp, ChevronDown, Plus, Upload, Youtube, Bold, Italic, Underline, AlignLeft, AlignRight, List, ListOrdered, Image, Link, Type, Calendar, Scan, X } from 'lucide-react';
+import { ChevronUp, ChevronDown, Plus, Upload, Youtube, Bold, Italic, Underline, AlignLeft, AlignRight, List, ListOrdered, Image, Link, Type, Calendar, Scan, X , ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Product, Category, SubCategory, ChildCategory, Brand, Tag } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -406,6 +406,12 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
         flashSaleEndDate: editProduct.flashSaleEndDate || '',
         tag: editProduct.tags || [],
         deepSearch: editProduct.deepSearch || '',
+        useDefaultDelivery: editProduct.useDefaultDelivery || false,
+        deliveryChargeDefault: editProduct.deliveryChargeDefault || 0,
+        deliveryByCity: (editProduct.deliveryByCity && editProduct.deliveryByCity.length > 0) ? editProduct.deliveryByCity : [{ city: 'Dhaka', charge: 80 }],
+        keywords: (editProduct as any).seoKeyword || '',
+        seoDescription: editProduct.seoDescription || '',
+        seoTitle: editProduct.seoTitle || '',
         serial: editProduct.serial || 0,
         unitName: editProduct.unitName || '',
         warranty: editProduct.warranty || '',
@@ -919,7 +925,16 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       expirationEnd: formData.expirationEnd || "",
       details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined,
       salePrice: undefined,
-      title: ''
+      title: '',
+      // Shipping
+      useDefaultDelivery: formData.useDefaultDelivery,
+      deliveryChargeDefault: formData.deliveryChargeDefault || 0,
+      deliveryCharge: formData.useDefaultDelivery ? formData.deliveryChargeDefault : (formData.deliveryByCity?.[0]?.charge || 0),
+      deliveryByCity: formData.deliveryByCity?.filter(d => d.city.trim()) || [],
+      // SEO
+      seoKeyword: formData.keywords || '',
+      seoDescription: formData.seoDescription || '',
+      seoTitle: formData.seoTitle || '',
     };
 
     // Save to backend via onAddProduct
@@ -989,7 +1004,16 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
       expirationEnd: formData.expirationEnd || "",
       details: formData.details.filter(d => d.type.trim() && d.description.trim()).length > 0 ? formData.details.filter(d => d.type.trim() && d.description.trim()) : undefined,
       salePrice: undefined,
-      title: ''
+      title: '',
+      // Shipping
+      useDefaultDelivery: formData.useDefaultDelivery,
+      deliveryChargeDefault: formData.deliveryChargeDefault || 0,
+      deliveryCharge: formData.useDefaultDelivery ? formData.deliveryChargeDefault : (formData.deliveryByCity?.[0]?.charge || 0),
+      deliveryByCity: formData.deliveryByCity?.filter(d => d.city.trim()) || [],
+      // SEO
+      seoKeyword: formData.keywords || '',
+      seoDescription: formData.seoDescription || '',
+      seoTitle: formData.seoTitle || '',
     };
 
     onAddProduct(newProduct);
@@ -1008,7 +1032,19 @@ const FigmaProductUpload: React.FC<FigmaProductUploadProps> = ({
     <div className="min-h-screen bg-[#f9f9f9] pb-6 xxs:pb-8 font-['Lato']">
       {/* Header */}
       <div className="px-2 xxs:px-3 sm:px-4 lg:px-3 xl:px-4 py-3 xxs:py-4 sm:py-6">
-        <h1 className="text-base xxs:text-lg sm:text-xl lg:text-[24px] font-bold text-black">Product Upload</h1>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors shadow-sm"
+              title="Back to Products"
+            >
+              <ArrowLeft size={20} className="text-gray-600" />
+            </button>
+          )}
+          <h1 className="text-base xxs:text-lg sm:text-xl lg:text-[24px] font-bold text-black">Product Upload</h1>
+        </div>
       </div>
 
       <div className="px-2 xxs:px-3 sm:px-4 lg:px-3 xl:px-4 flex flex-col lg:flex-row gap-3 xxs:gap-4 lg:gap-4 xl:gap-5">
