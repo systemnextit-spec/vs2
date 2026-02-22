@@ -22,6 +22,7 @@ import {
 import './StoreFooter.css';
 import { WebsiteConfig } from '../../../types';
 import { normalizeImageUrl } from '../../../utils/imageUrlHelper';
+import { resolveTenantFooterLogo } from '../../../utils/tenantBrandingHelper';
 
 const buildWhatsAppLink = (rawNumber?: string | null) => {
   if (!rawNumber) return null;
@@ -32,6 +33,7 @@ const buildWhatsAppLink = (rawNumber?: string | null) => {
 export interface StoreFooterProps {
   websiteConfig?: WebsiteConfig;
   logo?: string | null;
+  tenantId?: string;
   onOpenChat?: () => void;
 }
 
@@ -176,7 +178,7 @@ const FloatingChatButton: React.FC<{ websiteConfig?: WebsiteConfig; onOpenChat?:
 // Style 1: Default - Dark gradient with feature badges
 const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenChat }) => {
   const whatsappLink = buildWhatsAppLink(websiteConfig?.whatsappNumber);
-  const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
+  const resolvedFooterLogo = resolveTenantFooterLogo(websiteConfig, logo, tenantId);
   const currentYear = new Date().getFullYear();
   const quickLinks = getFooterQuickLinks(websiteConfig);
   const usefulLinks = getFooterUsefulLinks(websiteConfig);
@@ -250,7 +252,7 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
 
 // Style 2: Minimal - Clean white footer with simple layout
 const FooterStyle2: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenChat }) => {
-  const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
+  const resolvedFooterLogo = resolveTenantFooterLogo(websiteConfig, logo, tenantId);
   const currentYear = new Date().getFullYear();
   const quickLinks = getFooterQuickLinks(websiteConfig);
 
@@ -311,7 +313,7 @@ const FooterStyle2: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
 // Style 3: Colorful Gradient - Vibrant gradient footer
 const FooterStyle3: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenChat }) => {
   const whatsappLink = buildWhatsAppLink(websiteConfig?.whatsappNumber);
-  const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
+  const resolvedFooterLogo = resolveTenantFooterLogo(websiteConfig, logo, tenantId);
   const currentYear = new Date().getFullYear();
   const quickLinks = getFooterQuickLinks(websiteConfig);
   const usefulLinks = getFooterUsefulLinks(websiteConfig);
@@ -385,7 +387,7 @@ const FooterStyle3: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
 
 // Style 4: Centered - Centered layout with newsletter focus
 const FooterStyle4: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenChat }) => {
-  const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
+  const resolvedFooterLogo = resolveTenantFooterLogo(websiteConfig, logo, tenantId);
   const currentYear = new Date().getFullYear();
   const quickLinks = getFooterQuickLinks(websiteConfig);
 
@@ -438,7 +440,7 @@ const FooterStyle4: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenC
 // Style 5: E-commerce Pro - Full-featured with app download links
 const FooterStyle5: React.FC<StoreFooterProps> = ({ websiteConfig, logo, onOpenChat }) => {
   const whatsappLink = buildWhatsAppLink(websiteConfig?.whatsappNumber);
-  const resolvedFooterLogo = websiteConfig?.footerLogo || websiteConfig?.favicon || logo || null;
+  const resolvedFooterLogo = resolveTenantFooterLogo(websiteConfig, logo, tenantId);
   const currentYear = new Date().getFullYear();
   const quickLinks = getFooterQuickLinks(websiteConfig);
   const usefulLinks = getFooterUsefulLinks(websiteConfig);

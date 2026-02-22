@@ -8,6 +8,7 @@ import { DesktopHeaderBar } from '../store/header/DesktopHeaderBar';
 import { StoreHeaderModals } from '../store/header/StoreHeaderModals';
 import { ImageSearchModal } from '../store/header/ImageSearchModal';
 import type { CatalogGroup, HeaderSearchProps } from '../store/header/headerTypes';
+import { resolveTenantHeaderLogo, getTenantLogoKey } from '../../utils/tenantBrandingHelper';
 
 // Lazy load toast - avoid sync import of heavy dependency
 const showToast = {
@@ -106,10 +107,14 @@ export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {
     [productCatalog]
   );
 
-  const resolvedHeaderLogo = websiteConfig?.headerLogo || logo || null;
+  // Resolve header logo with tenant-specific logic to prevent logo leaking between tenants
+  const resolvedHeaderLogo = useMemo(
+    () => resolveTenantHeaderLogo(websiteConfig, logo, tenantId),
+    [websiteConfig, logo, tenantId]
+  );
   const logoKey = useMemo(
-    () => (resolvedHeaderLogo ? `logo-${resolvedHeaderLogo.slice(-20)}` : 'no-logo'),
-    [resolvedHeaderLogo]
+    () => getTenantLogoKey(resolvedHeaderLogo, tenantId),
+    [resolvedHeaderLogo, tenantId]
   );
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);

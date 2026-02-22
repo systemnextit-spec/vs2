@@ -7,6 +7,7 @@ import type { ThemeConfig, WebsiteConfig } from '../types';
 import { DataService, isKeyFromSocket, clearSocketFlag } from '../services/DataService';
 import { hexToRgb } from '../utils/appHelpers';
 import { normalizeImageUrl } from '../utils/imageUrlHelper';
+import { resolveTenantFavicon } from '../utils/tenantBrandingHelper';
 
 interface UseThemeEffectsOptions {
   themeConfig: ThemeConfig | null;
@@ -125,22 +126,23 @@ export function useThemeEffects({
         lastSavedWebsiteConfigRef.current = JSON.stringify(websiteConfig);
       }
       
-      // Apply favicon per tenant
-      if (websiteConfig.favicon) {
+      // Apply favicon per tenant with tenant-specific validation
+      const tenantFavicon = resolveTenantFavicon(websiteConfig, activeTenantId);
+      if (tenantFavicon) {
         // Remove all existing favicons first
         document.querySelectorAll("link[rel*='icon']").forEach(el => el.remove());
         
         // Create new favicon link
         const link = document.createElement('link');
         link.rel = 'icon';
-        link.type = websiteConfig.favicon.startsWith('data:image/png') || websiteConfig.favicon.includes('.png') ? 'image/png' : 'image/x-icon';
-        link.href = normalizeImageUrl(websiteConfig.favicon);
+        link.type = tenantFavicon.startsWith('data:image/png') || tenantFavicon.includes('.png') ? 'image/png' : 'image/x-icon';
+        link.href = normalizeImageUrl(tenantFavicon);
         document.head.appendChild(link);
         
         // Also add apple-touch-icon for mobile
         const appleLink = document.createElement('link');
         appleLink.rel = 'apple-touch-icon';
-        appleLink.href = normalizeImageUrl(websiteConfig.favicon);
+        appleLink.href = normalizeImageUrl(tenantFavicon);
         document.head.appendChild(appleLink);
       }
     }

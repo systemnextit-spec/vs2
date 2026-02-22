@@ -1268,7 +1268,7 @@ const StoreProductDetail = ({
       </div>
       <div className="hidden md:block">
         <Suspense fallback={null}>
-          <StoreFooter websiteConfig={websiteConfig} logo={logo} onOpenChat={onOpenChat} />
+          <StoreFooter websiteConfig={websiteConfig} logo={logo} tenantId={tenantId} onOpenChat={onOpenChat} />
         </Suspense>
       </div>
     </div>

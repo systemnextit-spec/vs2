@@ -92,7 +92,7 @@ const StaticPage: React.FC<StaticPageProps> = ({
       </Suspense>
       
       <Suspense fallback={<div className="h-64 bg-gray-100" />}>
-        <StoreFooter websiteConfig={websiteConfig} logo={logo} onOpenChat={onOpenChat} />
+        <StoreFooter websiteConfig={websiteConfig} logo={logo} tenantId={tenantId} onOpenChat={onOpenChat} />
       </Suspense>
     </div>
   );

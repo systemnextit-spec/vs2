@@ -125,7 +125,7 @@ const StoreOrderSuccess = ({ onHome, user, onLoginClick, onLogoutClick, onProfil
       </main>
 
       <Suspense fallback={null}>
-        <StoreFooter websiteConfig={websiteConfig} logo={logo} onOpenChat={onOpenChat} />
+        <StoreFooter websiteConfig={websiteConfig} logo={logo} tenantId={tenantId} onOpenChat={onOpenChat} />
       </Suspense>
 
       {isTrackOrderOpen && (

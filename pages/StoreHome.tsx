@@ -603,7 +603,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
 
       {/* Footer */}
       <Suspense fallback={<FooterSkeleton />}>
-        <StoreFooter websiteConfig={websiteConfig} logo={logo} onOpenChat={onOpenChat} />
+        <StoreFooter websiteConfig={websiteConfig} logo={logo} tenantId={tenantId} onOpenChat={onOpenChat} />
       </Suspense>
       
         </>
