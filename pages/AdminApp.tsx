@@ -241,10 +241,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
     pollingInterval: 30000 // Poll every 30 seconds
   });
 
-  function tenantSwitcher(tenantId: string): void {
-    throw new Error('Function not implemented.');
-  }
-
   return (
     <DashboardLayout
       sidebarProps={{
@@ -272,9 +268,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         unreadChatCount: hasUnreadChat ? 1 : 0,
         onChatClick: onOpenChatCenter,
         // Tenant switcher for super_admin
-        tenants: headerTenants,
+        tenants: tenants,
         activeTenantId,
-        onTenantChange: tenantSwitcher,
+        onTenantChange: onTenantChange,
         isTenantSwitching,
         userRole: user?.role
       }}
