@@ -297,6 +297,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
             orders={orders}
             products={products}
             logo={logo}
+                  tenantId={activeTenantId}
             themeConfig={themeConfig}
             websiteConfig={websiteConfig}
             deliveryConfig={deliveryConfig}
@@ -356,6 +357,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
                   onLogoutClick={onLogout}
                   onProfileClick={() => setCurrentView('profile')}
                   logo={logo}
+                  tenantId={activeTenantId}
                   websiteConfig={websiteConfig}
                   searchValue={storeSearchQuery}
                   onSearchChange={onSearchChange}
@@ -401,6 +403,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
                 onLogoutClick={onLogout}
                 onProfileClick={() => setCurrentView('profile')}
                 logo={logo}
+                  tenantId={activeTenantId}
                 websiteConfig={websiteConfig}
                 searchValue={storeSearchQuery}
                 onSearchChange={onSearchChange}
@@ -441,6 +444,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
                 onLogoutClick={onLogout}
                 onProfileClick={() => setCurrentView('profile')}
                 logo={logo}
+                  tenantId={activeTenantId}
                 websiteConfig={websiteConfig}
                 searchValue={storeSearchQuery}
                 onSearchChange={onSearchChange}
@@ -472,6 +476,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
                 onLogoutClick={onLogout}
                 onProfileClick={() => setCurrentView('profile')}
                 logo={logo}
+                  tenantId={activeTenantId}
                 websiteConfig={websiteConfig}
                 deliveryConfigs={deliveryConfig}
                 paymentMethods={paymentMethods}
@@ -499,6 +504,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
                 onLogoutClick={onLogout}
                 onProfileClick={() => setCurrentView('profile')}
                 logo={logo}
+                  tenantId={activeTenantId}
                 websiteConfig={websiteConfig}
                 searchValue={storeSearchQuery}
                 onSearchChange={onSearchChange}
@@ -526,6 +532,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = (props) => {
                   onLoginClick={() => setIsLoginOpen(true)}
                   onLogoutClick={onLogout}
                   logo={logo}
+                  tenantId={activeTenantId}
                   websiteConfig={websiteConfig}
                   searchValue={storeSearchQuery}
                   onSearchChange={onSearchChange}

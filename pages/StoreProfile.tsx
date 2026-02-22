@@ -19,6 +19,7 @@ interface StoreProfileProps {
   onLogoutClick?: () => void;
   logo?: string | null;
   websiteConfig?: WebsiteConfig;
+  tenantId?: string;
    searchValue?: string;
    onSearchChange?: (value: string) => void;
    onImageSearchClick?: () => void;
@@ -301,7 +302,7 @@ const StoreProfile = ({
       </main>
 
       <Suspense fallback={null}>
-        <StoreFooter websiteConfig={websiteConfig} logo={logo} onOpenChat={onOpenChat} />
+        <StoreFooter websiteConfig={websiteConfig} logo={logo} tenantId={tenantId} onOpenChat={onOpenChat} />
       </Suspense>
 
       {isTrackOrderOpen && (
