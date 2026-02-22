@@ -37,7 +37,7 @@ interface DesktopHeaderBarProps {
 }
 
 const Badge = memo<{ count: number }>(({ count }) => 
-  count > 0 ? <span className="absolute -to p-2 -right-2 bg-theme-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{count}</span> : null
+  count > 0 ? <span className="absolute -top-2 -right-2 bg-theme-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{count}</span> : null
 );
 
 // Style 1: Default - Clean Modern with glassmorphism

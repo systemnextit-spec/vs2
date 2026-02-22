@@ -22,7 +22,7 @@ const MobileHeaderStyle1: React.FC<MobileHeaderBarProps> = ({
   resolvedHeaderLogo, logoKey, onHomeClick, wishlistBadgeCount, cartBadgeCount,
   onWishlistOpen, onCartOpen, onAccountClick, onMenuOpen, onSearchOpen, websiteConfig
 }) => (
-  <header className="md:hidden bg-white/95 backdrop-blur-md w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2.5 border-b border-gray-100/60 mobile-header-refined to p-0 z-50">
+  <header className="md:hidden bg-white/95 backdrop-blur-md w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2.5 border-b border-gray-100/60 mobile-header-refined sticky top-0 z-50">
     <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">
         <button type="button" className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-600 hover:bg-gray-50/80 active:scale-95 transition-all duration-200" onClick={onMenuOpen} aria-label="Open menu">
@@ -57,7 +57,7 @@ const MobileHeaderStyle2: React.FC<MobileHeaderBarProps> = ({
   resolvedHeaderLogo, logoKey, onHomeClick, wishlistBadgeCount, cartBadgeCount,
   onWishlistOpen, onCartOpen, onMenuOpen, onSearchOpen, websiteConfig
 }) => (
-  <header className="md:hidden bg-white w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2 border-b border-gray-200 to p-0 z-50">
+  <header className="md:hidden bg-white w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2 border-b border-gray-200 sticky top-0 z-50">
     <div className="flex items-center justify-between">
       <button type="button" className="w-9 h-9 flex items-center justify-center text-gray-700" onClick={onMenuOpen} aria-label="Menu"><Menu size={22} strokeWidth={2} /></button>
       <button type="button" className="flex items-center justify-center flex-1 mx-4" onClick={onHomeClick}>
@@ -71,7 +71,7 @@ const MobileHeaderStyle2: React.FC<MobileHeaderBarProps> = ({
         <button type="button" className="w-9 h-9 flex items-center justify-center text-gray-700" onClick={onSearchOpen}><Search size={20} strokeWidth={2} /></button>
         <button type="button" className="relative w-9 h-9 flex items-center justify-center text-gray-700" onClick={onCartOpen}>
           <ShoppingCart size={20} strokeWidth={2} />
-          {cartBadgeCount > 0 && <span className="absolute -to p-0.5 -right-0.5 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartBadgeCount}</span>}
+          {cartBadgeCount > 0 && <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartBadgeCount}</span>}
         </button>
       </div>
     </div>
@@ -83,7 +83,7 @@ const MobileHeaderStyle3: React.FC<MobileHeaderBarProps> = ({
   resolvedHeaderLogo, logoKey, onHomeClick, wishlistBadgeCount, cartBadgeCount,
   onWishlistOpen, onCartOpen, onAccountClick, onMenuOpen, onSearchOpen, websiteConfig
 }) => (
-  <header className="md:hidden bg-gradient-theme-via w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2.5 to p-0 z-50 shadow-lg">
+  <header className="md:hidden bg-gradient-theme-via w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2.5 sticky top-0 z-50 shadow-lg">
     <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">
         <button type="button" className="w-10 h-10 flex items-center justify-center rounded-xl text-white/90 hover:bg-white/10 active:scale-95 transition-all" onClick={onMenuOpen}><Menu size={22} strokeWidth={2} /></button>
@@ -116,7 +116,7 @@ const MobileHeaderStyle4: React.FC<MobileHeaderBarProps> = ({
   resolvedHeaderLogo, logoKey, onHomeClick, cartBadgeCount,
   onCartOpen, onMenuOpen, onSearchOpen, websiteConfig
 }) => (
-  <header className="md:hidden bg-white w-full max-w-[560px] mx-auto border-b border-gray-200 to p-0 z-50">
+  <header className="md:hidden bg-white w-full max-w-[560px] mx-auto border-b border-gray-200 sticky top-0 z-50">
     <div className="px-2 sm:px-3 py-2 flex items-center gap-3">
       <button type="button" className="flex items-center gap-1.5 group" onClick={onHomeClick}>
         {resolvedHeaderLogo ? (
@@ -131,7 +131,7 @@ const MobileHeaderStyle4: React.FC<MobileHeaderBarProps> = ({
       </button>
       <button type="button" className="relative w-10 h-10 flex items-center justify-center text-gray-700" onClick={onCartOpen}>
         <ShoppingCart size={22} strokeWidth={1.8} />
-        {cartBadgeCount > 0 && <span className="absolute to p-0.5 right-0.5 bg-theme-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">{cartBadgeCount}</span>}
+        {cartBadgeCount > 0 && <span className="absolute top-0.5 right-0.5 bg-theme-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">{cartBadgeCount}</span>}
       </button>
     </div>
     <div className="px-2 sm:px-3 pb-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
@@ -150,7 +150,7 @@ const MobileHeaderStyle5: React.FC<MobileHeaderBarProps> = ({
   resolvedHeaderLogo, logoKey, onHomeClick, wishlistBadgeCount, cartBadgeCount,
   onWishlistOpen, onCartOpen, onAccountClick, onMenuOpen, onSearchOpen, websiteConfig
 }) => (
-  <header className="md:hidden bg-gray-900 w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2.5 to p-0 z-50 shadow-lg">
+  <header className="md:hidden bg-gray-900 w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2.5 sticky top-0 z-50 shadow-lg">
     <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">
         <button type="button" className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-300 hover:bg-gray-800 active:scale-95 transition-all" onClick={onMenuOpen}><Menu size={21} strokeWidth={1.8} /></button>
@@ -183,7 +183,7 @@ const MobileHeaderStyle6: React.FC<MobileHeaderBarProps> = ({
   resolvedHeaderLogo, logoKey, onHomeClick, wishlistBadgeCount, cartBadgeCount,
   onWishlistOpen, onCartOpen, onAccountClick, onMenuOpen, onSearchOpen, websiteConfig
 }) => (
-  <header className="md:hidden bg-gradient-to-r from-[#FF6A00] to-[#FF9F1C] w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2.5 top-0 z-50 shadow-lg">
+  <header className="md:hidden bg-gradient-to-r from-[#FF6A00] to-[#FF9F1C] w-full max-w-[560px] mx-auto px-2 sm:px-3 py-2.5 sticky top-0 z-50 shadow-lg">
     <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">
         <button type="button" className="w-10 h-10 flex items-center justify-center rounded-xl text-white/90 hover:bg-white/10 active:scale-95 transition-all" onClick={onMenuOpen} aria-label="Open menu"><Menu size={22} strokeWidth={2} /></button>

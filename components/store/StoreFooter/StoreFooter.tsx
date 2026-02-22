@@ -185,7 +185,7 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
 
   return (
     <>
-      <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-gray-300 mt-auto">
+      <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-gray-300 mt-auto store-footer-minheight">
         <div className="border-b border-gray-800">
           <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -258,7 +258,7 @@ const FooterStyle2: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
 
   return (
     <>
-      <footer className="bg-white border-t border-gray-200 mt-auto">
+      <footer className="bg-white border-t border-gray-200 mt-auto store-footer-minheight">
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
@@ -320,7 +320,7 @@ const FooterStyle3: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
 
   return (
     <>
-      <footer className="bg-gradient-to-br from-theme-primary via-purple-600 to-theme-secondary text-white mt-auto">
+      <footer className="bg-gradient-to-br from-theme-primary via-purple-600 to-theme-secondary text-white mt-auto store-footer-minheight">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             <div>
@@ -393,7 +393,7 @@ const FooterStyle4: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
 
   return (
     <>
-      <footer className="bg-gray-50 mt-auto">
+      <footer className="bg-gray-50 mt-auto store-footer-minheight">
         <div className="max-w-2xl mx-auto px-4 py-4 text-center">
           <div className="mb-4">
             {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-44 object-contain mx-auto mb-1" /> : <h3 className="text-3xl font-bold text-gray-900 mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
@@ -447,7 +447,7 @@ const FooterStyle5: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
 
   return (
     <>
-      <footer className="bg-white border-t border-gray-200 mt-auto">
+      <footer className="bg-white border-t border-gray-200 mt-auto store-footer-minheight">
         <div className="bg-theme-primary/5 border-b border-theme-primary/10">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
