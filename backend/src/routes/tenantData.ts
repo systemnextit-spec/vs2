@@ -5,6 +5,7 @@ import { getCached, setCachedWithTTL, CacheKeys, deleteCached, clearAllTenantCac
 import { getTenantBySubdomain } from '../services/tenantsService';
 import { createAuditLog } from './auditLogs';
 import { Server as SocketIOServer } from 'socket.io';
+import { authenticateToken, optionalAuth, requireAdmin } from '../middleware/auth';
 
 // Store Studio configuration interface
 interface StoreStudioConfig {
@@ -209,7 +210,7 @@ tenantDataRouter.get('/:tenantId/store_studio_config', async (req, res, next) =>
 });
 
 // Update store studio configuration (toggle, settings, etc.)
-tenantDataRouter.put('/:tenantId/store_studio_config', async (req, res, next) => {
+tenantDataRouter.put('/:tenantId/store_studio_config', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const rawTenantId = req.params.tenantId;
     if (!rawTenantId) {
@@ -270,7 +271,7 @@ tenantDataRouter.put('/:tenantId/store_studio_config', async (req, res, next) =>
 });
 
 // Update product display order
-tenantDataRouter.put('/:tenantId/product_display_order', async (req, res, next) => {
+tenantDataRouter.put('/:tenantId/product_display_order', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const rawTenantId = req.params.tenantId;
     if (!rawTenantId) {
@@ -341,7 +342,7 @@ tenantDataRouter.put('/:tenantId/product_display_order', async (req, res, next) 
 
 
 // Clear all cache for a tenant (used after customization save for real-time updates)
-tenantDataRouter.post('/:tenantId/clear-cache', async (req, res, next) => {
+tenantDataRouter.post('/:tenantId/clear-cache', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const tenantId = req.params.tenantId;
     if (!tenantId) {
@@ -393,7 +394,7 @@ tenantDataRouter.get('/:tenantId/:key', async (req, res, next) => {
   }
 });
 
-tenantDataRouter.put('/:tenantId/:key', async (req, res, next) => {
+tenantDataRouter.put('/:tenantId/:key', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const { tenantId, key } = paramsSchema.parse(req.params);
     const payload = updateSchema.parse(req.body ?? {});

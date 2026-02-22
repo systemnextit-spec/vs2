@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { getHostTenantSlug } from '../utils/appHelpers';
 
 // Types
 export type ResourceType = 
@@ -93,14 +94,8 @@ export interface AuthContextType extends AuthState {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Get tenant subdomain from URL for multi-tenant support
-const getTenantSubdomain = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  const hostname = window.location.hostname;
-  // Match subdomain.allinbangla.com or subdomain.cartnget.shop
-  const match = hostname.match(/^([a-z0-9-]+)\.(systemnextit\.com|cartnget\.shop)$/i);
-  return match ? match[1] : null;
-};
+// Use canonical tenant resolution from appHelpers (supports all domains)
+const getTenantSubdomain = (): string | null => getHostTenantSlug();
 
 const API_BASE_URL = typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL
   ? String(import.meta.env.VITE_API_BASE_URL)

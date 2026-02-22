@@ -14,6 +14,7 @@ import {
 } from '../services/tenantsService';
 import { getTenantData, setTenantData } from '../services/tenantDataService';
 import type { CreateTenantPayload } from '../types/tenant';
+import { authenticateToken, requireAdmin, requireRole } from '../middleware/auth';
 
 const createTenantSchema = z.object({
   name: z.string().min(2),
@@ -192,7 +193,7 @@ tenantsRouter.get('/by-domain/:domain', async (req, res) => {
 // ==================== PROTECTED ROUTES ====================
 
 // GET /api/tenants - List all tenants
-tenantsRouter.get('/', 
+tenantsRouter.get('/', authenticateToken, requireAdmin, 
   async (_req, res, next) => {
     try {
       const tenants = await listTenants();
@@ -226,7 +227,7 @@ tenantsRouter.get('/resolve/:subdomain', async (req, res, next) => {
 });
 
 // GET /api/tenants/:id - Get tenant by ID
-tenantsRouter.get('/:id', 
+tenantsRouter.get('/:id', authenticateToken, 
   async (req, res, next) => {
     try {
       const tenant = await getTenantById(req.params.id);
@@ -242,7 +243,7 @@ tenantsRouter.get('/:id',
 );
 
 // GET /api/tenants/:id/users - Get tenant users
-tenantsRouter.get('/:id/users',
+tenantsRouter.get('/:id/users', authenticateToken, requireAdmin,
   async (req, res, next) => {
     try {
       const users = await getTenantUsers(req.params.id);
@@ -254,7 +255,7 @@ tenantsRouter.get('/:id/users',
 );
 
 // GET /api/tenants/:id/stats - Get tenant statistics
-tenantsRouter.get('/:id/stats',
+tenantsRouter.get('/:id/stats', authenticateToken, requireAdmin,
   async (req, res, next) => {
     try {
       const stats = await getTenantStats(req.params.id);
@@ -266,7 +267,7 @@ tenantsRouter.get('/:id/stats',
 );
 
 // POST /api/tenants - Create new tenant
-tenantsRouter.post('/', 
+tenantsRouter.post('/', authenticateToken, requireRole('super_admin'), 
   async (req, res, next) => {
     try {
       const payload = createTenantSchema.parse(req.body) as CreateTenantPayload;
@@ -288,7 +289,7 @@ tenantsRouter.post('/',
 );
 
 // PUT /api/tenants/:id - Update tenant
-tenantsRouter.put('/:id',
+tenantsRouter.put('/:id', authenticateToken, requireAdmin,
   async (req, res, next) => {
     try {
       const updates = updateTenantSchema.parse(req.body);
@@ -304,7 +305,7 @@ tenantsRouter.put('/:id',
 );
 
 // PATCH /api/tenants/:id/status - Update tenant status
-tenantsRouter.patch('/:id/status', 
+tenantsRouter.patch('/:id/status', authenticateToken, requireRole('super_admin'), 
   async (req, res, next) => {
     try {
       const { status } = updateStatusSchema.parse(req.body);
@@ -320,7 +321,7 @@ tenantsRouter.patch('/:id/status',
 );
 
 // DELETE /api/tenants/:id - Delete tenant
-tenantsRouter.delete('/:id', 
+tenantsRouter.delete('/:id', authenticateToken, requireRole('super_admin'), 
   async (req, res, next) => {
     try {
       await deleteTenant(req.params.id);
@@ -332,7 +333,7 @@ tenantsRouter.delete('/:id',
 );
 
 // POST /api/tenants/:id/setup-domain - Setup custom domain with Nginx and SSL
-tenantsRouter.post('/:id/setup-domain',
+tenantsRouter.post('/:id/setup-domain', authenticateToken, requireAdmin,
   async (req, res, next) => {
     try {
       const { customDomain } = z.object({
@@ -444,7 +445,7 @@ tenantsRouter.get('/:id/verify-domain',
 );
 
 // DELETE /api/tenants/:id/custom-domain - Remove custom domain
-tenantsRouter.delete('/:id/custom-domain',
+tenantsRouter.delete('/:id/custom-domain', authenticateToken, requireAdmin,
   async (req, res, next) => {
     try {
       const tenantId = req.params.id;
@@ -581,7 +582,7 @@ tenantsRouter.get('/:id/app-requests', async (req, res, next) => {
 });
 
 // GET /api/tenants/app-requests/all - Get ALL app requests (for super admin)
-tenantsRouter.get('/app-requests/all', async (req, res, next) => {
+tenantsRouter.get('/app-requests/all', authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const allRequests = await getTenantData<AppRequest[]>('global', 'all_app_requests') || [];
     // Sort by createdAt descending (newest first)
@@ -593,7 +594,7 @@ tenantsRouter.get('/app-requests/all', async (req, res, next) => {
 });
 
 // PATCH /api/tenants/app-requests/:requestId/status - Update app request status (super admin)
-tenantsRouter.patch('/app-requests/:requestId/status', async (req, res, next) => {
+tenantsRouter.patch('/app-requests/:requestId/status', authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const { requestId } = req.params;
     const { status } = req.body;

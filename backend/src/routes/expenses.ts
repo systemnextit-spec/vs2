@@ -3,12 +3,17 @@ import { getDatabase } from '../db/mongo';
 import { ObjectId } from 'mongodb';
 import { createAuditLog } from './auditLogs';
 import { getCached, setCachedWithTTL, invalidateCachePattern, CacheKeys } from '../services/redisCache';
+import { authenticateToken, extractTenantId, requireTenantId } from '../middleware/auth';
 
 export const expensesRouter = Router();
 
-// Helper to extract tenantId from request
+// Apply auth middleware to all write operations
+expensesRouter.use(extractTenantId);  // Extract tenant from header/JWT for all routes
+
+// Helper to extract tenantId from request (trusted source: JWT > header)
 function getTenantId(req: any): string | null {
-  return req.headers['x-tenant-id'] || (req as any).user?.tenantId || null;
+  // Prefer JWT-decoded tenantId (set by auth middleware) over header
+  return req.tenantId || req.headers['x-tenant-id'] || null;
 }
 
 // List with filters and pagination (with caching)
@@ -16,7 +21,8 @@ expensesRouter.get('/', async (req, res, next) => {
   try {
     const db = await getDatabase();
     const col = db.collection('expenses');
-    const tenantId = getTenantId(req) || 'global';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
 
     const { query, status, category, from, to } = req.query as any;
     const page = Number(req.query.page ?? 1);
@@ -33,7 +39,7 @@ expensesRouter.get('/', async (req, res, next) => {
     }
 
     const filter: any = {};
-    if (tenantId !== 'global') filter.tenantId = tenantId;
+    filter.tenantId = tenantId;
     if (status) filter.status = status;
     if (category) filter.category = category;
     if (query) filter.name = { $regex: String(query), $options: 'i' };
@@ -70,7 +76,8 @@ expensesRouter.get('/summary', async (req, res, next) => {
   try {
     const db = await getDatabase();
     const col = db.collection('expenses');
-    const tenantId = getTenantId(req) || 'global';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
 
     const { from, to } = req.query as any;
 
@@ -129,7 +136,8 @@ expensesRouter.post('/', async (req, res, next) => {
     const db = await getDatabase();
     const col = db.collection('expenses');
     const payload = req.body;
-    const tenantId = getTenantId(req) || 'unknown';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
 
     const required = ['name','category','amount','date','status'];
     for (const k of required) {
@@ -159,7 +167,7 @@ expensesRouter.post('/', async (req, res, next) => {
     // Create audit log for expense creation
     const user = (req as any).user;
     await createAuditLog({
-      tenantId: user?.tenantId || 'unknown',
+      tenantId: user?.tenantId || tenantId,
       userId: user?._id || user?.id || 'system',
       userName: user?.name || 'System',
       userRole: user?.role || 'system',
@@ -187,12 +195,18 @@ expensesRouter.put('/:id', async (req, res, next) => {
     const col = db.collection('expenses');
     const { id } = req.params;
     const payload = req.body || {};
-    const tenantId = getTenantId(req) || 'unknown';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
 
     const updates: any = { ...payload, updatedAt: new Date().toISOString() };
 
-    await col.updateOne({ _id: new (require('mongodb').ObjectId)(id) }, { $set: updates });
-    const doc = await col.findOne({ _id: new (require('mongodb').ObjectId)(id) });
+    // CRITICAL: Filter by both _id AND tenantId to prevent cross-tenant modification
+    const filter = { _id: new ObjectId(id), tenantId };
+    const result = await col.updateOne(filter, { $set: updates });
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Expense not found or access denied' });
+    }
+    const doc = await col.findOne({ _id: new ObjectId(id) });
     
     // Invalidate expenses cache for this tenant
     invalidateCachePattern(`expenses:${tenantId}`);
@@ -209,9 +223,14 @@ expensesRouter.delete('/:id', async (req, res, next) => {
     const db = await getDatabase();
     const col = db.collection('expenses');
     const { id } = req.params;
-    const tenantId = getTenantId(req) || 'unknown';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
 
-    await col.deleteOne({ _id: new ObjectId(id) });
+    // CRITICAL: Filter by both _id AND tenantId to prevent cross-tenant deletion
+    const result = await col.deleteOne({ _id: new ObjectId(id), tenantId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Expense not found or access denied' });
+    }
     
     // Invalidate expenses cache for this tenant
     invalidateCachePattern(`expenses:${tenantId}`);
@@ -251,7 +270,7 @@ expensesRouter.post('/categories/create', async (req, res, next) => {
       return res.status(400).json({ error: 'Name is required' });
     }
 
-    const doc = { name: String(name).trim(), tenantId: tenantId || 'unknown', createdAt: new Date().toISOString() };
+    const doc = { name: String(name).trim(), tenantId: tenantId, createdAt: new Date().toISOString() };
     const result = await col.insertOne(doc as any);
     res.status(201).json({ id: String(result.insertedId), ...doc });
     
@@ -273,7 +292,9 @@ expensesRouter.put('/categories/:id', async (req, res, next) => {
     }
 
     const oid = new ObjectId(id);
-    await col.updateOne({ _id: oid }, { $set: { name: String(name).trim() } });
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
+    await col.updateOne({ _id: oid, tenantId }, { $set: { name: String(name).trim() } });
     const doc = await col.findOne({ _id: oid });
     res.json({ id: String(doc?._id), ...doc, _id: undefined });
   } catch (e) {
@@ -288,7 +309,9 @@ expensesRouter.delete('/categories/:id', async (req, res, next) => {
     const col = db.collection('expense_categories');
     const { id } = req.params;
 
-    await col.deleteOne({ _id: new ObjectId(id) });
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
+    await col.deleteOne({ _id: new ObjectId(id), tenantId });
     res.json({ success: true });
   } catch (e) {
     next(e);

@@ -108,10 +108,21 @@ app.set('io', io);
 io.on('connection', (socket) => {
   console.log('[Socket.IO] Client connected:', socket.id);
   
-  // Join tenant-specific room
+  // Join tenant-specific room - validate tenantId is not empty/suspicious
   socket.on('join-tenant', (tenantId: string) => {
-    socket.join(`tenant:${tenantId}`);
-    console.log(`[Socket.IO] Socket ${socket.id} joined tenant:${tenantId}`);
+    // Basic validation: only allow joining if a valid tenantId is provided
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.length < 2 || tenantId.length > 100) {
+      console.warn(`[Socket.IO] Invalid tenant join attempt from ${socket.id}: ${tenantId}`);
+      return;
+    }
+    // Sanitize: only allow alphanumeric, hyphens, underscores
+    const sanitized = tenantId.replace(/[^a-zA-Z0-9_-]/g, '');
+    if (sanitized !== tenantId) {
+      console.warn(`[Socket.IO] Suspicious tenant join from ${socket.id}: ${tenantId}`);
+      return;
+    }
+    socket.join(`tenant:${sanitized}`);
+    console.log(`[Socket.IO] Socket ${socket.id} joined tenant:${sanitized}`);
   });
   
   // Leave tenant room

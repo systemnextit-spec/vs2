@@ -5,6 +5,7 @@ import { BillingTransaction } from '../models/BillingTransaction';
 import { Invoice } from '../models/Invoice';
 import { TrialSettings } from '../models/TrialSettings';
 import type { SubscriptionPlanPayload, BillingTransactionPayload, InvoicePayload, RefundPayload } from '../types/subscription';
+import { authenticateToken, requireAdmin, requireRole } from '../middleware/auth';
 
 const subscriptionPlanSchema = z.object({
   name: z.enum(['basic', 'pro', 'enterprise']),
@@ -121,7 +122,7 @@ subscriptionsRouter.get('/plans/:id', async (req, res, next) => {
 });
 
 // POST /api/subscriptions/plans - Create new subscription plan
-subscriptionsRouter.post('/plans', async (req, res, next) => {
+subscriptionsRouter.post('/plans', authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const payload = subscriptionPlanSchema.parse(req.body) as SubscriptionPlanPayload;
     const plan = new SubscriptionPlan(payload);
@@ -139,7 +140,7 @@ subscriptionsRouter.post('/plans', async (req, res, next) => {
 });
 
 // PUT /api/subscriptions/plans/:id - Update subscription plan
-subscriptionsRouter.put('/plans/:id', async (req, res, next) => {
+subscriptionsRouter.put('/plans/:id', authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const payload = subscriptionPlanSchema.partial().parse(req.body);
     const plan = await SubscriptionPlan.findByIdAndUpdate(
@@ -160,7 +161,7 @@ subscriptionsRouter.put('/plans/:id', async (req, res, next) => {
 });
 
 // DELETE /api/subscriptions/plans/:id - Delete subscription plan
-subscriptionsRouter.delete('/plans/:id', async (req, res, next) => {
+subscriptionsRouter.delete('/plans/:id', authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const plan = await SubscriptionPlan.findByIdAndDelete(req.params.id);
     if (!plan) {
@@ -217,7 +218,7 @@ subscriptionsRouter.get('/transactions/:id', async (req, res, next) => {
 });
 
 // POST /api/subscriptions/transactions - Create new transaction
-subscriptionsRouter.post('/transactions', async (req, res, next) => {
+subscriptionsRouter.post('/transactions', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const payload = billingTransactionSchema.parse(req.body) as BillingTransactionPayload;
     const transaction = new BillingTransaction({
@@ -235,7 +236,7 @@ subscriptionsRouter.post('/transactions', async (req, res, next) => {
 });
 
 // PATCH /api/subscriptions/transactions/:id/complete - Mark transaction as completed
-subscriptionsRouter.patch('/transactions/:id/complete', async (req, res, next) => {
+subscriptionsRouter.patch('/transactions/:id/complete', authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const transaction = await BillingTransaction.findByIdAndUpdate(
       req.params.id,
@@ -252,7 +253,7 @@ subscriptionsRouter.patch('/transactions/:id/complete', async (req, res, next) =
 });
 
 // POST /api/subscriptions/transactions/:id/refund - Refund a transaction
-subscriptionsRouter.post('/transactions/:id/refund', async (req, res, next) => {
+subscriptionsRouter.post('/transactions/:id/refund', authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const { reason, refundedBy } = refundSchema.parse(req.body) as RefundPayload;
     
@@ -330,7 +331,7 @@ subscriptionsRouter.get('/invoices/:id', async (req, res, next) => {
 });
 
 // POST /api/subscriptions/invoices - Create new invoice
-subscriptionsRouter.post('/invoices', async (req, res, next) => {
+subscriptionsRouter.post('/invoices', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const payload = invoiceSchema.parse(req.body) as InvoicePayload;
     
@@ -380,7 +381,7 @@ subscriptionsRouter.post('/invoices', async (req, res, next) => {
 });
 
 // PATCH /api/subscriptions/invoices/:id/status - Update invoice status
-subscriptionsRouter.patch('/invoices/:id/status', async (req, res, next) => {
+subscriptionsRouter.patch('/invoices/:id/status', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const { status } = z.object({
       status: z.enum(['draft', 'sent', 'paid', 'overdue', 'cancelled'])
@@ -440,7 +441,7 @@ subscriptionsRouter.get('/trial-settings', async (_req, res, next) => {
 });
 
 // PUT /api/subscriptions/trial-settings - Update trial settings
-subscriptionsRouter.put('/trial-settings', async (req, res, next) => {
+subscriptionsRouter.put('/trial-settings', authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const payload = trialSettingsSchema.parse(req.body);
     
@@ -463,7 +464,7 @@ subscriptionsRouter.put('/trial-settings', async (req, res, next) => {
 });
 
 // GET /api/subscriptions/stats - Get subscription statistics
-subscriptionsRouter.get('/stats', async (_req, res, next) => {
+subscriptionsRouter.get('/stats', authenticateToken, requireRole('super_admin'), async (_req, res, next) => {
   try {
     const [
       totalTransactions,

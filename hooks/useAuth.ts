@@ -4,27 +4,21 @@
 
 import { useCallback, Dispatch, SetStateAction } from 'react';
 import type { User, Tenant } from '../types';
-import { isAdminRole, getAuthErrorMessage } from '../utils/appHelpers';
+import { isAdminRole, getAuthErrorMessage, getHostTenantSlug } from '../utils/appHelpers';
 
 import { signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from 'firebase/auth';
 import { auth, provider } from '../config/firebase';
 
 // Default tenant ID
-const DEFAULT_TENANT_ID = 'opbd';
+const DEFAULT_TENANT_ID = '';  // Empty to prevent data leaking to real tenant
 
 // API Base URL
 const API_BASE_URL = typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL
   ? String(import.meta.env.VITE_API_BASE_URL)
   : 'https://allinbangla.com';
 
-// Get tenant subdomain from URL for multi-tenant support
-const getTenantSubdomain = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  const hostname = window.location.hostname;
-  // Match subdomain.allinbangla.com or subdomain.cartnget.shop
-  const match = hostname.match(/^([a-z0-9-]+)\.(systemnextit\.com|cartnget\.shop)$/i);
-  return match ? match[1] : null;
-};
+// Use canonical tenant resolution from appHelpers (supports all domains)
+const getTenantSubdomain = (): string | null => getHostTenantSlug();
 
 interface UseAuthOptions {
   tenants: Tenant[];

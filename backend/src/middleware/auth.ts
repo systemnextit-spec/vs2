@@ -314,3 +314,51 @@ export const getUserPermissions = async (userId: string, roleId?: string): Promi
 
   return permissions;
 };
+
+/**
+ * Middleware to extract tenant ID from request.
+ * Priority: JWT decoded tenantId > x-tenant-id header > x-tenant-subdomain > null
+ * Use AFTER authenticateToken for authenticated routes,
+ * or standalone for public but tenant-scoped routes.
+ */
+export const extractTenantId = (req: Request, _res: Response, next: NextFunction) => {
+  // If auth middleware already set tenantId from JWT, use that (most trusted)
+  if (!req.tenantId) {
+    req.tenantId = req.headers['x-tenant-id'] as string || 
+                   req.headers['x-tenant-subdomain'] as string || 
+                   undefined;
+  }
+  next();
+};
+
+/**
+ * Middleware that REQUIRES a valid tenantId on the request.
+ * Must be used after authenticateToken or extractTenantId.
+ * Prevents operations without tenant context.
+ */
+export const requireTenantId = (req: Request, res: Response, next: NextFunction) => {
+  const tenantId = req.tenantId || req.headers['x-tenant-id'] as string;
+  if (!tenantId || tenantId === 'global' || tenantId === 'unknown') {
+    return res.status(400).json({ 
+      error: 'Tenant ID is required',
+      code: 'TENANT_REQUIRED'
+    });
+  }
+  req.tenantId = tenantId;
+  next();
+};
+
+/**
+ * Middleware that requires admin role (tenant_admin or super_admin)
+ * Must be used after authenticateToken.
+ */
+export const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+  const role = req.userRole || (req.user as any)?.role;
+  if (!role || !['admin', 'super_admin', 'tenant_admin'].includes(role)) {
+    return res.status(403).json({ 
+      error: 'Admin access required',
+      code: 'ADMIN_REQUIRED'
+    });
+  }
+  next();
+};

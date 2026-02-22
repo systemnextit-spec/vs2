@@ -3,12 +3,16 @@ import { getDatabase } from '../db/mongo';
 import { ObjectId } from 'mongodb';
 import { createAuditLog } from './auditLogs';
 import { getCached, setCachedWithTTL, invalidateCachePattern, CacheKeys } from '../services/redisCache';
+import { extractTenantId } from '../middleware/auth';
 
 export const incomesRouter = Router();
 
+// Extract tenant context for all routes
+incomesRouter.use(extractTenantId);
+
 // Helper to extract tenantId from request
 function getTenantId(req: any): string | null {
-  return req.headers['x-tenant-id'] || (req as any).user?.tenantId || null;
+  return req.tenantId || req.headers['x-tenant-id'] || null;
 }
 
 // List with filters and pagination (with caching)
@@ -16,7 +20,8 @@ incomesRouter.get('/', async (req, res, next) => {
   try {
     const db = await getDatabase();
     const col = db.collection('incomes');
-    const tenantId = getTenantId(req) || 'global';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
 
     const { query, status, category, from, to } = req.query as any;
     const page = Number(req.query.page ?? 1);
@@ -33,7 +38,7 @@ incomesRouter.get('/', async (req, res, next) => {
     }
 
     const filter: any = {};
-    if (tenantId !== 'global') filter.tenantId = tenantId;
+    filter.tenantId = tenantId;
     if (status) filter.status = status;
     if (category) filter.category = category;
     if (query) filter.name = { $regex: String(query), $options: 'i' };
@@ -70,7 +75,8 @@ incomesRouter.get('/summary', async (req, res, next) => {
   try {
     const db = await getDatabase();
     const col = db.collection('incomes');
-    const tenantId = getTenantId(req) || 'global';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
 
     const { from, to } = req.query as any;
 
@@ -85,7 +91,7 @@ incomesRouter.get('/summary', async (req, res, next) => {
     }
 
     const matchStage: any = {};
-    if (tenantId !== 'global') matchStage.tenantId = tenantId;
+    matchStage.tenantId = tenantId;
     if (from || to) {
       matchStage.date = {};
       if (from) matchStage.date.$gte = from;
@@ -158,7 +164,8 @@ incomesRouter.post('/', async (req, res, next) => {
   try {
     const db = await getDatabase();
     const col = db.collection('incomes');
-    const tenantId = getTenantId(req) || 'unknown';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
     const payload = req.body;
     const result = await col.insertOne({
       ...payload,
@@ -198,7 +205,8 @@ incomesRouter.put('/:id', async (req, res, next) => {
   try {
     const db = await getDatabase();
     const col = db.collection('incomes');
-    const tenantId = getTenantId(req) || 'unknown';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
     const { id } = req.params;
     const payload = req.body;
     
@@ -208,7 +216,7 @@ incomesRouter.put('/:id', async (req, res, next) => {
     } catch {
       filter = { id };
     }
-    if (tenantId !== 'unknown') filter.tenantId = tenantId;
+    filter.tenantId = tenantId;  // Always scope to tenant
 
     await col.updateOne(filter, {
       $set: {
@@ -231,7 +239,8 @@ incomesRouter.delete('/:id', async (req, res, next) => {
   try {
     const db = await getDatabase();
     const col = db.collection('incomes');
-    const tenantId = getTenantId(req) || 'unknown';
+    const tenantId = getTenantId(req);
+    if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
     const { id } = req.params;
     
     let filter: any;
@@ -240,7 +249,7 @@ incomesRouter.delete('/:id', async (req, res, next) => {
     } catch {
       filter = { id };
     }
-    if (tenantId !== 'unknown') filter.tenantId = tenantId;
+    filter.tenantId = tenantId;  // Always scope to tenant
 
     await col.deleteOne(filter);
     

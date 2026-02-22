@@ -15,7 +15,7 @@ import {
 } from '../utils/appHelpers';
 
 // Default tenant ID
-const DEFAULT_TENANT_ID = 'opbd';
+const DEFAULT_TENANT_ID = '';  // Empty - prevent data leaking to real tenant
 
 // Lazy load toast to avoid including in initial bundle
 let toastModule: typeof import('react-hot-toast') | null = null;

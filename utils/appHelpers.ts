@@ -12,7 +12,7 @@ const RESERVED_TENANT_SLUGS = [
 ];
 
 // Default tenant ID
-const DEFAULT_TENANT_ID = 'opbd';
+const DEFAULT_TENANT_ID = '';  // Empty - prevent data leaking to real tenant
 
 // --- Constants ---
 export const FALLBACK_VARIANT: ProductVariantSelection = { color: 'Default', size: 'Standard' };

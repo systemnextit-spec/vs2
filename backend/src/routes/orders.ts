@@ -4,6 +4,7 @@ import { getTenantData, setTenantData } from '../services/tenantDataService';
 import { Server as SocketIOServer } from 'socket.io';
 import { Notification } from '../models/Notification';
 import { createAuditLog } from './auditLogs';
+import { authenticateToken, optionalAuth, requireAdmin } from '../middleware/auth';
 
 export const ordersRouter = Router();
 
@@ -203,7 +204,11 @@ console.error('[Orders] Error creating order:', error instanceof Error ? error.m
 });
 
 // Update an order
-ordersRouter.put('/:tenantId/:orderId', async (req, res, next) => {
+ordersRouter.put('/:tenantId/:orderId', authenticateToken, requireAdmin, async (req, res, next) => {
+  // Tenant isolation: non-super-admin can only modify their own tenant's orders
+  if (req.userRole !== 'super_admin' && req.tenantId && req.params.tenantId !== req.tenantId) {
+    return res.status(403).json({ error: 'Cannot modify orders from another tenant' });
+  }
   try {
     const { tenantId, orderId } = req.params;
     if (!tenantId || !orderId) {
@@ -261,7 +266,11 @@ ordersRouter.put('/:tenantId/:orderId', async (req, res, next) => {
 
 
 // Update an order (PATCH - same as PUT for compatibility)
-ordersRouter.patch('/:tenantId/:orderId', async (req, res, next) => {
+ordersRouter.patch('/:tenantId/:orderId', authenticateToken, requireAdmin, async (req, res, next) => {
+  // Tenant isolation: non-super-admin can only modify their own tenant's orders
+  if (req.userRole !== 'super_admin' && req.tenantId && req.params.tenantId !== req.tenantId) {
+    return res.status(403).json({ error: 'Cannot modify orders from another tenant' });
+  }
   try {
     const { tenantId, orderId } = req.params;
     if (!tenantId || !orderId) {
@@ -317,7 +326,11 @@ ordersRouter.patch('/:tenantId/:orderId', async (req, res, next) => {
   }
 });
 // Delete an order
-ordersRouter.delete('/:tenantId/:orderId', async (req, res, next) => {
+ordersRouter.delete('/:tenantId/:orderId', authenticateToken, requireAdmin, async (req, res, next) => {
+  // Tenant isolation: non-super-admin can only delete their own tenant's orders
+  if (req.userRole !== 'super_admin' && req.tenantId && req.params.tenantId !== req.tenantId) {
+    return res.status(403).json({ error: 'Cannot delete orders from another tenant' });
+  }
   try {
     const { tenantId, orderId } = req.params;
     if (!tenantId || !orderId) {

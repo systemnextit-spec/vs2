@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { Notification } from "../models/Notification";
+import { authenticateToken, requireAdmin, requireRole } from '../middleware/auth';
 
 export const notificationsRouter = Router();
 
