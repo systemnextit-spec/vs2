@@ -148,17 +148,40 @@ export default function ProductDetailsPage({
     };
 
     // Construct tenant-specific logo URL
-    // Priority: 1) websiteConfig headerLogo (if includes tenantId path), 2) websiteConfig footerLogo, 3) generic logo prop
+    // Priority: 1) websiteConfig headerLogo with tenant path, 2) websiteConfig footerLogo with tenant path, 
+    // 3) generic logo prop, 4) fallback to any websiteConfig logo
     const logoUrl = (() => {
-        // Check if websiteConfig has headerLogo with tenant-specific path
-        if (websiteConfig?.headerLogo && websiteConfig.headerLogo.includes('/branding/')) {
-            return normalizeImageUrl(websiteConfig.headerLogo);
+        // First, check if websiteConfig has headerLogo with tenant-specific branding path
+        if (websiteConfig?.headerLogo) {
+            const headerLogo = websiteConfig.headerLogo;
+            // If it's already a tenant-specific branding URL, use it
+            if (headerLogo.includes('/branding/')) {
+                return normalizeImageUrl(headerLogo);
+            }
+            // If we have a tenantId and the logo isn't tenant-specific, check if it should be
+            // This handles cases where the websiteConfig is from the active tenant but we need the product's tenant logo
+            if (tenantId && headerLogo.includes('/uploads/images/')) {
+                // Check if the logo path matches the product's tenant
+                if (headerLogo.includes(`/branding/${tenantId}/`)) {
+                    return normalizeImageUrl(headerLogo);
+                }
+            }
         }
+        
         // Check if websiteConfig has footerLogo with tenant-specific path
-        if (websiteConfig?.footerLogo && websiteConfig.footerLogo.includes('/branding/')) {
-            return normalizeImageUrl(websiteConfig.footerLogo);
+        if (websiteConfig?.footerLogo) {
+            const footerLogo = websiteConfig.footerLogo;
+            if (footerLogo.includes('/branding/')) {
+                return normalizeImageUrl(footerLogo);
+            }
+            if (tenantId && footerLogo.includes('/uploads/images/')) {
+                if (footerLogo.includes(`/branding/${tenantId}/`)) {
+                    return normalizeImageUrl(footerLogo);
+                }
+            }
         }
-        // Fallback to logo prop or other config options
+        
+        // Fallback to generic logo prop or any websiteConfig logo
         return normalizeImageUrl(logo || websiteConfig?.headerLogo || websiteConfig?.footerLogo || "");
     })();
     const announcementText = websiteConfig?.adminNoticeText || websiteConfig?.headerSliderText || "";

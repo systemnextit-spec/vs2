@@ -166,8 +166,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               localStorage.setItem(USER_KEY, JSON.stringify(data.user));
               localStorage.setItem(PERMISSIONS_KEY, JSON.stringify(data.permissions));
             } else if (response.status === 401) {
-              // Token is definitively invalid (expired/revoked), clear storage
-              console.warn('[Auth] Token invalid (401), clearing session');
+              // Token is definitively invalid (expired/revoked), clear storage silently
+              // This is expected for users using the legacy auth system
               clearStorage();
               setState(prev => ({ ...prev, isLoading: false }));
             } else {
