@@ -42,6 +42,7 @@ interface CheckoutProps {
   onProfileClick?: () => void;
   logo?: string | null;
   websiteConfig?: WebsiteConfig;
+  tenantId?: string;
   deliveryConfigs?: DeliveryConfig[];
   paymentMethods?: PaymentMethod[];
   searchValue?: string;
@@ -98,6 +99,7 @@ const StoreCheckout = ({
   onSearchChange,
   onImageSearchClick,
   onOpenChat,
+  tenantId,
   cart,
   onToggleCart,
   onCheckoutFromCart,

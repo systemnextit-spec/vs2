@@ -16,6 +16,7 @@ interface SuccessProps {
   onProfileClick?: () => void;
   logo?: string | null;
   websiteConfig?: WebsiteConfig;
+  tenantId?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
   onImageSearchClick?: () => void;
@@ -28,7 +29,7 @@ interface SuccessProps {
   orders?: Order[];
 }
 
-const StoreOrderSuccess = ({ onHome, user, onLoginClick, onLogoutClick, onProfileClick, logo, websiteConfig, searchValue, onSearchChange, onImageSearchClick, onOpenChat, cart, onToggleCart, onCheckoutFromCart, productCatalog, orderId: propsOrderId, orders = [] }: SuccessProps) => {
+const StoreOrderSuccess = ({ onHome, user, onLoginClick, onLogoutClick, onProfileClick, logo, websiteConfig, searchValue, onSearchChange, onImageSearchClick, onOpenChat, tenantId, cart, onToggleCart, onCheckoutFromCart, productCatalog, orderId: propsOrderId, orders = [] }: SuccessProps) => {
   const [copied, setCopied] = React.useState(false);
   const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
   

@@ -39,6 +39,7 @@ const StoreProfile = ({
   onLogoutClick,
   logo,
    websiteConfig,
+   tenantId,
    searchValue,
    onSearchChange,
    onImageSearchClick,

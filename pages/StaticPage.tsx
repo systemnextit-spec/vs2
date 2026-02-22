@@ -15,6 +15,7 @@ interface StaticPageProps {
   onProfileClick?: () => void;
   logo?: string | null;
   websiteConfig?: WebsiteConfig;
+  tenantId?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
   onOpenChat?: () => void;
@@ -41,6 +42,7 @@ const StaticPage: React.FC<StaticPageProps> = ({
   onProfileClick,
   logo,
   websiteConfig,
+  tenantId,
   searchValue = '',
   onSearchChange,
   onOpenChat,
