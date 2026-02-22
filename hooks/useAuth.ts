@@ -6,7 +6,7 @@ import { useCallback, Dispatch, SetStateAction } from 'react';
 import type { User, Tenant } from '../types';
 import { isAdminRole, getAuthErrorMessage } from '../utils/appHelpers';
 
-import { signInWithRedirect, getRedirectResult, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from 'firebase/auth';
 import { auth, provider } from '../config/firebase';
 
 // Default tenant ID
@@ -238,26 +238,68 @@ export function useAuth({
 
   const handleGoogleLogin = useCallback(async (): Promise<boolean> => {
     try {
-      // Store current tenant info before redirect
       const tenantIdToUse = activeTenantId || DEFAULT_TENANT_ID;
       const tenantSubdomain = getTenantSubdomain();
-      
-      localStorage.setItem('google_login_tenant', tenantIdToUse);
-      if (tenantSubdomain) {
-        localStorage.setItem('google_login_subdomain', tenantSubdomain);
+
+      // Use popup for Google sign-in (avoids redirect/iframe/X-Frame-Options issues)
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      if (!user) {
+        throw new Error('No user data received from Google');
       }
-      
-      // Redirect to Google for authentication (opens in same tab, no popup/COOP issues)
-      await signInWithRedirect(auth, provider);
-      
-      // This function won't return - the page will redirect to Google
-      // After Google auth, user will be redirected back and processGoogleRedirect will handle it
+
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const idToken = credential?.idToken || (await user.getIdToken());
+
+      // Send the ID token to backend for verification and user creation/login
+      const payload: any = {
+        idToken,
+        email: user.email,
+        name: user.displayName,
+        photoURL: user.photoURL,
+        provider: 'google',
+        role: 'customer'
+      };
+
+      if (tenantSubdomain && tenantSubdomain !== 'www' && tenantSubdomain !== 'admin') {
+        payload.tenantSubdomain = tenantSubdomain;
+      } else if (tenantIdToUse) {
+        payload.tenantId = tenantIdToUse;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Google login failed');
+      }
+
+      const data = await response.json();
+
+      if (data.user) {
+        setUser(data.user);
+        localStorage.setItem('admin_auth_user', JSON.stringify(data.user));
+      }
+
+      if (data.token) {
+        localStorage.setItem('admin_auth_token', data.token);
+      }
+
+      if (data.user?.tenantId) {
+        setActiveTenantId(data.user.tenantId);
+      }
+
       return true;
     } catch (error: any) {
-      console.error('Google redirect error:', error);
+      console.error('Google login error:', error);
       throw new Error(error.message || 'Failed to initiate Google sign-in');
     }
-  }, [activeTenantId]);
+  }, [activeTenantId, setUser, setActiveTenantId]);
 
   const processGoogleRedirect = useCallback(async (): Promise<boolean> => {
     try {
