@@ -27,6 +27,7 @@ import type {
   MerchantHealth,
   AtRiskMerchant
 } from '../components/superadmin/types';
+import IsActiveTogglebtn from '@/components/superadmin/IsActiveTogglebtn';
 
 // Lazy load tab components for better performance and code splitting
 // Each tab component will be in its own bundle chunk
@@ -47,6 +48,8 @@ const TutorialsTab = React.lazy(() => import('../components/superadmin/Tutorials
 const ApkBuildsTab = React.lazy(() => import('../components/superadmin/ApkBuildsTab'));
 const AppRequestsTab = React.lazy(() => import('../components/superadmin/AppRequestsTab'));
 const AdsManagementTab = React.lazy(() => import('../components/superadmin/AdsManagementTab'));
+
+
 
 // Lazy load AdminTenantManagement
 const AdminTenantManagement = React.lazy(() => import('./AdminTenantManagement'));
@@ -1409,6 +1412,15 @@ const SuperAdminDashboard: React.FC = () => {
             <AdsManagementTab />
           </React.Suspense>
         );
+
+          // Is active toggle btn here. 
+
+        case 'new-section':
+      return (
+        <React.Suspense fallback={<TabLoadingFallback />}>
+          <IsActiveTogglebtn />
+        </React.Suspense>
+      );
 
       default:
         return (

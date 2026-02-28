@@ -9,6 +9,7 @@ import {
 import { MerchantHealth, MerchantAlert, AtRiskMerchant } from './types';
 import { Tenant } from '../../types';
 
+
 interface MerchantSuccessTabProps {
   merchantHealth: MerchantHealth[];
   atRiskMerchants: AtRiskMerchant[];
@@ -465,6 +466,9 @@ const MerchantSuccessTab: React.FC<MerchantSuccessTabProps> = ({
                   <Clock className="w-3 h-3" />
                   Last Login
                 </div>
+
+                
+
                 <p className={`font-bold ${selectedMerchant.daysSinceLastLogin > 7 ? 'text-red-600' : 'text-slate-800'}`}>
                   {selectedMerchant.daysSinceLastLogin === 0 ? 'Today' : `${selectedMerchant.daysSinceLastLogin} days ago`}
                 </p>

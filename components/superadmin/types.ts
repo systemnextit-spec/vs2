@@ -332,4 +332,5 @@ export type TabType =
   | 'tutorials'
   | 'apk-builds'
   | 'app-requests'
-  | 'ads-management';
+  | 'ads-management'
+  | 'new-section';

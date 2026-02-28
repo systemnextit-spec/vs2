@@ -122,12 +122,22 @@ const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => setActiveTab('notifications')} 
           collapsed={!sidebarOpen} 
         />
-        <NavItem 
+     {/* Existing Ads Management item */}
+        <NavItem
           icon={Image} 
-          label="Ads Management" 
-          active={activeTab === 'ads-management'} 
-          onClick={() => setActiveTab('ads-management')} 
-          collapsed={!sidebarOpen} 
+          label="Ads Management"
+          active={activeTab === 'ads-management'}
+          onClick={() => setActiveTab('ads-management')}
+          collapsed={!sidebarOpen}
+        />
+
+        {/* Your NEW Section */}
+        <NavItem
+          icon={Image} // Ensure this icon is imported at the top of the file
+          label="New Section"
+          active={activeTab === 'new-section'}
+          onClick={() => setActiveTab('new-section')}
+          collapsed={!sidebarOpen}
         />
 
         <div className="pt-4 pb-2">
