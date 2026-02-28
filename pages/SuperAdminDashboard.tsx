@@ -59,7 +59,7 @@ const defaultPlatformConfig: PlatformConfig = {
   platformName: 'SystemNext IT',
   platformUrl: 'allinbangla.com',
   supportEmail: 'support@allinbangla.com',
-  supportPhone: '+880 1700-000000',
+  supportPhone: '+880 1410-050031',
   defaultCurrency: 'BDT',
   defaultLanguage: 'English',
   maintenanceMode: false,
@@ -92,7 +92,7 @@ const defaultThemeConfig: TenantThemeConfig = {
   // Storefront styling options
   headerStyle: 'style1',
   mobileHeaderStyle: 'style1',
-  categorySectionStyle: 'style5',
+  categorySectionStyle: 'style1',
   productCardStyle: 'style1',
   footerStyle: 'style1',
   bottomNavStyle: 'style1'
@@ -103,7 +103,7 @@ const defaultChatConfig: ChatConfig = {
   enabled: true,
   whatsappNumber: '',
   messengerPageId: '',
-  liveChatEnabled: false,
+  liveChatEnabled: true,
   supportHoursFrom: '09:00',
   supportHoursTo: '18:00',
   autoReplyMessage: 'Thanks for reaching out! We\'ll get back to you soon.',
