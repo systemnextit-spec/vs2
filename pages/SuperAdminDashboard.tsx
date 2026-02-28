@@ -1418,7 +1418,7 @@ const SuperAdminDashboard: React.FC = () => {
         case 'new-section':
       return (
         <React.Suspense fallback={<TabLoadingFallback />}>
-          <IsActiveTogglebtn />
+          <IsActiveTogglebtn onSelectTenant={undefined} />
         </React.Suspense>
       );
 
